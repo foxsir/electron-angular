@@ -1,0 +1,88 @@
+<div fxLayout="row" fxFlexFill>
+  <div fxFlex="334px" fxLayout="column" fxLayoutGap="14px" style="background: rgb(241 241 241); height: 100%;">
+    <div class="">
+      <div fxLayout="row">
+        <div fxFlex="calc(100% - 60px)">
+          <div fxLayout="row" fxLayoutAlign="end center">
+            <div fxFlex="0 0 calc(294px - 40px)">
+              <input type="text" nz-input placeholder="Username" />
+            </div>
+          </div>
+        </div>
+        <div fxFlex="60px" fxLayoutAlign="center center">
+          <div>
+            <mat-icon style="width: 20px; height: 20px;">
+              <img [src]="edit" alt="">
+            </mat-icon>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="chatting-list">
+      <mat-card class="mat-elevation-z0" style="background: #F1F1F1;"
+                *ngFor="let alarm of alarmItemList" (click)="switchChat(alarm)">
+        <div fxLayout="row" fxLayoutGap="10px">
+          <div fxFlex="40px">
+            <img src="https://material.angular.io/assets/img/examples/shiba1.jpg" mat-card-avatar alt="">
+          </div>
+          <div fxFlex="calc(100% - 200px)">
+            <div fxLayout="column">
+              <div fxFlex="100">
+                <mat-card-subtitle>{{alarm.dataId}}</mat-card-subtitle>
+                <mat-card-subtitle>{{alarm.title}}</mat-card-subtitle>
+              </div>
+              <div fxFlex="100">
+                <div class="chatting-hint">{{alarm.msgContent}}</div>
+              </div>
+            </div>
+          </div>
+          <div fxFlex="70px" fxLayoutAlign="center">
+            <div fxLayout="column">
+              <div fxFlex="100" fxLayout="row">
+                <div style="font-size: 12px;">{{formatDate(alarm.date, 'M-d h:m')}}</div>
+              </div>
+              <div fxFlex="100" fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="end">
+                <mat-icon class="chatting-action-button">volume_up</mat-icon>
+                <mat-icon class="chatting-action-button">volume_up</mat-icon>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-card>
+    </div>
+  </div>
+  <div fxFlex="calc(100% - 334px)">
+    <div fxLayout="column" fxFlexFill>
+      <div fxFlex="100" id="chatting-panel" style="overflow: scroll">
+        <mat-card class="mat-elevation-z0" style="background: #F6F7F9;">
+          <mat-card-content *ngIf="chatMsgEntityList">
+            <div fxLayout="column" fxLayoutGap="20px" class="chatting-panel-container">
+              <div fxLayout="row" *ngFor="let chat of chatMsgEntityList"
+                   [fxLayoutAlign]="chat.uid === localUserInfo.user_uid ? 'end' : 'start'"
+                   [ngClass]="{'self-message': chat.uid === localUserInfo.user_uid}">
+                <div fxFlex="50" [fxLayoutAlign]="chat.uid === localUserInfo.user_uid ? 'end' : 'start'">
+                  <div class="message-entity-item" (contextmenu)="textMenu($event, createPlanmenuTrigger, span)">
+                    <app-message-factory [chatMsg]="chat"></app-message-factory>
+                    <span #createPlanmenuTrigger="matMenuTrigger" #span [matMenuTriggerFor]="menu"></span>
+                    <mat-menu #menu="matMenu">
+                      <button mat-menu-item>Item 1</button>
+                      <button mat-menu-item>Item 1</button>
+                      <button mat-menu-item>Item 1</button>
+                      <button mat-menu-item>Item 1</button>
+                      <button mat-menu-item>Item 2</button>
+                    </mat-menu>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      <div>
+        <mat-form-field appearance="outline" fxFlex="100">
+          <textarea matInput cdkTextareaAutosize cdkAutosizeMaxRows="10" placeholder="Ex. It makes me feel..."></textarea>
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
+</div>

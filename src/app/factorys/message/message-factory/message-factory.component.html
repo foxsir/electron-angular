@@ -1,0 +1,32 @@
+<!--<ng-container [ngComponentOutlet]="component" [ngComponentOutletInjector]="msgData"></ng-container>-->
+
+<app-message-at *ngIf="chatMsg.msgType ===  msgType.TYPE_AITE" [chatMsg]="chatMsg"></app-message-at>
+
+<app-message-contact *ngIf="chatMsg.msgType ===  msgType.TYPE_CONTACT" [chatMsg]="chatMsg"></app-message-contact>
+
+<app-message-dismiss *ngIf="chatMsg.msgType ===  msgType.TYPE_TIREN" [chatMsg]="chatMsg"></app-message-dismiss>
+
+<app-message-file *ngIf="chatMsg.msgType ===  msgType.TYPE_FILE" [chatMsg]="chatMsg"></app-message-file>
+
+<app-message-get-red-envelope *ngIf="chatMsg.msgType ===  msgType.TYPE_GETREDBAG" [chatMsg]="chatMsg"></app-message-get-red-envelope>
+
+<app-message-image *ngIf="chatMsg.msgType ===  msgType.TYPE_IMAGE" [chatMsg]="chatMsg"></app-message-image>
+
+<app-message-location *ngIf="chatMsg.msgType ===  msgType.TYPE_LOCATION" [chatMsg]="chatMsg"></app-message-location>
+
+<app-message-red-envelope *ngIf="chatMsg.msgType ===  msgType.TYPE_REDBAG" [chatMsg]="chatMsg"></app-message-red-envelope>
+
+<app-message-system *ngIf="chatMsg.msgType ===  msgType.TYPE_SYSTEAM$INFO" [chatMsg]="chatMsg"></app-message-system>
+
+<app-message-text *ngIf="chatMsg.msgType ===  msgType.TYPE_TEXT" [chatMsg]="chatMsg"></app-message-text>
+
+<app-message-transfer *ngIf="chatMsg.msgType ===  msgType.TYPE_TRANSFER" [chatMsg]="chatMsg"></app-message-transfer>
+
+<app-message-video *ngIf="chatMsg.msgType ===  msgType.TYPE_SHORTVIDEO" [chatMsg]="chatMsg"></app-message-video>
+
+<app-message-voice *ngIf="chatMsg.msgType ===  msgType.TYPE_VOICE" [chatMsg]="chatMsg"></app-message-voice>
+
+<app-message-no-talk *ngIf="chatMsg.msgType ===  msgType.TYPE_NOTALK" [chatMsg]="chatMsg"></app-message-no-talk>
+
+<app-message-repeal *ngIf="chatMsg.msgType ===  msgType.TYPE_AITE" [chatMsg]="chatMsg"></app-message-repeal>
+

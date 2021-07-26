@@ -1,0 +1,43 @@
+<div fxLayout="row" fxFlexFill>
+  <div fxFlex="74px">
+    <mat-card class="mat-elevation-z0" id="left-toolbar">
+      <mat-card-content class="user-avatar"
+                        matBadge="0" matBadgeOverlap="true"
+                        matBadgePosition="below after" matBadgeSize="small" matBadgeColor="warn">
+        <img mat-card-avatar (click)="drawer.toggle()"
+             src="https://material.angular.io/assets/img/examples/shiba2.jpg" alt="Photo of a Shiba Inu">
+      </mat-card-content>
+      <mat-card-content>
+        <div fxLayout="column" fxLayoutGap="32px">
+          <div fxFlex="100" *ngFor="let menu of leftMenu">
+            <div style="cursor: pointer" [routerLink]="menu.router">
+              <div fxLayout="column" fxLayoutAlign="center center">
+                <div>
+                  <mat-icon>
+                    <img class="left-icon" [src]="menu.icon"
+                         (mouseenter)="menu.icon = menu.iconActive"
+                         (mouseleave)="menu.icon = menu.iconUnActive"
+                         alt="">
+                  </mat-icon>
+                </div>
+                <div>{{menu.label}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div fxFlex="calc(100% - 74px)">
+    <mat-drawer-container fxFlexFill autosize>
+      <div style="height: 30px; background: #f1f1f1"></div>
+      <mat-drawer #drawer mode="over" style="width: 334px">
+        setting
+      </mat-drawer>
+
+      <div fxFlexFill>
+        <router-outlet></router-outlet>
+      </div>
+    </mat-drawer-container>
+  </div>
+</div>

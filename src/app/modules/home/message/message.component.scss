@@ -1,0 +1,46 @@
+@import "~ng-zorro-antd/input/style/index.css";
+
+#chatting-list {
+  .mat-card-subtitle {
+    margin-bottom: 0;
+    color: #383838;
+  }
+
+  .chatting-hint {
+    font-size: 12px;
+    color: #888888;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 200px;
+  }
+
+  .chatting-action-button {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+
+  .mat-card {
+    padding: 16px 20px;
+  }
+
+  .mat-card:hover {
+    background: #DCF1FE !important;
+  }
+}
+
+
+#chatting-panel {
+  .message-entity-item {
+    position: relative;
+    padding: 10px;
+    background: white;
+    width: fit-content;
+    border-radius: 0px 6px 6px 6px;
+  }
+  .self-message .message-entity-item {
+    background: deepskyblue;
+    border-radius: 6px 0px 6px 6px;
+  }
+}
