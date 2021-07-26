@@ -1,1 +1,22 @@
-<a routerLink="/home">HOME</a>
+<div fxLayout="column" fxFlexFill fxLayoutAlign="center center">
+  <div style="width: 400px; height: 440px">
+    <mat-card fxFlexFill>
+      <mat-card-content>
+        <mat-tab-group animationDuration="0ms" mat-align-tabs="start">
+          <mat-tab>
+            <ng-template mat-tab-label>
+              <h2>账号登录</h2>
+            </ng-template>
+            <app-login></app-login>
+          </mat-tab>
+          <mat-tab>
+            <ng-template mat-tab-label>
+              <h2>立即注册</h2>
+            </ng-template>
+            <app-register></app-register>
+          </mat-tab>
+        </mat-tab-group>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
