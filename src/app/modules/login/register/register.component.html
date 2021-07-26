@@ -1,0 +1,13 @@
+<div fxLayout="row" fxFlex="100">
+  <mat-card fxFlex="100" class="mat-elevation-z0">
+    <mat-card-content>
+      <form fxLayout="column" [formGroup]="signupForm.form" (ngSubmit)="onSubmit()" fxLayoutGap="16px">
+        <formly-form [model]="signupForm.model" [fields]="signupForm.fields" [options]="signupForm.options" [form]="signupForm.form">
+        </formly-form>
+        <div>
+          <button mat-flat-button color="primary" fxFlex="100">注册账号</button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>
