@@ -1,0 +1,12 @@
+::ng-deep {
+  .editor {
+    min-height: 100px;
+    padding: 8px 30px;
+  }
+  .dark-theme {
+    .editor, .ProseMirror {
+      background: #0d0d0d;
+      color: white;
+    }
+  }
+}
