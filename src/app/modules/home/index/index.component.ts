@@ -18,7 +18,7 @@ import chatting from "./images/chatting.png";
 import chattingActive from "./images/chatting-active.png";
 import OriginData from "@app/models/OriginData";
 import {MessageDistributeService} from "@services/message-distribute/message-distribute.service";
-import {Router} from "@angular/router";
+import {ActivatedRoute, ActivationEnd, NavigationEnd, Router} from "@angular/router";
 
 @Component({
   selector: 'app-index',
@@ -27,8 +27,16 @@ import {Router} from "@angular/router";
 })
 export class IndexComponent implements OnInit {
   chatting = chatting.toString();
+
+  massageBadges = {
+    message: 0
+  };
+
+  currentRouter: string = "";
+
   leftMenu = [
     {
+      path: 'message',
       label: "消息",
       router: "/home/message",
       icon: chatting,
@@ -64,6 +72,7 @@ export class IndexComponent implements OnInit {
 
   constructor(
     private router: Router,
+    private activatedRoute: ActivatedRoute,
     private localUserService: LocalUserService,
     private groupChattingCacheService: GroupChattingCacheService,
     private singleChattingCacheService: SingleChattingCacheService,
@@ -77,14 +86,23 @@ export class IndexComponent implements OnInit {
     private snackBarService: SnackBarService,
     private imService: ImService,
     private messageDistributeService: MessageDistributeService,
-  ) { }
+  ) {
+    this.router.events.subscribe(e => {
+      if (e instanceof NavigationEnd) {
+        this.currentRouter = this.router.url;
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.initAll();
     this.doLoginIMServer();
 
     this.messageDistributeService.MT03_OF_CHATTING_MESSAGE$.subscribe(data => {
-      alert(JSON.stringify(data));
+      this.massageBadges.message = 1;
+    });
+    this.messageDistributeService.MT45_OF_GROUP$CHAT$MSG_SERVER$TO$B$.subscribe(data => {
+      this.massageBadges.message = 1;
     });
   }
 
@@ -300,11 +318,10 @@ export class IndexComponent implements OnInit {
    * @param options
    */
   onIMData(pFromServer: OriginData) {
-    const typeu = pFromServer.typeu;
-
-    console.dir(pFromServer);
-    const msgBody = JSON.parse(pFromServer.dataContent);
-    console.dir(msgBody);
+    // const typeu = pFromServer.typeu;
+    // console.dir(pFromServer);
+    // const msgBody = JSON.parse(pFromServer.dataContent);
+    // console.dir(msgBody);
 
     this.messageDistributeService.inceptMessage(pFromServer);
   }

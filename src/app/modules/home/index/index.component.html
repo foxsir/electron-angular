@@ -13,8 +13,14 @@
             <div style="cursor: pointer" [routerLink]="menu.router">
               <div fxLayout="column" fxLayoutAlign="center center">
                 <div>
-                  <mat-icon>
-                    <img class="left-icon" [src]="menu.icon"
+                  <mat-icon [matBadge]="massageBadges.message" matBadgeColor="warn"
+                            matBadgePosition="above after" matBadgeSize="small"
+                            matBadgeOverlap="true"
+                            [matBadgeHidden]="!menu.path || massageBadges[menu.path] === 0">
+                    <img *ngIf="currentRouter === menu.router" class="left-icon" [src]="menu.iconActive"
+                         (mouseleave)="menu.icon = menu.iconUnActive"
+                         alt="">
+                    <img *ngIf="currentRouter !== menu.router" class="left-icon" [src]="menu.icon"
                          (mouseenter)="menu.icon = menu.iconActive"
                          (mouseleave)="menu.icon = menu.iconUnActive"
                          alt="">
