@@ -23,6 +23,8 @@ import {RosterProviderService} from "@services/roster-provider/roster-provider.s
 import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 import OriginData from "@app/models/OriginData";
 import {MessageDistributeService} from "@services/message-distribute/message-distribute.service";
+import HttpResponse from "@app/models/HttpResponse";
+import AlarmData from "@app/models/AlarmData";
 
 @Component({
   selector: 'app-message',
@@ -30,12 +32,15 @@ import {MessageDistributeService} from "@services/message-distribute/message-dis
   styleUrls: ['./message.component.scss']
 })
 export class MessageComponent implements OnInit {
-  public alarmItemList = [];
+  public alarmItemList: AlarmData[] = [];
   public chatMsgEntityList: ChatMsgEntity[] = [];
-  public currentChat;
+  public currentChat: AlarmData;
   public formatDate = formatDate;
   public localUserInfo: LocalUserInfo;
 
+  public massageBadges = {};
+
+  // image
   public edit = edit;
 
   constructor(
@@ -56,15 +61,35 @@ export class MessageComponent implements OnInit {
   ) {
     this.localUserInfo = this.localUserService.localUserInfo;
 
-    this.messageDistributeService.MT03_OF_CHATTING_MESSAGE$.subscribe(data => {
-      alert(JSON.stringify(data.dataContent));
+    this.messageDistributeService.MT03_OF_CHATTING_MESSAGE$.subscribe((data: OriginData) => {
+      const dataContent: any = JSON.stringify(data.dataContent);
+      // alert("单聊" + data.from);
+      this.massageBadges[data.from.trim()] = 4;
+
+      console.dir(this.massageBadges);
+    });
+
+    // this.messageDistributeService.MT44_OF_GROUP$CHAT$MSG_A$TO$SERVER$.subscribe((data: OriginData) => {
+    //   const dataContent: any = JSON.parse(data.dataContent);
+    //   alert("群组" + dataContent.f);
+    // });
+
+    this.messageDistributeService.MT45_OF_GROUP$CHAT$MSG_SERVER$TO$B$.subscribe((data: OriginData) => {
+      const dataContent: any = JSON.parse(data.dataContent);
+      // alert("群组" + dataContent.t);
+      this.massageBadges[dataContent.t.trim()] = 99;
     });
   }
 
   ngOnInit(): void {
-    this.alarmsProviderService.refreshHistoryChattingAlarmsAsync().subscribe(res => {
-      const list = JSON.parse(res.returnValue);
-      this.showChattingList(list);
+    this.alarmsProviderService.refreshHistoryChattingAlarmsAsync().subscribe((res: HttpResponse) => {
+      if (res.success) {
+        const list = JSON.parse(res.returnValue);
+        this.showChattingList(list);
+      } else {
+        console.dir(res);
+        this.snackBarService.openSnackBar("数据加载失败");
+      }
     });
   }
 
@@ -131,10 +156,12 @@ export class MessageComponent implements OnInit {
     });
   }
 
-  insertItem(alarmData: any, atTheTop: boolean) {
+  insertItem(alarmData: AlarmData, atTheTop: boolean) {
     if (this.currentChat === undefined) {
       this.currentChat = alarmData;
     }
+    Object.assign(this.massageBadges, {[alarmData.dataId.trim()]: 0});
+
     if (Object.is(atTheTop, true)) {
       this.alarmItemList = [alarmData, ...this.alarmItemList];
     } else {

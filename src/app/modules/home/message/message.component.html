@@ -22,13 +22,15 @@
       <mat-card class="mat-elevation-z0" style="background: #F1F1F1;"
                 *ngFor="let alarm of alarmItemList" (click)="switchChat(alarm)">
         <div fxLayout="row" fxLayoutGap="10px">
-          <div fxFlex="40px">
+          <div fxFlex="40px" [matBadge]="massageBadges[alarm.dataId]" matBadgeColor="warn"
+               matBadgePosition="above after" matBadgeSize="small"
+               [matBadgeHidden]="massageBadges[alarm.dataId] === 0"
+               matBadgeOverlap="true">
             <img src="https://material.angular.io/assets/img/examples/shiba1.jpg" mat-card-avatar alt="">
           </div>
           <div fxFlex="calc(100% - 200px)">
             <div fxLayout="column">
               <div fxFlex="100">
-                <mat-card-subtitle>{{alarm.dataId}}</mat-card-subtitle>
                 <mat-card-subtitle>{{alarm.title}}</mat-card-subtitle>
               </div>
               <div fxFlex="100">
