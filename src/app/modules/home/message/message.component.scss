@@ -1,5 +1,33 @@
 @import "~ng-zorro-antd/input/style/index.css";
 
+::ng-deep {
+  .mat-form-field-underline {
+    display: none;
+  }
+  .mat-form-field-wrapper {
+    padding: 0;
+  }
+  .mat-form-field-infix {
+    border-top: 0;
+  }
+}
+
+.alarm-item-list {
+  background: rgb(241 241 241);
+  height: 100%;
+}
+
+.chatting-body {
+  border: solid #CCCCCC 1px;
+  ::-webkit-scrollbar {
+    display: none;
+  }
+}
+.chatting-header {
+  border-left: solid #CCCCCC 1px;
+  border-right: solid #CCCCCC 1px;
+}
+
 #chatting-list {
   .mat-card-subtitle {
     margin-bottom: 0;

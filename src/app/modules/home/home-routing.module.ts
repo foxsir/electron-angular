@@ -3,9 +3,12 @@ import { CommonModule } from '@angular/common';
 import { Routes, RouterModule } from '@angular/router';
 import {IndexComponent} from './index/index.component';
 import {MessageComponent} from './message/message.component';
-import {FriendListComponent} from "./friend-list/friend-list.component";
+import {AddressListComponent} from "./address-list/address-list.component";
 import {GroupComponent} from "./group/group.component";
 import {CollectComponent} from "./collect/collect.component";
+import {NewFriendComponent} from "./new-friend/new-friend.component";
+import {GroupingComponent} from "./grouping/grouping.component";
+import {BlackListComponent} from "./black-list/black-list.component";
 
 const routes: Routes = [
   {
@@ -14,7 +17,7 @@ const routes: Routes = [
     children: [
       {
         path: '',
-        component: MessageComponent,
+        redirectTo: 'message',
         pathMatch: 'full'
       },
       {
@@ -23,19 +26,39 @@ const routes: Routes = [
         pathMatch: 'full'
       },
       {
-        path: 'friend-list',
-        component: FriendListComponent,
-        pathMatch: 'full'
-      },
-      {
-        path: 'group',
-        component: GroupComponent,
-        pathMatch: 'full'
-      },
-      {
-        path: 'collect',
-        component: CollectComponent,
-        pathMatch: 'full'
+        path: 'address-list',
+        component: AddressListComponent,
+        children: [
+          {
+            path: '',
+            redirectTo: 'new-friend',
+          },
+          {
+            path: 'new-friend',
+            component: NewFriendComponent,
+            pathMatch: 'full'
+          },
+          {
+            path: 'group',
+            component: GroupComponent,
+            pathMatch: 'full'
+          },
+          {
+            path: 'grouping',
+            component: GroupingComponent,
+            pathMatch: 'full'
+          },
+          {
+            path: 'collect',
+            component: CollectComponent,
+            pathMatch: 'full'
+          },
+          {
+            path: 'black-list',
+            component: BlackListComponent,
+            pathMatch: 'full'
+          },
+        ]
       },
     ]
   }

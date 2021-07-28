@@ -1,5 +1,5 @@
 <div fxLayout="row" fxFlexFill>
-  <div fxFlex="74px">
+  <div fxFlex="74px" style="background: #F6F7F9">
     <mat-card class="mat-elevation-z0" id="left-toolbar">
       <mat-card-content class="user-avatar"
                         matBadge="0" matBadgeOverlap="true"
@@ -11,16 +11,16 @@
         <div fxLayout="column" fxLayoutGap="32px">
           <div fxFlex="100" *ngFor="let menu of leftMenu">
             <div style="cursor: pointer" [routerLink]="menu.router">
-              <div fxLayout="column" fxLayoutAlign="center center">
+              <div fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="6px">
                 <div>
-                  <mat-icon [matBadge]="massageBadges.message" matBadgeColor="warn"
+                  <mat-icon style="width: 30px" [matBadge]="massageBadges.message" matBadgeColor="warn"
                             matBadgePosition="above after" matBadgeSize="small"
                             matBadgeOverlap="true"
                             [matBadgeHidden]="!menu.path || massageBadges[menu.path] === 0">
-                    <img *ngIf="currentRouter === menu.router" class="left-icon" [src]="menu.iconActive"
+                    <img *ngIf="currentRouter.includes(menu.router)" class="left-icon" [src]="menu.iconActive"
                          (mouseleave)="menu.icon = menu.iconUnActive"
                          alt="">
-                    <img *ngIf="currentRouter !== menu.router" class="left-icon" [src]="menu.icon"
+                    <img *ngIf="!currentRouter.includes(menu.router)" class="left-icon" [src]="menu.icon"
                          (mouseenter)="menu.icon = menu.iconActive"
                          (mouseleave)="menu.icon = menu.iconUnActive"
                          alt="">
@@ -36,12 +36,12 @@
   </div>
   <div fxFlex="calc(100% - 74px)">
     <mat-drawer-container fxFlexFill autosize>
-      <div style="height: 30px; background: #f1f1f1"></div>
       <mat-drawer #drawer mode="over" style="width: 334px">
         setting
       </mat-drawer>
 
       <div fxFlexFill>
+        <div style="height: 30px; background: #f1f1f1"></div>
         <router-outlet></router-outlet>
       </div>
     </mat-drawer-container>

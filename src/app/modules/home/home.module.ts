@@ -8,7 +8,7 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from "@angular/material/card";
 import {MatIconModule} from "@angular/material/icon";
 import { MessageComponent } from './message/message.component';
-import { FriendListComponent } from './friend-list/friend-list.component';
+import { AddressListComponent } from './address-list/address-list.component';
 import { GroupComponent } from './group/group.component';
 import { CollectComponent } from './collect/collect.component';
 import {MatListModule} from "@angular/material/list";
@@ -17,14 +17,20 @@ import {MatBadgeModule} from "@angular/material/badge";
 import {NzInputModule} from "ng-zorro-antd/input";
 import {MatMenuModule} from "@angular/material/menu";
 import {MessageModule} from "../../factorys/message/message.module";
+import { BlackListComponent } from './black-list/black-list.component';
+import { GroupingComponent } from './grouping/grouping.component';
+import { NewFriendComponent } from './new-friend/new-friend.component';
 
 @NgModule({
   declarations: [
     IndexComponent,
     MessageComponent,
-    FriendListComponent,
+    AddressListComponent,
     GroupComponent,
-    CollectComponent
+    CollectComponent,
+    BlackListComponent,
+    GroupingComponent,
+    NewFriendComponent
   ],
   imports: [
     CommonModule,

@@ -10,7 +10,15 @@ import {SingleChattingCacheService} from "@services/single-chatting-cache/single
 import {MessageEntityService} from "@services/message-entity/message-entity.service";
 
 // import image
-import edit from "./images/edit.png";
+import editIcon from "@app/assets/icons/edit.svg";
+import attachmentIcon from "@app/assets/icons/attachment.svg";
+import emojiIcon from "@app/assets/icons/emoji.svg";
+import sendIcon from "@app/assets/icons/send.svg";
+import settingIcon from "@app/assets/icons/setting.svg";
+import searchIcon from "@app/assets/icons/search.svg";
+import voiceIcon from "@app/assets/icons/voice.svg";
+// import image end
+
 import LocalUserInfo from "@app/models/LocalUserInfo";
 import {MatMenuTrigger} from "@angular/material/menu";
 import {ImService} from "@services/im/im.service";
@@ -25,6 +33,7 @@ import OriginData from "@app/models/OriginData";
 import {MessageDistributeService} from "@services/message-distribute/message-distribute.service";
 import HttpResponse from "@app/models/HttpResponse";
 import AlarmData from "@app/models/AlarmData";
+import {DomSanitizer} from "@angular/platform-browser";
 
 @Component({
   selector: 'app-message',
@@ -41,7 +50,13 @@ export class MessageComponent implements OnInit {
   public massageBadges = {};
 
   // image
-  public edit = edit;
+  public editIcon = this.dom.bypassSecurityTrustResourceUrl(editIcon);
+  public attachmentIcon = this.dom.bypassSecurityTrustResourceUrl(attachmentIcon);
+  public emojiIcon = this.dom.bypassSecurityTrustResourceUrl(emojiIcon);
+  public sendIcon = this.dom.bypassSecurityTrustResourceUrl(sendIcon);
+  public settingIcon = this.dom.bypassSecurityTrustResourceUrl(settingIcon);
+  public searchIcon = this.dom.bypassSecurityTrustResourceUrl(searchIcon);
+  public voiceIcon = this.dom.bypassSecurityTrustResourceUrl(voiceIcon);
 
   constructor(
     private alarmsProviderService: AlarmsProviderService,
@@ -57,7 +72,8 @@ export class MessageComponent implements OnInit {
     private singleChattingCacheService: SingleChattingCacheService,
     private imService: ImService,
     private snackBarService: SnackBarService,
-    private messageDistributeService: MessageDistributeService
+    private messageDistributeService: MessageDistributeService,
+    private dom: DomSanitizer,
   ) {
     this.localUserInfo = this.localUserService.localUserInfo;
 
@@ -66,7 +82,7 @@ export class MessageComponent implements OnInit {
       // alert("单聊" + data.from);
       this.massageBadges[data.from.trim()] = 4;
 
-      console.dir(this.massageBadges);
+      // console.dir(this.massageBadges);
     });
 
     // this.messageDistributeService.MT44_OF_GROUP$CHAT$MSG_A$TO$SERVER$.subscribe((data: OriginData) => {
@@ -157,9 +173,6 @@ export class MessageComponent implements OnInit {
   }
 
   insertItem(alarmData: AlarmData, atTheTop: boolean) {
-    if (this.currentChat === undefined) {
-      this.currentChat = alarmData;
-    }
     Object.assign(this.massageBadges, {[alarmData.dataId.trim()]: 0});
 
     if (Object.is(atTheTop, true)) {

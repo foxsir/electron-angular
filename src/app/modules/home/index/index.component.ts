@@ -14,11 +14,21 @@ import {RosterProviderService} from "@services/roster-provider/roster-provider.s
 import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 import {ImService} from "@services/im/im.service";
 
-import chatting from "./images/chatting.png";
-import chattingActive from "./images/chatting-active.png";
 import OriginData from "@app/models/OriginData";
 import {MessageDistributeService} from "@services/message-distribute/message-distribute.service";
-import {ActivatedRoute, ActivationEnd, NavigationEnd, Router} from "@angular/router";
+import {ActivatedRoute, NavigationEnd, Router} from "@angular/router";
+import {DomSanitizer} from "@angular/platform-browser";
+
+// import svg
+import chatting from "@app/assets/icons/chatting.svg";
+import chattingActive from "@app/assets/icons/chatting-active.svg";
+import addressList from "@app/assets/icons/address-list.svg";
+import addressListActive from "@app/assets/icons/address-list-active.svg";
+import groupChatting from "@app/assets/icons/group-chatting.svg";
+import groupChattingActive from "@app/assets/icons/group-chatting-active.svg";
+import collect from "@app/assets/icons/collect.svg";
+import collectActive from "@app/assets/icons/collect-active.svg";
+// import svg end
 
 @Component({
   selector: 'app-index',
@@ -39,31 +49,17 @@ export class IndexComponent implements OnInit {
       path: 'message',
       label: "消息",
       router: "/home/message",
-      icon: chatting,
-      iconUnActive: chatting,
-      iconActive: chattingActive,
+      icon: this.dom.bypassSecurityTrustResourceUrl(chatting),
+      iconUnActive: this.dom.bypassSecurityTrustResourceUrl(chatting),
+      iconActive: this.dom.bypassSecurityTrustResourceUrl(chattingActive),
     },
     {
       label: "通讯录",
-      router: "/home/friend-list",
-      icon: chatting,
-      iconUnActive: chatting,
-      iconActive: chattingActive,
-    },
-    {
-      label: "群组",
-      router: "/home/group",
-      icon: chatting,
-      iconUnActive: chatting,
-      iconActive: chattingActive,
-    },
-    {
-      label: "收藏",
-      router: "/home/collect",
-      icon: chatting,
-      iconUnActive: chatting,
-      iconActive: chattingActive,
-    },
+      router: "/home/address-list",
+      icon: this.dom.bypassSecurityTrustResourceUrl(addressList),
+      iconUnActive: this.dom.bypassSecurityTrustResourceUrl(addressList),
+      iconActive: this.dom.bypassSecurityTrustResourceUrl(addressListActive),
+    }
   ];
 
   /************************************ 全局其它变量 ************************************/
@@ -86,6 +82,7 @@ export class IndexComponent implements OnInit {
     private snackBarService: SnackBarService,
     private imService: ImService,
     private messageDistributeService: MessageDistributeService,
+    private dom: DomSanitizer,
   ) {
     this.router.events.subscribe(e => {
       if (e instanceof NavigationEnd) {

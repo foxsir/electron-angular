@@ -1,0 +1,26 @@
+@import "~ng-zorro-antd/input/style/index.css";
+
+.friend-item-list {
+  background: rgb(241 241 241);
+}
+
+
+#left-menu-list {
+  .mat-list-item {
+    cursor: pointer;
+    height: 60px;
+    .mat-list-item-content {
+      padding: 0 20px;
+    }
+  }
+  .mat-icon {
+    width: 40px;
+    height: 40px;
+  }
+  .mat-icon > img {
+    width: 40px;
+    height: auto;
+    line-height: 40px;
+    vertical-align: text-top;
+  }
+}

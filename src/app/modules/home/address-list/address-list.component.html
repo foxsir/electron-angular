@@ -1,0 +1,35 @@
+<div fxLayout="row" style="height: calc(100vh - 30px)">
+  <div fxFlex="334px" fxLayout="column" fxLayoutGap="14px" class="friend-item-list">
+    <div class="">
+      <div fxLayout="row">
+        <div fxFlex="calc(100% - 60px)">
+          <div fxLayout="row" fxLayoutAlign="end center">
+            <div fxFlex="0 0 calc(294px - 40px)">
+              <input type="text" nz-input placeholder="Username" />
+            </div>
+          </div>
+        </div>
+        <div fxFlex="60px" fxLayoutAlign="center center">
+          <div>
+            <mat-icon style="width: 20px; height: 20px;">
+              <img [src]="editIcon" alt="">
+            </mat-icon>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="left-menu-list">
+      <mat-list role="list" fxLayoutGap="2px">
+        <mat-list-item *ngFor="let menu of leftMenuList" [routerLink]="menu.router">
+          <mat-icon mat-list-icon>
+            <img [src]="menu.icon" alt="">
+          </mat-icon>
+          <div mat-line>{{menu.label}}</div>
+        </mat-list-item>
+      </mat-list>
+    </div>
+  </div>
+  <div fxFlex="calc(100% - 334px)" fxLayout="column">
+    <router-outlet></router-outlet>
+  </div>
+</div>
