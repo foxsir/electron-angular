@@ -12,25 +12,32 @@ export class ContextMenuService {
 
   private contextMenu: ContextMenu[][] = [];
 
+  private common = ['common'];
+  private commonManage = ['common', 'manage'];
+  private commonManageOwner = ['common', 'manage', 'owner'];
+
   private actionCollection = {
     copyText: {
       label: "复制",
+      limits: this.common,
       action: (chat: ChatMsgEntity, messageContainer: HTMLDivElement) => {
         this.copyDivToClipboard(messageContainer);
       }
     },
     copyImage: {
       label: "复制",
+      limits: this.common,
       action: (chat: ChatMsgEntity, messageContainer: HTMLDivElement) => {
         this.copyDivToClipboard(messageContainer);
       }
     },
     repeal: {
       label: "撤回",
+      limits: this.common,
       action: (chat: ChatMsgEntity, messageContainer: HTMLDivElement) => {
         chat.msgType = this.msgType.TYPE_BACK;
       }
-    }
+    },
   };
 
   constructor() {
@@ -144,12 +151,12 @@ export class ContextMenuService {
     window.getSelection().removeAllRanges();// to deselect
   }
 
-  getContextMenuForChat(chat: ChatMsgEntity) {
+  getContextMenuForChat(chat: ChatMsgEntity, chatOwner: any = null) {
     // chat.msgType
     return this.contextMenu[chat.msgType] || [];
   }
 
-  getContextMenuForAvatar(chat: ChatMsgEntity) {
+  getContextMenuForAvatar(chat: ChatMsgEntity, chatOwner) {
 
   }
 
