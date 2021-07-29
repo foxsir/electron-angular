@@ -111,17 +111,24 @@
                 <div fxLayout="row" *ngFor="let chat of chatMsgEntityList"
                      [fxLayoutAlign]="chat.uid === localUserInfo.user_uid ? 'end' : 'start'"
                      [ngClass]="{'self-message': chat.uid === localUserInfo.user_uid}">
-                  <div fxFlex="50" [fxLayoutAlign]="chat.uid === localUserInfo.user_uid ? 'end' : 'start'">
-                    <div class="message-entity-item" (contextmenu)="textMenuForMessage($event, createPlanMenuTrigger, span, chat)">
-                      <div class="message-container" #messageContainer>
-                        <app-message-factory [chatMsg]="chat"></app-message-factory>
+                  <div fxFlex="65" [fxLayoutAlign]="chat.uid === localUserInfo.user_uid ? 'end' : 'start'">
+                    <div fxLayout="column" class="message-container" fxLayoutGap="5px"
+                         [fxLayoutAlign]="chat.uid === localUserInfo.user_uid ? 'end end' : 'start'">
+                      <div class="message-time">
+                        {{chat.date | date}}
                       </div>
-                      <span #createPlanMenuTrigger="matMenuTrigger" #span [matMenuTriggerFor]="contextmenu"></span>
-                      <mat-menu #contextmenu="matMenu">
-                        <button mat-menu-item *ngFor="let item of contextMenu" (click)="item.action(chat, messageContainer)">
-                          {{item.label}}
-                        </button>
-                      </mat-menu>
+                      <!--[fxLayoutAlign]="chat.uid === localUserInfo.user_uid ? 'end' : 'start'"-->
+                      <div class="message-entity-item" (contextmenu)="textMenuForMessage($event, createPlanMenuTrigger, span, chat)">
+                        <div class="message-entity" #messageContainer>
+                          <app-message-factory [chatMsg]="chat"></app-message-factory>
+                        </div>
+                        <span #createPlanMenuTrigger="matMenuTrigger" #span [matMenuTriggerFor]="contextmenu"></span>
+                        <mat-menu #contextmenu="matMenu">
+                          <button mat-menu-item *ngFor="let item of contextMenu" (click)="item.action(chat, messageContainer)">
+                            {{item.label}}
+                          </button>
+                        </mat-menu>
+                      </div>
                     </div>
                   </div>
                 </div>
