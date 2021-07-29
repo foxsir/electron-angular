@@ -1,3 +1,13 @@
 <mat-card class="mat-elevation-z0">
-  <p>collect works!</p>
+  <mat-card-content>
+    <mat-list>
+      <div mat-subheader>Groups</div>
+      <mat-list-item *ngFor="let collect of collectList">
+        <mat-icon mat-list-icon>folder</mat-icon>
+        <div mat-line>collect</div>
+        <div mat-line> collect </div>
+      </mat-list-item>
+      <mat-divider></mat-divider>
+    </mat-list>
+  </mat-card-content>
 </mat-card>

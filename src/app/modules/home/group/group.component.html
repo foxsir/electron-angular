@@ -1,3 +1,13 @@
 <mat-card class="mat-elevation-z0">
-  <p>group works!</p>
+  <mat-card-content>
+    <mat-list>
+      <div mat-subheader>Groups</div>
+      <mat-list-item *ngFor="let group of chattingGroup">
+        <mat-icon mat-list-icon>folder</mat-icon>
+        <div mat-line>{{group.g_name}}</div>
+        <div mat-line> {{group.create_time | date}} </div>
+      </mat-list-item>
+      <mat-divider></mat-divider>
+    </mat-list>
+  </mat-card-content>
 </mat-card>

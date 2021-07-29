@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import {RestService} from "@services/rest/rest.service";
+import HttpResponse from "@app/models/HttpResponse";
 
 @Component({
   selector: 'app-black-list',
@@ -7,7 +9,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class BlackListComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+    private restService: RestService
+  ) {
+    this.restService.getMyBlackList().subscribe((res: HttpResponse) => {
+      console.dir(res.data === null);
+      console.dir(res);
+    });
+  }
 
   ngOnInit(): void {
   }
