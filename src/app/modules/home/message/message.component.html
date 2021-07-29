@@ -112,15 +112,15 @@
                      [fxLayoutAlign]="chat.uid === localUserInfo.user_uid ? 'end' : 'start'"
                      [ngClass]="{'self-message': chat.uid === localUserInfo.user_uid}">
                   <div fxFlex="50" [fxLayoutAlign]="chat.uid === localUserInfo.user_uid ? 'end' : 'start'">
-                    <div class="message-entity-item" (contextmenu)="textMenu($event, createPlanmenuTrigger, span)">
-                      <app-message-factory [chatMsg]="chat"></app-message-factory>
-                      <span #createPlanmenuTrigger="matMenuTrigger" #span [matMenuTriggerFor]="menu"></span>
-                      <mat-menu #menu="matMenu">
-                        <button mat-menu-item>Item 1</button>
-                        <button mat-menu-item>Item 1</button>
-                        <button mat-menu-item>Item 1</button>
-                        <button mat-menu-item>Item 1</button>
-                        <button mat-menu-item>Item 2</button>
+                    <div class="message-entity-item" (contextmenu)="textMenuForMessage($event, createPlanMenuTrigger, span, chat)">
+                      <div class="message-container" #messageContainer>
+                        <app-message-factory [chatMsg]="chat"></app-message-factory>
+                      </div>
+                      <span #createPlanMenuTrigger="matMenuTrigger" #span [matMenuTriggerFor]="contextmenu"></span>
+                      <mat-menu #contextmenu="matMenu">
+                        <button mat-menu-item *ngFor="let item of contextMenu" (click)="item.action(chat, messageContainer)">
+                          {{item.label}}
+                        </button>
                       </mat-menu>
                     </div>
                   </div>

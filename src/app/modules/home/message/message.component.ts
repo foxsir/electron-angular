@@ -34,6 +34,7 @@ import {MessageDistributeService} from "@services/message-distribute/message-dis
 import HttpResponse from "@app/models/HttpResponse";
 import AlarmData from "@app/models/AlarmData";
 import {DomSanitizer} from "@angular/platform-browser";
+import {ContextMenuService} from "@services/context-menu/context-menu.service";
 
 @Component({
   selector: 'app-message',
@@ -48,6 +49,8 @@ export class MessageComponent implements OnInit {
   public localUserInfo: LocalUserInfo;
 
   public massageBadges = {};
+
+  public contextMenu: any[] = [];
 
   // image
   public editIcon = this.dom.bypassSecurityTrustResourceUrl(editIcon);
@@ -74,6 +77,7 @@ export class MessageComponent implements OnInit {
     private snackBarService: SnackBarService,
     private messageDistributeService: MessageDistributeService,
     private dom: DomSanitizer,
+    private contextMenuService: ContextMenuService
   ) {
     this.localUserInfo = this.localUserService.localUserInfo;
 
@@ -309,12 +313,15 @@ export class MessageComponent implements OnInit {
     });
   }
 
-  textMenu(e: MouseEvent, menu: MatMenuTrigger, span: HTMLSpanElement) {
-    menu.openMenu();
-    span.style.position = "absolute";
-    span.style.top = "0px";
-    span.style.left = "0px";
-    span.style.transform = `translate3d(${e.offsetX}px, ${e.offsetY}px, 0px)`;
+  textMenuForMessage(e: MouseEvent, menu: MatMenuTrigger, span: HTMLSpanElement, chat: ChatMsgEntity) {
+    this.contextMenu = this.contextMenuService.getContextMenuForChat(chat);
+    if (this.contextMenu.length > 0) {
+      menu.openMenu();
+      span.style.position = "absolute";
+      span.style.top = "0px";
+      span.style.left = "0px";
+      span.style.transform = `translate3d(${e.offsetX}px, ${e.offsetY}px, 0px)`;
+    }
     return e.defaultPrevented;
   }
 
