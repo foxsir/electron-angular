@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import ChatMsgEntity from "@app/models/ChatMsgEntity";
 import {MsgType} from "@app/config/rbchat-config";
+import ContextMenu from "@app/models/ContextMenu";
 
 @Injectable({
   providedIn: 'root'
@@ -9,24 +10,30 @@ export class ContextMenuService {
 
   public msgType = MsgType;
 
-  private contextMenu: any[] = [];
+  private contextMenu: ContextMenu[][] = [];
+
+  private actionCollection = {
+    copyText: {
+      label: "复制",
+      action: (chat: ChatMsgEntity, messageContainer: HTMLDivElement) => {
+        this.copyDivToClipboard(messageContainer);
+      }
+    },
+    copyImage: {
+      label: "复制",
+      action: (chat: ChatMsgEntity, messageContainer: HTMLDivElement) => {
+        this.copyDivToClipboard(messageContainer);
+      }
+    },
+    repeal: {
+      label: "撤回",
+      action: (chat: ChatMsgEntity, messageContainer: HTMLDivElement) => {
+        chat.msgType = this.msgType.TYPE_BACK;
+      }
+    }
+  };
 
   constructor() {
-    this.contextMenu[this.msgType.TYPE_TEXT] = [
-      {
-        label: "复制",
-        action: (chat: ChatMsgEntity, messageContainer) => {
-          this.copyDivToClipboard(messageContainer);
-          chat.msgType = this.msgType.TYPE_BACK;
-        }
-      },
-      {
-        label: "撤回",
-        action: (chat: ChatMsgEntity) => { chat.msgType = this.msgType.TYPE_BACK; }
-      },
-    ];
-
-
     //     // take any image
     //     let img = temp1;
     //
@@ -113,24 +120,18 @@ export class ContextMenuService {
     //   })
     // })
 
+    this.initMenu();
+  }
 
-
-
-
+  private initMenu() {
+    this.contextMenu[this.msgType.TYPE_TEXT] = [
+      this.actionCollection.copyText,
+      this.actionCollection.repeal,
+    ];
 
     this.contextMenu[this.msgType.TYPE_IMAGE] = [
-      {
-        label: "复制",
-        action: (chat: ChatMsgEntity, messageContainer) => {
-          console.dir(messageContainer.querySelector("img").src);
-          this.copyDivToClipboard(messageContainer.querySelector("img"));
-          chat.msgType = this.msgType.TYPE_BACK;
-        }
-      },
-      {
-        label: "撤回",
-        action: (chat: ChatMsgEntity) => { chat.msgType = this.msgType.TYPE_BACK; }
-      },
+      this.actionCollection.copyImage,
+      this.actionCollection.repeal,
     ];
   }
 
