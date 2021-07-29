@@ -7,3 +7,7 @@ interface Window {
   process: any;
   require: any;
 }
+
+declare class ClipboardItem {
+  constructor(data: { [mimeType: string]: Blob });
+}
