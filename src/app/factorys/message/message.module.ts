@@ -16,6 +16,7 @@ import { MessageDismissComponent } from './message-dismiss/message-dismiss.compo
 import { MessageSystemComponent } from './message-system/message-system.component';
 import { MessageFactoryComponent } from './message-factory/message-factory.component';
 import { MessageNoTalkComponent } from './message-no-talk/message-no-talk.component';
+import { MessageBackComponent } from './message-back/message-back.component';
 
 @NgModule({
     declarations: [
@@ -34,7 +35,8 @@ import { MessageNoTalkComponent } from './message-no-talk/message-no-talk.compon
         MessageDismissComponent,
         MessageSystemComponent,
         MessageFactoryComponent,
-        MessageNoTalkComponent
+        MessageNoTalkComponent,
+        MessageBackComponent
     ],
     exports: [
       MessageFactoryComponent
