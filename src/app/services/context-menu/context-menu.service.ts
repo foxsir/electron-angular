@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import ChatMsgEntity from "@app/models/ChatMsgEntity";
 import {MsgType} from "@app/config/rbchat-config";
 import ContextMenu from "@app/models/ContextMenu";
+import {Clipboard} from "@angular/cdk/clipboard";
 
 @Injectable({
   providedIn: 'root'
@@ -21,14 +22,14 @@ export class ContextMenuService {
       label: "复制",
       limits: this.common,
       action: (chat: ChatMsgEntity, messageContainer: HTMLDivElement) => {
-        this.copyDivToClipboard(messageContainer);
+        this.copyTextToClipboard(messageContainer);
       }
     },
     copyImage: {
       label: "复制",
       limits: this.common,
       action: (chat: ChatMsgEntity, messageContainer: HTMLDivElement) => {
-        this.copyDivToClipboard(messageContainer);
+        this.copyImageToClipboard(messageContainer);
       }
     },
     repeal: {
@@ -142,13 +143,42 @@ export class ContextMenuService {
     ];
   }
 
-  copyDivToClipboard(messageContainer) {
-    const range = document.createRange();
-    range.selectNode(messageContainer);
-    window.getSelection().removeAllRanges(); // clear current selection
-    window.getSelection().addRange(range); // to select text
-    document.execCommand("copy");
-    window.getSelection().removeAllRanges();// to deselect
+  async copyTextToClipboard(messageContainer) {
+    try {
+      const blob = new Blob([messageContainer.innerText], { type: 'text/plain' });
+      await this.setToClipboard(blob);
+    } catch (error) {
+      console.error('Something wrong happened');
+    }
+  }
+
+  async copyImageToClipboard(messageContainer) {
+    // take any image
+    const img = messageContainer.querySelector("img");
+    // make <canvas> of the same size
+    const canvas = document.createElement('canvas');
+    canvas.width = img.naturalWidth;
+    canvas.height = img.naturalHeight;
+
+    const context = canvas.getContext('2d');
+
+    // copy image to it (this method allows to cut image)
+    context.drawImage(img, 0, 0);
+
+    // toBlob is async operation, callback is called when done
+    canvas.toBlob(async (blob) => {
+      try {
+        await this.setToClipboard(blob);
+      } catch (error) {
+        console.error('Something wrong happened');
+        console.error(error);
+      }
+    }, 'image/png');
+  }
+
+  setToClipboard(blob) {
+    const data = [new ClipboardItem({ [blob.type]: blob })];
+    return navigator.clipboard.write(data);
   }
 
   getContextMenuForChat(chat: ChatMsgEntity, chatOwner: any = null) {
