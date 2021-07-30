@@ -4,3 +4,22 @@
   line-height: 20px;
   vertical-align: text-top;
 }
+
+.mat-form-field-appearance-legacy .mat-form-field-infix {
+  padding: 10px 0;
+}
+
+
+// antd
+.ant-message-notice-content {
+  background: #D9EFFF;
+  box-shadow: none;
+
+  .ng-star-inserted {
+    height: 17px;
+    font-size: 12px;
+    font-weight: 400;
+    color: #0091FF;
+    line-height: 17px;
+  }
+}
