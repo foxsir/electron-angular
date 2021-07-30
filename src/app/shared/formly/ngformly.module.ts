@@ -26,6 +26,7 @@ import {AutocompleteTypeComponent} from '@app/shared/formly/types/autocomplete-t
 // import {RichtextTypeComponent} from '@app/shared/formly/types/richtext-type.component';
 import { FormlyMatToggleModule } from '@ngx-formly/material/toggle';
 import {FormlyFieldSelect} from '@app/shared/formly/types/select';
+import {FormlyFieldPassword} from '@app/shared/formly/types/password';
 
 export function minlengthValidationMessage(err, field) {
   return `Should have atleast ${field.templateOptions.minLength} characters`;
@@ -79,6 +80,10 @@ export function maxValidationMessage(err, field) {
         //   name: 'richtext',
         //   component: RichtextTypeComponent,
         // },
+        {
+          name: 'password',
+          component: FormlyFieldPassword,
+        },
         {
           name: 'select',
           component: FormlyFieldSelect,
