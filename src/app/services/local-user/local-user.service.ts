@@ -26,7 +26,7 @@ export class LocalUserService {
   public token;
 
   constructor(
-    private restServiceService: RestService
+    private restService: RestService
   ) {
     this.localUserInfo = RBChatUtils.getAuthedLocalUserInfoFromCookie();
   }
@@ -113,7 +113,7 @@ export class LocalUserService {
     // 开始从服务端查询指定uid的用户基本信息，同时尝试在ui上显示之
     // this.getUid() 注意此id为本地用户的uid
     // 数据读取成功后的回调
-    this.restServiceService.submitGetUserInfoToServer(false, null, this.getUid(),function(returnValue) {
+    this.restService.submitGetUserInfoToServer(false, null, this.getUid(),function(returnValue) {
         // 服务端返回的是java对象RosterElementEntity的JSON文本
         const ree = JSON.parse(returnValue);
 

@@ -24,7 +24,6 @@ export class AvatarService {
   getAvatar(user_uid: string): Promise<any> {
     const url = this.imageTools.avatar(user_uid);
     return new Promise((resolve, reject) => {
-
       localforage.getItem("avatarMap").then(data => {
         if (data !== null && !!data[user_uid]) {
           resolve(data[user_uid]);

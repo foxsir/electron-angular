@@ -68,19 +68,17 @@
           <div fxFlex="60">
             <div fxLayout="row" fxFlexFill>
               <div fxFlex="60px" fxLayoutAlign="center center">
-                <button mat-icon-button>
-                  <mat-icon>face</mat-icon>
-                </button>
+                <img [src]="currentChatAvatar" mat-card-avatar alt="">
               </div>
               <div fxFlex="calc(100% - 60px)">
                 <div fxLayout="column" fxLayoutAlign="center start" fxFlexFill>
-                  <div fxFlex="40px">
-                    <div fxLayout="column">
-                      <div fxFlex="22px">
+                  <div fxFlex="40px" fxLayoutAlign="center center" style="width: 100%">
+                    <div fxLayout="column" style="width: 100%">
+                      <div fxFlex="22px" class="chatting-title">
                         {{currentChat.title}}
                       </div>
-                      <div fxFlex="18px">
-                        {{currentChat.date}}
+                      <div fxFlex="18px" class="chatting-subtitle" *ngIf="currentChatSubtitle">
+                        {{currentChatSubtitle}}
                       </div>
                     </div>
                   </div>
@@ -115,7 +113,7 @@
                     <div fxLayout="column" class="message-container" fxLayoutGap="5px"
                          [fxLayoutAlign]="chat.uid === localUserInfo.user_uid ? 'end end' : 'start'">
                       <div class="message-time">
-                        {{chat.date | date}}
+                        {{formatDate(chat.date, 'M-dd hh:m')}}
                       </div>
                       <!--[fxLayoutAlign]="chat.uid === localUserInfo.user_uid ? 'end' : 'start'"-->
                       <div class="message-entity-item" (contextmenu)="textMenuForMessage($event, createPlanMenuTrigger, span, chat)">
@@ -124,7 +122,8 @@
                         </div>
                         <span #createPlanMenuTrigger="matMenuTrigger" #span [matMenuTriggerFor]="contextmenu"></span>
                         <mat-menu #contextmenu="matMenu">
-                          <button mat-menu-item *ngFor="let item of contextMenu" (click)="item.action(chat, messageContainer)">
+                          <button mat-menu-item *ngFor="let item of contextMenu"
+                                  (click)="item.action(chat, messageContainer)">
                             {{item.label}}
                           </button>
                         </mat-menu>
@@ -158,6 +157,11 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
+    <div fxFlex="100" *ngIf="chatMsgEntityList.length < 1">
+      <div fxLayout="column" fxFlexFill fxLayoutAlign="center center">
+        <empty-data [dataCount]="chatMsgEntityList.length"></empty-data>
       </div>
     </div>
   </div>

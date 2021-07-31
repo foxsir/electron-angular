@@ -73,12 +73,74 @@ export class HttpService {
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
-        Authorization: localStorage.getItem('Authorization') || "",
+        // Authorization: localStorage.getItem('Authorization') || "",
       })
     };
     return this.http.post(request, body, httpOptions).pipe(
       catchError(this.handleError.bind(this))
     );
+  }
+
+  get(url: string, body: any = {}) {
+    let request;
+    if (url.charAt(0) === "/") {
+      request = url;
+      // request = [this.host, url].join("");
+    } else {
+      // request = [this.host, url].join("/");
+      request = url;
+    }
+
+    const params = [];
+    for (const d in body) {
+      if (body.hasOwnProperty(d)) {
+        params.push([d, body[d]].join('='));
+      }
+    }
+
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/x-www-form-urlencoded'
+      })
+    };
+    return this.http.get(request + "?" + params.join("&"), httpOptions).pipe(
+      catchError(this.handleError.bind(this))
+    );
+  }
+
+  postForm(url: string, body: any = {}) {
+    let request;
+    if (url.charAt(0) === "/") {
+      request = url;
+      // request = [this.host, url].join("");
+    } else {
+      // request = [this.host, url].join("/");
+      request = url;
+    }
+
+    const params = [];
+    for (const d in body) {
+      if (body.hasOwnProperty(d)) {
+        params.push([d, body[d]].join('='));
+      }
+    }
+
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+      })
+    };
+    return this.http.post(request, params.join("&"), httpOptions).pipe(
+      catchError(this.handleError.bind(this))
+    );
+  }
+
+  getContentLength(url: string) {
+    return new Promise((resolve, reject) => {
+      fetch(url).then(response => {
+        resolve(response.headers.get("content-length"));
+      });
+    });
   }
 
 }

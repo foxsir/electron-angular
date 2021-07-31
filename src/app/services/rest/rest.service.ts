@@ -5,23 +5,27 @@ import {HttpService} from "@services/http/http.service";
 import {Observable} from "rxjs";
 import {LocalUserService} from "@services/local-user/local-user.service";
 import {ImService} from "@services/im/im.service";
+import {getMissuCollectById, getMyBlackUser, getUserBaseById} from "@app/config/post-api";
+import {HttpHeaders} from "@angular/common/http";
 
 @Injectable({
   providedIn: 'root'
 })
 export class RestService {
-
   private deviceInfo = "chrome 91.0.4472.124";
   private localUserService: LocalUserService;
 
   constructor(
     private http: HttpService,
-    private imService: ImService
+    private imService: ImService,
   ) {
     this.localUserService = new LocalUserService(this);
   }
 
   private restServer(processorId: number, jobDispatchId: number, actionId: number, data: any): Observable<any> {
+    if (typeof data === 'object') {
+      data = JSON.stringify(data);
+    }
     if (data) {
       data = encodeURIComponent(data);// encodeURIComponent也会自动对包括html的格式字符在内的相关字符进行转义处理
     }
@@ -712,7 +716,35 @@ export class RestService {
       , JSON.stringify(xum));
   }
 
+  /**
+   * 获取我的收藏列表
+   */
+  getMyCollectList() {
+    const localUser = this.localUserService.getObj();
+    const data = {
+      userId: localUser.user_uid,
+    };
+    return this.http.get(getMissuCollectById, data);
+  }
 
+  /**
+   * 获取我的黑名单
+   */
+  getMyBlackList() {
+    const localUser = this.localUserService.getObj();
+    const data = {
+      userId: localUser.user_uid,
+    };
+    return this.http.get(getMyBlackUser, data);
+  }
+
+  /**
+   * 查询用户资料
+   * @param user_id
+   */
+  getUserBaseById(user_id: string): Observable<any> {
+    return this.http.postForm(getUserBaseById, {userUid: user_id});
+  }
 
 }
 

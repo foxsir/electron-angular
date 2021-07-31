@@ -5,7 +5,7 @@
                         matBadge="0" matBadgeOverlap="true"
                         matBadgePosition="below after" matBadgeSize="small" matBadgeColor="warn">
         <img mat-card-avatar (click)="drawer.toggle()"
-             src="https://material.angular.io/assets/img/examples/shiba2.jpg" alt="Photo of a Shiba Inu">
+             [src]="myAvatar" alt="Photo of a Shiba Inu">
       </mat-card-content>
       <mat-card-content>
         <div fxLayout="column" fxLayoutGap="32px">

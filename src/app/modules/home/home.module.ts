@@ -20,6 +20,7 @@ import {MessageModule} from "../../factorys/message/message.module";
 import { BlackListComponent } from './black-list/black-list.component';
 import { GroupingComponent } from './grouping/grouping.component';
 import { NewFriendComponent } from './new-friend/new-friend.component';
+import {EmptyDataModule} from "../../factorys/empty-data/empty-data.module";
 
 @NgModule({
   declarations: [
@@ -46,6 +47,7 @@ import { NewFriendComponent } from './new-friend/new-friend.component';
     NzInputModule,
     MatMenuModule,
     MessageModule,
+    EmptyDataModule,
   ]
 })
 export class HomeModule { }

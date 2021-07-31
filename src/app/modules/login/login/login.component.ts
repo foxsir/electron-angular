@@ -6,6 +6,9 @@ import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 import {Router} from "@angular/router";
 import {LocalUserService} from "@services/local-user/local-user.service";
 
+
+const { ipcRenderer } = window.require("electron");
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -18,7 +21,8 @@ export class LoginComponent implements OnInit {
     private restService: RestService,
     private snackBarService: SnackBarService,
     private localUserService: LocalUserService,
-  ) { }
+  ) {
+  }
 
   ngOnInit(): void {
   }
@@ -33,6 +37,7 @@ export class LoginComponent implements OnInit {
           this.localUserService.update(userInfo);
           this.router.navigate(["/home"]).then(() => {
             this.snackBarService.openSnackBar("登录成功");
+            ipcRenderer.send("large-window");
           });
         } else {
           this.snackBarService.openMessage("你输入的账号或密码不正确，请重新输入");

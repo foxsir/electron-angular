@@ -66,7 +66,7 @@ export class ContextMenuService {
     //       reader.readAsDataURL(blob);
     //       reader.onloadend = function() {
     //         var base64data = reader.result;
-    //         console.log(base64data);
+    //         console.log(base64data);base64data
     //       }
     //
     //
@@ -143,16 +143,16 @@ export class ContextMenuService {
     ];
   }
 
-  async copyTextToClipboard(messageContainer) {
+  copyTextToClipboard(messageContainer) {
     try {
       const blob = new Blob([messageContainer.innerText], { type: 'text/plain' });
-      await this.setToClipboard(blob);
+      this.setToClipboard(blob);
     } catch (error) {
       console.error('Something wrong happened');
     }
   }
 
-  async copyImageToClipboard(messageContainer) {
+  copyImageToClipboard(messageContainer) {
     // take any image
     const img = messageContainer.querySelector("img");
     // make <canvas> of the same size
@@ -166,14 +166,14 @@ export class ContextMenuService {
     context.drawImage(img, 0, 0);
 
     // toBlob is async operation, callback is called when done
-    canvas.toBlob(async (blob) => {
+    canvas.toBlob((blob) => {
       try {
-        await this.setToClipboard(blob);
+        this.setToClipboard(blob);
       } catch (error) {
         console.error('Something wrong happened');
         console.error(error);
       }
-    }, 'image/png');
+    }, 'image/png'); // 只支持png
   }
 
   setToClipboard(blob) {

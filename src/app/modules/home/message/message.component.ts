@@ -33,8 +33,10 @@ import OriginData from "@app/models/OriginData";
 import {MessageDistributeService} from "@services/message-distribute/message-distribute.service";
 import HttpResponse from "@app/models/HttpResponse";
 import AlarmData from "@app/models/AlarmData";
-import {DomSanitizer} from "@angular/platform-browser";
+import {DomSanitizer, SafeResourceUrl} from "@angular/platform-browser";
 import {ContextMenuService} from "@services/context-menu/context-menu.service";
+import ContextMenu from "@app/models/ContextMenu";
+import {AvatarService} from "@services/avatar/avatar.service";
 
 @Component({
   selector: 'app-message',
@@ -45,12 +47,14 @@ export class MessageComponent implements OnInit {
   public alarmItemList: AlarmData[] = [];
   public chatMsgEntityList: ChatMsgEntity[] = [];
   public currentChat: AlarmData;
+  public currentChatAvatar: SafeResourceUrl;
+  public currentChatSubtitle: string = null;
   public formatDate = formatDate;
   public localUserInfo: LocalUserInfo;
 
   public massageBadges = {};
 
-  public contextMenu: any[] = [];
+  public contextMenu: ContextMenu[] = [];
 
   // image
   public editIcon = this.dom.bypassSecurityTrustResourceUrl(editIcon);
@@ -77,7 +81,8 @@ export class MessageComponent implements OnInit {
     private snackBarService: SnackBarService,
     private messageDistributeService: MessageDistributeService,
     private dom: DomSanitizer,
-    private contextMenuService: ContextMenuService
+    private contextMenuService: ContextMenuService,
+    private avatarService: AvatarService,
   ) {
     this.localUserInfo = this.localUserService.localUserInfo;
 
@@ -107,7 +112,7 @@ export class MessageComponent implements OnInit {
         const list = JSON.parse(res.returnValue);
         this.showChattingList(list);
       } else {
-        console.dir(res);
+        // console.dir(res);
         this.snackBarService.openSnackBar("数据加载失败");
       }
     });
@@ -193,6 +198,18 @@ export class MessageComponent implements OnInit {
    */
   switchChat(alarm) {
     this.currentChat = alarm;
+
+    this.avatarService.getAvatar(alarm.dataId).then(url => {
+      this.currentChatAvatar = this.dom.bypassSecurityTrustResourceUrl(url);
+    });
+
+    this.restService.getUserBaseById(alarm.dataId).subscribe(res => {
+      if (res.data !== null) {
+        this.currentChatSubtitle = [res.data.latestLoginAddres, res.data.registerIp].join(": ");
+      } else {
+        this.currentChatSubtitle = null;
+      }
+    });
 
     this.chatMsgEntityList = [];
     this.loadChattingHistoryFromServer(this.currentChat);

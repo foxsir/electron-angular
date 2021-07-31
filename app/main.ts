@@ -1,4 +1,4 @@
-import { app, BrowserWindow, screen } from 'electron';
+import { app, BrowserWindow, screen, ipcMain } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as url from 'url';
@@ -17,10 +17,12 @@ function createWindow(): BrowserWindow {
 
   // Create the browser window.
   win = new BrowserWindow({
-    x: 0,
-    y: 0,
-    width: size.width,
-    height: size.height,
+    // x: 0,
+    // y: 0,
+    // width: size.width,
+    // height: size.height,
+    width: 400,
+    height: 440,
     webPreferences: {
       nodeIntegration: true,
       allowRunningInsecureContent: (serve) ? true : false,
@@ -60,6 +62,13 @@ function createWindow(): BrowserWindow {
     win = null;
   });
 
+  // 登录后窗口变大
+  ipcMain.on('large-window', function (event, arg) {
+    win.setSize(800, 600);
+    const position: number[] = win.getPosition();
+    win.setPosition(position[0]-200, position[1]-80);
+  })
+
   return win;
 }
 
@@ -86,7 +95,6 @@ try {
       createWindow();
     }
   });
-
 } catch (e) {
   // Catch Error
   // throw e;

@@ -3,6 +3,7 @@ import {HttpService} from "../services/http/http.service";
 import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
 import {throwError} from "rxjs";
 
+
 export class ImageTools {
   private appConfig = AppConfig;
 
@@ -15,14 +16,10 @@ export class ImageTools {
   // }
 
   avatar(user_uid: string, defaultAvatar: boolean = false) {
-    if (defaultAvatar) {
-      return [
-        this.appConfig.ossUrl,
-        "UserAvatarDownloader?action=ad&enforceDawnload=1&one_pixel_transparent_if_no=1&user_uid=" + user_uid
-      ].join("/");
-    } else {
-      return this.appConfig.defaultLocalAvatar;
-    }
+    return [
+      this.appConfig.ossUrl,
+      "UserAvatarDownloader?action=ad&enforceDawnload=1&one_pixel_transparent_if_no=1&user_uid=" + user_uid
+    ].join("/");
   }
 
   image(image: string, user_uid: string = null) {

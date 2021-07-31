@@ -17,7 +17,7 @@ export class SnackBarService {
   ) {
     this.nzConfigService.set("message", {
       nzTop: "calc(50% - 22px)",
-      nzDuration: 30000,
+      nzDuration: 3000,
       nzAnimate: false,
     });
   }

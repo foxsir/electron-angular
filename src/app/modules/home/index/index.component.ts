@@ -17,7 +17,7 @@ import {ImService} from "@services/im/im.service";
 import OriginData from "@app/models/OriginData";
 import {MessageDistributeService} from "@services/message-distribute/message-distribute.service";
 import {ActivatedRoute, NavigationEnd, Router} from "@angular/router";
-import {DomSanitizer} from "@angular/platform-browser";
+import {DomSanitizer, SafeResourceUrl} from "@angular/platform-browser";
 
 // import svg
 import chatting from "@app/assets/icons/chatting.svg";
@@ -28,6 +28,7 @@ import groupChatting from "@app/assets/icons/group-chatting.svg";
 import groupChattingActive from "@app/assets/icons/group-chatting-active.svg";
 import collect from "@app/assets/icons/collect.svg";
 import collectActive from "@app/assets/icons/collect-active.svg";
+import {AvatarService} from "@services/avatar/avatar.service";
 // import svg end
 
 @Component({
@@ -41,6 +42,10 @@ export class IndexComponent implements OnInit {
   massageBadges = {
     message: 0
   };
+
+  myAvatar: SafeResourceUrl = this.dom.bypassSecurityTrustResourceUrl(
+    this.avatarService.defaultLocalAvatar
+  );
 
   currentRouter: string = "";
 
@@ -83,11 +88,16 @@ export class IndexComponent implements OnInit {
     private imService: ImService,
     private messageDistributeService: MessageDistributeService,
     private dom: DomSanitizer,
+    private avatarService: AvatarService,
   ) {
     this.router.events.subscribe(e => {
       if (e instanceof NavigationEnd) {
         this.currentRouter = this.router.url;
       }
+    });
+
+    this.avatarService.getAvatar(this.localUserService.localUserInfo.user_uid).then(url => {
+      this.myAvatar = this.dom.bypassSecurityTrustResourceUrl(url);
     });
   }
 
