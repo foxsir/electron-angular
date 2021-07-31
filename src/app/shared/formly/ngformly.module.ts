@@ -27,6 +27,8 @@ import {AutocompleteTypeComponent} from '@app/shared/formly/types/autocomplete-t
 import { FormlyMatToggleModule } from '@ngx-formly/material/toggle';
 import {FormlyFieldSelect} from '@app/shared/formly/types/select';
 import {FormlyFieldPassword} from '@app/shared/formly/types/password';
+import {SmsCodeTypeComponent} from "@app/shared/formly/types/sms-code-type.component";
+import {MatSelectModule} from "@angular/material/select";
 
 export function minlengthValidationMessage(err, field) {
   return `Should have atleast ${field.templateOptions.minLength} characters`;
@@ -47,6 +49,7 @@ export function maxValidationMessage(err, field) {
      * Components / Directives/ Pipes
      */
     SendSmsTypeComponent,
+    SmsCodeTypeComponent,
     AutochipsTypeComponent,
     AutocompleteTypeComponent,
     // RichtextTypeComponent,
@@ -67,6 +70,10 @@ export function maxValidationMessage(err, field) {
         {
           name: 'send-sms',
           component: SendSmsTypeComponent,
+        },
+        {
+          name: 'sms-code',
+          component: SmsCodeTypeComponent,
         },
         {
           name: 'autochips',
@@ -119,6 +126,7 @@ export function maxValidationMessage(err, field) {
     FlexLayoutModule,
     MatNativeDateModule,
     FormlyMatToggleModule,
+    MatSelectModule,
   ],
   exports: [
     FormlyModule,

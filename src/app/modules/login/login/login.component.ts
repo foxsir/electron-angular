@@ -27,7 +27,7 @@ export class LoginComponent implements OnInit {
     if (this.loginForm.form.valid) {
       const value = this.loginForm.form.value;
       this.restService.submitLoginToServer(value.account, value.password).subscribe((res: HttpResponse) => {
-        if (res.success) {
+        if (res.returnValue !== "null") {
           const userInfo = JSON.parse(res.returnValue);
           console.dir(userInfo);
           this.localUserService.update(userInfo);
@@ -35,7 +35,7 @@ export class LoginComponent implements OnInit {
             this.snackBarService.openSnackBar("登录成功");
           });
         } else {
-          this.snackBarService.openSnackBar("账号或者密码不正确");
+          this.snackBarService.openMessage("你输入的账号或密码不正确，请重新输入");
         }
       });
     }

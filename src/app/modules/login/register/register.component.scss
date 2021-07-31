@@ -1,0 +1,23 @@
+.register-button {
+  height: 40px !important;
+  border-radius: 4px;
+  font-size: 20px;
+}
+
+
+.sex-select {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.42);
+  .mat-button {
+    font-size: 16px;
+    color: #383838;
+  }
+  .sex-icon {
+    width: 14px;
+    height: 18px;
+    margin-right: 10px;
+    img {
+      width: 14px;
+      height: 14px;
+    }
+  }
+}

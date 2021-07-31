@@ -15,10 +15,11 @@ export class LoginForm {
     {
       key: 'account',
       type: 'input',
+      defaultValue: 'guanliyuan',
       templateOptions: {
-        label: '账号',
+        label: '请输入登录账号',
         type: 'text',
-        description: '用户名或者手机号',
+        // description: '用户名或者手机号',
         required: true,
       },
       validators: {
@@ -30,7 +31,8 @@ export class LoginForm {
     },
     {
       key: 'password',
-      type: 'input',
+      type: 'password',
+      defaultValue: '123456',
       templateOptions: {
         label: '密码',
         type: 'password',

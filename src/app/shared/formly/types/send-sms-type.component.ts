@@ -9,38 +9,55 @@ import {FormControl} from "@angular/forms";
 
 @Component({
   selector: 'app-formly-field-send-sms-input',
+  styles: [`
+    ::ng-deep .mat-select-arrow {
+        width: 0;
+        height: 15px !important;
+        border-left: none !important;
+        border-right: 1px solid #383838 !important;
+        border-top: none !important;
+        margin: 0 6px !important;
+    }
+  `],
   template: `
-    <mat-form-field
-      [hideRequiredMarker]="true"
-      [floatLabel]="to.floatLabel"
-      [appearance]="to.appearance"
-      [color]="to.color"
-      [style.width]="'100%'">
-      <mat-label>{{to.label}}</mat-label>
-      <input
-        #input
-        matInput
-        type="text"
-        [id]="id"
-        [errorStateMatcher]="errorStateMatcher"
-        [formControl]="formControl"
-        [formlyAttributes]="field"
-        [tabindex]="to.tabindex || 0"
-        [placeholder]="to.placeholder"
-      >
-      <span matPrefix>+86 &nbsp;</span>
-      <section matSuffix>
-        <button mat-button type="button" #button (click)="send(button)">
-          <span class="text">发送验证码</span> &nbsp; <mat-icon>sms</mat-icon>
-        </button>
-      </section>
-      <!-- fix https://github.com/angular/material2/issues/7737 by setting id to null  -->
-      <mat-error [id]="null">
-        <formly-validation-message [field]="field"></formly-validation-message>
-      </mat-error>
-      <!-- fix https://github.com/angular/material2/issues/7737 by setting id to null  -->
-      <mat-hint *ngIf="to.description" [id]="null">{{ to.description }}</mat-hint>
-    </mat-form-field>
+    <div fxLayout="row">
+      <div fxFlex="50px">
+        <mat-form-field fxFlex="100">
+          <mat-select value="+86">
+            <mat-option value="+86">+86</mat-option>
+            <mat-option value="+86">+88</mat-option>
+            <mat-option value="+86">+89</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div fxFlex="calc(100% - 50px)">
+        <mat-form-field
+          [hideRequiredMarker]="true"
+          [floatLabel]="to.floatLabel"
+          [appearance]="to.appearance"
+          [color]="to.color"
+          [style.width]="'100%'">
+          <mat-label>{{to.label}}</mat-label>
+          <input
+            #input
+            matInput
+            type="text"
+            [id]="id"
+            [errorStateMatcher]="errorStateMatcher"
+            [formControl]="formControl"
+            [formlyAttributes]="field"
+            [tabindex]="to.tabindex || 0"
+            [placeholder]="to.placeholder"
+          >
+          <!-- fix https://github.com/angular/material2/issues/7737 by setting id to null  -->
+          <mat-error [id]="null">
+            <formly-validation-message [field]="field"></formly-validation-message>
+          </mat-error>
+          <!-- fix https://github.com/angular/material2/issues/7737 by setting id to null  -->
+          <mat-hint *ngIf="to.description" [id]="null">{{ to.description }}</mat-hint>
+        </mat-form-field>
+      </div>
+    </div>
   `,
 })
 export class SendSmsTypeComponent extends FieldType implements OnInit {

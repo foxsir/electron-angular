@@ -13,6 +13,7 @@ import {MatIconModule} from "@angular/material/icon";
 import {MatInputModule} from "@angular/material/input";
 import {FormlyModule} from "@ngx-formly/core";
 import {MatButtonModule} from "@angular/material/button";
+import {UploadModule} from "../../factorys/upload/upload.module";
 
 
 
@@ -34,6 +35,7 @@ import {MatButtonModule} from "@angular/material/button";
     MatInputModule,
     FormlyModule,
     MatButtonModule,
+    UploadModule,
   ]
 })
 export class LoginModule { }

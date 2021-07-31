@@ -1,11 +1,54 @@
 <div fxLayout="row" fxFlex="100">
   <mat-card fxFlex="100" class="mat-elevation-z0">
-    <mat-card-content>
+    <mat-card-content *ngIf="step === 'one'">
       <form fxLayout="column" [formGroup]="signupForm.form" (ngSubmit)="onSubmit()" fxLayoutGap="16px">
         <formly-form [model]="signupForm.model" [fields]="signupForm.fields" [options]="signupForm.options" [form]="signupForm.form">
         </formly-form>
         <div>
-          <button mat-flat-button color="primary" fxFlex="100">注册账号</button>
+          <button mat-flat-button color="primary" class="register-button" fxFlex="100">下一步</button>
+        </div>
+      </form>
+    </mat-card-content>
+    <mat-card-content *ngIf="step === 'two'">
+      <form>
+        <div fxLayout="column">
+          <div fxFlex="100">
+            <div fxLayout="row" style="height: 120px" fxLayoutAlign="center center">
+              <div style="width: 40px; height: 40px;">
+                <app-upload-file [options]="uploadOptions"></app-upload-file>
+              </div>
+            </div>
+          </div>
+          <div fxFlex="100">
+            <mat-form-field fxFlex="100">
+              <mat-label>Favorite food</mat-label>
+              <input matInput placeholder="Ex. Pizza" value="Sushi">
+            </mat-form-field>
+          </div>
+          <div fxFlex="100">
+            <div class="sex-select" fxLayout="row">
+              <div fxFlex="40" fxLayoutAlign="start center">
+                选择性别
+              </div>
+              <div fxFlex="60" fxLayoutAlign="end">
+                <button type="button" mat-button (click)="setSex(1)">
+                  <mat-icon class="sex-icon">
+                    <img [src]="userSex === 1 ? manActiveIcon : manIcon" alt="">
+                  </mat-icon>
+                  先生
+                </button>
+                <button type="button" mat-button (click)="setSex(0)">
+                  <mat-icon class="sex-icon">
+                    <img [src]="userSex === 0 ? womanActiveIcon : womanIcon" alt="">
+                  </mat-icon>
+                  女士
+                </button>
+              </div>
+            </div>
+          </div>
+          <div fxFlex="100" fxFlexOffset="40px">
+            <button mat-flat-button color="primary" class="register-button" fxFlex="100">完成注册</button>
+          </div>
         </div>
       </form>
     </mat-card-content>
