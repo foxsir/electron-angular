@@ -89,13 +89,22 @@
           <div fxFlex="40" fxLayoutAlign="end center" style="padding-right: 20px;">
             <div fxLayout="row" fxLayoutGap="1px">
               <button mat-icon-button>
-                <mat-icon><img [src]="searchIcon" alt=""></mat-icon>
+                <mat-icon class="hover-icon">
+                  <img class="icon" [src]="searchIcon" alt="">
+                  <img class="icon-active" [src]="searchActiveIcon" alt="">
+                </mat-icon>
               </button>
               <button mat-icon-button>
-                <mat-icon><img [src]="voiceIcon" alt=""></mat-icon>
+                <mat-icon class="hover-icon">
+                  <img class="icon" [src]="voiceIcon" alt="">
+                  <img class="icon-active" [src]="voiceActiveIcon" alt="">
+                </mat-icon>
               </button>
               <button mat-icon-button (click)="chattingSetting.toggle()">
-                <mat-icon><img [src]="settingIcon" alt=""></mat-icon>
+                <mat-icon class="hover-icon">
+                  <img class="icon" [src]="settingIcon" alt="">
+                  <img class="icon-active" [src]="settingActiveIcon" alt="">
+                </mat-icon>
               </button>
             </div>
           </div>
@@ -139,7 +148,10 @@
           <div fxLayout="row">
             <div fxFlex="60px" fxLayoutAlign="center center" style="background: rgba(0,0,0,.04)">
               <button mat-icon-button>
-                <mat-icon><img [src]="attachmentIcon" alt=""></mat-icon>
+                <mat-icon class="hover-icon">
+                  <img class="icon" [src]="attachmentIcon" alt="">
+                  <img class="icon-active" [src]="attachmentActiveIcon" alt="">
+                </mat-icon>
               </button>
             </div>
             <div fxFlex="calc(100% - 180px)">
@@ -149,10 +161,16 @@
             </div>
             <div fxFlex="120px" fxLayoutAlign="center center" fxLayoutGap="10px" style="background: rgba(0,0,0,.04)">
               <button mat-icon-button>
-                <mat-icon><img [src]="emojiIcon" alt=""></mat-icon>
+                <mat-icon class="hover-icon">
+                  <img class="icon" [src]="emojiIcon" alt="">
+                  <img class="icon-active" [src]="emojiActiveIcon" alt="">
+                </mat-icon>
               </button>
               <button mat-icon-button>
-                <mat-icon><img [src]="sendIcon" alt=""></mat-icon>
+                <mat-icon class="hover-icon">
+                  <img class="icon" [src]="sendIcon" alt="">
+                  <img class="icon-active" [src]="sendActiveIcon" alt="">
+                </mat-icon>
               </button>
             </div>
           </div>

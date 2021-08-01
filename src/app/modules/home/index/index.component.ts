@@ -59,6 +59,7 @@ export class IndexComponent implements OnInit {
       iconActive: this.dom.bypassSecurityTrustResourceUrl(chattingActive),
     },
     {
+      path: 'address-list',
       label: "通讯录",
       router: "/home/address-list",
       icon: this.dom.bypassSecurityTrustResourceUrl(addressList),

@@ -12,11 +12,17 @@ import {MessageEntityService} from "@services/message-entity/message-entity.serv
 // import image
 import editIcon from "@app/assets/icons/edit.svg";
 import attachmentIcon from "@app/assets/icons/attachment.svg";
+import attachmentActiveIcon from "@app/assets/icons/attachment-active.svg";
 import emojiIcon from "@app/assets/icons/emoji.svg";
+import emojiActiveIcon from "@app/assets/icons/emoji-active.svg";
 import sendIcon from "@app/assets/icons/send.svg";
+import sendActiveIcon from "@app/assets/icons/send-active.svg";
 import settingIcon from "@app/assets/icons/setting.svg";
+import settingActiveIcon from "@app/assets/icons/setting-active.svg";
 import searchIcon from "@app/assets/icons/search.svg";
+import searchActiveIcon from "@app/assets/icons/search-active.svg";
 import voiceIcon from "@app/assets/icons/voice.svg";
+import voiceActiveIcon from "@app/assets/icons/voice-active.svg";
 // import image end
 
 import LocalUserInfo from "@app/models/LocalUserInfo";
@@ -59,11 +65,17 @@ export class MessageComponent implements OnInit {
   // image
   public editIcon = this.dom.bypassSecurityTrustResourceUrl(editIcon);
   public attachmentIcon = this.dom.bypassSecurityTrustResourceUrl(attachmentIcon);
+  public attachmentActiveIcon = this.dom.bypassSecurityTrustResourceUrl(attachmentActiveIcon);
   public emojiIcon = this.dom.bypassSecurityTrustResourceUrl(emojiIcon);
+  public emojiActiveIcon = this.dom.bypassSecurityTrustResourceUrl(emojiActiveIcon);
   public sendIcon = this.dom.bypassSecurityTrustResourceUrl(sendIcon);
+  public sendActiveIcon = this.dom.bypassSecurityTrustResourceUrl(sendActiveIcon);
   public settingIcon = this.dom.bypassSecurityTrustResourceUrl(settingIcon);
+  public settingActiveIcon = this.dom.bypassSecurityTrustResourceUrl(settingActiveIcon);
   public searchIcon = this.dom.bypassSecurityTrustResourceUrl(searchIcon);
+  public searchActiveIcon = this.dom.bypassSecurityTrustResourceUrl(searchActiveIcon);
   public voiceIcon = this.dom.bypassSecurityTrustResourceUrl(voiceIcon);
+  public voiceActiveIcon = this.dom.bypassSecurityTrustResourceUrl(voiceActiveIcon);
 
   constructor(
     private alarmsProviderService: AlarmsProviderService,

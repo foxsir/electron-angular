@@ -36,8 +36,8 @@
   </div>
   <div fxFlex="calc(100% - 74px)">
     <mat-drawer-container fxFlexFill autosize>
-      <mat-drawer #drawer mode="over" style="width: 334px">
-        setting
+      <mat-drawer #drawer mode="over" style="width: 334px" opened>
+        <app-account-panel [drawer]="drawer"></app-account-panel>
       </mat-drawer>
 
       <div fxFlexFill>

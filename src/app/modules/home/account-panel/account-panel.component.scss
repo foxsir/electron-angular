@@ -1,0 +1,48 @@
+.account-panel-container {
+  background: #F1F1F1;
+
+  .account-panel-header {
+    background: white;
+
+    .account-panel-title {
+      .title {
+        margin: 0;
+        font-size: 16px;
+      }
+      button.close-button {
+        width: 30px;
+        height: 30px;
+        line-height: 30px;
+      }
+      .close-button .mat-icon, .close-button img {
+        width: 14px;
+        height: 14px;
+      }
+    }
+  }
+  .account-panel-body {
+    background: white;
+  }
+
+  .user-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+  }
+}
+
+.user-setting-menu {
+  margin-top: 20px;
+  .user-setting-menu-item:hover {
+    .icon {
+      position: absolute;
+      left: 0;
+      visibility: hidden;
+    }
+    .icon-active {
+      position: absolute;
+      left: 0;
+      visibility: visible;
+    }
+  }
+}
