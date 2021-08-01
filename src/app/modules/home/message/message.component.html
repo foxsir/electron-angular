@@ -1,8 +1,8 @@
 <mat-drawer-container autosize>
   <mat-drawer #chattingSetting mode="side" position="end">
     <div fxFlex="280px">
-      <mat-card class="mat-elevation-z0">
-        Settings
+      <mat-card class="mat-elevation-z0" *ngIf="currentChat">
+        {{currentChat.title}}
       </mat-card>
     </div>
   </mat-drawer>
@@ -29,7 +29,7 @@
       </div>
       <div id="chatting-list">
         <mat-card class="mat-elevation-z0" style="background: #F1F1F1;"
-                  *ngFor="let alarm of alarmItemList" (click)="switchChat(alarm)">
+                  *ngFor="let alarm of alarmItemList" (click)="switchChat(alarm); chattingSetting.close();">
           <div fxLayout="row" fxLayoutGap="10px">
             <div fxFlex="40px" [matBadge]="massageBadges[alarm.dataId]" matBadgeColor="warn"
                  matBadgePosition="above after" matBadgeSize="small"
@@ -88,7 +88,7 @@
           </div>
           <div fxFlex="40" fxLayoutAlign="end center" style="padding-right: 20px;">
             <div fxLayout="row" fxLayoutGap="1px">
-              <button mat-icon-button>
+              <button mat-icon-button (click)="searching = !searching">
                 <mat-icon class="hover-icon">
                   <img class="icon" [src]="searchIcon" alt="">
                   <img class="icon-active" [src]="searchActiveIcon" alt="">
@@ -110,7 +110,10 @@
           </div>
         </div>
       </div>
-      <div fxLayout="column" fxFlex="calc(100% - 60px)" class="chatting-body">
+      <div [fxHide]="searching === false" fxLayout="column" fxFlex="calc(100% - 60px)">
+        <app-search-chatting fxFlexFill [chatting]="currentChat"></app-search-chatting>
+      </div>
+      <div [fxHide]="searching === true" fxLayout="column" fxFlex="calc(100% - 60px)" class="chatting-body">
         <div fxFlex="100" id="chatting-panel" style="overflow-y: scroll">
           <mat-card class="mat-elevation-z0" style="background: #F6F7F9;">
             <mat-card-content *ngIf="chatMsgEntityList">
@@ -177,7 +180,7 @@
         </div>
       </div>
     </div>
-    <div fxFlex="100" *ngIf="chatMsgEntityList.length < 1">
+    <div fxFlex="100" *ngIf="chatMsgEntityList && chatMsgEntityList.length < 1">
       <div fxLayout="column" fxFlexFill fxLayoutAlign="center center">
         <empty-data [dataCount]="chatMsgEntityList.length"></empty-data>
       </div>

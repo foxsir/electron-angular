@@ -54,3 +54,39 @@ html, body {
   }
 }
 
+// 设置icon hover样式
+.hover-icon {
+  position: relative;
+  height: 20px !important;
+  width: 20px !important;
+  .icon {
+    position: absolute;
+    left: 0;
+    visibility: visible;
+  }
+  .icon-active {
+    position: absolute;
+    left: 0;
+    visibility: hidden;
+  }
+  &:hover {
+    .icon {
+      position: absolute;
+      left: 0;
+      visibility: hidden;
+    }
+    .icon-active {
+      position: absolute;
+      left: 0;
+      visibility: visible;
+    }
+  }
+}
+
+.small-title {
+  font-size: 16px;
+  color: #383838;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}

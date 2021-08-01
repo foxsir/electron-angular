@@ -1,4 +1,4 @@
-export default class AlarmData {
+export default class Chatting {
   alarmMessageType: number;
   dataId: string;
   date: string;

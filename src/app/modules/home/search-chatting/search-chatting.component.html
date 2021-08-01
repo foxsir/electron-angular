@@ -1,0 +1,48 @@
+<div fxFlexFill>
+  <div fxLayout="column" fxFlexFill fxLayoutGap="20px" class="mat-card mat-elevation-z0">
+    <div fxFlex="112px">
+      <div fxLayout="column" fxFlexFill>
+        <div fxFlex="50">
+          <input nz-input placeholder="Basic usage" />
+        </div>
+        <div fxFlex="50">
+          <div fxLayout="row" fxLayoutGap="20px">
+            <div fxFlex="33" fxLayoutAlign="center">
+              <button mat-button (click)="currentTab = 'chat'"
+                      [color]="currentTab === 'chat' ? 'primary' : null">
+                聊天内容
+              </button>
+            </div>
+            <div fxFlex="33" fxLayoutAlign="center">
+              <button mat-button (click)="currentTab = 'media'"
+                      [color]="currentTab === 'media' ? 'primary' : null">
+                图片视频
+              </button>
+            </div>
+            <div fxFlex="33" fxLayoutAlign="center">
+              <button mat-button (click)="currentTab = 'file'"
+                      [color]="currentTab === 'file' ? 'primary' : null">
+                文件
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div fxFlex style="overflow-y: auto; overflow-x: hidden;">
+      <ng-template [ngIf]="currentTab === 'chat'">
+        chat
+      </ng-template>
+      <ng-template [ngIf]="currentTab === 'media'">
+        <div fxFlexFill fxLayout="row wrap" fxLayoutGap="20px grid">
+          <div fxFlex="25" fxFlex.md="33" fxFlex.lt-md="50" *ngFor="let i of [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]">
+            <img src="https://material.angular.io/assets/img/examples/shiba2.jpg" style="width: 100%;" alt="">
+          </div>
+        </div>
+      </ng-template>
+      <ng-template [ngIf]="currentTab === 'file'">
+        file
+      </ng-template>
+    </div>
+  </div>
+</div>

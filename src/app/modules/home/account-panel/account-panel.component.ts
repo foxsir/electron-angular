@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Inject, Input, OnInit} from '@angular/core';
 
 import closeIcon from "@app/assets/icons/close.svg";
 import closeActiveIcon from "@app/assets/icons/close-active.svg";
@@ -19,6 +19,8 @@ import lockIcon from "@app/assets/icons/lock.svg";
 import lockActiveIcon from "@app/assets/icons/lock-active.svg";
 import logoutIcon from "@app/assets/icons/logout.svg";
 import logoutActiveIcon from "@app/assets/icons/logout-active.svg";
+import {DialogService} from "@services/dialog/dialog.service";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 // import icons end
 
 @Component({
@@ -70,6 +72,7 @@ export class AccountPanelComponent implements OnInit {
     private dom: DomSanitizer,
     private avatarService: AvatarService,
     private localUserService: LocalUserService,
+    private dialogService: DialogService
   ) {
   }
 
@@ -78,6 +81,9 @@ export class AccountPanelComponent implements OnInit {
     this.avatarService.getAvatar(this.localUserInfo.user_uid).then(url => {
       this.myAvatar = this.dom.bypassSecurityTrustResourceUrl(url);
     });
+  }
+
+  openDialog() {
   }
 
 }

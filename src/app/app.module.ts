@@ -16,6 +16,7 @@ import { AppComponent } from './app.component';
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {MatSnackBarModule} from "@angular/material/snack-bar";
 import { NzMessageModule } from 'ng-zorro-antd/message';
+import {MatDialogModule} from "@angular/material/dialog";
 
 // AoT requires an exported function for factories
 const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>  new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -32,6 +33,7 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>  new Transl
     SharedModule,
     AppRoutingModule,
     ReactiveFormsModule,
+    MatDialogModule,
     NgformlyModule,
     NzMessageModule,
     TranslateModule.forRoot({

@@ -38,7 +38,7 @@ import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 import OriginData from "@app/models/OriginData";
 import {MessageDistributeService} from "@services/message-distribute/message-distribute.service";
 import HttpResponse from "@app/models/HttpResponse";
-import AlarmData from "@app/models/AlarmData";
+import Chatting from "@app/models/Chatting";
 import {DomSanitizer, SafeResourceUrl} from "@angular/platform-browser";
 import {ContextMenuService} from "@services/context-menu/context-menu.service";
 import ContextMenu from "@app/models/ContextMenu";
@@ -50,18 +50,6 @@ import {AvatarService} from "@services/avatar/avatar.service";
   styleUrls: ['./message.component.scss']
 })
 export class MessageComponent implements OnInit {
-  public alarmItemList: AlarmData[] = [];
-  public chatMsgEntityList: ChatMsgEntity[] = [];
-  public currentChat: AlarmData;
-  public currentChatAvatar: SafeResourceUrl;
-  public currentChatSubtitle: string = null;
-  public formatDate = formatDate;
-  public localUserInfo: LocalUserInfo;
-
-  public massageBadges = {};
-
-  public contextMenu: ContextMenu[] = [];
-
   // image
   public editIcon = this.dom.bypassSecurityTrustResourceUrl(editIcon);
   public attachmentIcon = this.dom.bypassSecurityTrustResourceUrl(attachmentIcon);
@@ -76,6 +64,21 @@ export class MessageComponent implements OnInit {
   public searchActiveIcon = this.dom.bypassSecurityTrustResourceUrl(searchActiveIcon);
   public voiceIcon = this.dom.bypassSecurityTrustResourceUrl(voiceIcon);
   public voiceActiveIcon = this.dom.bypassSecurityTrustResourceUrl(voiceActiveIcon);
+
+
+  public alarmItemList: Chatting[] = [];
+  public chatMsgEntityList: ChatMsgEntity[] = [];
+  public currentChat: Chatting;
+  public currentChatAvatar: SafeResourceUrl;
+  public currentChatSubtitle: string = null;
+  public formatDate = formatDate;
+  public localUserInfo: LocalUserInfo;
+
+  public massageBadges = {};
+
+  public contextMenu: ContextMenu[] = [];
+
+  public searching = false;
 
   constructor(
     private alarmsProviderService: AlarmsProviderService,
@@ -193,7 +196,7 @@ export class MessageComponent implements OnInit {
     });
   }
 
-  insertItem(alarmData: AlarmData, atTheTop: boolean) {
+  insertItem(alarmData: Chatting, atTheTop: boolean) {
     Object.assign(this.massageBadges, {[alarmData.dataId.trim()]: 0});
 
     if (Object.is(atTheTop, true)) {
@@ -205,12 +208,12 @@ export class MessageComponent implements OnInit {
 
   /**
    * 切换聊天对象
-   *
    * @param alarm
    */
   switchChat(alarm) {
-    this.currentChat = alarm;
+    this.resetUI();
 
+    this.currentChat = alarm;
     this.avatarService.getAvatar(alarm.dataId).then(url => {
       this.currentChatAvatar = this.dom.bypassSecurityTrustResourceUrl(url);
     });
@@ -222,9 +225,12 @@ export class MessageComponent implements OnInit {
         this.currentChatSubtitle = null;
       }
     });
-
     this.chatMsgEntityList = [];
     this.loadChattingHistoryFromServer(this.currentChat);
+  }
+
+  resetUI() {
+    this.searching = false;
   }
 
   loadChattingHistoryFromServer(currentChat) {
@@ -353,5 +359,4 @@ export class MessageComponent implements OnInit {
     }
     return e.defaultPrevented;
   }
-
 }

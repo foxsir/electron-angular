@@ -22,6 +22,7 @@ import { GroupingComponent } from './grouping/grouping.component';
 import { NewFriendComponent } from './new-friend/new-friend.component';
 import {EmptyDataModule} from "../../factorys/empty-data/empty-data.module";
 import { AccountPanelComponent } from './account-panel/account-panel.component';
+import { SearchChattingComponent } from './search-chatting/search-chatting.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import { AccountPanelComponent } from './account-panel/account-panel.component';
     BlackListComponent,
     GroupingComponent,
     NewFriendComponent,
-    AccountPanelComponent
+    AccountPanelComponent,
+    SearchChattingComponent
   ],
   imports: [
     CommonModule,
