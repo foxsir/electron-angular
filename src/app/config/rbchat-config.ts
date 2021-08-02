@@ -12,8 +12,8 @@ const _PRODUCT_NAME = 'IM即时通讯产品';
 
 //本地测试
 const _HTTP_SERVER_ROOT_URL = "http://120.79.90.66:8808"; // TODO: 【1】开发者请修改为您自已的 http 服务根接口地址
-const _IM_SERVER_URL = "http://120.79.90.66:5000";                            // TODO: 【2】开发者请修改为您自已的 web im 服务端地址（即nodejs服务地址）
-// const _IM_SERVER_URL = "http://127.0.0.1:5000";                            // TODO: 【2】开发者请修改为您自已的 web im 服务端地址（即nodejs服务地址）
+const _IM_SERVER_URL = "ws://192.168.0.102:8808/websocket"; // TODO: 【2】开发者请修改为您自已的 web im 服务端地址（即nodejs服务地址）
+// const _IM_SERVER_URL = "http://127.0.0.1:5000"; // TODO: 【2】开发者请修改为您自已的 web im 服务端地址（即nodejs服务地址）
 
 
 // const _IM_SERVER_URL = " "

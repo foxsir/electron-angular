@@ -180,9 +180,9 @@
         </div>
       </div>
     </div>
-    <div fxFlex="100" *ngIf="chatMsgEntityList && chatMsgEntityList.length < 1">
+    <div fxFlex="100" *ngIf="chatMsgEntityList === undefined">
       <div fxLayout="column" fxFlexFill fxLayoutAlign="center center">
-        <empty-data [dataCount]="chatMsgEntityList.length"></empty-data>
+        <empty-data [dataCount]="0"></empty-data>
       </div>
     </div>
   </div>

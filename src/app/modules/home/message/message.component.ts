@@ -67,7 +67,7 @@ export class MessageComponent implements OnInit {
 
 
   public alarmItemList: Chatting[] = [];
-  public chatMsgEntityList: ChatMsgEntity[] = [];
+  public chatMsgEntityList: ChatMsgEntity[];
   public currentChat: Chatting;
   public currentChatAvatar: SafeResourceUrl;
   public currentChatSubtitle: string = null;
