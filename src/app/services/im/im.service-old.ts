@@ -6,7 +6,7 @@ import {Subject} from "rxjs";
 @Injectable({
   providedIn: 'root'
 })
-export class ImService {
+export class ImServiceOld {
 
   //*************************************************** 【1】以下属性定义仅供MobileIMSDK-Web框架内部使用 START
   // 【内部变量：是否在线】：true表示已正常连接且成功认证，当且仅当此值为true时才是业务层理解的正常通信！
