@@ -46,10 +46,10 @@ export default class MBCore {
   private mbQoS4ReciveDaemon: MBQoS4ReciveDaemon;
 
   /* 事件监听者Map(key=事件名, value=回调函数)，事件名常量定义请见：mb_constants.js中的MBSocketEvent对象 */
-  public _socketEvenCallbacks = {};
+  public static _socketEvenCallbacks = {};
 
   /* 要连接的WebSockcet服务端地址和端口，形如：“ws://192.168.0.113:3000/websocket” */
-  public _websocketUrl = null;
+  private static _websocketUrl = null;
 
   /* true表示开启MobileIMSDK框架核心层的Debug信息在浏览器console下的输出，否则关闭。默认为true. */
   public DEBUG = false;
@@ -117,7 +117,7 @@ export default class MBCore {
    * @param wsUrl {String } websocket的url地址，形如：“ws://192.168.0.113:3000/websocket”
    */
   setWebsocketUrl(wsUrl) {
-    this._websocketUrl = wsUrl;
+    MBCore._websocketUrl = wsUrl;
   }
 
   /**
@@ -126,7 +126,7 @@ export default class MBCore {
    * @return {null|String} 形如：“ws://192.168.0.113:3000/websocket”
    */
   getWebsocketUrl() {
-    return this._websocketUrl;
+    return MBCore._websocketUrl;
   }
 
   /**
@@ -241,15 +241,16 @@ export default class MBCore {
    */
   getEventCallback(eventName) {
     if (eventName) {
-      const callback = this._socketEvenCallbacks[eventName];
+      const callback = MBCore._socketEvenCallbacks[eventName];
       if (callback) {
         return callback;
       }
 
       MBUtils.mblog_d(this.TAG, "事件监听者列表中，名称为 eventName=" + eventName + "的callback 是空的！");
       return null;
-    } else
+    } else {
       MBUtils.mblog_w(this.TAG, '无效的参数：eventName=' + eventName);
+    }
   }
 
   /**
@@ -264,7 +265,7 @@ export default class MBCore {
   on(eventName, callback) {
     if (eventName && callback) {
       // 如果存在则直接覆盖（替换）成最新的
-      this._socketEvenCallbacks[eventName] = callback;
+      MBCore._socketEvenCallbacks[eventName] = callback;
     } else {
       MBUtils.mblog_w(this.TAG, '无效的参数：eventName=' + eventName + ", callback=" + callback);
     }

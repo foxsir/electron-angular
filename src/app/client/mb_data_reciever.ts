@@ -44,7 +44,7 @@ import MBDataSender from "./mb_data_sender";
 export default class MBDataReciever {
 
   readonly TAG = "MBDataReciever";
-  private mbCore = new MBCore();
+  private mbCore = new MBCore;
   private mbKeepAliveDaemon = new MBKeepAliveDaemon();
   private mbAutoReLoginDaemon = new MBAutoReLoginDaemon();
   private mbSocketProvider = new MBSocketProvider();
@@ -204,7 +204,7 @@ export default class MBDataReciever {
   onServerResponseLogined(pFromServer) {
     // 解析服务端反馈过来的登陆消息对象，该PLoginInfoResponse对象的API文档：
     // http://docs.52im.net/extend/docs/api/mobileimsdk/server_tcp/net/x52im/mobileimsdk/server/protocal/s/PLoginInfoResponse.html
-    let loginInfoRes = JSON.parse(pFromServer.dataContent);
+    const loginInfoRes = JSON.parse(pFromServer.dataContent);
 
     // 登陆成功了！
     if (loginInfoRes.code === 0) {
@@ -298,8 +298,6 @@ export default class MBDataReciever {
    * 登陆服务端成功后的处理逻辑。
    */
   fireConnectedToServer() {
-    let that = this;
-
     // 标记已完成首次登陆服务端
     this.mbCore.setLoginHasInit(true);
 
@@ -307,9 +305,9 @@ export default class MBDataReciever {
     this.mbAutoReLoginDaemon.stop();
 
     // 服务端的网络断开后会调用的回调函数
-    let networkConnectionLostCallBack = function () {
-      that.fireDisconnectedToServer();
-    }
+    const networkConnectionLostCallBack = () => {
+      this.fireDisconnectedToServer();
+    };
     // 立即开启Keepalive心跳线程
     this.mbKeepAliveDaemon.setNetworkConnectionLostCallback(networkConnectionLostCallBack);
 

@@ -155,7 +155,7 @@ export default class MBAutoReLoginDaemon {
     }
 
     // 定时执行
-    this.intervalId = setInterval(function () {
+    this.intervalId = setInterval(() => {
       this.excute();
     }, this.AUTO_RE$LOGIN_INTERVAL);
   }

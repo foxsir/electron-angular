@@ -9,8 +9,10 @@
 // import MBHashMap from "./MBHashMap";
 // import MBProtocalFactory from "./MBProtocalFactory";
 
+import MBCore from "@app/client/mb_core";
+
 export default class InstanceFactory {
-  static getInstance<T>(classRef: {new(): T; }): T {
+  static getInstance<T>(classRef: { new(): T }): T {
     return new classRef();
   }
 }

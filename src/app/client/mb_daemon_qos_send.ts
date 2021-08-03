@@ -249,7 +249,7 @@ export default class MBQoS4SendDaemon {
     }
 
     // 定时执行
-    this.intervalId = setInterval(function() {
+    this.intervalId = setInterval(() => {
       this.excute();
     }, this.CHECH_INTERVAL);
   }
