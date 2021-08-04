@@ -54,17 +54,18 @@ export class RestService {
    * @param loginPswStr
    */
   submitLoginToServer(loginNameStr, loginPswStr) {
-
     // 要提交给服务端的参数
     const loginInfoObj = {
       loginName: loginNameStr,
       loginPsw: loginPswStr,
-      deviceInfo: this.deviceInfo,
+      // deviceInfo: this.deviceInfo,
       osType: 2
     };
 
-    return this.restServer(MyProcessorConst.PROCESSOR_LOGIN_4ALL, -1, -1
-      , loginInfoObj);
+    return this.http.post(
+      RBChatConfig._HTTP_LOGIN_URL,
+      loginInfoObj
+    );
   }
 
   /**
@@ -265,31 +266,8 @@ export class RestService {
   /**
    * 【接口1008-1-7】用户注册接口调用.
    */
-  submitRegisterToServer(user_mail, nickname, user_psw, user_sex, phone, inviteCode) {
-
-    // 要提交给服务端的参数
-    let m;
-    if (phone == null) {
-      m = {
-        user_mail, // 注册邮箱
-        nickname,  // 昵称
-        user_psw,  // 登陆密码
-        user_sex,  // 性别：0 女、1 男
-        reCommunicationNumber: inviteCode //111 邀请码
-      };
-    } else {
-      m = {
-        user_mail, // 注册邮箱
-        nickname,  // 昵称
-        user_psw,  // 登陆密码
-        user_sex,  // 性别：0 女、1 男
-        user_phone: phone, //手机号
-        reCommunicationNumber: inviteCode //111 邀请码
-
-      };
-    }
-    return this.restServer(MyProcessorConst.PROCESSOR_LOGIC, JobDispatchConst.LOGIC_REGISTER, SysActionConst.ACTION_APPEND1
-      , JSON.stringify(m));
+  submitRegisterToServer(data: any) {
+    return this.http.post(RBChatConfig._HTTP_REGISTER_URL, data);
   }
 
   /**

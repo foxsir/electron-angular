@@ -21,6 +21,8 @@ import logoutIcon from "@app/assets/icons/logout.svg";
 import logoutActiveIcon from "@app/assets/icons/logout-active.svg";
 import {DialogService} from "@services/dialog/dialog.service";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {Router} from "@angular/router";
+import {WindowService} from "@services/window/window.service";
 // import icons end
 
 @Component({
@@ -45,26 +47,31 @@ export class AccountPanelComponent implements OnInit {
       label: "二维码",
       icon: this.dom.bypassSecurityTrustResourceUrl(qrIcon),
       iconActive: this.dom.bypassSecurityTrustResourceUrl(qrActiveIcon),
+      action: this.qrcode.bind(this)
     },
     {
       label: "隐私设置",
       icon: this.dom.bypassSecurityTrustResourceUrl(listIcon),
       iconActive: this.dom.bypassSecurityTrustResourceUrl(listActiveIcon),
+      action: this.privacySetting.bind(this)
     },
     {
       label: "个性签名",
       icon: this.dom.bypassSecurityTrustResourceUrl(pencilIcon),
       iconActive: this.dom.bypassSecurityTrustResourceUrl(pencilActiveIcon),
+      action: this.editSign.bind(this)
     },
     {
       label: "修改密码",
       icon: this.dom.bypassSecurityTrustResourceUrl(lockIcon),
       iconActive: this.dom.bypassSecurityTrustResourceUrl(lockActiveIcon),
+      action: this.resetPassword.bind(this)
     },
     {
       label: "退出登录",
       icon: this.dom.bypassSecurityTrustResourceUrl(logoutIcon),
       iconActive: this.dom.bypassSecurityTrustResourceUrl(logoutActiveIcon),
+      action: this.logout.bind(this)
     },
   ];
 
@@ -72,7 +79,9 @@ export class AccountPanelComponent implements OnInit {
     private dom: DomSanitizer,
     private avatarService: AvatarService,
     private localUserService: LocalUserService,
-    private dialogService: DialogService
+    private dialogService: DialogService,
+    private router: Router,
+    private windowService: WindowService,
   ) {
   }
 
@@ -83,7 +92,27 @@ export class AccountPanelComponent implements OnInit {
     });
   }
 
-  openDialog() {
+  qrcode() {
+
+  }
+
+  privacySetting() {
+
+  }
+
+  editSign() {
+
+  }
+
+  resetPassword() {
+
+  }
+
+  logout() {
+    this.router.navigate(['/']).then(() => {
+      localStorage.removeItem("aluiid");
+      this.windowService.loginWindow();
+    });
   }
 
 }

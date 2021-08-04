@@ -120,7 +120,6 @@ export class FormlyFieldSelect extends FieldType {
       };
     }
 
-
     return this.selectAllValue.value;
   }
 

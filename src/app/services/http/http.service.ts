@@ -121,7 +121,7 @@ export class HttpService {
     const params = [];
     for (const d in body) {
       if (body.hasOwnProperty(d)) {
-        params.push([d, body[d]].join('='));
+        params.push([d, encodeURIComponent(body[d])].join('='));
       }
     }
 

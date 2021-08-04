@@ -286,8 +286,7 @@ export default class RBChatUtils {
       // $.removeCookie(COOKIE_KEY_AUTHED_LOCAL_USER_INFO_ID, { path: '/' });
 
       localStorage.removeItem(RBChatUtils.COOKIE_KEY_AUTHED_LOCAL_USER_INFO_ID);
-      window.location.href = "./login.html";
-
+      window.location.href = "/";
 
       //location.reload();
     }

@@ -18,8 +18,16 @@ export class WindowService {
     ipcRenderer.send("minimizeWindow");
   }
 
+  restoreWindow() {
+    ipcRenderer.send("restoreWindow");
+  }
+
   maximizeWindow() {
     ipcRenderer.send("maximizeWindow");
+  }
+
+  unmaximizeWindow() {
+    ipcRenderer.send("unmaximizeWindow");
   }
 
   loginWindow() {

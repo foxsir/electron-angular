@@ -5,6 +5,8 @@ import {MatButton} from '@angular/material/button';
 import {SnackBarService} from '@services/snack-bar/snack-bar.service';
 import {APP_CONFIG as environment} from "environments/environment";
 import {FormControl} from "@angular/forms";
+import {getVerifyCode} from "@app/config/post-api";
+import NewHttpResponse from "@app/models/NewHttpResponse";
 
 
 @Component({
@@ -59,16 +61,18 @@ export class SmsCodeTypeComponent extends FieldType implements OnInit {
   }
 
   send(button: MatButton) {
-    if (this.formControl.value.length > 0) {
+    const mobile = this.field.form.value.user_phone;
+    const areaCode = this.field.form.value.area;
+    if (mobile > 0) {
       // alert(this.formControl.value);
-      button.disabled = true;
-      this.http.post("/sms-log/get", {mobile: this.formControl.value}).subscribe(res => {
-        if (res.data) {
-          if (res.data.seconds) {
-            this.counter = res.data.seconds;
-          } else {
-            this.snackBar.openSnackBar(res.data.Message, 'mat-warn');
-          }
+      // button.disabled = true;
+      this.http.postForm(getVerifyCode, {phone: [areaCode, mobile].join("-")}).subscribe((res: NewHttpResponse<any>) => {
+        if (Number(res.status) === 200) {
+          // if (res.data.seconds) {
+          //   this.counter = res.data.seconds;
+          // } else {
+          //   this.snackBar.openSnackBar(res.data.Message, 'mat-warn');
+          // }
           const si = setInterval(() => {
             if (this.counter === 0) {
               button._elementRef.nativeElement.querySelector(".text").innerText = this.text;
@@ -80,10 +84,12 @@ export class SmsCodeTypeComponent extends FieldType implements OnInit {
             }
           }, 1000);
         } else {
-          this.snackBar.openSnackBar("短信发送失败", 'mat-warn');
+          this.snackBar.openMessage(res.msg);
           button.disabled = false;
         }
       });
+    } else {
+      this.snackBar.openMessage("请输入手机号");
     }
   }
 

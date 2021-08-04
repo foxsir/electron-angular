@@ -103,8 +103,8 @@ export class IndexComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.initAll();
-    this.doLoginIMServer();
+    // this.initAll();
+    // this.doLoginIMServer();
 
     this.messageDistributeService.MT03_OF_CHATTING_MESSAGE$.subscribe(data => {
       this.massageBadges.message = 1;
@@ -259,7 +259,7 @@ export class IndexComponent implements OnInit {
     // 具体对象字段，详见：
     // http://docs.52im.net/extend/docs/api/rainbowchatserver4_pro/com/x52im/rainbowchat/http/logic/dto/RosterElementEntity.html
     if (localAuthedUserInfo) {
-      loginUserId = localAuthedUserInfo.user_uid;
+      loginUserId = localAuthedUserInfo.userId;
       loginToken = localAuthedUserInfo.token;
 
       if (!loginUserId) {
@@ -272,10 +272,10 @@ export class IndexComponent implements OnInit {
         // 组织好要提交到im服务器的连接身份信息
         const loginIMServerInfo = {
           // loginUserId: loginUserId, // 本字段为RainbowChat系统中的用户唯id，是全系统的唯一标识
-          loginUserId: "web" + loginUserId, //111  本字段为RainbowChat系统中的用户唯id，是全系统的唯一标识
+          loginUserId: loginUserId, //111  本字段为RainbowChat系统中的用户唯id，是全系统的唯一标识
+          // loginUserId: "web" + loginUserId, //111  本字段为RainbowChat系统中的用户唯id，是全系统的唯一标识
           loginToken: loginToken,   // 此token为上一步中的http sso单点登陆接口返回，现提交给im服务器用于验证此次连接者的身份是否合法（不需要单独验证用户名和密码了，用上一步的token即可）
         };
-        console.log(loginIMServerInfo);
 
         this.log("【doLoginIMServer】IM服务器连接中....", true);
 

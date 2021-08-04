@@ -13,7 +13,7 @@ export class SignupForm {
 
   fields: FormlyFieldConfig[] = [
     {
-      key: 'username',
+      key: 'user_mail',
       type: 'input',
       templateOptions: {
         label: '请输入6-20字母或者数字组合的账号备份',
@@ -57,8 +57,8 @@ export class SignupForm {
     //   },
     // },
     {
-      key: 'password',
-      type: 'input',
+      key: 'user_psw',
+      type: 'password',
       templateOptions: {
         label: '请设置最低6位密码备份',
         type: 'password',
@@ -72,7 +72,7 @@ export class SignupForm {
       },
     },
     {
-      key: 'confirm-password',
+      key: 'confirm_password',
       type: 'input',
       templateOptions: {
         label: '请再次输入密码进行确认备份',

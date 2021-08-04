@@ -29,7 +29,7 @@ export class SignupMobileForm {
     //   },
     // },
     {
-      key: 'mobile',
+      key: 'user_phone',
       type: 'send-sms',
       templateOptions: {
         label: '请输入手机号',
@@ -57,8 +57,8 @@ export class SignupMobileForm {
       },
     },
     {
-      key: 'password',
-      type: 'input',
+      key: 'user_psw',
+      type: 'password',
       templateOptions: {
         label: '请设置最低6位密码备份',
         type: 'password',
@@ -72,8 +72,8 @@ export class SignupMobileForm {
       },
     },
     {
-      key: 'confirm-password',
-      type: 'input',
+      key: 'confirm_password',
+      type: 'password',
       templateOptions: {
         label: '请再次输入密码进行确认备份',
         type: 'password',
@@ -87,7 +87,7 @@ export class SignupMobileForm {
       },
     },
     // {
-    //   key: 'email',
+    //   key: 'user_mail',
     //   type: 'input',
     //   templateOptions: {
     //     label: '邮箱地址',
@@ -113,6 +113,6 @@ export class SignupMobileForm {
       });
     });
     return selectFields;
-  }
+  };
 
 }
