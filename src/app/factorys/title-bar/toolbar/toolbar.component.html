@@ -1,0 +1,20 @@
+<div style="-webkit-app-region: drag" class="title-bar" (dblclick)="maximize()">
+  <div fxLayout="row" fxFlexFill fxLayoutAlign="end center" fxLayoutGap="20px">
+    <div fxFlex="14px" class="action-button">
+      <div fxLayout="column" fxFlexFill fxFlexAlign="center center">
+        <mat-icon class="hover-icon action" (click)="minimize()">
+          <img [src]="minIcon" alt="" class="icon">
+          <img [src]="minActiveIcon" alt="" class="icon-hover">
+        </mat-icon>
+      </div>
+    </div>
+    <div fxFlex="14px" class="action-button">
+      <div fxLayout="column" fxFlexFill fxFlexAlign="center center">
+        <mat-icon class="hover-icon action" (click)="close()">
+          <img [src]="closeIcon" alt="" class="icon">
+          <img [src]="closeActiveIcon" alt="" class="icon-hover">
+        </mat-icon>
+      </div>
+    </div>
+  </div>
+</div>
