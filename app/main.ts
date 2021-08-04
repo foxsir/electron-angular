@@ -23,8 +23,10 @@ function createWindow(): BrowserWindow {
     // y: 0,
     // width: size.width,
     // height: size.height,
+    resizable: false,
     width: 400,
     height: 440,
+    frame: false,
     webPreferences: {
       nodeIntegration: true,
       allowRunningInsecureContent: (serve) ? true : false,
@@ -70,7 +72,7 @@ function createWindow(): BrowserWindow {
   //   const position: number[] = win.getPosition();
   //   win.setPosition(position[0]-200, position[1]-80);
   // })
-  WindowEventListen.listen(win, ipcMain)
+  WindowEventListen.listen(win)
 
 
 
