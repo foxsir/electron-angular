@@ -3,6 +3,8 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as url from 'url';
 
+import WindowEventListen from "./windowEventListen";
+
 // Initialize remote module
 require('@electron/remote/main').initialize();
 
@@ -63,11 +65,14 @@ function createWindow(): BrowserWindow {
   });
 
   // 登录后窗口变大
-  ipcMain.on('large-window', function (event, arg) {
-    win.setSize(800, 600);
-    const position: number[] = win.getPosition();
-    win.setPosition(position[0]-200, position[1]-80);
-  })
+  // ipcMain.on('large-window', function (event, arg) {
+  //   win.setSize(800, 600);
+  //   const position: number[] = win.getPosition();
+  //   win.setPosition(position[0]-200, position[1]-80);
+  // })
+  WindowEventListen.listen(win, ipcMain)
+
+
 
   return win;
 }
