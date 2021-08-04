@@ -1,12 +1,9 @@
 <nz-upload
-  nzAction="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-  nzName="avatar"
   nzListType="picture-card"
   [nzShowUploadList]="false"
   [nzBeforeUpload]="beforeUpload"
-  (nzChange)="handleChange($event)"
 >
-  <ng-container *ngIf="!avatarUrl">
+  <ng-container *ngIf="!fileUrl">
     <div>
       <div class="ant-upload-text">
         <img [src]="defaultOptions.icon" alt="" [ngStyle]="defaultOptions.size">
@@ -14,5 +11,5 @@
       <mat-progress-bar *ngIf="loading && this.defaultOptions.showProgress" mode="indeterminate"></mat-progress-bar>
     </div>
   </ng-container>
-  <img *ngIf="avatarUrl" [src]="avatarUrl" style="width: 100%"  alt=""/>
+  <img *ngIf="fileUrl" [src]="fileUrl" style="width: 100%"  alt=""/>
 </nz-upload>

@@ -1,12 +1,14 @@
-import {Component, Input, OnInit} from '@angular/core';
-import { Observable, Observer } from 'rxjs';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Observable, Observer} from 'rxjs';
 
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzUploadFile } from 'ng-zorro-antd/upload';
+import {NzMessageService} from 'ng-zorro-antd/message';
+import {NzUploadFile} from 'ng-zorro-antd/upload';
 
 import uploadIcon from "./upload-icon";
-import {DomSanitizer, SafeResourceUrl} from "@angular/platform-browser";
+import {DomSanitizer} from "@angular/platform-browser";
 import uploadOptions from "../uploadOptions";
+import {FileService} from "@services/file/file.service";
+import DirectoryType from "@services/file/config/DirectoryType";
 
 @Component({
   selector: 'app-upload-file',
@@ -14,11 +16,11 @@ import uploadOptions from "../uploadOptions";
   styleUrls: ['./upload-file.component.scss']
 })
 export class UploadFileComponent implements OnInit {
-
   loading = false;
-  avatarUrl?: string;
+  fileUrl?: string;
 
   @Input() options: Partial<uploadOptions>;
+  @Output() fileChange = new EventEmitter<URL>();
 
   public defaultOptions: uploadOptions = {
     size: {width: '100px'},
@@ -29,6 +31,7 @@ export class UploadFileComponent implements OnInit {
   constructor(
     private msg: NzMessageService,
     private dom: DomSanitizer,
+    private fileService: FileService,
   ) {
   }
 
@@ -53,8 +56,24 @@ export class UploadFileComponent implements OnInit {
         observer.complete();
         return;
       }
-      observer.next(isJpgOrPng && isLt2M);
-      observer.complete();
+
+      this.loading = true;
+      this.getBuffer(file).then(buffer => {
+        this.fileService.upload(buffer, DirectoryType.OSS_FILE).then(res => {
+          // console.dir(res);
+          this.fileChange.emit(new URL(res.url));
+          this.loading = false;
+          this.fileUrl = res.url;
+        });
+      });
+      // alert(file.type);
+      // alert(file.size);
+      // alert(file.name);
+      // alert(file.path);
+      // observer.next(isJpgOrPng && isLt2M);
+      //
+      // console.dir(observer.complete());
+
     });
 
   private getBase64(img: File, callback: (img: string) => void): void {
@@ -63,23 +82,38 @@ export class UploadFileComponent implements OnInit {
     reader.readAsDataURL(img);
   }
 
-  handleChange(info: { file: NzUploadFile }): void {
-    switch (info.file.status) {
-      case 'uploading':
-        this.loading = true;
-        break;
-      case 'done':
-        // Get this url from response in real world.
-        this.getBase64(info.file!.originFileObj!, (img: string) => {
-          this.loading = false;
-          this.avatarUrl = img;
-        });
-        break;
-      case 'error':
-        this.msg.error('Network error');
-        this.loading = false;
-        break;
-    }
+  private getBuffer(img: any): Promise<Buffer> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      let binaryString;
+
+      reader.onload = function() {
+        const arrayBuffer: ArrayBuffer = this.result as ArrayBuffer;
+        const buffer = Buffer.from(arrayBuffer);
+        resolve(buffer);
+      };
+      reader.readAsArrayBuffer(img);
+    });
   }
+
+  // handleChange(info: { file: NzUploadFile }): void {
+  //   switch (info.file.status) {
+  //     case 'uploading':
+  //       this.loading = true;
+  //       break;
+  //     case 'done':
+  //       this.fileChange.emit("urlurlurl");
+  //       // Get this url from response in real world.
+  //       this.getBase64(info.file!.originFileObj!, (img: string) => {
+  //         this.loading = false;
+  //         this.fileUrl = img;
+  //       });
+  //       break;
+  //     case 'error':
+  //       this.msg.error('Network error');
+  //       this.loading = false;
+  //       break;
+  //   }
+  // }
 
 }
