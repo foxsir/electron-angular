@@ -1,6 +1,6 @@
 <div fxLayout="column" fxFlexFill fxLayoutAlign="center center">
   <div style="width: 400px; height: 440px">
-    <mat-card fxFlexFill style="box-sizing: border-box;">
+    <mat-card class="mat-elevation-z0" style="box-sizing: border-box;">
       <mat-card-content>
         <mat-tab-group animationDuration="0ms" mat-align-tabs="start">
           <mat-tab>
@@ -16,6 +16,9 @@
             <app-register></app-register>
           </mat-tab>
         </mat-tab-group>
+        <div class="minbar">
+          <app-toolbar></app-toolbar>
+        </div>
       </mat-card-content>
     </mat-card>
   </div>

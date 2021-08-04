@@ -14,6 +14,7 @@ import {MatInputModule} from "@angular/material/input";
 import {FormlyModule} from "@ngx-formly/core";
 import {MatButtonModule} from "@angular/material/button";
 import {UploadModule} from "../../factorys/upload/upload.module";
+import {TitleBarModule} from "../../factorys/title-bar/title-bar.module";
 
 
 
@@ -23,19 +24,20 @@ import {UploadModule} from "../../factorys/upload/upload.module";
     LoginComponent,
     RegisterComponent
   ],
-  imports: [
-    CommonModule,
-    LoginRoutingModule,
-    MatTabsModule,
-    MatCardModule,
-    FlexLayoutModule,
-    MatFormFieldModule,
-    ReactiveFormsModule,
-    MatIconModule,
-    MatInputModule,
-    FormlyModule,
-    MatButtonModule,
-    UploadModule,
-  ]
+    imports: [
+        CommonModule,
+        LoginRoutingModule,
+        MatTabsModule,
+        MatCardModule,
+        FlexLayoutModule,
+        MatFormFieldModule,
+        ReactiveFormsModule,
+        MatIconModule,
+        MatInputModule,
+        FormlyModule,
+        MatButtonModule,
+        UploadModule,
+        TitleBarModule,
+    ]
 })
 export class LoginModule { }

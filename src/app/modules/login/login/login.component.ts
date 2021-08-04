@@ -5,9 +5,8 @@ import HttpResponse from "@app/models/HttpResponse";
 import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 import {Router} from "@angular/router";
 import {LocalUserService} from "@services/local-user/local-user.service";
-
-
-const { ipcRenderer } = window.require("electron");
+import NewHttpResponse from "@app/models/NewHttpResponse";
+import {WindowService} from "@services/window/window.service";
 
 @Component({
   selector: 'app-login',
@@ -21,6 +20,7 @@ export class LoginComponent implements OnInit {
     private restService: RestService,
     private snackBarService: SnackBarService,
     private localUserService: LocalUserService,
+    private windowService: WindowService,
   ) {
   }
 
@@ -30,14 +30,13 @@ export class LoginComponent implements OnInit {
   public onSubmit() {
     if (this.loginForm.form.valid) {
       const value = this.loginForm.form.value;
-      this.restService.submitLoginToServer(value.account, value.password).subscribe((res: HttpResponse) => {
-        if (res.returnValue !== "null") {
-          const userInfo = JSON.parse(res.returnValue);
-          console.dir(userInfo);
+      this.restService.submitLoginToServer(value.account, value.password).subscribe((res: NewHttpResponse<any>) => {
+        if (res.status === 200) {
+          const userInfo = res.data;
           this.localUserService.update(userInfo);
           this.router.navigate(["/home"]).then(() => {
-            this.snackBarService.openSnackBar("登录成功");
-            ipcRenderer.send("large-window");
+            this.snackBarService.openMessage("登录成功");
+            this.windowService.normalWindow();
           });
         } else {
           this.snackBarService.openMessage("你输入的账号或密码不正确，请重新输入");
