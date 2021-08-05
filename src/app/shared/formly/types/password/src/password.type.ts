@@ -1,8 +1,15 @@
-import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
+import {Component, ChangeDetectionStrategy, OnInit, TemplateRef} from '@angular/core';
 import { FieldType } from '@ngx-formly/material/form-field';
 import {FormControl} from "@angular/forms";
 import {DomSanitizer} from "@angular/platform-browser";
+import {FormlyFieldConfig} from "@ngx-formly/core";
+import {FormlyWrapperFormField} from "@ngx-formly/material/form-field/form-field.wrapper";
 
+interface MatFormlyFieldConfig extends FormlyFieldConfig {
+  _matprefix?: TemplateRef<any>;
+  _matsuffix?: TemplateRef<any>;
+  _formField?: FormlyWrapperFormField;
+}
 
 @Component({
   selector: 'formly-field-mat-password',
@@ -13,7 +20,10 @@ import {DomSanitizer} from "@angular/platform-browser";
       [appearance]="to.appearance"
       [color]="to.color"
       [style.width]="'100%'">
-      <mat-label>{{to.label}}</mat-label>
+      <mat-label *ngIf="to.label && to.hideLabel !== true">
+        {{ to.label }}
+        <span *ngIf="to.required && to.hideRequiredMarker !== true" class="mat-form-field-required-marker">*</span>
+      </mat-label>
       <input
         #input
         matInput
@@ -33,12 +43,34 @@ import {DomSanitizer} from "@angular/platform-browser";
           <img [src]="hiddenIcon"  *ngIf="!visibilityPassword" alt="">
         </mat-icon>
       </a>
+      <ng-container matSuffix *ngIf="field._matsuffix">
+        <ng-container *ngTemplateOutlet="field._matsuffix"></ng-container>
+      </ng-container>
+      <mat-error>
+        <formly-validation-message [field]="field"></formly-validation-message>
+      </mat-error>
+      <mat-hint *ngIf="to.description || to.hintStart as hint">
+        <ng-container [ngTemplateOutlet]="stringOrTemplate" [ngTemplateOutletContext]="{ content: hint }">
+        </ng-container>
+      </mat-hint>
+      <mat-hint *ngIf="to.hintEnd as hintEnd" align="end">
+        <ng-container [ngTemplateOutlet]="stringOrTemplate" [ngTemplateOutletContext]="{ content: hintEnd }">
+        </ng-container>
+      </mat-hint>
     </mat-form-field>
+
+    <ng-template #stringOrTemplate let-content="content">
+      <ng-container *ngIf="!content.createEmbeddedView; else template">{{ content }}</ng-container>
+      <ng-template #template>
+        <ng-container *ngTemplateOutlet="content"></ng-container>
+      </ng-template>
+    </ng-template>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormlyFieldPassword extends FieldType implements OnInit {
   formControl: FormControl;
+  field!: MatFormlyFieldConfig;
 
   visibilityPassword = false;
   inputType = "password";
