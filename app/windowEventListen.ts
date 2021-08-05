@@ -12,11 +12,12 @@ export default class WindowEventListen {
     ipcMain.on("maximizeWindow", function (event, arg) {
       if(win.isResizable()) {
         if(win.isMaximized()) {
-          win.restore()
+          win.unmaximize();
         } else {
           win.maximize();
         }
       }
+      win.setResizable(true);
     });
 
     ipcMain.on("unmaximizeWindow", function (event, arg) {

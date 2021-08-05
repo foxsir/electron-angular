@@ -26,6 +26,8 @@ function createWindow(): BrowserWindow {
     resizable: false,
     width: 400,
     height: 440,
+    minWidth: 800,
+    minHeight: 600,
     frame: false,
     webPreferences: {
       nodeIntegration: true,
