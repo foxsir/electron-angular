@@ -21,8 +21,11 @@
           </div>
           <div fxFlex="100">
             <mat-form-field fxFlex="100">
-              <mat-label>Favorite food</mat-label>
+              <mat-label>请设置您的用户昵称</mat-label>
               <input matInput name="nickname" placeholder="昵称" [formControl]="nicknameControl" value="">
+              <mat-error *ngIf="nicknameControl.hasError('required')">
+                请设置您的用户昵称
+              </mat-error>
             </mat-form-field>
           </div>
           <div fxFlex="100">

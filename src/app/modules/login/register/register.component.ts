@@ -11,7 +11,7 @@ import avatarIcon from "@app/assets/icons/avatar.svg";
 
 import {DomSanitizer} from "@angular/platform-browser";
 import uploadOptions from "@app/factorys/upload/uploadOptions";
-import {FormControl, FormGroup} from "@angular/forms";
+import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {RestService} from "@services/rest/rest.service";
 import NewHttpResponse from "@app/models/NewHttpResponse";
 import RegisterResponse from "@app/models/RegisterResponse";
@@ -34,12 +34,15 @@ export class RegisterComponent implements OnInit {
   userSex: number = 0;
   avatarUrl: URL;
 
+  // 0 账号 1 手机
+  private registerType = 0;
+
   uploadOptions: Partial<uploadOptions> = {
     size: {width: '40px'},
     icon: avatarIcon,
   };
 
-  nicknameControl = new FormControl();
+  nicknameControl = new FormControl(null, Validators.required);
   step2Form = new FormGroup({
     nickname: this.nicknameControl
   });
@@ -56,7 +59,12 @@ export class RegisterComponent implements OnInit {
     private router: Router,
     private windowService: WindowService,
   ) {
-    this.signupForm = this.signupFormMobile;
+    this.restService.getAppConfig().subscribe((res: NewHttpResponse<any>) => {
+      if(res.data.registerType !== this.registerType) {
+        this.signupForm = this.signupFormMobile;
+        this.registerType = res.data.registerType;
+      }
+    });
   }
 
   ngOnInit(): void {
@@ -68,7 +76,21 @@ export class RegisterComponent implements OnInit {
 
   public nextStep() {
     if (this.signupForm.form.valid) {
-      this.step = 'two';
+      const data = {
+        phone: [this.signupForm.form.value.area, this.signupForm.form.value.user_phone].join("-"),
+        vCode: this.signupForm.form.value.code
+      };
+      if (this.registerType === 1) {
+        this.restService.submitVerifyCodeToServer(data).subscribe((res: NewHttpResponse<any>) => {
+          if (res.status === 200) {
+            this.step = 'two';
+          } else {
+            this.snackBarService.openMessage("您输入的验证码有误，请核对验证码后重新输");
+          }
+        });
+      } else {
+        this.step = 'two';
+      }
     }
   }
 
@@ -78,19 +100,22 @@ export class RegisterComponent implements OnInit {
 
   public onSubmit() {
     if (this.step2Form.valid) {
-      const data = {
+      let data = {
         ...this.signupForm.form.value,
         ...this.step2Form.value,
         user_sex: this.userSex,
-        userAvatarFileName: this.avatarUrl.pathname
       };
+      if(this.avatarUrl && this.avatarUrl.pathname) {
+        data = Object.assign(data, {userAvatarFileName: this.avatarUrl.pathname});
+      }
+
       this.restService.submitRegisterToServer(data).subscribe((res: NewHttpResponse<RegisterResponse>) => {
         if (res.status === 200) {
           const userInfo = res.data;
 
           this.localUserService.update(userInfo);
           this.router.navigate(["/home"]).then(() => {
-            this.snackBarService.openMessage("登录成功");
+            this.snackBarService.openMessage("注册成功");
             this.windowService.normalWindow();
           });
         } else {
