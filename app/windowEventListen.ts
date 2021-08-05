@@ -46,7 +46,7 @@ export default class WindowEventListen {
     });
 
     ipcMain.on("closeWindow", function (event, arg) {
-      win.close();
+      win.hide();
     });
 
   }

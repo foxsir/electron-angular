@@ -35,7 +35,6 @@ function createWindow(): BrowserWindow {
     },
   });
 
-
   if (serve) {
     win.webContents.openDevTools();
     require('electron-reload')(__dirname, {
@@ -74,8 +73,6 @@ function createWindow(): BrowserWindow {
   // })
   WindowEventListen.listen(win)
 
-
-
   return win;
 }
 
@@ -100,6 +97,8 @@ try {
     // dock icon is clicked and there are no other windows open.
     if (win === null) {
       createWindow();
+    } else {
+      win.show();
     }
   });
 } catch (e) {
