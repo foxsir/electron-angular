@@ -5,7 +5,7 @@ import {HttpService} from "@services/http/http.service";
 import {Observable} from "rxjs";
 import {LocalUserService} from "@services/local-user/local-user.service";
 import {ImService} from "@services/im/im.service";
-import {getMissuCollectById, getMyBlackUser, getUserBaseById} from "@app/config/post-api";
+import {getAppConfig, getMissuCollectById, getMyBlackUser, getUserBaseById, verifyCode} from "@app/config/post-api";
 import {HttpHeaders} from "@angular/common/http";
 
 @Injectable({
@@ -268,6 +268,18 @@ export class RestService {
    */
   submitRegisterToServer(data: any) {
     return this.http.post(RBChatConfig._HTTP_REGISTER_URL, data);
+  }
+
+  /**
+   * 校验验证码
+   * @param data
+   */
+  submitVerifyCodeToServer(data: any) {
+    return this.http.postForm(verifyCode, data);
+  }
+
+  getAppConfig() {
+    return this.http.get(getAppConfig);
   }
 
   /**
