@@ -21,6 +21,8 @@ export class LoginForm {
         type: 'text',
         // description: '用户名或者手机号',
         required: true,
+        maxLength: 20,
+        minLength: 6,
       },
       validators: {
         // pattern: {
@@ -37,6 +39,8 @@ export class LoginForm {
         label: '密码',
         type: 'password',
         required: true,
+        maxLength: 20,
+        minLength: 6,
       },
       validators: {
         // pattern: {

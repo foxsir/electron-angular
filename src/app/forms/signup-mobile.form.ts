@@ -40,10 +40,10 @@ export class SignupMobileForm {
         required: true,
       },
       validators: {
-        // pattern: {
-        //   expression: (c) => !c.value || /(\d{1,3}\.){3}\d{1,3}/.test(c.value),
-        //   message: (error, field: FormlyFieldConfig) => `"$\{field.formControl.value\}" is not a valid IP Address`,
-        // },
+        pattern: {
+          expression: (c) => !c.value || /(1)[0-9]{10}/.test(c.value),
+          message: (error, field: FormlyFieldConfig) => `"${field.formControl.value}" 格式不正确`,
+        },
       },
     },
     {
@@ -62,13 +62,21 @@ export class SignupMobileForm {
       templateOptions: {
         label: '请设置最低6位密码备份',
         type: 'password',
+        description: '请设置最低6位密码备份',
         required: true,
+        minLength: 6,
+        blur: (field: FormlyFieldConfig, event?: any) => {
+          if(field.formControl.value && field.formControl.value.toString().length > 0) {
+            this.form.controls.confirm_password.markAsTouched();
+            this.form.controls.confirm_password.updateValueAndValidity();
+          }
+        },
       },
       validators: {
-        // pattern: {
-        //   expression: (c) => !c.value || /(\d{1,3}\.){3}\d{1,3}/.test(c.value),
-        //   message: (error, field: FormlyFieldConfig) => `"$\{field.formControl.value\}" is not a valid IP Address`,
-        // },
+        pattern: {
+          expression: (c) => !c.value || c.value.length >= 6,
+          message: (error, field: FormlyFieldConfig) => `${field.templateOptions.description}`,
+        },
       },
     },
     {
@@ -77,13 +85,15 @@ export class SignupMobileForm {
       templateOptions: {
         label: '请再次输入密码进行确认备份',
         type: 'password',
+        description: '请再次输入密码进行确认备份',
         required: true,
+        minLength: 6,
       },
       validators: {
-        // pattern: {
-        //   expression: (c) => !c.value || /(\d{1,3}\.){3}\d{1,3}/.test(c.value),
-        //   message: (error, field: FormlyFieldConfig) => `"$\{field.formControl.value\}" is not a valid IP Address`,
-        // },
+        pattern: {
+          expression: (c) => this.model.user_psw === c.value,
+          message: (error, field: FormlyFieldConfig) => "两次输入密码不一致",
+        },
       },
     },
     // {
