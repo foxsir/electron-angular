@@ -21,7 +21,7 @@ import Area from "./data/Area";
   `],
   template: `
     <mat-form-field
-      [hideRequiredMarker]="true"
+      [hideRequiredMarker]="to.required"
       [floatLabel]="to.floatLabel"
       [appearance]="to.appearance"
       [color]="to.color"

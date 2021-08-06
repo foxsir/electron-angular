@@ -1,4 +1,12 @@
-import {Component, ChangeDetectionStrategy, OnInit, TemplateRef} from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+  AfterViewInit,
+  AfterContentChecked
+} from '@angular/core';
 import { FieldType } from '@ngx-formly/material/form-field';
 import {FormControl} from "@angular/forms";
 import {DomSanitizer} from "@angular/platform-browser";
@@ -14,16 +22,6 @@ interface MatFormlyFieldConfig extends FormlyFieldConfig {
 @Component({
   selector: 'formly-field-mat-password',
   template: `
-    <mat-form-field
-      [hideRequiredMarker]="true"
-      [floatLabel]="to.floatLabel"
-      [appearance]="to.appearance"
-      [color]="to.color"
-      [style.width]="'100%'">
-      <mat-label *ngIf="to.label && to.hideLabel !== true">
-        {{ to.label }}
-        <span *ngIf="to.required && to.hideRequiredMarker !== true" class="mat-form-field-required-marker">*</span>
-      </mat-label>
       <input
         #input
         matInput
@@ -37,48 +35,38 @@ interface MatFormlyFieldConfig extends FormlyFieldConfig {
         [tabIndex]="to.tabindex"
         [placeholder]="to.placeholder"
       />
-      <a type="button" style="cursor: pointer" matSuffix aria-label="Clear" (click)="switchInputType(input)">
-        <mat-icon>
-          <img [src]="visibilityIcon" *ngIf="visibilityPassword" alt="">
-          <img [src]="hiddenIcon" *ngIf="!visibilityPassword" alt="">
-        </mat-icon>
-      </a>
-      <ng-container matSuffix *ngIf="field._matsuffix">
-        <ng-container *ngTemplateOutlet="field._matsuffix"></ng-container>
-      </ng-container>
-      <mat-error>
-        <formly-validation-message [field]="field"></formly-validation-message>
-      </mat-error>
-      <mat-hint *ngIf="to.description || to.hintStart as hint">
-        <ng-container [ngTemplateOutlet]="stringOrTemplate" [ngTemplateOutletContext]="{ content: hint }">
-        </ng-container>
-      </mat-hint>
-      <mat-hint *ngIf="to.hintEnd as hintEnd" align="end">
-        <ng-container [ngTemplateOutlet]="stringOrTemplate" [ngTemplateOutletContext]="{ content: hintEnd }">
-        </ng-container>
-      </mat-hint>
-    </mat-form-field>
-
-    <ng-template #stringOrTemplate let-content="content">
-      <ng-container *ngIf="!content.createEmbeddedView; else template">{{ content }}</ng-container>
-      <ng-template #template>
-        <ng-container *ngTemplateOutlet="content"></ng-container>
+      <ng-template #buttonToggle>
+        <a type="button" style="cursor: pointer" matSuffix aria-label="Clear" (click)="switchInputType(input)">
+          <mat-icon>
+            <img [src]="visibilityIcon" *ngIf="visibilityPassword" alt="">
+            <img [src]="hiddenIcon" *ngIf="!visibilityPassword" alt="">
+          </mat-icon>
+        </a>
       </ng-template>
-    </ng-template>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FormlyFieldPassword extends FieldType implements OnInit {
+export class FormlyFieldPassword extends FieldType implements AfterContentChecked {
+  @ViewChild('buttonToggle', { static: true }) buttonToggle!: TemplateRef<any>;
+
   formControl: FormControl;
   field!: MatFormlyFieldConfig;
 
   visibilityPassword = false;
   inputType = "password";
 
+  private togglePosition: string = 'suffix';
+
   constructor(
     private dom: DomSanitizer
   ) {
     super();
+  }
+
+  ngAfterContentChecked() {
+    setTimeout(() => {
+      this.to[this.togglePosition] = this.buttonToggle;
+    });
   }
 
   visibilityIcon = this.dom.bypassSecurityTrustResourceUrl(
