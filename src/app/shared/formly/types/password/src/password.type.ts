@@ -40,7 +40,7 @@ interface MatFormlyFieldConfig extends FormlyFieldConfig {
       <a type="button" style="cursor: pointer" matSuffix aria-label="Clear" (click)="switchInputType(input)">
         <mat-icon>
           <img [src]="visibilityIcon" *ngIf="visibilityPassword" alt="">
-          <img [src]="hiddenIcon"  *ngIf="!visibilityPassword" alt="">
+          <img [src]="hiddenIcon" *ngIf="!visibilityPassword" alt="">
         </mat-icon>
       </a>
       <ng-container matSuffix *ngIf="field._matsuffix">

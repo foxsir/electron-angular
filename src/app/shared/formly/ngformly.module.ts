@@ -29,18 +29,19 @@ import {FormlyFieldSelect} from '@app/shared/formly/types/select';
 import {FormlyFieldPassword} from '@app/shared/formly/types/password';
 import {SmsCodeTypeComponent} from "@app/shared/formly/types/sms-code-type.component";
 import {MatSelectModule} from "@angular/material/select";
+import {MatMenuModule} from "@angular/material/menu";
 
 export function minlengthValidationMessage(err, field) {
-  return `Should have atleast ${field.templateOptions.minLength} characters`;
+  return `不能少于 ${field.templateOptions.minLength} 个字符`;
 }
 export function maxlengthValidationMessage(err, field) {
-  return `This value should be less than ${field.templateOptions.maxLength} characters`;
+  return `不能多于 ${field.templateOptions.maxLength} 个字符`;
 }
 export function minValidationMessage(err, field) {
-  return `This value should be more than ${field.templateOptions.min}`;
+  return `数值应该大于 ${field.templateOptions.min}`;
 }
 export function maxValidationMessage(err, field) {
-  return `This value should be less than ${field.templateOptions.max}`;
+  return `数值应该小于 ${field.templateOptions.max}`;
 }
 
 @NgModule({
@@ -57,77 +58,78 @@ export function maxValidationMessage(err, field) {
   ],
   entryComponents: [
   ],
-  imports: [
-    CommonModule,
-    MatInputModule,
-    MatButtonModule,
-    MatAutocompleteModule,
-    FormsModule,
-    ReactiveFormsModule,
-    FormlyMaterialModule,
-    FormlyModule.forRoot({
-      types: [
-        {
-          name: 'send-sms',
-          component: SendSmsTypeComponent,
-        },
-        {
-          name: 'sms-code',
-          component: SmsCodeTypeComponent,
-        },
-        {
-          name: 'autochips',
-          component: AutochipsTypeComponent,
-        },
-        {
-          name: 'autocomplete',
-          component: AutocompleteTypeComponent,
-        },
-        // {
-        //   name: 'richtext',
-        //   component: RichtextTypeComponent,
-        // },
-        {
-          name: 'password',
-          component: FormlyFieldPassword,
-        },
-        {
-          name: 'select',
-          component: FormlyFieldSelect,
-        },
-        {
-          name: 'upload-image',
-          component: ImageTypeComponent,
-          wrappers: ['form-field'],
-          defaultOptions: {
-            templateOptions: {
-              floatPlaceholder: 'always',
-              floatLabel: 'always',
-            },
-          },
-        },
-      ],
-      validationMessages: [
-        // {name: 'required', message: '不能留空'},
-        // {name: 'minlength', message: minlengthValidationMessage},
-        // {name: 'maxlength', message: maxlengthValidationMessage},
-        // {name: 'min', message: minValidationMessage},
-        // {name: 'max', message: maxValidationMessage},
-      ],
-    }),
-    FormlyMatDatepickerModule,
-    MatIconModule,
-    MatChipsModule,
-    MatButtonModule,
-    MatIconModule,
-    NzUploadModule,
-    MatProgressSpinnerModule,
-    MatCardModule,
-    FlexLayoutModule,
-    MatNativeDateModule,
-    FormlyMatToggleModule,
-    MatSelectModule,
-  ],
+    imports: [
+        CommonModule,
+        MatInputModule,
+        MatButtonModule,
+        MatAutocompleteModule,
+        FormsModule,
+        ReactiveFormsModule,
+        FormlyMaterialModule,
+        FormlyModule.forRoot({
+            types: [
+                {
+                    name: 'send-sms',
+                    component: SendSmsTypeComponent,
+                },
+                {
+                    name: 'sms-code',
+                    component: SmsCodeTypeComponent,
+                },
+                {
+                    name: 'autochips',
+                    component: AutochipsTypeComponent,
+                },
+                {
+                    name: 'autocomplete',
+                    component: AutocompleteTypeComponent,
+                },
+                // {
+                //   name: 'richtext',
+                //   component: RichtextTypeComponent,
+                // },
+                {
+                    name: 'password',
+                    component: FormlyFieldPassword,
+                },
+                {
+                    name: 'select',
+                    component: FormlyFieldSelect,
+                },
+                {
+                    name: 'upload-image',
+                    component: ImageTypeComponent,
+                    wrappers: ['form-field'],
+                    defaultOptions: {
+                        templateOptions: {
+                            floatPlaceholder: 'always',
+                            floatLabel: 'always',
+                        },
+                    },
+                },
+            ],
+            validationMessages: [
+                {name: 'required', message: '不能留空'},
+                {name: 'minlength', message: minlengthValidationMessage},
+                {name: 'maxlength', message: maxlengthValidationMessage},
+                {name: 'min', message: minValidationMessage},
+                {name: 'max', message: maxValidationMessage},
+            ],
+        }),
+        FormlyMatDatepickerModule,
+        MatIconModule,
+        MatChipsModule,
+        MatButtonModule,
+        MatIconModule,
+        NzUploadModule,
+        MatProgressSpinnerModule,
+        MatCardModule,
+        FlexLayoutModule,
+        MatNativeDateModule,
+        FormlyMatToggleModule,
+        MatSelectModule,
+        MatMenuModule,
+    ],
   exports: [
     FormlyModule,
   ]

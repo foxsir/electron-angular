@@ -62,7 +62,7 @@ export class SmsCodeTypeComponent extends FieldType implements OnInit {
 
   send(button: MatButton) {
     const mobile = this.field.form.value.user_phone;
-    const areaCode = this.field.form.value.area;
+    const areaCode = this.model.area;
     if (mobile > 0) {
       // alert(this.formControl.value);
       // button.disabled = true;
@@ -85,11 +85,13 @@ export class SmsCodeTypeComponent extends FieldType implements OnInit {
           }, 1000);
         } else {
           this.snackBar.openMessage(res.msg);
+          button._elementRef.nativeElement.textContent = "重新获取";
           button.disabled = false;
         }
       });
     } else {
-      this.snackBar.openMessage("请输入手机号");
+      // this.snackBar.openMessage("请输入手机号");
+      this.form.controls.user_phone.markAsTouched();
     }
   }
 
