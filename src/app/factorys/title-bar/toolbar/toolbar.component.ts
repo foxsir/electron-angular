@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {WindowService} from "@services/window/window.service";
 import {DomSanitizer} from "@angular/platform-browser";
 
@@ -13,11 +13,15 @@ import minActiveIcon from '@app/assets/icons/min-active.svg';
   styleUrls: ['./toolbar.component.scss']
 })
 export class ToolbarComponent implements OnInit {
+  @Input() transparent: boolean = false;
+  @Input() visibilityActions: boolean = true;
+  @Input() stickyTop: boolean = false;
+  @Input() height: string = '30px';
 
-  public closeIcon = this.dom.bypassSecurityTrustResourceUrl(closeIcon)
-  public closeActiveIcon = this.dom.bypassSecurityTrustResourceUrl(closeActiveIcon)
-  public minIcon = this.dom.bypassSecurityTrustResourceUrl(minIcon)
-  public minActiveIcon = this.dom.bypassSecurityTrustResourceUrl(minActiveIcon)
+  public closeIcon = this.dom.bypassSecurityTrustResourceUrl(closeIcon);
+  public closeActiveIcon = this.dom.bypassSecurityTrustResourceUrl(closeActiveIcon);
+  public minIcon = this.dom.bypassSecurityTrustResourceUrl(minIcon);
+  public minActiveIcon = this.dom.bypassSecurityTrustResourceUrl(minActiveIcon);
 
   constructor(
     private windowService: WindowService,
@@ -37,6 +41,10 @@ export class ToolbarComponent implements OnInit {
 
   close() {
     this.windowService.closeWindow();
+  }
+
+  openDevTools() {
+    this.windowService.openDevTools();
   }
 
 

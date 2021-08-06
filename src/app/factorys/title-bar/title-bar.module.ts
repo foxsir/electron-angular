@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ToolbarComponent } from './toolbar/toolbar.component';
 import {MatIconModule} from "@angular/material/icon";
 import {FlexLayoutModule} from "@angular/flex-layout";
+import {MatButtonModule} from "@angular/material/button";
 
 
 
@@ -16,7 +17,8 @@ import {FlexLayoutModule} from "@angular/flex-layout";
   imports: [
     CommonModule,
     MatIconModule,
-    FlexLayoutModule
+    FlexLayoutModule,
+    MatButtonModule
   ]
 })
 export class TitleBarModule { }

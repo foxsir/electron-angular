@@ -1,8 +1,24 @@
 .title-bar {
   height: 30px;
   width: 100%;
+  padding-right: 20px;
+  box-sizing: border-box;
+  -webkit-user-select: none;
+  -webkit-app-region: drag;
 }
+
+.title-bar.background {
+  background: #F1F1F1;
+}
+
+.title-bar.sticky-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
 .action {
+  -webkit-app-region: no-drag;
   cursor: pointer;
   width: 14px !important;
   height: 14px !important;
@@ -10,4 +26,10 @@
     width: 14px;
     height: 14px;
   }
+}
+
+#dbug {
+  position: fixed;
+  bottom: 4px;
+  left: 4px;
 }
