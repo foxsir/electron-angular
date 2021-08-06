@@ -1,23 +1,30 @@
 <div fxLayout="column" fxFlexFill fxLayoutAlign="center center">
   <div style="width: 400px; height: 440px">
+    <app-toolbar [transparent]="true" [visibilityActions]="false" [stickyTop]="true" [height]="'20px'"></app-toolbar>
     <mat-card class="mat-elevation-z0" style="box-sizing: border-box;">
       <mat-card-content>
-        <mat-tab-group animationDuration="0ms" mat-align-tabs="start">
-          <mat-tab>
-            <ng-template mat-tab-label>
-              <h2>账号登录</h2>
+        <div fxLayout="column">
+          <div fxFlex="100">
+            <div fxLayout="row">
+              <div fxFlex="40" fxLayoutAlign="center center">
+                <h2 (click)="selectedChange(0)">账号登录</h2>
+              </div>
+              <div fxFlex="40" fxLayoutAlign="center center">
+                <h2 (click)="selectedChange(1)">立即注册</h2>
+              </div>
+              <div fxFlex="20" fxLayoutAlign="center center">
+                <app-toolbar [transparent]="true"></app-toolbar>
+              </div>
+            </div>
+          </div>
+          <div fxFlex="100">
+            <ng-template [ngIf]="selectedTab === 0">
+              <app-login></app-login>
             </ng-template>
-            <app-login></app-login>
-          </mat-tab>
-          <mat-tab>
-            <ng-template mat-tab-label>
-              <h2>立即注册</h2>
+            <ng-template [ngIf]="selectedTab === 1">
+              <app-register [signupForm]="registerForm" [registerType]="registerType"></app-register>
             </ng-template>
-            <app-register></app-register>
-          </mat-tab>
-        </mat-tab-group>
-        <div class="minbar">
-          <app-toolbar [transparent]="false"></app-toolbar>
+          </div>
         </div>
       </mat-card-content>
     </mat-card>

@@ -119,15 +119,15 @@
             <mat-card-content *ngIf="chatMsgEntityList">
               <div fxLayout="column" fxLayoutGap="20px" class="chatting-panel-container">
                 <div fxLayout="row" *ngFor="let chat of chatMsgEntityList"
-                     [fxLayoutAlign]="chat.uid === localUserInfo.user_uid ? 'end' : 'start'"
-                     [ngClass]="{'self-message': chat.uid === localUserInfo.user_uid}">
-                  <div fxFlex="65" [fxLayoutAlign]="chat.uid === localUserInfo.user_uid ? 'end' : 'start'">
+                     [fxLayoutAlign]="chat.uid === localUserInfo.userId ? 'end' : 'start'"
+                     [ngClass]="{'self-message': chat.uid === localUserInfo.userId}">
+                  <div fxFlex="65" [fxLayoutAlign]="chat.uid === localUserInfo.userId ? 'end' : 'start'">
                     <div fxLayout="column" class="message-container" fxLayoutGap="5px"
-                         [fxLayoutAlign]="chat.uid === localUserInfo.user_uid ? 'end end' : 'start'">
+                         [fxLayoutAlign]="chat.uid === localUserInfo.userId ? 'end end' : 'start'">
                       <div class="message-time">
                         {{formatDate(chat.date, 'M-dd hh:m')}}
                       </div>
-                      <!--[fxLayoutAlign]="chat.uid === localUserInfo.user_uid ? 'end' : 'start'"-->
+                      <!--[fxLayoutAlign]="chat.uid === localUserInfo.userId ? 'end' : 'start'"-->
                       <div class="message-entity-item" (contextmenu)="textMenuForMessage($event, createPlanMenuTrigger, span, chat)">
                         <div class="message-entity" #messageContainer>
                           <app-message-factory [chatMsg]="chat"></app-message-factory>
@@ -147,36 +147,9 @@
             </mat-card-content>
           </mat-card>
         </div>
-        <div>
-          <div fxLayout="row">
-            <div fxFlex="60px" fxLayoutAlign="center center" style="background: rgba(0,0,0,.04)">
-              <button mat-icon-button>
-                <mat-icon class="hover-icon">
-                  <img class="icon" [src]="attachmentIcon" alt="">
-                  <img class="icon-active" [src]="attachmentActiveIcon" alt="">
-                </mat-icon>
-              </button>
-            </div>
-            <div fxFlex="calc(100% - 180px)">
-              <mat-form-field appearance="fill" fxFlex="100">
-                <textarea matInput cdkTextareaAutosize cdkAutosizeMaxRows="10" placeholder="发送消息"></textarea>
-              </mat-form-field>
-            </div>
-            <div fxFlex="120px" fxLayoutAlign="center center" fxLayoutGap="10px" style="background: rgba(0,0,0,.04)">
-              <button mat-icon-button>
-                <mat-icon class="hover-icon">
-                  <img class="icon" [src]="emojiIcon" alt="">
-                  <img class="icon-active" [src]="emojiActiveIcon" alt="">
-                </mat-icon>
-              </button>
-              <button mat-icon-button>
-                <mat-icon class="hover-icon">
-                  <img class="icon" [src]="sendIcon" alt="">
-                  <img class="icon-active" [src]="sendActiveIcon" alt="">
-                </mat-icon>
-              </button>
-            </div>
-          </div>
+        <div fxLayout="row">
+          <!--文字输入区域-->
+          <app-input-area fxFlex="100" (sendMessage)="chatMsgEntityList.unshift($event)" [currentChat]="currentChat"></app-input-area>
         </div>
       </div>
     </div>

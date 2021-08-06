@@ -1,5 +1,5 @@
 <div fxLayout="row" fxFlex="100">
-  <mat-card fxFlex="100" class="mat-elevation-z0">
+  <mat-card fxFlex="100" class="mat-elevation-z0" *ngIf="signupForm">
     <mat-card-content *ngIf="step === 'one'">
       <form fxLayout="column" [formGroup]="signupForm.form" (ngSubmit)="nextStep()" fxLayoutGap="16px">
         <formly-form [model]="signupForm.model" [fields]="signupForm.fields" [options]="signupForm.options" [form]="signupForm.form">
@@ -49,8 +49,11 @@
               </div>
             </div>
           </div>
-          <div fxFlex="100" fxFlexOffset="40px">
-            <button mat-flat-button color="primary" class="register-button" fxFlex="100">完成注册</button>
+          <div fxFlex="100" fxFlexOffset="40px" fxLayoutAlign="space-between">
+            <button mat-button type="button" class="register-button" fxFlex="18" (click)="step = 'one'">
+              <mat-icon>keyboard_backspace</mat-icon>
+            </button>
+            <button mat-flat-button color="primary" class="register-button" fxFlex="80">完成注册</button>
           </div>
         </div>
       </form>

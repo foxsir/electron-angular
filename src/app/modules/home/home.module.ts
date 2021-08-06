@@ -23,6 +23,8 @@ import { NewFriendComponent } from './new-friend/new-friend.component';
 import {EmptyDataModule} from "../../factorys/empty-data/empty-data.module";
 import { AccountPanelComponent } from './account-panel/account-panel.component';
 import { SearchChattingComponent } from './search-chatting/search-chatting.component';
+import {TitleBarModule} from "../../factorys/title-bar/title-bar.module";
+import { InputAreaComponent } from './input-area/input-area.component';
 
 @NgModule({
   declarations: [
@@ -35,23 +37,25 @@ import { SearchChattingComponent } from './search-chatting/search-chatting.compo
     GroupingComponent,
     NewFriendComponent,
     AccountPanelComponent,
-    SearchChattingComponent
+    SearchChattingComponent,
+    InputAreaComponent
   ],
-  imports: [
-    CommonModule,
-    HomeRoutingModule,
-    FlexLayoutModule,
-    MatSidenavModule,
-    MatButtonModule,
-    MatCardModule,
-    MatIconModule,
-    MatListModule,
-    MatInputModule,
-    MatBadgeModule,
-    NzInputModule,
-    MatMenuModule,
-    MessageModule,
-    EmptyDataModule,
-  ]
+    imports: [
+        CommonModule,
+        HomeRoutingModule,
+        FlexLayoutModule,
+        MatSidenavModule,
+        MatButtonModule,
+        MatCardModule,
+        MatIconModule,
+        MatListModule,
+        MatInputModule,
+        MatBadgeModule,
+        NzInputModule,
+        MatMenuModule,
+        MessageModule,
+        EmptyDataModule,
+        TitleBarModule,
+    ]
 })
 export class HomeModule { }

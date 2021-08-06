@@ -18,7 +18,7 @@ export class GroupComponent implements OnInit {
     private restService: RestService,
     private localUserService: LocalUserService,
   ) {
-    this.restService.submitGetGroupsListFromServer(this.localUserInfo.user_uid).subscribe((res: HttpResponse) => {
+    this.restService.submitGetGroupsListFromServer(this.localUserInfo.userId).subscribe((res: HttpResponse) => {
       if (res.success) {
         this.chattingGroup = JSON.parse(res.returnValue);
       }

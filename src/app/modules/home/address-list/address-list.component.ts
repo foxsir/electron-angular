@@ -57,14 +57,14 @@ export class AddressListComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.getFriendList();
+    // this.getFriendList();
   }
 
-  getFriendList() {
-    this.rosterProviderService.refreshRosterAsync().subscribe(res => {
-      // 服务端返回的是一维RosterElementEntity对象数组
-      this.friendList = JSON.parse(res.returnValue);
-    });
-  }
+  // getFriendList() {
+  //   this.rosterProviderService.refreshRosterAsync().subscribe(res => {
+  //     // 服务端返回的是一维RosterElementEntity对象数组
+  //     this.friendList = JSON.parse(res.returnValue);
+  //   });
+  // }
 
 }

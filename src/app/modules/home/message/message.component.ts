@@ -11,12 +11,6 @@ import {MessageEntityService} from "@services/message-entity/message-entity.serv
 
 // import image
 import editIcon from "@app/assets/icons/edit.svg";
-import attachmentIcon from "@app/assets/icons/attachment.svg";
-import attachmentActiveIcon from "@app/assets/icons/attachment-active.svg";
-import emojiIcon from "@app/assets/icons/emoji.svg";
-import emojiActiveIcon from "@app/assets/icons/emoji-active.svg";
-import sendIcon from "@app/assets/icons/send.svg";
-import sendActiveIcon from "@app/assets/icons/send-active.svg";
 import settingIcon from "@app/assets/icons/setting.svg";
 import settingActiveIcon from "@app/assets/icons/setting-active.svg";
 import searchIcon from "@app/assets/icons/search.svg";
@@ -52,19 +46,12 @@ import {AvatarService} from "@services/avatar/avatar.service";
 export class MessageComponent implements OnInit {
   // image
   public editIcon = this.dom.bypassSecurityTrustResourceUrl(editIcon);
-  public attachmentIcon = this.dom.bypassSecurityTrustResourceUrl(attachmentIcon);
-  public attachmentActiveIcon = this.dom.bypassSecurityTrustResourceUrl(attachmentActiveIcon);
-  public emojiIcon = this.dom.bypassSecurityTrustResourceUrl(emojiIcon);
-  public emojiActiveIcon = this.dom.bypassSecurityTrustResourceUrl(emojiActiveIcon);
-  public sendIcon = this.dom.bypassSecurityTrustResourceUrl(sendIcon);
-  public sendActiveIcon = this.dom.bypassSecurityTrustResourceUrl(sendActiveIcon);
   public settingIcon = this.dom.bypassSecurityTrustResourceUrl(settingIcon);
   public settingActiveIcon = this.dom.bypassSecurityTrustResourceUrl(settingActiveIcon);
   public searchIcon = this.dom.bypassSecurityTrustResourceUrl(searchIcon);
   public searchActiveIcon = this.dom.bypassSecurityTrustResourceUrl(searchActiveIcon);
   public voiceIcon = this.dom.bypassSecurityTrustResourceUrl(voiceIcon);
   public voiceActiveIcon = this.dom.bypassSecurityTrustResourceUrl(voiceActiveIcon);
-
 
   public alarmItemList: Chatting[] = [];
   public chatMsgEntityList: ChatMsgEntity[];
@@ -269,7 +256,7 @@ export class MessageComponent implements OnInit {
 
     this.restService.queryChattingHistoryFromServer(
       //111 新增
-      isGroupChatting, beyongDataId, this.localUserService.getObj().user_uid, beyongDataId, "1",
+      isGroupChatting, beyongDataId, this.localUserService.getObj().userId, beyongDataId, "1",
       startTime, endTime
     ).subscribe(res => {
 
@@ -289,7 +276,7 @@ export class MessageComponent implements OnInit {
         // true表示是“我”发出的消息，否则是“我”收到的消息（即对方发给“我”的）
         // var isOutgoing = (srcUid == IMSDK.getLoginInfo().loginUserId);
         //111 这是在加上登录web 标识后取值错误，换内存取
-        const isOutgoing = (srcUid == this.localUserService.getObj().user_uid);
+        const isOutgoing = (srcUid == this.localUserService.getObj().userId);
 
         // 消息发送者的uid
         const beyongUid = returnIsGroupChatting ? srcUid : (isOutgoing ? destUid :
@@ -323,7 +310,7 @@ export class MessageComponent implements OnInit {
         }
         //## Bug FIX END
 
-        let chatMsgEntity = null;
+        let chatMsgEntity: ChatMsgEntity;
         if (isOutgoing) {
           chatMsgEntity = this.messageEntityService.prepareSendedMessage(msgContent,
             msgTime2Timestamp ? msgTime2Timestamp : 0, fingerPrint, msg_type);

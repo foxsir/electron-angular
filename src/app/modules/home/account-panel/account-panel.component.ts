@@ -87,7 +87,7 @@ export class AccountPanelComponent implements OnInit {
 
   ngOnInit(): void {
     this.localUserInfo = this.localUserService.localUserInfo;
-    this.avatarService.getAvatar(this.localUserInfo.user_uid).then(url => {
+    this.avatarService.getAvatar(this.localUserInfo.userId).then(url => {
       this.myAvatar = this.dom.bypassSecurityTrustResourceUrl(url);
     });
   }

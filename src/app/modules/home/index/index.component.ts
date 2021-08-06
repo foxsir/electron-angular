@@ -97,14 +97,14 @@ export class IndexComponent implements OnInit {
       }
     });
 
-    this.avatarService.getAvatar(this.localUserService.localUserInfo.user_uid).then(url => {
+    this.avatarService.getAvatar(this.localUserService.localUserInfo.userId).then(url => {
       this.myAvatar = this.dom.bypassSecurityTrustResourceUrl(url);
     });
   }
 
   ngOnInit(): void {
-    // this.initAll();
-    // this.doLoginIMServer();
+    this.initAll();
+    this.doLoginIMServer();
 
     this.messageDistributeService.MT03_OF_CHATTING_MESSAGE$.subscribe(data => {
       this.massageBadges.message = 1;
@@ -112,6 +112,13 @@ export class IndexComponent implements OnInit {
     this.messageDistributeService.MT45_OF_GROUP$CHAT$MSG_SERVER$TO$B$.subscribe(data => {
       this.massageBadges.message = 1;
     });
+
+    this.cacheFriends();
+  }
+
+  private cacheFriends() {
+    // 获取好友列表
+    this.rosterProviderService.refreshRosterAsync();
   }
 
   //#################################################################### 【1】初始化方面代码 START

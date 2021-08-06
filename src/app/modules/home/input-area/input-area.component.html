@@ -1,0 +1,29 @@
+<div fxLayout="row" fxFlex="100">
+  <div fxFlex="60px" fxLayoutAlign="center center" style="background: rgba(0,0,0,.04)">
+    <button mat-icon-button>
+      <mat-icon class="hover-icon">
+        <img class="icon" [src]="attachmentIcon" alt="">
+        <img class="icon-active" [src]="attachmentActiveIcon" alt="">
+      </mat-icon>
+    </button>
+  </div>
+  <div fxFlex="calc(100% - 180px)">
+    <mat-form-field appearance="fill" fxFlex="100">
+      <textarea matInput cdkTextareaAutosize cdkAutosizeMaxRows="10" placeholder="发送消息"></textarea>
+    </mat-form-field>
+  </div>
+  <div fxFlex="120px" fxLayoutAlign="center center" fxLayoutGap="10px" style="background: rgba(0,0,0,.04)">
+    <button mat-icon-button>
+      <mat-icon class="hover-icon">
+        <img class="icon" [src]="emojiIcon" alt="">
+        <img class="icon-active" [src]="emojiActiveIcon" alt="">
+      </mat-icon>
+    </button>
+    <button mat-icon-button (click)="doSend()">
+      <mat-icon class="hover-icon">
+        <img class="icon" [src]="sendIcon" alt="">
+        <img class="icon-active" [src]="sendActiveIcon" alt="">
+      </mat-icon>
+    </button>
+  </div>
+</div>

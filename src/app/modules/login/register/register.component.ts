@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit} from '@angular/core';
 import {SignupForm} from "@app/forms/signup.form";
 import {SignupMobileForm} from "@app/forms/signup-mobile.form";
 
@@ -17,7 +17,7 @@ import NewHttpResponse from "@app/models/NewHttpResponse";
 import RegisterResponse from "@app/models/RegisterResponse";
 import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 import {LocalUserService} from "@services/local-user/local-user.service";
-import {Router} from "@angular/router";
+import {ActivatedRoute, NavigationEnd, Router, RouterEvent} from "@angular/router";
 import {WindowService} from "@services/window/window.service";
 
 @Component({
@@ -26,16 +26,16 @@ import {WindowService} from "@services/window/window.service";
   styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent implements OnInit {
+  @Input() signupForm: SignupForm | SignupMobileForm;
+  @Input() registerType: number = 0;
+
   manIcon = this.dom.bypassSecurityTrustResourceUrl(manIcon);
   manActiveIcon = this.dom.bypassSecurityTrustResourceUrl(manActiveIcon);
   womanIcon = this.dom.bypassSecurityTrustResourceUrl(womanIcon);
   womanActiveIcon = this.dom.bypassSecurityTrustResourceUrl(womanActiveIcon);
 
-  userSex: number = 0;
+  userSex: number = 1;
   avatarUrl: URL;
-
-  // 0 账号 1 手机
-  private registerType = 0;
 
   uploadOptions: Partial<uploadOptions> = {
     size: {width: '40px'},
@@ -50,8 +50,6 @@ export class RegisterComponent implements OnInit {
   step: string = 'one';
 
   constructor(
-    public signupForm: SignupForm,
-    public signupFormMobile: SignupMobileForm,
     private dom: DomSanitizer,
     private restService: RestService,
     private snackBarService: SnackBarService,
@@ -59,12 +57,6 @@ export class RegisterComponent implements OnInit {
     private router: Router,
     private windowService: WindowService,
   ) {
-    this.restService.getAppConfig().subscribe((res: NewHttpResponse<any>) => {
-      if(res.data.registerType !== this.registerType) {
-        this.signupForm = this.signupFormMobile;
-        this.registerType = res.data.registerType;
-      }
-    });
   }
 
   ngOnInit(): void {
