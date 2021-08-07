@@ -33,7 +33,7 @@ class SignupFields {
         validators: {
           pattern: {
             expression: (c) => !c.value || RegexpMap.username.test(c.value),
-            message: (error, field: FormlyFieldConfig) => `${field.templateOptions.description} expression`,
+            message: (error, field: FormlyFieldConfig) => `${field.templateOptions.description}`,
           },
         }
       },
@@ -45,8 +45,8 @@ class SignupFields {
           type: 'password',
           description: '请设置最低6位密码备份',
           required: true,
-          maxLength: 20,
           minLength: 6,
+          maxLength: 20,
           blur: (field: FormlyFieldConfig, event?: any) => {
             if(!field.formControl.value || field.formControl.value.trim().length === 0) {
               field.formControl.markAsUntouched();
@@ -73,8 +73,8 @@ class SignupFields {
           type: 'password',
           description: '请再次输入密码进行确认备份',
           required: true,
-          maxLength: 20,
           minLength: 6,
+          maxLength: 20,
           blur: (field: FormlyFieldConfig, event?: any) => {
             if(!field.formControl.value || field.formControl.value.trim().length === 0) {
               field.formControl.markAsUntouched();

@@ -39,6 +39,11 @@ export class SignupMobileForm {
         maxLength: 11,
         minLength: 11,
         required: true,
+        blur:  (field: FormlyFieldConfig, event?: any) => {
+          if(!field.formControl.value || field.formControl.value.trim().length === 0) {
+            field.formControl.markAsUntouched();
+          }
+        },
       },
       validators: {
         pattern: {
@@ -53,8 +58,14 @@ export class SignupMobileForm {
       templateOptions: {
         label: '获取验证码',
         type: 'number',
+        minLength: 6,
         // description: '10分钟内有效',
         required: true,
+        blur:  (field: FormlyFieldConfig, event?: any) => {
+          if(!field.formControl.value || field.formControl.value.trim().length === 0) {
+            field.formControl.markAsUntouched();
+          }
+        },
       },
     },
     SignupFields.getField(this, 'user_psw'),
