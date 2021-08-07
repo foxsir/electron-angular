@@ -32,7 +32,7 @@ import NewHttpResponse from "@app/models/NewHttpResponse";
       >
       <section matSuffix>
         <button mat-button type="button" color="primary" #button (click)="send(button)">
-          <span class="text">{{to.label || '获取验证码'}}</span>
+          <span class="text">{{sendText}}</span>
         </button>
       </section>
       <!-- fix https://github.com/angular/material2/issues/7737 by setting id to null  -->
@@ -46,8 +46,8 @@ import NewHttpResponse from "@app/models/NewHttpResponse";
 })
 export class SmsCodeTypeComponent extends FieldType implements OnInit {
   formControl: FormControl;
-  private text = "发送验证码";
-  private sendText = "秒后可重新发送";
+  public sendText = "发送验证码";
+  private resendText = "秒后可重新发送";
   private seconds = environment.smsSpaceSeconds;
   private counter = this.seconds;
   constructor(
@@ -63,6 +63,7 @@ export class SmsCodeTypeComponent extends FieldType implements OnInit {
   send(button: MatButton) {
     const mobile = this.field.form.value.user_phone;
     const areaCode = this.model.area;
+
     if (mobile > 0) {
       // alert(this.formControl.value);
       // button.disabled = true;
@@ -75,12 +76,12 @@ export class SmsCodeTypeComponent extends FieldType implements OnInit {
           // }
           const si = setInterval(() => {
             if (this.counter === 0) {
-              button._elementRef.nativeElement.querySelector(".text").innerText = this.text;
+              this.sendText = "发送验证码";
               button.disabled = false;
               clearInterval(si);
             } else {
               this.counter --;
-              button._elementRef.nativeElement.querySelector(".text").innerText = [this.counter, this.sendText].join(" ");
+              this.sendText = [this.counter, this.resendText].join("");
             }
           }, 1000);
         } else {

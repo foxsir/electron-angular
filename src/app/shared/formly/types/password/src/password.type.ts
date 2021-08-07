@@ -46,7 +46,7 @@ interface MatFormlyFieldConfig extends FormlyFieldConfig {
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FormlyFieldPassword extends FieldType implements AfterContentChecked {
+export class FormlyFieldPassword extends FieldType implements AfterViewInit {
   @ViewChild('buttonToggle', { static: true }) buttonToggle!: TemplateRef<any>;
 
   formControl: FormControl;
@@ -63,7 +63,8 @@ export class FormlyFieldPassword extends FieldType implements AfterContentChecke
     super();
   }
 
-  ngAfterContentChecked() {
+  ngAfterViewInit() {
+    super.ngAfterViewInit();
     setTimeout(() => {
       this.to[this.togglePosition] = this.buttonToggle;
     });
