@@ -2,6 +2,7 @@ import { FormGroup } from '@angular/forms';
 import { FormlyFormOptions, FormlyFieldConfig } from '@ngx-formly/core';
 import {LoginModel} from '@app/models/login.model';
 import {Injectable} from '@angular/core';
+import RegexpMap from "@app/forms/RegexpMap";
 
 @Injectable({
   providedIn: 'root'
@@ -23,6 +24,19 @@ export class LoginForm {
         required: true,
         maxLength: 20,
         minLength: 6,
+        blur:  (field: FormlyFieldConfig, event?: any) => {
+          if(!field.formControl.value || field.formControl.value.trim().length === 0) {
+            field.formControl.markAsUntouched();
+          }
+        },
+        keyup: (field: FormlyFieldConfig, event?: any) => {
+          if (RegexpMap.username.test(field.formControl.value) === false) {
+            const regexp = /[a-z0-9]/g;
+            const array = [...field.formControl.value.matchAll(regexp)];
+            const newValue = array.map(v => v[0]);
+            field.formControl.setValue(newValue.join(""));
+          }
+        }
       },
       validators: {
         // pattern: {
@@ -41,6 +55,11 @@ export class LoginForm {
         required: true,
         maxLength: 20,
         minLength: 6,
+        blur:  (field: FormlyFieldConfig, event?: any) => {
+          if(!field.formControl.value || field.formControl.value.trim().length === 0) {
+            field.formControl.markAsUntouched();
+          }
+        },
       },
       validators: {
         // pattern: {
