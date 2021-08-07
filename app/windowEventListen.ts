@@ -1,4 +1,5 @@
 import { screen, ipcMain } from 'electron';
+import defaultOptions from "./DefaultOptions";
 
 export default class WindowEventListen {
   public static listen(win) {
@@ -30,12 +31,12 @@ export default class WindowEventListen {
     });
 
     ipcMain.on("restoreWindow", function (event, arg) {
-      win.restore()
+      win.restore();
       win.setResizable(true);
     });
 
     ipcMain.on("loginWindow", function (event, arg) {
-      win.setSize(400, 440);
+      win.setSize(defaultOptions.size.width, defaultOptions.size.height);
       win.setResizable(false);
       win.center();
     });
@@ -48,6 +49,11 @@ export default class WindowEventListen {
 
     ipcMain.on("closeWindow", function (event, arg) {
       win.hide();
+    });
+
+    ipcMain.on("openDevTools", function (event, arg) {
+      win.webContents.openDevTools();
+      win.setResizable(true);
     });
 
   }
