@@ -26,9 +26,6 @@ import {WindowService} from "@services/window/window.service";
   styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent implements OnInit {
-  @Input() signupForm: SignupForm | SignupMobileForm;
-  @Input() registerType: number = 0;
-
   manIcon = this.dom.bypassSecurityTrustResourceUrl(manIcon);
   manActiveIcon = this.dom.bypassSecurityTrustResourceUrl(manActiveIcon);
   womanIcon = this.dom.bypassSecurityTrustResourceUrl(womanIcon);
@@ -38,7 +35,7 @@ export class RegisterComponent implements OnInit {
   avatarUrl: URL;
 
   uploadOptions: Partial<uploadOptions> = {
-    size: {width: '40px'},
+    size: {width: '60px'},
     icon: avatarIcon,
   };
 
@@ -49,6 +46,9 @@ export class RegisterComponent implements OnInit {
 
   step: string = 'one';
 
+  public form: SignupForm | SignupMobileForm = this.signupForm;
+  public registerType: number = 0;
+
   constructor(
     private dom: DomSanitizer,
     private restService: RestService,
@@ -56,7 +56,10 @@ export class RegisterComponent implements OnInit {
     private localUserService: LocalUserService,
     private router: Router,
     private windowService: WindowService,
+    public signupForm: SignupForm,
+    public signupFormMobile: SignupMobileForm,
   ) {
+    this.checkRegisterTYpe();
   }
 
   ngOnInit(): void {
@@ -66,24 +69,71 @@ export class RegisterComponent implements OnInit {
     this.userSex = sex;
   }
 
+  switchType(type: number) {
+    if(type === 1) {
+      this.form = this.signupFormMobile;
+    } else {
+      this.form = this.signupForm;
+    }
+    this.registerType = type;
+  }
+
+  checkRegisterTYpe() {
+    this.restService.getAppConfig().subscribe((res: NewHttpResponse<any>) => {
+      if(res.data.registerType !== this.registerType) {
+        if(res.data.registerType === 1) {
+          this.form = this.signupFormMobile;
+        } else {
+          this.form = this.signupForm;
+        }
+        this.registerType = res.data.registerType;
+      }
+    });
+  }
+
   public nextStep() {
-    if (this.signupForm.form.valid) {
+    if (this.form.form.valid) {
       const data = {
-        phone: [this.signupForm.form.value.area, this.signupForm.form.value.user_phone].join("-"),
-        vCode: this.signupForm.form.value.code
+        phone: [this.form.form.value.area, this.form.form.value.user_phone].join("-"),
+        vCode: this.form.form.value.code
       };
       if (this.registerType === 1) {
         this.restService.submitVerifyCodeToServer(data).subscribe((res: NewHttpResponse<any>) => {
           if (res.status === 200) {
-            this.step = 'two';
+            this.gotoStepTwo();
           } else {
             this.snackBarService.openMessage("您输入的验证码有误，请核对验证码后重新输");
           }
         });
       } else {
-        this.step = 'two';
+        this.gotoStepTwo();
       }
+    } else {
+      this.form.form.markAllAsTouched();
     }
+  }
+
+  /**
+   * 检查用户名或者手机号是否可用
+   */
+  gotoStepTwo() {
+    const data = {
+      phone: [this.form.form.value.area, this.form.form.value.user_phone].join("-"),
+      username: this.form.form.value.user_mail
+    };
+    let params = "";
+    if (this.registerType === 1) {
+      params = "?phone="+data.phone;
+    } else {
+      params = "?username="+data.username;
+    }
+    this.restService.checkUsernameAndPhone(params, data).subscribe((res: NewHttpResponse<any>) => {
+      if(res.status === 200) {
+        this.step = 'two';
+      } else {
+        this.snackBarService.openMessage(res.msg);
+      }
+    });
   }
 
   public setAvatar(url: URL) {
@@ -93,7 +143,7 @@ export class RegisterComponent implements OnInit {
   public onSubmit() {
     if (this.step2Form.valid) {
       let data = {
-        ...this.signupForm.form.value,
+        ...this.form.form.value,
         ...this.step2Form.value,
         user_sex: this.userSex,
       };
@@ -114,6 +164,8 @@ export class RegisterComponent implements OnInit {
           this.snackBarService.openMessage(res.msg);
         }
       });
+    } else {
+      this.step2Form.markAllAsTouched();
     }
   }
 

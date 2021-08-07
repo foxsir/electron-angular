@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IndexComponent } from './index/index.component';
-import {LoginRoutingModule} from './login-routing.module';
+import {SessionRoutingModule} from './session-routing.module';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import {MatTabsModule} from "@angular/material/tabs";
@@ -15,6 +15,8 @@ import {FormlyModule} from "@ngx-formly/core";
 import {MatButtonModule} from "@angular/material/button";
 import {UploadModule} from "../../factorys/upload/upload.module";
 import {TitleBarModule} from "../../factorys/title-bar/title-bar.module";
+import {MatProgressBarModule} from "@angular/material/progress-bar";
+import {NzButtonModule} from "ng-zorro-antd/button";
 
 
 
@@ -24,20 +26,22 @@ import {TitleBarModule} from "../../factorys/title-bar/title-bar.module";
     LoginComponent,
     RegisterComponent
   ],
-    imports: [
-        CommonModule,
-        LoginRoutingModule,
-        MatTabsModule,
-        MatCardModule,
-        FlexLayoutModule,
-        MatFormFieldModule,
-        ReactiveFormsModule,
-        MatIconModule,
-        MatInputModule,
-        FormlyModule,
-        MatButtonModule,
-        UploadModule,
-        TitleBarModule,
-    ]
+  imports: [
+    CommonModule,
+    SessionRoutingModule,
+    MatTabsModule,
+    MatCardModule,
+    FlexLayoutModule,
+    MatFormFieldModule,
+    ReactiveFormsModule,
+    MatIconModule,
+    MatInputModule,
+    FormlyModule,
+    MatButtonModule,
+    UploadModule,
+    TitleBarModule,
+    MatProgressBarModule,
+    NzButtonModule,
+  ]
 })
-export class LoginModule { }
+export class SessionModule { }

@@ -1,0 +1,54 @@
+<div fxLayout="column" fxLayoutAlign="center center" class="session-container" fxFlexFill>
+  <div fxLayout="column" fxFlexFill>
+    <div fxFlex="30px">
+      <app-toolbar></app-toolbar>
+    </div>
+    <div fxFlex>
+      <mat-card class="mat-elevation-z0">
+        <mat-card-content>
+          <div fxLayout="column" fxLayoutGap="20px">
+            <div fxFlex="100">
+              <div fxLayout="row">
+                <div fxFlex="120px">
+                  <div fxLayout="column">
+                    <div fxFlex>
+                      <div fxFlex="90px">
+                        <h2 (click)="selectedChange(0)" style="margin: 0 0 10px 0">账号登录</h2>
+                      </div>
+                    </div>
+                    <div fxLayout="row">
+                      <div fxFlex="80px" fxLayoutAlign="center">
+                        <div fxFlex="40px" *ngIf="selectedTab === 0">
+                          <mat-progress-bar mode="determinate" value="100"></mat-progress-bar>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div fxFlex="120px">
+                  <div fxLayout="column">
+                    <div fxFlex>
+                      <div fxFlex="90px">
+                        <h2 (click)="selectedChange(1)" style="margin: 0 0 10px 0">立即注册</h2>
+                      </div>
+                    </div>
+                    <div fxLayout="row">
+                      <div fxFlex="80px" fxLayoutAlign="center">
+                        <div fxFlex="40px" *ngIf="selectedTab === 1">
+                          <mat-progress-bar mode="determinate" value="100"></mat-progress-bar>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div fxFlex="100">
+              <router-outlet></router-outlet>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

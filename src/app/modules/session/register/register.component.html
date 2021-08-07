@@ -1,20 +1,25 @@
 <div fxLayout="row" fxFlex="100">
-  <mat-card fxFlex="100" class="mat-elevation-z0" *ngIf="signupForm">
-    <mat-card-content *ngIf="step === 'one'">
-      <form fxLayout="column" [formGroup]="signupForm.form" (ngSubmit)="nextStep()" fxLayoutGap="16px">
-        <formly-form [model]="signupForm.model" [fields]="signupForm.fields" [options]="signupForm.options" [form]="signupForm.form">
+  <div fxFlex="100">
+    <div *ngIf="step === 'one'">
+      <form fxLayout="column" [formGroup]="form.form" (ngSubmit)="nextStep()" fxLayoutGap="16px">
+        <formly-form [model]="form.model" [fields]="form.fields" [options]="form.options" [form]="form.form">
         </formly-form>
         <div>
           <button mat-flat-button color="primary" class="register-button" fxFlex="100">下一步</button>
         </div>
       </form>
-    </mat-card-content>
-    <mat-card-content *ngIf="step === 'two'">
+      <div style="margin-top: 20px">
+        <button (click)="switchType(0)">用户名</button>
+        <button (click)="switchType(1)">手机号</button>
+        <button (click)="step = 'two'">next</button>
+      </div>
+    </div>
+    <div *ngIf="step === 'two'">
       <form [formGroup]="step2Form" (ngSubmit)="onSubmit()">
         <div fxLayout="column">
           <div fxFlex="100">
-            <div fxLayout="row" style="height: 120px" fxLayoutAlign="center center">
-              <div style="width: 40px; height: 40px;">
+            <div fxLayout="row" style="height: 80px" fxLayoutAlign="center center">
+              <div style="width: 60px; height: 60px; border-radius: 100%; overflow: hidden">
                 <app-upload-file (fileChange)="setAvatar($event)" [options]="uploadOptions"></app-upload-file>
               </div>
             </div>
@@ -22,7 +27,7 @@
           <div fxFlex="100">
             <mat-form-field fxFlex="100">
               <mat-label>请设置您的用户昵称</mat-label>
-              <input matInput name="nickname" placeholder="昵称" [formControl]="nicknameControl" value="">
+              <input matInput name="nickname" maxlength="15" placeholder="昵称" [formControl]="nicknameControl" value="">
               <mat-error *ngIf="nicknameControl.hasError('required')">
                 请设置您的用户昵称
               </mat-error>
@@ -50,13 +55,13 @@
             </div>
           </div>
           <div fxFlex="100" fxFlexOffset="40px" fxLayoutAlign="space-between">
-            <button mat-button type="button" class="register-button" fxFlex="18" (click)="step = 'one'">
-              <mat-icon>keyboard_backspace</mat-icon>
-            </button>
-            <button mat-flat-button color="primary" class="register-button" fxFlex="80">完成注册</button>
+            <button mat-flat-button color="primary" class="register-button" fxFlex="100">完成注册</button>
+          </div>
+          <div fxFlex="100" fxFlexOffset="10px" fxLayoutAlign="space-between">
+            <a nz-button nzType="default" nzSize="large" (click)="step = 'one'"  style="background: transparent;" fxFlex="100">返回</a>
           </div>
         </div>
       </form>
-    </mat-card-content>
-  </mat-card>
+    </div>
+  </div>
 </div>

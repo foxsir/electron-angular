@@ -1,5 +1,5 @@
-<mat-card class="mat-elevation-z0">
-  <mat-card-content>
+<div fxLayout="row" fxFlex="100">
+  <div fxFlex="100">
     <form fxLayout="column" [formGroup]="loginForm.form" (ngSubmit)="onSubmit()" fxLayoutGap="16px">
       <formly-form [model]="loginForm.model" [fields]="loginForm.fields" [options]="loginForm.options" [form]="loginForm.form">
       </formly-form>
@@ -7,5 +7,5 @@
         <button mat-flat-button color="primary" class="login-button" fxFlexFill>登录</button>
       </div>
     </form>
-  </mat-card-content>
-</mat-card>
+  </div>
+</div>
