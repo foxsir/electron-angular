@@ -11,9 +11,10 @@ const _PRODUCT_VER_NAME = '2.0_b200327_pro';
 const _PRODUCT_NAME = 'IM即时通讯产品';
 
 //本地测试
-const _HTTP_SERVER_ROOT_URL = "http://192.168.0.102:8808"; // TODO: 【1】开发者请修改为您自已的 http 服务根接口地址
-// const _HTTP_SERVER_ROOT_URL = "http://120.79.90.66:8808"; // TODO: 【1】开发者请修改为您自已的 http 服务根接口地址
-const _IM_SERVER_URL = "ws://192.168.0.102:9904/websocket"; // TODO: 【2】开发者请修改为您自已的 web im 服务端地址（即nodejs服务地址）
+// const _HTTP_SERVER_ROOT_URL = "http://192.168.0.105:8808"; // TODO: 【1】开发者请修改为您自已的 http 服务根接口地址
+const _HTTP_SERVER_ROOT_URL = "http://120.79.90.66:8808"; // TODO: 【1】开发者请修改为您自已的 http 服务根接口地址
+// const _IM_SERVER_URL = "ws://192.168.0.105:9904/websocket"; // TODO: 【2】开发者请修改为您自已的 web im 服务端地址（即nodejs服务地址）
+const _IM_SERVER_URL = "ws://120.79.90.66:9904/websocket"; // TODO: 【2】开发者请修改为您自已的 web im 服务端地址（即nodejs服务地址）
 // const _IM_SERVER_URL = "http://127.0.0.1:5000"; // TODO: 【2】开发者请修改为您自已的 web im 服务端地址（即nodejs服务地址）
 
 
@@ -22,6 +23,9 @@ const _IM_SERVER_URL = "ws://192.168.0.102:9904/websocket"; // TODO: 【2】开�
 const _HTTP_REST_URL = _HTTP_SERVER_ROOT_URL + "/rest_get";
 const _HTTP_LOGIN_URL = _HTTP_SERVER_ROOT_URL + "/api/user/login";
 const _HTTP_REGISTER_URL = _HTTP_SERVER_ROOT_URL + "/api/user/register";
+const _HTTP_FRIEND_LIST_URL = _HTTP_SERVER_ROOT_URL + "/api/user/friendList";
+// 检查用户名或者手机号是否存在
+const _HTTP_CHECK_REPEAT_URL = _HTTP_SERVER_ROOT_URL + "/api/user/checkRepeat";
 /* Web版IM静态资源（图片、表情、swf等）服务器地址 */
 const _IM_STATIC_SERVER_ROOT_URL = _IM_SERVER_URL + "/";
 /** 用户头像下载的独立http接口地址 */
@@ -59,6 +63,8 @@ const config = {
   HTTP_REST_URL: _HTTP_REST_URL,
   _HTTP_LOGIN_URL: _HTTP_LOGIN_URL,
   _HTTP_REGISTER_URL: _HTTP_REGISTER_URL,
+  _HTTP_FRIEND_LIST_URL: _HTTP_FRIEND_LIST_URL,
+  _HTTP_CHECK_REPEAT_URL: _HTTP_CHECK_REPEAT_URL,
   IM_STATIC_SERVER_ROOT_URL: _IM_STATIC_SERVER_ROOT_URL,
 
   WEB_FILE_UPLOAD_CONTROLLER_URL_ROOT: _WEB_FILE_UPLOAD_CONTROLLER_URL_ROOT,
