@@ -9,6 +9,7 @@ import {DomSanitizer} from "@angular/platform-browser";
 import uploadOptions from "../uploadOptions";
 import {FileService} from "@services/file/file.service";
 import DirectoryType from "@services/file/config/DirectoryType";
+import CommonTools from "@app/common/common.tools";
 
 @Component({
   selector: 'app-upload-file',
@@ -59,8 +60,10 @@ export class UploadFileComponent implements OnInit {
 
       this.loading = true;
       this.getBuffer(file).then(buffer => {
-        this.fileService.upload(buffer, DirectoryType.OSS_FILE).then(res => {
-          // console.dir(res);
+        let filename = CommonTools.md5([file.name, file.lastModified].join("-"));
+        filename = [filename, CommonTools.getFileExt(file.type)].join(".");
+
+        this.fileService.upload(buffer, filename, DirectoryType.OSS_FILE).then(res => {
           this.fileChange.emit(new URL(res.url));
           this.loading = false;
           this.fileUrl = res.url;
@@ -82,7 +85,7 @@ export class UploadFileComponent implements OnInit {
     reader.readAsDataURL(img);
   }
 
-  private getBuffer(img: any): Promise<Buffer> {
+  private getBuffer(file: any): Promise<Buffer> {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       let binaryString;
@@ -92,7 +95,7 @@ export class UploadFileComponent implements OnInit {
         const buffer = Buffer.from(arrayBuffer);
         resolve(buffer);
       };
-      reader.readAsArrayBuffer(img);
+      reader.readAsArrayBuffer(file);
     });
   }
 
