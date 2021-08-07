@@ -19,11 +19,14 @@ export class FileService {
   constructor() { }
 
   // Buffer/Blob/File
-  upload(buffer: Buffer, fileType: string): Promise<OSS.PutObjectResult> {
+  upload(buffer: Buffer, filename: string, fileType: string): Promise<OSS.PutObjectResult> {
+
+    'message_file/my-obj.png'
+
     if (Object.values(DirectoryType).includes(fileType)) {
-      return this.client.put('message_file/my-obj.png', buffer);
+      return this.client.put([fileType, filename].join("/"), buffer);
     } else {
-      throw new Error([fileType, "未知的文件类型"].join(": "));
+      throw new Error([fileType, "未知的文件路径类型 请参考：DirectoryType"].join(": "));
     }
   }
 
