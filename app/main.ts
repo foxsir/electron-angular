@@ -1,9 +1,10 @@
-import { app, BrowserWindow, screen, ipcMain } from 'electron';
+import { app, BrowserWindow, screen, ipcMain, Menu } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as url from 'url';
 
 import WindowEventListen from "./windowEventListen";
+import defaultOptions from "./DefaultOptions";
 
 // Initialize remote module
 require('@electron/remote/main').initialize();
@@ -24,10 +25,10 @@ function createWindow(): BrowserWindow {
     // width: size.width,
     // height: size.height,
     resizable: false,
-    width: 400,
-    height: 440,
-    minWidth: 800,
-    minHeight: 600,
+    width: defaultOptions.size.width,
+    height: defaultOptions.size.height,
+    minWidth: defaultOptions.size.width,
+    minHeight: defaultOptions.size.height,
     frame: false,
     webPreferences: {
       nodeIntegration: true,
@@ -38,11 +39,12 @@ function createWindow(): BrowserWindow {
   });
 
   if (serve) {
-    win.webContents.openDevTools();
     require('electron-reload')(__dirname, {
       electron: require(path.join(__dirname, '/../node_modules/electron'))
     });
-    win.loadURL('http://localhost:4200');
+    win.loadURL('http://localhost:4200').then(res => {
+      win.webContents.openDevTools();
+    });
   } else {
     // Path when running electron executable
     let pathIndex = './index.html';
@@ -52,11 +54,15 @@ function createWindow(): BrowserWindow {
       pathIndex = '../dist/index.html';
     }
 
-    win.loadURL(url.format({
-      pathname: path.join(__dirname, pathIndex),
-      protocol: 'file:',
-      slashes: true
-    }));
+    // win.loadURL(url.format({
+    //   pathname: path.join(__dirname, pathIndex),
+    //   protocol: 'file:',
+    //   slashes: true
+    // }));
+    win.loadFile(path.join(__dirname, pathIndex)).then(res => {
+      // console.dir(res);
+      win.webContents.openDevTools();
+    });
   }
 
   // Emitted when the window is closed.
@@ -74,6 +80,32 @@ function createWindow(): BrowserWindow {
   //   win.setPosition(position[0]-200, position[1]-80);
   // })
   WindowEventListen.listen(win)
+
+
+  let template = [
+    {
+      label: "调试",
+      submenu: [
+        {
+          label: "打开控制台",
+          click: function () {
+            win.webContents.openDevTools();
+          }
+        },
+        {
+          label: "退出",
+          click: function () {
+            app.exit();
+          }
+        }
+      ]
+    }
+  ];
+
+  // let menu = Menu.buildFromTemplate(template)
+  //
+  // // 3.设置菜单到应用中
+  // Menu.setApplicationMenu(menu)
 
   return win;
 }
