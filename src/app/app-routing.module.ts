@@ -3,8 +3,8 @@ import { Routes, RouterModule } from '@angular/router';
 import { PageNotFoundComponent } from './shared/components';
 
 const routes: Routes = [
-  {path: '', loadChildren: () => import('@modules/login/login.module').then(m => m.LoginModule)},
-  {path: 'login', loadChildren: () => import('@modules/login/login.module').then(m => m.LoginModule)},
+  {path: '', loadChildren: () => import('@modules/session/session.module').then(m => m.SessionModule)},
+  {path: 'session', loadChildren: () => import('@modules/session/session.module').then(m => m.SessionModule)},
   {path: 'home', loadChildren: () => import('@modules/home/home.module').then(m => m.HomeModule)},
   {
     path: '**',
