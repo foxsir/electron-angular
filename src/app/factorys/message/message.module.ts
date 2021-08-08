@@ -19,6 +19,7 @@ import { MessageNoTalkComponent } from './message-no-talk/message-no-talk.compon
 import { MessageBackComponent } from './message-back/message-back.component';
 import {FlexLayoutModule} from "@angular/flex-layout";
 import {MatDividerModule} from "@angular/material/divider";
+import {MatButtonModule} from "@angular/material/button";
 
 @NgModule({
     declarations: [
@@ -47,6 +48,7 @@ import {MatDividerModule} from "@angular/material/divider";
     CommonModule,
     FlexLayoutModule,
     MatDividerModule,
+    MatButtonModule,
   ]
 })
 export class MessageModule { }
