@@ -17,6 +17,8 @@ import { MessageSystemComponent } from './message-system/message-system.componen
 import { MessageFactoryComponent } from './message-factory/message-factory.component';
 import { MessageNoTalkComponent } from './message-no-talk/message-no-talk.component';
 import { MessageBackComponent } from './message-back/message-back.component';
+import {FlexLayoutModule} from "@angular/flex-layout";
+import {MatDividerModule} from "@angular/material/divider";
 
 @NgModule({
     declarations: [
@@ -41,8 +43,10 @@ import { MessageBackComponent } from './message-back/message-back.component';
     exports: [
       MessageFactoryComponent
     ],
-    imports: [
-        CommonModule
-    ]
+  imports: [
+    CommonModule,
+    FlexLayoutModule,
+    MatDividerModule,
+  ]
 })
 export class MessageModule { }
