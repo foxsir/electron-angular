@@ -1,1 +1,20 @@
-{{chatMsg.text}}
+<div fxLayout="column" fxLayoutGap="10px" class="user-card-container">
+  <div fxFlex>
+    <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start center">
+      <div fxFlex="40px">
+        <img src="" class="user-avatar" alt="">
+      </div>
+      <div fxFlex>
+        {{userContact.nickName}}
+      </div>
+    </div>
+  </div>
+  <div fxFlex>
+    <div fxLayout="column" fxLayoutGap="10px">
+      <div fxFlex><mat-divider inset></mat-divider></div>
+      <div fxFlex style="color: #888888">
+        个人名片
+      </div>
+    </div>
+  </div>
+</div>
