@@ -1,1 +1,19 @@
-{{chatMsg.text}}
+<div fxLayout="column" fxLayoutGap="10px" class="file-card-container">
+  <div fxFlex>
+    <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start center">
+      <div fxFlex>
+        {{fileInfo.fileName}}
+      </div>
+    </div>
+  </div>
+  <div fxFlex>
+    <div fxLayout="column" fxLayoutGap="10px">
+      <div fxFlex>
+        <mat-divider inset></mat-divider>
+      </div>
+      <div fxFlex>
+        <button mat-button>下载文件</button>
+      </div>
+    </div>
+  </div>
+</div>
