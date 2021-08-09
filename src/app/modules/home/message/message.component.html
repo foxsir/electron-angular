@@ -2,7 +2,12 @@
   <mat-drawer #chattingSetting mode="side" position="end">
     <div fxFlex="280px">
       <mat-card class="mat-elevation-z0" *ngIf="currentChat">
-        {{currentChat.title}}
+        {{currentChat | json}}
+        <!--判断是单聊还是群聊-->
+        <!--单聊-->
+        <app-chatting-setting *ngIf="currentChat.metadata.msgType !== 2" [currentChat]="currentChat"></app-chatting-setting>
+        <!--群聊-->
+        <app-group-chatting-setting *ngIf="currentChat.metadata.msgType === 2" [currentChat]="currentChat"></app-group-chatting-setting>
       </mat-card>
     </div>
   </mat-drawer>
@@ -31,26 +36,26 @@
         <mat-card class="mat-elevation-z0" style="background: #F1F1F1;"
                   *ngFor="let alarm of alarmItemList" (click)="switchChat(alarm); chattingSetting.close();">
           <div fxLayout="row" fxLayoutGap="10px">
-            <div fxFlex="40px" [matBadge]="massageBadges[alarm.dataId]" matBadgeColor="warn"
+            <div fxFlex="40px" [matBadge]="massageBadges[alarm.alarmItem.dataId]" matBadgeColor="warn"
                  matBadgePosition="above after" matBadgeSize="small"
-                 [matBadgeHidden]="massageBadges[alarm.dataId] === 0"
+                 [matBadgeHidden]="massageBadges[alarm.alarmItem.dataId] === 0"
                  matBadgeOverlap="true">
               <img src="https://material.angular.io/assets/img/examples/shiba1.jpg" mat-card-avatar alt="">
             </div>
             <div fxFlex="calc(100% - 200px)">
               <div fxLayout="column">
                 <div fxFlex="100">
-                  <mat-card-subtitle>{{alarm.title}}</mat-card-subtitle>
+                  <mat-card-subtitle>{{alarm.alarmItem.title}}</mat-card-subtitle>
                 </div>
                 <div fxFlex="100">
-                  <div class="chatting-hint">{{alarm.msgContent}}</div>
+                  <div class="chatting-hint">{{alarm.alarmItem.msgContent}}</div>
                 </div>
               </div>
             </div>
             <div fxFlex="70px" fxLayoutAlign="center">
               <div fxLayout="column">
                 <div fxFlex="100" fxLayout="row">
-                  <div style="font-size: 12px;">{{formatDate(alarm.date, 'M-d h:m')}}</div>
+                  <div style="font-size: 12px;">{{formatDate(alarm.alarmItem.date, 'M-d h:m')}}</div>
                 </div>
                 <div fxFlex="100" fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="end">
                   <mat-icon class="chatting-action-button">volume_up</mat-icon>
@@ -75,7 +80,7 @@
                   <div fxFlex="40px" fxLayoutAlign="center center" style="width: 100%">
                     <div fxLayout="column" style="width: 100%">
                       <div fxFlex="22px" class="chatting-title">
-                        {{currentChat.title}}
+                        {{currentChat.alarmItem.title}}
                       </div>
                       <div fxFlex="18px" class="chatting-subtitle" *ngIf="currentChatSubtitle">
                         {{currentChatSubtitle}}

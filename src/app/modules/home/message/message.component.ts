@@ -38,6 +38,13 @@ import {ContextMenuService} from "@services/context-menu/context-menu.service";
 import ContextMenu from "@app/models/ContextMenu";
 import {AvatarService} from "@services/avatar/avatar.service";
 
+interface AlarmItemInterface {
+  alarmItem: Chatting;
+  metadata: {
+    msgType: number;
+  };
+}
+
 @Component({
   selector: 'app-message',
   templateUrl: './message.component.html',
@@ -55,9 +62,9 @@ export class MessageComponent implements OnInit {
   public voiceIcon = this.dom.bypassSecurityTrustResourceUrl(voiceIcon);
   public voiceActiveIcon = this.dom.bypassSecurityTrustResourceUrl(voiceActiveIcon);
 
-  public alarmItemList: Chatting[] = [];
+  public alarmItemList: AlarmItemInterface[] = [];
   public chatMsgEntityList: ChatMsgEntity[];
-  public currentChat: Chatting;
+  public currentChat: AlarmItemInterface;
   public currentChatAvatar: SafeResourceUrl;
   public currentChatSubtitle: string = null;
   public formatDate = formatDate;
@@ -148,11 +155,10 @@ export class MessageComponent implements OnInit {
       // const isonLine = row[12];//111 置顶
 
 
-      let alarmData = null;
+      let alarmData: Chatting = null;
 
       // 群聊消息
       if (chatType === ChatModeType.CHAT_TYPE_GROUP$CHAT) {
-
         // 群聊消息的发出者uid
         const srcUid = row[6];
         // true表示是我自已发出的群聊消息
@@ -160,15 +166,19 @@ export class MessageComponent implements OnInit {
 
         // 我自已发出的消息，在首页“消息”里显示时，不需要显示昵称了（就像微信一样）;
         //111 新增了 57
-        if (msgType != "57") {
+        if (Number(msgType) !== 57) {
           alarmData = this.alarmsProviderService.createAGroupChatMsgAlarm(msgType, msgContent, gname, gid,
             isMe ? null : chatUserNickname, RBChatUtils.isStringEmpty(msgTimestamp) ?
               RBChatUtils.getCurrentUTCTimestamp() : msgTimestamp,);
           //111 插入置顶
           alarmData.istop = istop;
-          this.insertItem(alarmData, false);
-        }
 
+          const alarmItem: AlarmItemInterface = {
+            alarmItem: alarmData,
+            metadata: {msgType: chatType}
+          };
+          this.insertItem(alarmItem);
+        }
       } else { // 单聊消息
         // 是“我”的好友
         if (isFriend === 1) {
@@ -185,15 +195,19 @@ export class MessageComponent implements OnInit {
         }
         //111 插入置顶
         alarmData.istop = istop;
-        this.insertItem(alarmData, false);
+        const alarmItem: AlarmItemInterface = {
+          alarmItem: alarmData,
+          metadata: {msgType: chatType}
+        };
+        this.insertItem(alarmItem);
       }
     });
   }
 
-  insertItem(alarmData: Chatting, atTheTop: boolean) {
-    Object.assign(this.massageBadges, {[alarmData.dataId.trim()]: 0});
+  insertItem(alarmData: AlarmItemInterface) {
+    Object.assign(this.massageBadges, {[alarmData.alarmItem.dataId.trim()]: 0});
 
-    if (Object.is(atTheTop, true)) {
+    if (Object.is(alarmData.alarmItem.istop, true)) {
       this.alarmItemList = [alarmData, ...this.alarmItemList];
     } else {
       this.alarmItemList = [ ...this.alarmItemList, alarmData];
@@ -211,15 +225,15 @@ export class MessageComponent implements OnInit {
    * 切换聊天对象
    * @param alarm
    */
-  switchChat(alarm) {
+  switchChat(alarm: AlarmItemInterface) {
     this.resetUI();
 
     this.currentChat = alarm;
-    this.avatarService.getAvatar(alarm.dataId).then(url => {
+    this.avatarService.getAvatar(alarm.alarmItem.dataId).then(url => {
       this.currentChatAvatar = this.dom.bypassSecurityTrustResourceUrl(url);
     });
 
-    this.restService.getUserBaseById(alarm.dataId).subscribe(res => {
+    this.restService.getUserBaseById(alarm.alarmItem.dataId).subscribe(res => {
       if (res.data !== null) {
         this.currentChatSubtitle = [res.data.latestLoginAddres, res.data.registerIp].join(": ");
       } else {
