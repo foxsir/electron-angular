@@ -12,7 +12,7 @@ export class DialogService {
   ) { }
 
 
-  openDialog(component: ComponentType<any>, config: MatDialogConfig) {
+  openDialog(component: ComponentType<any>, config: MatDialogConfig = {}) {
     const dialogRef = this.dialog.open(component, config);
 
     dialogRef.afterClosed().subscribe(result => {

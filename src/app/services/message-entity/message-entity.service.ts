@@ -198,7 +198,7 @@ export class MessageEntityService {
   createChatMsgEntity_TO_TEXT(message, time, fingerPrint, xu_isRead_type = null) {
     // const chatMsgEntityObj =
     // this.createChatMsgEntity_COME_TEXT(this.imService.getLoginInfo().loginUserId, "我", message, time, fingerPrint);
-    const chatMsgEntityObj = this.createChatMsgEntity_COME_TEXT(this.localUserService.getObj().user_uid, "我", message, time, fingerPrint);
+    const chatMsgEntityObj = this.createChatMsgEntity_COME_TEXT(this.localUserService.getObj().userId, "我", message, time, fingerPrint);
     chatMsgEntityObj.isOutgoing = true;
 
     chatMsgEntityObj.xu_isRead_type = xu_isRead_type;  //111 新增已读类型

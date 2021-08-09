@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import {LocalUserService} from "@services/local-user/local-user.service";
 import {RestService} from "@services/rest/rest.service";
+import RBChatUtils from "@app/libs/rbchat-utils";
+import NewHttpResponse from "@app/models/NewHttpResponse";
 
 /**
  * 好友列表数据提供者（即好友列表全局数据模型）.
@@ -22,25 +24,26 @@ export class RosterProviderService {
    * @param fn_callback_for_success 回调函数，当本参数不为空时，数据加载成后后会通知此回函数，此回调函数里可以实现UI的刷新逻辑等
    */
   refreshRosterAsync() {
-    const localUserUid = this.localUserService.getObj().user_uid;
-    return this.restServiceService.submitGetRosterToServer(localUserUid);
-
+    const localUserUid = this.localUserService.getObj().userId;
+    // return this.restServiceService.submitGetRosterToServer(localUserUid);
     // 通过rest接口获取好友列表数据
-    // this.restServiceService.submitGetRosterToServer(localUserUid).subscribe(res => {
-    //   console.log(res);
-    //   // 服务端返回的是一维RosterElementEntity对象数组
-    //   const rosterList = JSON.parse(res.returnValue);
-    //
-    //   if (rosterList.length > 0) {
-    //     RBChatUtils.logToConsole('【refreshRosterAsync】服务端返回的好友数据行数：' + rosterList.length);
-    //
-    //     // 用最新的好友表数据刷新好友列表
-    //     console.dir(rosterList);
-    //     this.putFriends(rosterList);
-    //   } else {
-    //     RBChatUtils.logToConsole('【refreshRosterAsync】服务端返回的好友数据为空，本次拉取已结束。');
-    //   }
-    // });
+    this.restServiceService.submitGetRosterToServer(localUserUid).subscribe((res: NewHttpResponse<any>) => {
+      // 服务端返回的是一维RosterElementEntity对象数组
+      if(res.status === 200) {
+        const rosterList = res.data;
+
+        if (rosterList.length > 0) {
+          RBChatUtils.logToConsole('【refreshRosterAsync】服务端返回的好友数据行数：' + rosterList.length);
+
+          // 用最新的好友表数据刷新好友列表
+          this.putFriends(rosterList);
+        } else {
+          RBChatUtils.logToConsole('【refreshRosterAsync】服务端返回的好友数据为空，本次拉取已结束。');
+        }
+      } else {
+        RBChatUtils.logToConsole_ERROR("refreshRosterAsync: 获取好友列表失败");
+      }
+    });
   }
 
   /**
@@ -86,7 +89,7 @@ export class RosterProviderService {
 
     // 再逐个放入数组元素
     for (let i = 0; i < newDatas.length; i++) {
-      var ree = newDatas[i];
+      const ree = newDatas[i];
       // 注意splice函数的用法（向i索引处放入元素）
       this.rosterData.splice(i, 0, ree);
     }
@@ -130,11 +133,10 @@ export class RosterProviderService {
    *              x52im/rainbowchat/http/logic/dto/RosterElementEntity.html)
    */
   getFriendInfoByUid(uid) {
-    // console.log(this.rosterData);
     if (this.rosterData) {
-      for (let ree of this.rosterData) {
+      for (const ree of this.rosterData) {
         // 数组元素便是RosterElementEntity对象
-        if (ree.user_uid === uid) {return ree;}
+        if (Number(ree.friendUserUid) === Number(uid)) {return ree;}
       }
     }
 

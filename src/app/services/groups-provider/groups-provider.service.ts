@@ -36,7 +36,7 @@ export class GroupsProviderService {
    * @param fn_callback_for_success 回调函数，当本参数不为空时，数据加载成后后会通知此回函数，此回调函数里可以实现UI的刷新逻辑等
    */
   refreshGroupsListAsync(fn_callback_for_success) {
-    const localUserUid = this.localUserService.getObj().user_uid;
+    const localUserUid = this.localUserService.getObj().userId;
     // 通过rest接口获取群组列表数据
     return this.restService.submitGetGroupsListFromServer(localUserUid);
   }

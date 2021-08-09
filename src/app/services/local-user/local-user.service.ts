@@ -38,7 +38,8 @@ export class LocalUserService {
    * @see getObj_AlertIfNotExist()
    */
   getUid() {
-    return this.getObj_AlertIfNotExist()?.user_uid;
+    return this.getObj()?.userId;
+    // return this.getObj_AlertIfNotExist()?.user_uid;
   }
 
   /**

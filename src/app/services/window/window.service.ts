@@ -42,4 +42,8 @@ export class WindowService {
     ipcRenderer.send("closeWindow");
   }
 
+  openDevTools() {
+    ipcRenderer.send("openDevTools");
+  }
+
 }

@@ -533,6 +533,7 @@ export class ImService {
 
       // 真正发出登陆请求网络指令
       const code = this.mbDataSender.sendLogin(varloginInfo);
+      console.dir(varloginInfo);
       if(code === 0) {
         this.callback_onIMLog('[SDK]  登陆/连接信息已发出（等待底层Socket反馈和服务端响应中...）！', true);
       } else {

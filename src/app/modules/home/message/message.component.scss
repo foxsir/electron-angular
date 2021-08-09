@@ -73,7 +73,6 @@
   }
 }
 
-
 #chatting-panel {
   .message-entity-item {
     position: relative;
@@ -81,13 +80,13 @@
     background: white;
     width: fit-content;
     border-radius: 0px 6px 6px 6px;
+    word-break: break-word;
   }
   .self-message .message-entity-item {
     background: #CCE4FF;
     border-radius: 6px 0px 6px 6px;
   }
 }
-
 
 .message-container {
   .message-time {

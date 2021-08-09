@@ -5,6 +5,12 @@ import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 import {createCommonData2} from "@app/libs/mobileimsdk-client-common";
 import {ImService} from "@services/im/im.service";
 
+interface SendMessageResponse {
+  success: boolean;
+  msgBody: any;
+  fingerPrint: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -183,63 +189,58 @@ export class MessageService {
   //    _sendMessage(MsgType.TYPE_IMAGE, friendUID, imageFileName, fn_callback);
   //}
 
-  sendMessage(msgType, friendUID, msgContent, fn_callback) {
-    let sucess = false;
-    let msgBody = null;
+  sendMessage(msgType, friendUID, msgContent): Promise<SendMessageResponse> {
+    return new Promise((resolve, reject) => {
+      let sucess = false;
+      let msgBody = null;
 
-    // if (!RBChatChattingContentPaneUI.send4IMCheck()) {
-    //   //
-    // } else
+      // if (!RBChatChattingContentPaneUI.send4IMCheck()) {
+      //   //
+      // } else
 
-    let p;
-    if (!friendUID) {
-      //alert('消息接收者不能为空！');
-      this.snackBarService.openSnackBar('消息接收者不能为空！');
-    } else if (!msgContent) {
-      //alert('消息内容不能为空！');
-      this.snackBarService.openSnackBar('消息内容不能为空！');
-    } else {
-      // 消息发送者uid（就是本地用户的uid了）
-      // var fromUid = this.imService.getLoginInfo().loginUserId;
-      //111 设备需要加web
-      let fromUid = 0;
-      this.imService.promiseUserInfo().then(loginInfo => {
-        fromUid = loginInfo.loginUserId.split("web")[1] ?
-          loginInfo.loginUserId.split("web")[1] :
-          loginInfo.loginUserId;
-      });
+      let p;
+      if (!friendUID) {
+        //alert('消息接收者不能为空！');
+        this.snackBarService.openSnackBar('消息接收者不能为空！');
+      } else if (!msgContent) {
+        //alert('消息内容不能为空！');
+        this.snackBarService.openSnackBar('消息内容不能为空！');
+      } else {
+        // 消息发送者uid（就是本地用户的uid了）
+        // var fromUid = this.imService.getLoginInfo().loginUserId;
+        //111 设备需要加web
+        this.imService.promiseUserInfo().then(loginInfo => {
+          const fromUid = loginInfo.loginUserId;
 
-      // const fromUid =
-      //     this.imService.getLoginInfo().loginUserId.split("web")[1] ?
-      //     this.imService.getLoginInfo().loginUserId.split("web")[1] :
-      //     this.imService.getLoginInfo().loginUserId;
+          // const fromUid =
+          //     this.imService.getLoginInfo().loginUserId.split("web")[1] ?
+          //     this.imService.getLoginInfo().loginUserId.split("web")[1] :
+          //     this.imService.getLoginInfo().loginUserId;
 
-      // console.log(this.imService.getLoginInfo().loginUserId.split("web"))
-      // console.log(fromUid)
-      // debugger
+          // console.log(this.imService.getLoginInfo().loginUserId.split("web"))
+          // console.log(fromUid)
+          // debugger
 
-      // 要发送的聊天消息内容，实际上是一个MsgBody4Friend对象
-      // （详见：http://docs.52im.net/extend/docs/api/rainbowchatserver4_pro/com/x52im/rainbowchat/im/dto/MsgBody4Friend.html）
-      msgBody = this.constructFriendChatMsgBody(fromUid, friendUID, msgContent, msgType);
-      // 构建建IM协议报文包（即Protocal对象，
-      // 详见：http://docs.52im.net/extend/docs/api/mobileimsdk/server/net/openmob/mobileimsdk/server/protocal/Protocal.html）
-      p = createCommonData2(JSON.stringify(msgBody), fromUid, friendUID, UserProtocalsType.MT03_OF_CHATTING_MESSAGE);
-      // console.log(msgBody)
-      // 将消息通过websocket发送出去
-      console.log(p);
-      this.imService.sendData(p);
-      sucess = true;
-      //    111
-      // 清空输入框
-      // $("#im-panel-inputcontent").val("");
-    }
-    if (fn_callback) {
-      //111 新增指纹码
-      const fingerPrint = p.fp;
-      fn_callback(sucess, msgBody, fingerPrint);
-      //原版
-      // fn_callback(sucess, msgBody);
-    }
+          // 要发送的聊天消息内容，实际上是一个MsgBody4Friend对象
+          // （详见：http://docs.52im.net/extend/docs/api/rainbowchatserver4_pro/com/x52im/rainbowchat/im/dto/MsgBody4Friend.html）
+          msgBody = this.constructFriendChatMsgBody(fromUid, friendUID, msgContent, msgType);
+          // 构建建IM协议报文包（即Protocal对象，
+          // 详见：http://docs.52im.net/extend/docs/api/mobileimsdk/server/net/openmob/mobileimsdk/server/protocal/Protocal.html）
+          p = createCommonData2(JSON.stringify(msgBody), fromUid, friendUID, UserProtocalsType.MT03_OF_CHATTING_MESSAGE);
+          // 将消息通过websocket发送出去
+
+          this.imService.sendData(p);
+          sucess = true;
+          //    111
+          // resolve, reject
+          resolve({
+            success: sucess,
+            msgBody: msgBody,
+            fingerPrint: p.fp,
+          });
+        });
+      }
+    });
   }
 
   // 111 新增音视频消息发送
@@ -321,7 +322,7 @@ export class MessageService {
           //
           //     let fid = ""
           //     for (let i = 0; i < JSON.parse(returnValue).length; i++) {
-          //         if (JSON.parse(returnValue)[i].user_uid != this.localUserService.getObj().user_uid) {
+          //         if (JSON.parse(returnValue)[i].user_uid != this.localUserService.getObj().userId) {
           //             uid.push(JSON.parse(returnValue)[i])
           //         }
           //         if (i < JSON.parse(returnValue).length - 1) {

@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import {ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {AlarmsProviderService} from "@services/alarms-provider/alarms-provider.service";
 import RBChatUtils from "@app/libs/rbchat-utils";
-import {AlarmMessageType, ChatModeType, RBChatConfig, UserProtocalsType} from "@app/config/rbchat-config";
+import {AlarmMessageType, ChatModeType, MsgType, RBChatConfig, UserProtocalsType} from "@app/config/rbchat-config";
 import {LocalUserService} from "@services/local-user/local-user.service";
 import {RestService} from "@services/rest/rest.service";
 import {createCommonData2, formatDate} from "@app/libs/mobileimsdk-client-common";
@@ -41,9 +41,11 @@ import {AvatarService} from "@services/avatar/avatar.service";
 @Component({
   selector: 'app-message',
   templateUrl: './message.component.html',
-  styleUrls: ['./message.component.scss']
+  styleUrls: ['./message.component.scss'],
 })
 export class MessageComponent implements OnInit {
+  @ViewChild("chattingContainer") chattingContainer: ElementRef;
+
   // image
   public editIcon = this.dom.bypassSecurityTrustResourceUrl(editIcon);
   public settingIcon = this.dom.bypassSecurityTrustResourceUrl(settingIcon);
@@ -88,12 +90,16 @@ export class MessageComponent implements OnInit {
   ) {
     this.localUserInfo = this.localUserService.localUserInfo;
 
-    this.messageDistributeService.MT03_OF_CHATTING_MESSAGE$.subscribe((data: OriginData) => {
-      const dataContent: any = JSON.stringify(data.dataContent);
+    this.messageDistributeService.MT03_OF_CHATTING_MESSAGE$.subscribe((res: OriginData) => {
+      const dataContent: any = JSON.parse(res.dataContent);
       // alert("单聊" + data.from);
-      this.massageBadges[data.from.trim()] = 4;
+      this.massageBadges[res.from.trim()] = 4;
 
-      // console.dir(this.massageBadges);
+      const chatMsgEntity = this.messageEntityService.prepareRecievedMessage(
+        res.from, dataContent.nickName, dataContent.m, (new Date()).getTime(), MsgType.TYPE_TEXT, res.fp
+      );
+      // fromUid, nickName, msg, time, msgType, fp = null
+      this.pushMessageToPanel(chatMsgEntity);
     });
 
     // this.messageDistributeService.MT44_OF_GROUP$CHAT$MSG_A$TO$SERVER$.subscribe((data: OriginData) => {
@@ -171,6 +177,7 @@ export class MessageComponent implements OnInit {
               .isStringEmpty(msgTimestamp) ? RBChatUtils.getCurrentUTCTimestamp() :
               msgTimestamp);
         } else {
+          // 陌生人
           alarmData = this.alarmsProviderService.createATempChatMsgAlarm(
             msgType, msgContent, chatUserNickname, chatUserUid, RBChatUtils
               .isStringEmpty(msgTimestamp) ? RBChatUtils.getCurrentUTCTimestamp() :
@@ -190,6 +197,13 @@ export class MessageComponent implements OnInit {
       this.alarmItemList = [alarmData, ...this.alarmItemList];
     } else {
       this.alarmItemList = [ ...this.alarmItemList, alarmData];
+    }
+  }
+
+  pushMessageToPanel(chat: ChatMsgEntity) {
+    if(this.chatMsgEntityList) {
+      this.chatMsgEntityList.push(chat);
+      this.scrollToBottom();
     }
   }
 
@@ -264,19 +278,19 @@ export class MessageComponent implements OnInit {
 
       dataList.forEach(row => {
         const srcUid = row[0];
-          const destUid = row[1];
-          const chat_type = row[2];
-          const msg_type = row[3];
-          const msgContent = row[4];
-          const msgTime2Timestamp = row[5];
-          const fingerPrint = row[6];
+        const destUid = row[1];
+        const chat_type = row[2];
+        const msg_type = row[3];
+        const msgContent = row[4];
+        const msgTime2Timestamp = row[5];
+        const fingerPrint = row[6];
 
         // true表示此行数据是群聊息，否则是单聊的
         const returnIsGroupChatting = (chat_type === ChatModeType.CHAT_TYPE_GROUP$CHAT);
         // true表示是“我”发出的消息，否则是“我”收到的消息（即对方发给“我”的）
         // var isOutgoing = (srcUid == IMSDK.getLoginInfo().loginUserId);
         //111 这是在加上登录web 标识后取值错误，换内存取
-        const isOutgoing = (srcUid == this.localUserService.getObj().userId);
+        const isOutgoing = (Number(srcUid) === Number(this.localUserService.getObj().userId));
 
         // 消息发送者的uid
         const beyongUid = returnIsGroupChatting ? srcUid : (isOutgoing ? destUid :
@@ -332,7 +346,18 @@ export class MessageComponent implements OnInit {
           // console.dir(chatMsgEntity);
         }
       });
+
+      // 消息容器滚动到底部
+      this.scrollToBottom("auto");
     });
+  }
+
+  scrollToBottom(behavior: "auto" | "smooth" = "smooth") {
+    setTimeout(() => {
+      this.chattingContainer.nativeElement.lastElementChild?.scrollIntoView({
+        behavior: behavior, block: "start"
+      });
+    }, 500);
   }
 
   textMenuForMessage(e: MouseEvent, menu: MatMenuTrigger, span: HTMLSpanElement, chat: ChatMsgEntity) {

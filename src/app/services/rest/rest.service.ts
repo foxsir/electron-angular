@@ -75,7 +75,8 @@ export class RestService {
    *
    */
   submitGetRosterToServer(uid) {
-    return this.restServer(MyProcessorConst.PROCESSOR_LOGIC, JobDispatchConst.LOGIC_ROSTER, SysActionConst.ACTION_APPEND1,uid);
+    // return this.restServer(MyProcessorConst.PROCESSOR_LOGIC, JobDispatchConst.LOGIC_ROSTER, SysActionConst.ACTION_APPEND1,uid);
+    return this.http.get(RBChatConfig._HTTP_FRIEND_LIST_URL, {userId: uid});
   }
 
   /**
@@ -171,7 +172,7 @@ export class RestService {
       m = {
         gid,          // 被查群id
         // 'luid'      : localUserUid, // local uid（即“我”的uid）
-        luid: localUserUid.split("web")[1] ? localUserUid.split("web")[1] : localUserUid, //111 设备需要 local uid（即“我”的uid）
+        luid: localUserUid, //111 设备需要 local uid（即“我”的uid）
         orderby,      // 排序方式： 1 表示按消息时间DESC逆序，0 表示按消息时间ASC顺序排序
         starttime,    // 聊天记录查询范围的起始时间（为空表示不区分时间范围），形如：“2019-01-01 10:02:02”
         endtime       // 聊天记录查询范围的结束时间（为空表示查询截止当前时间），形如：“2019-01-01 10:02:02”
@@ -180,7 +181,7 @@ export class RestService {
       // 要提交给服务端的参数
       m = {
         // 'luid'      : localUserUid, // local uid（即“我”的uid）
-        luid: localUserUid.split("web")[1] ? localUserUid.split("web")[1] : localUserUid, //111 设备需要 local uid（即“我”的uid）
+        luid: localUserUid, //111 设备需要 local uid（即“我”的uid）
 
         ruid: friendUid,    // remote uid（即“对方”的uid）
         orderby,      // 排序方式： 1 表示按消息时间DESC逆序，0 表示按消息时间ASC顺序排序
@@ -276,6 +277,15 @@ export class RestService {
    */
   submitVerifyCodeToServer(data: any) {
     return this.http.postForm(verifyCode, data);
+  }
+
+  /**
+   * 检查用户名或者手机号是否存在
+   * @param params
+   * @param data
+   */
+  checkUsernameAndPhone(params: string, data: any) {
+    return this.http.post(RBChatConfig._HTTP_CHECK_REPEAT_URL + params, data);
   }
 
   getAppConfig() {
@@ -384,7 +394,7 @@ export class RestService {
     const localUserInfo = this.localUserService.getObj();
 
     // 本地用户的uid
-    const localUserUid = localUserInfo.user_uid;
+    const localUserUid = localUserInfo.userId;
 
     // 要提交给服务端的参数（本参数即CMDBody4AddFriendRequest对象，
     // 详见：http://docs.52im.net/extend/docs/api/rainbowchatserver4_pro/com/x52im/rainbowchat/im/dto/CMDBody4AddFriendRequest.html）
@@ -405,7 +415,7 @@ export class RestService {
     // 读取本地用户信息
     const localUserInfo = this.localUserService.getObj();
     // 本地用户的uid
-    const localUserUid = localUserInfo.user_uid;
+    const localUserUid = localUserInfo.userId;
     // 要提交给服务端的参数（本参数即CMDBody4AddFriendRequest对象，
     const m = {
       groupUid,
@@ -699,7 +709,7 @@ export class RestService {
   //    111 退出登录
   loginOut() {
     const xum = {
-      uid: "web" + this.localUserService.getObj().user_uid
+      uid: "web" + this.localUserService.getObj().userId
     };
 
     return this.restServer(MyProcessorConst.PROCESSSOR_LOGOUT,-1 ,-1
@@ -712,7 +722,7 @@ export class RestService {
   getMyCollectList() {
     const localUser = this.localUserService.getObj();
     const data = {
-      userId: localUser.user_uid,
+      userId: localUser.userId,
     };
     return this.http.get(getMissuCollectById, data);
   }
@@ -723,7 +733,7 @@ export class RestService {
   getMyBlackList() {
     const localUser = this.localUserService.getObj();
     const data = {
-      userId: localUser.user_uid,
+      userId: localUser.userId,
     };
     return this.http.get(getMyBlackUser, data);
   }

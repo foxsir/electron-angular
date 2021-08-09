@@ -25,6 +25,8 @@ import { AccountPanelComponent } from './account-panel/account-panel.component';
 import { SearchChattingComponent } from './search-chatting/search-chatting.component';
 import {TitleBarModule} from "../../factorys/title-bar/title-bar.module";
 import { InputAreaComponent } from './input-area/input-area.component';
+import {FormsModule} from "@angular/forms";
+import {UserDialogsModule} from "../user-dialogs/user-dialogs.module";
 
 @NgModule({
   declarations: [
@@ -40,22 +42,24 @@ import { InputAreaComponent } from './input-area/input-area.component';
     SearchChattingComponent,
     InputAreaComponent
   ],
-    imports: [
-        CommonModule,
-        HomeRoutingModule,
-        FlexLayoutModule,
-        MatSidenavModule,
-        MatButtonModule,
-        MatCardModule,
-        MatIconModule,
-        MatListModule,
-        MatInputModule,
-        MatBadgeModule,
-        NzInputModule,
-        MatMenuModule,
-        MessageModule,
-        EmptyDataModule,
-        TitleBarModule,
-    ]
+  imports: [
+    CommonModule,
+    HomeRoutingModule,
+    FlexLayoutModule,
+    MatSidenavModule,
+    MatButtonModule,
+    MatCardModule,
+    MatIconModule,
+    MatListModule,
+    MatInputModule,
+    MatBadgeModule,
+    NzInputModule,
+    MatMenuModule,
+    MessageModule,
+    EmptyDataModule,
+    TitleBarModule,
+    FormsModule,
+    UserDialogsModule,
+  ]
 })
 export class HomeModule { }

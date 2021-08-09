@@ -7,7 +7,7 @@
     </div>
   </mat-drawer>
 
-  <div fxLayout="row" style="height: calc(100vh - 30px)">
+  <div fxLayout="row" style="height: calc(100vh - 30px);">
     <div fxFlex="334px" fxLayout="column" fxLayoutGap="14px" class="alarm-item-list">
       <div class="">
         <div fxLayout="row">
@@ -20,7 +20,7 @@
           </div>
           <div fxFlex="60px" fxLayoutAlign="center center">
             <div>
-              <mat-icon style="width: 20px; height: 20px;">
+              <mat-icon>
                 <img [src]="editIcon" alt="">
               </mat-icon>
             </div>
@@ -114,14 +114,15 @@
         <app-search-chatting fxFlexFill [chatting]="currentChat"></app-search-chatting>
       </div>
       <div [fxHide]="searching === true" fxLayout="column" fxFlex="calc(100% - 60px)" class="chatting-body">
-        <div fxFlex="100" id="chatting-panel" style="overflow-y: scroll">
+        <div fxFlex id="chatting-panel" style="overflow-y: scroll">
           <mat-card class="mat-elevation-z0" style="background: #F6F7F9;">
             <mat-card-content *ngIf="chatMsgEntityList">
-              <div fxLayout="column" fxLayoutGap="20px" class="chatting-panel-container">
+              <div fxLayout="column" fxLayoutGap="20px" class="chatting-panel-container" #chattingContainer>
                 <div fxLayout="row" *ngFor="let chat of chatMsgEntityList"
                      [fxLayoutAlign]="chat.uid === localUserInfo.userId ? 'end' : 'start'"
                      [ngClass]="{'self-message': chat.uid === localUserInfo.userId}">
-                  <div fxFlex="65" [fxLayoutAlign]="chat.uid === localUserInfo.userId ? 'end' : 'start'">
+                  <div fxFlex="65"
+                       [fxLayoutAlign]="chat.uid.toString() === localUserInfo.userId.toString() ? 'end' : 'start'">
                     <div fxLayout="column" class="message-container" fxLayoutGap="5px"
                          [fxLayoutAlign]="chat.uid === localUserInfo.userId ? 'end end' : 'start'">
                       <div class="message-time">
@@ -147,9 +148,14 @@
             </mat-card-content>
           </mat-card>
         </div>
+        <div fxFlex="50px" fxLayout="row" style="background: #f1eded;">
+          <div fxFlex="100" fxFlexFill fxLayoutAlign="center center">
+            回复消息区域
+          </div>
+        </div>
         <div fxLayout="row">
           <!--文字输入区域-->
-          <app-input-area fxFlex="100" (sendMessage)="chatMsgEntityList.unshift($event)" [currentChat]="currentChat"></app-input-area>
+          <app-input-area fxFlex="100" (sendMessage)="pushMessageToPanel($event)" [currentChat]="currentChat"></app-input-area>
         </div>
       </div>
     </div>

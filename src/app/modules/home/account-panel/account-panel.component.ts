@@ -23,6 +23,11 @@ import {DialogService} from "@services/dialog/dialog.service";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {Router} from "@angular/router";
 import {WindowService} from "@services/window/window.service";
+import RBChatUtils from "@app/libs/rbchat-utils";
+import {QrCodeComponent} from "@modules/user-dialogs/qr-code/qr-code.component";
+import {PrivacySettingComponent} from "@modules/user-dialogs/privacy-setting/privacy-setting.component";
+import {MySignatureComponent} from "@modules/user-dialogs/my-signature/my-signature.component";
+import {UpdatePasswordComponent} from "@modules/user-dialogs/update-password/update-password.component";
 // import icons end
 
 @Component({
@@ -32,6 +37,10 @@ import {WindowService} from "@services/window/window.service";
 })
 export class AccountPanelComponent implements OnInit {
   @Input() drawer: MatDrawer;
+
+  private dialogConfig = {
+    width: '314px'
+  };
 
   public closeIcon = this.dom.bypassSecurityTrustResourceUrl(closeIcon);
   public closeActiveIcon = this.dom.bypassSecurityTrustResourceUrl(closeActiveIcon);
@@ -59,13 +68,13 @@ export class AccountPanelComponent implements OnInit {
       label: "个性签名",
       icon: this.dom.bypassSecurityTrustResourceUrl(pencilIcon),
       iconActive: this.dom.bypassSecurityTrustResourceUrl(pencilActiveIcon),
-      action: this.editSign.bind(this)
+      action: this.editSignature.bind(this)
     },
     {
       label: "修改密码",
       icon: this.dom.bypassSecurityTrustResourceUrl(lockIcon),
       iconActive: this.dom.bypassSecurityTrustResourceUrl(lockActiveIcon),
-      action: this.resetPassword.bind(this)
+      action: this.updatePassword.bind(this)
     },
     {
       label: "退出登录",
@@ -93,24 +102,24 @@ export class AccountPanelComponent implements OnInit {
   }
 
   qrcode() {
-
+    this.dialogService.openDialog(QrCodeComponent, this.dialogConfig);
   }
 
   privacySetting() {
-
+    this.dialogService.openDialog(PrivacySettingComponent, this.dialogConfig);
   }
 
-  editSign() {
-
+  editSignature() {
+    this.dialogService.openDialog(MySignatureComponent, this.dialogConfig);
   }
 
-  resetPassword() {
-
+  updatePassword() {
+    this.dialogService.openDialog(UpdatePasswordComponent, this.dialogConfig);
   }
 
   logout() {
     this.router.navigate(['/']).then(() => {
-      localStorage.removeItem("aluiid");
+      localStorage.removeItem(RBChatUtils.COOKIE_KEY_AUTHED_LOCAL_USER_INFO_ID);
       this.windowService.loginWindow();
     });
   }

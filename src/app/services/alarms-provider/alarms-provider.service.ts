@@ -28,7 +28,7 @@ export class AlarmsProviderService {
    * @param fn_callback_for_success(alarmsHistoryList) 回调函数，当本参数不为空时，数据加载成后后会通知此回函数，此回调函数里可以实现UI的刷新逻辑等
    */
   refreshHistoryChattingAlarmsAsync() {
-    const localUserUid = this.localUserService.getUid();//this.localUserService.getObj().user_uid;
+    const localUserUid = this.localUserService.getUid();//this.localUserService.getObj().userId;
 
     // 要加载的聊天记录的开始时间
     let startTime = null;

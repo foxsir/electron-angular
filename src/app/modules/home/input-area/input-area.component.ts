@@ -17,6 +17,7 @@ import {AlarmsProviderService} from "@services/alarms-provider/alarms-provider.s
 import {MessageEntityService} from "@services/message-entity/message-entity.service";
 import {RestService} from "@services/rest/rest.service";
 import {LocalUserService} from "@services/local-user/local-user.service";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-input-area',
@@ -34,7 +35,10 @@ export class InputAreaComponent implements OnInit {
   public sendIcon = this.dom.bypassSecurityTrustResourceUrl(sendIcon);
   public sendActiveIcon = this.dom.bypassSecurityTrustResourceUrl(sendActiveIcon);
 
+  public messageText: string;
+
   constructor(
+    private router: Router,
     private dom: DomSanitizer,
     private imService: ImService,
     private messageService: MessageService,
@@ -47,16 +51,16 @@ export class InputAreaComponent implements OnInit {
   }
 
   doSend() {
-  //     const message = `{
-  // "cy":"0",
-  // "f":"400300",
-  // "m":"发送给400301的数据",
-  // "t":"400301",
-  // "ty":"0",
-  // "fromUserId":"400300",
-  // "m3":"android",
-  // "sync":"1"
-  // }`;
+    //     const message = `{
+    // "cy":"0",
+    // "f":"400300",
+    // "m":"发送给400301的数据",
+    // "t":"400301",
+    // "ty":"0",
+    // "fromUserId":"400300",
+    // "m3":"android",
+    // "sync":"1"
+    // }`;
 
     // const protocal = this.mbProtocalFactory.createCommonData2(
     //   message, this.imService.getLoginInfo().loginUserId, this.currentChat.dataId, -1
@@ -70,14 +74,24 @@ export class InputAreaComponent implements OnInit {
     // // 将消息通过websocket发送出去
     // this.imService.sendData(protocal); // return 0
 
-    this.messageService.sendMessage(MsgType.TYPE_TEXT, this.currentChat.dataId, "2321321321321").then(res => {
+    if (!this.messageText || this.messageText.trim().length === 0) {
+      return;
+    }
+
+    if(!this.imService.isLogined()) {
+      return this.router.navigate(['/session/login']).then(() => {
+        // goto login page
+      });
+    }
+
+    this.messageService.sendMessage(MsgType.TYPE_TEXT, this.currentChat.dataId, this.messageText).then(res => {
       if(res.success === true) {
         const friendUid = this.currentChat.dataId;
         const ree = this.rosterProviderService.getFriendInfoByUid(friendUid);
 
         // 自已发出的消息，也要显示在相应的UI界面上
         const message = res.msgBody.m;
-        const alarmMessageDTO = this.alarmsProviderService.createChatMsgAlarmForLocal(res.msgBody.ty, message, ree.nickname, friendUid);
+        const alarmMessageDTO = this.alarmsProviderService.createChatMsgAlarmForLocal(res.msgBody.ty, message, "ree.nickname", friendUid);
 
         //111 新增指纹码 he 消息类型msgType
         // debugger
@@ -88,5 +102,4 @@ export class InputAreaComponent implements OnInit {
       }
     });
   }
-
 }
