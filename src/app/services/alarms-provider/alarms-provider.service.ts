@@ -5,6 +5,7 @@ import RBChatUtils from "@app/libs/rbchat-utils";
 import {RestService} from "@services/rest/rest.service";
 import {formatDate} from "@app/libs/mobileimsdk-client-common";
 import {MessageService} from "@services/message/message.service";
+import Chatting from "@app/models/Chatting";
 
 
 /**
@@ -77,7 +78,7 @@ export class AlarmsProviderService {
    * @param time java时间戳长整数（形如：1280977330748），本参数小于或等于0于，将自动取当前系统时间戳
    * @returns
    */
-  createATempChatMsgAlarm(messageContentType, messageContent, beyondNickName, beyondUid, time) {
+  createATempChatMsgAlarm(messageContentType, messageContent, beyondNickName, beyondUid, time): Chatting {
 
     // 新的AlarmMessageDto对象
     // amd.alarmMessageType = AlarmMessageType.tempChatMessage;
@@ -100,7 +101,8 @@ export class AlarmsProviderService {
       title: beyondNickName,
       msgContent: this.messageService.parseMessageForShow(messageContent, messageContentType),
       date: (time <= 0 ? RBChatUtils.getCurrentUTCTimestamp() : time),
-      dataId: beyondUid
+      dataId: beyondUid,
+      istop: ""
     };
   }
 
@@ -140,7 +142,7 @@ export class AlarmsProviderService {
    * @param time java时间戳长整数（形如：1280977330748），本参数小于或等于0于，将自动取当前系统时间戳
    * @returns
    */
-  createChatMessageAlarm(messageContentType, messageContent, friendNickName, friendUid, time) {
+  createChatMessageAlarm(messageContentType, messageContent, friendNickName, friendUid, time): Chatting {
 
     //111 处理合并转发的bug
     // let msg = messageContent;
@@ -156,6 +158,7 @@ export class AlarmsProviderService {
       date: (time <= 0 ? RBChatUtils.getCurrentUTCTimestamp() : time),
 
       dataId: friendUid,
+      istop: ""
     };
   }
 
@@ -221,13 +224,13 @@ export class AlarmsProviderService {
    * @param time
    * @returns
    */
-  createAGroupChatMsgAlarm(messageContentType, messageContent, toGname, toGid, fromUserNickName, time) {
+  createAGroupChatMsgAlarm(messageContentType, messageContent, toGname, toGid, fromUserNickName, time): Chatting {
     //111 为了显示撤回。转发等带有json的样式而处理
     // let msg = messageContent,
     // messageContent = msg;
     //-----
     // 新的AlarmMessageDto对象
-    const amd = {
+    const amd: Chatting = {
       alarmMessageType: AlarmMessageType.groupChatMessage,
       title: toGname,
       //原版
@@ -236,7 +239,8 @@ export class AlarmsProviderService {
       msgContent: (RBChatUtils.isStringEmpty(fromUserNickName) ? '' : fromUserNickName + ': ')
         + this.messageService.parseMessageForShow(messageContent, messageContentType),
       date: (time <= 0 ? RBChatUtils.getCurrentUTCTimestamp() : time),
-      dataId: toGid
+      dataId: toGid,
+      istop: "false",
     };
 
     return amd;

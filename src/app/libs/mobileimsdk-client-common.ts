@@ -117,7 +117,7 @@ export const createCommonData = function(dataContent, from_user_id, to_user_id) 
  *  common.formatDate(new Date(), 'hh:mm:ss.S')            ==> 08:09:04.423
  */
 export const formatDate = function(date, fmt) { //author: meizz
-  if (typeof date === "string") {
+  if (["string", "number"].includes(typeof date)) {
     date = new Date(Number(date) * 1000);
   }
   const o = {

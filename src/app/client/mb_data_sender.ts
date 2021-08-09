@@ -202,7 +202,6 @@ export default class MBDataSender {
    * @return {int} 0表示数据发出成功，否则返回的是错误码
    */
   send(dataWithString) {
-
     // 获得netty的channel实例
     const websocket = this.mbSocketProvider.getLocalSocket();
 

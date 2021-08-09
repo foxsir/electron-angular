@@ -27,6 +27,8 @@ import {TitleBarModule} from "../../factorys/title-bar/title-bar.module";
 import { InputAreaComponent } from './input-area/input-area.component';
 import {FormsModule} from "@angular/forms";
 import {UserDialogsModule} from "../user-dialogs/user-dialogs.module";
+import { ChattingSettingComponent } from './chatting-setting/chatting-setting.component';
+import { GroupChattingSettingComponent } from './group-chatting-setting/group-chatting-setting.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +42,9 @@ import {UserDialogsModule} from "../user-dialogs/user-dialogs.module";
     NewFriendComponent,
     AccountPanelComponent,
     SearchChattingComponent,
-    InputAreaComponent
+    InputAreaComponent,
+    ChattingSettingComponent,
+    GroupChattingSettingComponent
   ],
   imports: [
     CommonModule,

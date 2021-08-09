@@ -45,9 +45,8 @@ export default class MBSocketProvider {
   private mbKeepAliveDaemon: MBKeepAliveDaemon;
   private _websocketUrl = null;
 
-
   /* 本地WebSocket对象引用 */
-  localSocket = null;
+  public static localSocket: WebSocket;
 
   /*
    * 连接完成后将被通知的观察者。如果设置本参数，则将在连接完成后调用1次，调用完成后置null。
@@ -91,7 +90,7 @@ export default class MBSocketProvider {
       // 连接服务器
       this.tryConnectToHost();
 
-      return this.localSocket;
+      return MBSocketProvider.localSocket;
     } catch (e) {
       MBUtils.mblog_w(this.TAG, "重置localSocket时出错，原因是：" + e);
 
@@ -115,37 +114,36 @@ export default class MBSocketProvider {
     }
 
     let done = false;
-    const that = this;
 
     // 标准HTML5的WebSocket API文档请见：
     // https://developer.mozilla.org/zh-CN/docs/Web/API/WebSocket
     try {
-      if (!window.WebSocket) {
-        window.WebSocket = window['MozWebSocket'];
-      }
+      // if (!window.WebSocket) {
+      //   window.WebSocket = window['MozWebSocket'];
+      // }
 
       if (window.WebSocket) {
-        this.localSocket = new WebSocket(this.mbCore.getWebsocketUrl());// "ws://192.168.99.190:7080/websocket"
+        MBSocketProvider.localSocket = new WebSocket(this.mbCore.getWebsocketUrl());// "ws://192.168.99.190:7080/websocket"
 
         //## WebSocket的HTML5标准API连接建立时的回调处理
-        this.localSocket.onopen = (event) => {
+        MBSocketProvider.localSocket.onopen = (event) => {
           if (this.mbCore.debugEnabled()) {
-            MBUtils.mblog_d(this.TAG, "WS.onopen - 连接已成功建立！(isLocalSocketReady=" + that.isLocalSocketReady() + ")");
+            MBUtils.mblog_d(this.TAG, "WS.onopen - 连接已成功建立！(isLocalSocketReady=" + this.isLocalSocketReady() + ")");
           }
 
           // 连接结果回调通知
-          if (that.connectionDoneCallback) {
-            that.connectionDoneCallback(true);
+          if (this.connectionDoneCallback) {
+            this.connectionDoneCallback(true);
 
             // 调用完成马上置空，确保本观察者只被调用一次
-            that.connectionDoneCallback = null;
+            this.connectionDoneCallback = null;
           }
-        }
+        };
 
         //## WebSocket的HTML5标准API连接关闭时的回调处理
-        this.localSocket.onclose = (evt) => {
+        MBSocketProvider.localSocket.onclose = (evt) => {
           if (this.mbCore.debugEnabled()) {
-            MBUtils.mblog_d(this.TAG, "WS.onclose - 连接已断开。。。。(isLocalSocketReady=" + that.isLocalSocketReady()
+            MBUtils.mblog_d(this.TAG, "WS.onclose - 连接已断开。。。。(isLocalSocketReady=" + this.isLocalSocketReady()
               + ", MBClientCoreSDK.connectedToServer=" + this.mbCore.isConnectedToServer() + ")", evt);
           }
 
@@ -157,19 +155,19 @@ export default class MBSocketProvider {
             // 进入框架的“通信通道”断开处理逻辑（即断开回调通知）
             this.mbKeepAliveDaemon.notifyConnectionLost();
           }
-        }
+        };
 
         //## WebSocket的HTML5标准API发生错误时的回调处理
-        this.localSocket.onerror = (evt) => {
+        MBSocketProvider.localSocket.onerror = (evt) => {
           // if(MBClientCoreSDK.debugEnabled())
           MBUtils.mblog_e(this.TAG, "WS.onerror - 异常被触发了，原因是：", evt);
 
-          if (that.localSocket)
-            {that.localSocket.close();}
+          if (MBSocketProvider.localSocket)
+            {MBSocketProvider.localSocket.close();}
         }
 
         //## WebSocket的HTML5标准API收到数据时的回调处理
-        this.localSocket.onmessage = (event) => {
+        MBSocketProvider.localSocket.onmessage = (event) => {
           const protocalJsonStr = (event ? (event.data ? event.data : null) : null);
 
           if (this.mbCore.debugEnabled())
@@ -201,7 +199,7 @@ export default class MBSocketProvider {
   isLocalSocketReady() {
     // 有关WebSocket的readyState状态说明，请见：
     // https://developer.mozilla.org/zh-CN/docs/Web/API/WebSocket/readyState
-    return this.localSocket != null && this.localSocket.readyState === 1;
+    return MBSocketProvider.localSocket != null && MBSocketProvider.localSocket.readyState === 1;
   }
 
   /**
@@ -218,7 +216,7 @@ export default class MBSocketProvider {
       // // TODO: 注释掉log！
       // if(this.mbCore.debugEnabled())
       //     MBUtils.mblog_d(this.TAG, "isLocalSocketReady()==true，直接返回本地socket引用哦。");
-      return this.localSocket;
+      return MBSocketProvider.localSocket;
     } else {
       // // TODO: 注释掉log！
       // if(this.mbCore.debugEnabled())
@@ -241,11 +239,11 @@ export default class MBSocketProvider {
     if (this.mbCore.debugEnabled())
       {MBUtils.mblog_d(this.TAG, "正在closeLocalSocket()...");}
 
-    if (this.localSocket) {
+    if (MBSocketProvider.localSocket) {
       try {
         // 关闭socket
-        this.localSocket.close();
-        this.localSocket = null;
+        MBSocketProvider.localSocket.close();
+        MBSocketProvider.localSocket = null;
       } catch (e) {
         MBUtils.mblog_w(this.TAG, "在closeLocalSocket方法中试图释放localSocket资源时：", e);
       }
