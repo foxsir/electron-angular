@@ -8,6 +8,10 @@ import {NzConfigService} from "ng-zorro-antd/core/config";
   providedIn: 'root'
 })
 export class SnackBarService {
+  /**
+   * 提示持续显示时间，单位s
+   * @private
+   */
   private durationInSeconds = 3;
 
   constructor(
@@ -22,6 +26,12 @@ export class SnackBarService {
     });
   }
 
+  /**
+   * 显示material放个消息提示
+   * @url https://material.angular.io/components/snack-bar/overview
+   * @param messageText
+   * @param color
+   */
   public openSnackBar(messageText: string, color = "mat-accent"): void {
     const snackBar = this.snackBar.openFromComponent(SnackComponent, {
       data: {text: messageText, color},
@@ -34,8 +44,16 @@ export class SnackBarService {
     });
   }
 
+  /**
+   * antd风格消息提示
+   * @url https://ng.ant.design/components/message/en
+   * @param message
+   * @param type
+   */
   public openMessage(message: string, type: string = ''): void {
-    this.message.create(type, message);
+    this.message.create(type, message, {
+      nzDuration: this.durationInSeconds * 1000
+    });
   }
 
 }
