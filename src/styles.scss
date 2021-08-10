@@ -3,6 +3,8 @@
 
 // antd
 @import "~ng-zorro-antd/message/style/index.css";
+@import "~ng-zorro-antd/switch/style/index.min.css";
+
 
 /* You can add global styles to this file, and also import other style files */
 html, body {
@@ -56,6 +58,7 @@ html, body {
 
 // 设置icon hover样式
 .hover-icon {
+  cursor: pointer;
   position: relative;
   height: 20px !important;
   width: 20px !important;
@@ -79,6 +82,28 @@ html, body {
       position: absolute;
       left: 0;
       visibility: visible;
+    }
+  }
+}
+.hover-icon.icon14 {
+  height: 14px !important;
+  width: 14px !important;
+  .icon {
+    height: 14px !important;
+    width: 14px !important;
+  }
+  .icon-active {
+    height: 14px !important;
+    width: 14px !important;
+  }
+  &:hover {
+    .icon {
+      height: 14px !important;
+      width: 14px !important;
+    }
+    .icon-active {
+      height: 14px !important;
+      width: 14px !important;
     }
   }
 }

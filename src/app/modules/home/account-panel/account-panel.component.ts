@@ -1,4 +1,4 @@
-import {Component, Inject, Input, OnInit} from '@angular/core';
+import {Component, Inject, Input, OnInit, ViewChild} from '@angular/core';
 
 import closeIcon from "@app/assets/icons/close.svg";
 import closeActiveIcon from "@app/assets/icons/close-active.svg";
@@ -36,7 +36,9 @@ import {UpdatePasswordComponent} from "@modules/user-dialogs/update-password/upd
   styleUrls: ['./account-panel.component.scss']
 })
 export class AccountPanelComponent implements OnInit {
-  @Input() drawer: MatDrawer;
+  @Input() accountDrawer: MatDrawer;
+  @ViewChild('privacySettingDrawer') privacySettingDrawer: MatDrawer;
+
 
   private dialogConfig = {
     width: '314px'
@@ -106,7 +108,7 @@ export class AccountPanelComponent implements OnInit {
   }
 
   privacySetting() {
-    this.dialogService.openDialog(PrivacySettingComponent, this.dialogConfig);
+    return this.privacySettingDrawer.open();
   }
 
   editSignature() {

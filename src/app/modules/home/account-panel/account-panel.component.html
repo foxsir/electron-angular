@@ -1,39 +1,47 @@
-<div class="account-panel-container">
-  <div fxLayout="column" fxLayoutGap="10px" fxFlexFill>
-    <div fxFlex="210px" class="account-panel-header">
-      <mat-card class="mat-elevation-z0">
-        <mat-card-content>
-          <div fxLayout="row" fxLayoutAlign="space-between center" class="account-panel-title">
-            <h3 class="title">个人信息</h3>
-            <button class="close-button" mat-icon-button (click)="drawer.close()" tabindex="-1">
-              <mat-icon class="hover-icon">
-                <img [src]="closeIcon" class="icon" alt="">
-                <img [src]="closeActiveIcon" class="icon-active" alt="">
+<mat-drawer-container fxFlexFill>
+  <app-toolbar [visibilityActions]="false"></app-toolbar>
+  <mat-drawer fxFlexFill disableClose #privacySettingDrawer class="privacySetting" mode="over">
+    <app-privacy-setting [drawer]="privacySettingDrawer"></app-privacy-setting>
+  </mat-drawer>
+
+  <div class="account-panel-container">
+    <div fxLayout="column" fxLayoutGap="10px" fxFlexFill>
+      <div fxFlex="210px" class="account-panel-header">
+        <mat-card class="mat-elevation-z0">
+          <mat-card-content>
+            <div fxLayout="row" fxLayoutAlign="space-between center" class="account-panel-title">
+              <h3 class="title">个人信息</h3>
+              <button class="close-button" mat-icon-button (click)="accountDrawer.close()" tabindex="-1">
+                <mat-icon class="hover-icon" style="width: 14px !important;height: 14px !important;">
+                  <img [src]="closeIcon" class="icon" alt="">
+                  <img [src]="closeActiveIcon" class="icon-active" alt="">
+                </mat-icon>
+              </button>
+            </div>
+          </mat-card-content>
+          <mat-card-content>
+            <img [src]="myAvatar" class="user-avatar" alt="">
+          </mat-card-content>
+          <mat-card-content>
+            <mat-card-title class="small-title">{{localUserInfo.userDesc || '暂无介绍'}}</mat-card-title>
+            <mat-card-subtitle>账号：{{localUserInfo}}</mat-card-subtitle>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      <div fxFlex class="account-panel-body">
+        <div fxLayout="column" fxLayoutGap="20px" class="user-setting-menu">
+          <div fxFlex="100" *ngFor="let menu of userSettingMenu" class="user-setting-menu-item">
+            <button mat-button fxFlex="100" style="text-align: start" tabindex="-1" (click)="menu.action()">
+              <mat-icon mat-list-icon class="hover-icon" style="margin-right: 20px;">
+                <img [src]="menu.icon" alt="" class="icon">
+                <img [src]="menu.iconActive" alt="" class="icon-active">
               </mat-icon>
+              {{menu.label}}
             </button>
           </div>
-        </mat-card-content>
-        <mat-card-content>
-          <img [src]="myAvatar" class="user-avatar" alt="">
-        </mat-card-content>
-        <mat-card-content>
-          <mat-card-title class="small-title">{{localUserInfo.userDesc || '暂无介绍'}}</mat-card-title>
-          <mat-card-subtitle>账号：{{localUserInfo}}</mat-card-subtitle>
-        </mat-card-content>
-      </mat-card>
-    </div>
-    <div fxFlex class="account-panel-body">
-      <div fxLayout="column" fxLayoutGap="20px" class="user-setting-menu">
-        <div fxFlex="100" *ngFor="let menu of userSettingMenu" class="user-setting-menu-item">
-          <button mat-button fxFlex="100" style="text-align: start" tabindex="-1" (click)="menu.action()">
-            <mat-icon mat-list-icon class="hover-icon" style="margin-right: 20px;">
-              <img [src]="menu.icon" alt="" class="icon">
-              <img [src]="menu.iconActive" alt="" class="icon-active">
-            </mat-icon>
-            {{menu.label}}
-          </button>
         </div>
       </div>
     </div>
   </div>
-</div>
+
+</mat-drawer-container>

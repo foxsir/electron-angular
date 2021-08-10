@@ -1,1 +1,42 @@
-<p>privacy-setting works!</p>
+<div fxLayout="column" style="background: #F1F1F1;">
+  <div fxFlex>
+    <app-toolbar [visibilityActions]="false"></app-toolbar>
+  </div>
+  <div fxFlex="62px">
+    <mat-card class="mat-elevation-z0" fxLayoutAlign="stretch center" fxFlex="100" style="padding: 11px 16px;">
+      <mat-card-content fxFlex="100">
+        <div fxLayout="row">
+          <div fxFlex="100px" fxLayoutAlign="space-between center">
+            <mat-icon (click)="drawer.close()" class="hover-icon">
+              <img [src]="backspaceIcon" alt="" class="icon">
+              <img [src]="backspaceActiveIcon" alt="" class="icon-active">
+            </mat-icon>
+            <span>隐私设置</span>
+          </div>
+          <div fxFlex fxLayoutAlign="end center">
+            <mat-icon (click)="drawer.close()" class="hover-icon icon14">
+              <img [src]="closeIcon" alt="" class="icon">
+              <img [src]="closeActiveIcon" alt="" class="icon-active">
+            </mat-icon>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div fxFlex style="margin-top: 10px;">
+    <mat-card class="mat-elevation-z0">
+      <mat-card-content>
+        <div fxLayout="column" fxLayoutGap="10px">
+          <div fxFlex fxLayoutAlign="space-between center">
+            <span class="privacy-item-text">允许通过手机搜到我</span>
+            <nz-switch [(ngModel)]="findMeByPhone" (ngModelChange)="byPhone()"></nz-switch>
+          </div>
+          <div fxFlex fxLayoutAlign="space-between center">
+            <span class="privacy-item-text">二维码搜到我</span>
+            <nz-switch [(ngModel)]="findMeByQRCode" (ngModelChange)="byQRCode()"></nz-switch>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
