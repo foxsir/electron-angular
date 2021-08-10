@@ -47,7 +47,30 @@ yarn electron:build
     - shared/formly：表单字段类型定制
   - environments：环境变量配置
   - themes：主题scss文件
-  
+
+## 服务功能说明
+> src/app/services
+
+- alarms-provider：
+- avatar：获取用户头像
+- context-menu：右键菜单服务
+- dialog：弹窗服务
+- file：alioss 上传下载
+- group-chatting-cache：
+- group-message：
+- groups-provider：
+- http：基础HTTP访问服务
+- im：
+- local-user：本地用户信息操作
+- message：
+- message-distribute：
+- message-entity：
+- rest：服务端接口访问
+- roster-provider：
+- single-chatting-cache：
+- snack-bar：提示信息服务
+- temp-message：
+- window：electronjs窗口操作
 
 ### 表单开发
 
