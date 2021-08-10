@@ -18,11 +18,13 @@ export class FileService {
 
   constructor() { }
 
-  // Buffer/Blob/File
+  /**
+   * 可接受数据类型 Buffer/Blob/File
+   * @param buffer
+   * @param filename
+   * @param fileType
+   */
   upload(buffer: Buffer, filename: string, fileType: string): Promise<OSS.PutObjectResult> {
-
-    'message_file/my-obj.png'
-
     if (Object.values(DirectoryType).includes(fileType)) {
       return this.client.put([fileType, filename].join("/"), buffer);
     } else {
@@ -30,6 +32,10 @@ export class FileService {
     }
   }
 
+  /**
+   * 获取文件，fileName：alioss文件路径
+   * @param fileName
+   */
   getFile(fileName: string): Promise<OSS.GetObjectResult> {
     return this.client.get(fileName);
   }
