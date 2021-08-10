@@ -60,6 +60,11 @@ export class HttpService {
     // Return an observable with a user-facing error message.
   }
 
+  /**
+   * 以json形式提交数据
+   * @param url
+   * @param body
+   */
   post(url: string, body: any) {
     let request;
     if (url.charAt(0) === "/") {
@@ -108,6 +113,11 @@ export class HttpService {
     );
   }
 
+  /**
+   * 以表单形式提交POST数据
+   * @param url
+   * @param body
+   */
   postForm(url: string, body: any = {}) {
     let request;
     if (url.charAt(0) === "/") {
@@ -135,6 +145,10 @@ export class HttpService {
     );
   }
 
+  /**
+   * 获取文件内容长度
+   * @param url
+   */
   getContentLength(url: string) {
     return new Promise((resolve, reject) => {
       fetch(url).then(response => {
