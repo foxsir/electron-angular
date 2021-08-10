@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import ChatMsgEntity from "@app/models/ChatMsgEntity";
+import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 
 @Component({
   selector: 'app-message-red-envelope',
@@ -7,7 +7,7 @@ import ChatMsgEntity from "@app/models/ChatMsgEntity";
   styleUrls: ['./message-red-envelope.component.scss']
 })
 export class MessageRedEnvelopeComponent implements OnInit {
-  @Input() chatMsg: ChatMsgEntity;
+  @Input() chatMsg: ChatmsgEntityModel;
 
   constructor() { }
 

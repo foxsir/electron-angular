@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import ChatMsgEntity from "@app/models/ChatMsgEntity";
+import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 
 interface VideoInfo {
   fileName: string;
@@ -14,7 +14,7 @@ interface VideoInfo {
   styleUrls: ['./message-video.component.scss']
 })
 export class MessageVideoComponent implements OnInit {
-  @Input() chatMsg: ChatMsgEntity;
+  @Input() chatMsg: ChatmsgEntityModel;
   public videoInfo: VideoInfo;
 
   constructor() { }

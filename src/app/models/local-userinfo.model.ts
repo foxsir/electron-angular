@@ -1,4 +1,4 @@
-export default class LocalUserInfo {
+export default class LocalUserinfoModel {
   android_is_online: number;
   ios_liveStatus: number;
   latest_login_ip: string;

@@ -14,7 +14,7 @@ import {RosterProviderService} from "@services/roster-provider/roster-provider.s
 import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 import {ImService} from "@services/im/im.service";
 
-import OriginData from "@app/models/OriginData";
+import ProtocalModel from "@app/models/protocal.model";
 import {MessageDistributeService} from "@services/message-distribute/message-distribute.service";
 import {ActivatedRoute, NavigationEnd, Router} from "@angular/router";
 import {DomSanitizer, SafeResourceUrl} from "@angular/platform-browser";
@@ -332,7 +332,7 @@ export class IndexComponent implements OnInit {
    * @param pFromServer Protocal对象（对象字段请见：http://docs.52im.net/extend/docs/api/mobileimsdk/server/net/openmob/mobileimsdk/server/protocal/Protocal.html）
    * @param options
    */
-  onIMData(pFromServer: OriginData) {
+  onIMData(pFromServer: ProtocalModel) {
     // const typeu = pFromServer.typeu;
     // console.dir(pFromServer);
     // const msgBody = JSON.parse(pFromServer.dataContent);

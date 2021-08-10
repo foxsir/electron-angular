@@ -1,5 +1,5 @@
 import {Component, Injector, Input, OnInit} from '@angular/core';
-import ChatMsgEntity from "@app/models/ChatMsgEntity";
+import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 import {MsgType} from "@app/config/rbchat-config";
 
 import {MessageAtComponent} from '../message-at/message-at.component';
@@ -25,7 +25,7 @@ import {MessageRepealComponent} from "../message-repeal/message-repeal.component
   styleUrls: ['./message-factory.component.scss']
 })
 export class MessageFactoryComponent implements OnInit {
-  @Input() chatMsg: ChatMsgEntity;
+  @Input() chatMsg: ChatmsgEntityModel;
 
   // private chatMsgTemplate = {
   //   [MsgType.TYPE_AITE]: MessageAtComponent,

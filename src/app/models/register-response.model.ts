@@ -1,4 +1,4 @@
-export default class RegisterResponse {
+export default class RegisterResponseModel {
   token: string;
   userCornet: string;
   userId: number;

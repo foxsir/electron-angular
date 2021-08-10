@@ -1,4 +1,4 @@
-export default class Friend {
+export default class FriendModel {
   android_is_online: number;
   ios_liveStatus: number;
   liveStatus: number;

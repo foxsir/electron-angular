@@ -1,6 +1,10 @@
 import {MsgType} from "../config/rbchat-config";
 
-export default class ChatMsgEntity {
+
+/**
+ * 聊天消息体模型
+ */
+export default class ChatmsgEntityModel {
   //======================================================== 核心数据字段 START
   /** 消息发起者的uid（用于功能链接中使用） */
   uid: string = null;

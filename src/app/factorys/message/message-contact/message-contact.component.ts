@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import ChatMsgEntity from "@app/models/ChatMsgEntity";
+import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 import {AvatarService} from "@services/avatar/avatar.service";
 import {DomSanitizer, SafeResourceUrl} from "@angular/platform-browser";
 
@@ -14,7 +14,7 @@ interface UserContact {
   styleUrls: ['./message-contact.component.scss']
 })
 export class MessageContactComponent implements OnInit {
-  @Input() chatMsg: ChatMsgEntity;
+  @Input() chatMsg: ChatmsgEntityModel;
   public userContact: UserContact;
   public userAvatar: SafeResourceUrl;
 

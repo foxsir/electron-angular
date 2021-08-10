@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import {LoginForm} from "@app/forms/login.form";
 import {RestService} from "@services/rest/rest.service";
-import HttpResponse from "@app/models/HttpResponse";
+import HttpPresponseModel from "@app/models/http-response.model";
 import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 import {Router} from "@angular/router";
 import {LocalUserService} from "@services/local-user/local-user.service";
-import NewHttpResponse from "@app/models/NewHttpResponse";
+import NewHttpResponseModel from "@app/models/new-http-response.model";
 import {WindowService} from "@services/window/window.service";
 
 @Component({
@@ -30,7 +30,7 @@ export class LoginComponent implements OnInit {
   public onSubmit() {
     if (this.loginForm.form.valid) {
       const value = this.loginForm.form.value;
-      this.restService.submitLoginToServer(value.account, value.password).subscribe((res: NewHttpResponse<any>) => {
+      this.restService.submitLoginToServer(value.account, value.password).subscribe((res: NewHttpResponseModel<any>) => {
         if (res.status === 200) {
           const userInfo = res.data;
           this.localUserService.update(userInfo);

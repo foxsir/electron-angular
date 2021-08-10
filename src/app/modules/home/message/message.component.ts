@@ -19,29 +19,31 @@ import voiceIcon from "@app/assets/icons/voice.svg";
 import voiceActiveIcon from "@app/assets/icons/voice-active.svg";
 // import image end
 
-import LocalUserInfo from "@app/models/LocalUserInfo";
+import LocalUserinfoModel from "@app/models/local-userinfo.model";
 import {MatMenuTrigger} from "@angular/material/menu";
 import {ImService} from "@services/im/im.service";
-import ChatMsgEntity from "@app/models/ChatMsgEntity";
+import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 import {MessageService} from "@services/message/message.service";
 import {GroupsProviderService} from "@services/groups-provider/groups-provider.service";
 import {TempMessageService} from "@services/temp-message/temp-message.service";
 import {GroupMessageService} from "@services/group-message/group-message.service";
 import {RosterProviderService} from "@services/roster-provider/roster-provider.service";
 import {SnackBarService} from "@services/snack-bar/snack-bar.service";
-import OriginData from "@app/models/OriginData";
+import ProtocalModel from "@app/models/protocal.model";
 import {MessageDistributeService} from "@services/message-distribute/message-distribute.service";
-import HttpResponse from "@app/models/HttpResponse";
-import Chatting from "@app/models/Chatting";
+import HttpPresponseModel from "@app/models/http-response.model";
+import ChattingModel from "@app/models/chatting.model";
 import {DomSanitizer, SafeResourceUrl} from "@angular/platform-browser";
 import {ContextMenuService} from "@services/context-menu/context-menu.service";
-import ContextMenu from "@app/models/ContextMenu";
+import ContextMenuModel from "@app/models/context-menu.model";
 import {AvatarService} from "@services/avatar/avatar.service";
 
 interface AlarmItemInterface {
-  alarmItem: Chatting;
+  // 聊天信息
+  alarmItem: ChattingModel;
+  // 聊天元数据
   metadata: {
-    msgType: number;
+    msgType: number; // 0=单聊 1=临时聊天/陌生人聊天  2=群聊
   };
 }
 
@@ -63,16 +65,16 @@ export class MessageComponent implements OnInit {
   public voiceActiveIcon = this.dom.bypassSecurityTrustResourceUrl(voiceActiveIcon);
 
   public alarmItemList: AlarmItemInterface[] = [];
-  public chatMsgEntityList: ChatMsgEntity[];
+  public chatMsgEntityList: ChatmsgEntityModel[];
   public currentChat: AlarmItemInterface;
   public currentChatAvatar: SafeResourceUrl;
   public currentChatSubtitle: string = null;
   public formatDate = formatDate;
-  public localUserInfo: LocalUserInfo;
+  public localUserInfo: LocalUserinfoModel;
 
   public massageBadges = {};
 
-  public contextMenu: ContextMenu[] = [];
+  public contextMenu: ContextMenuModel[] = [];
 
   public searching = false;
 
@@ -97,7 +99,7 @@ export class MessageComponent implements OnInit {
   ) {
     this.localUserInfo = this.localUserService.localUserInfo;
 
-    this.messageDistributeService.MT03_OF_CHATTING_MESSAGE$.subscribe((res: OriginData) => {
+    this.messageDistributeService.MT03_OF_CHATTING_MESSAGE$.subscribe((res: ProtocalModel) => {
       const dataContent: any = JSON.parse(res.dataContent);
       // alert("单聊" + data.from);
       this.massageBadges[res.from.trim()] = 4;
@@ -114,7 +116,7 @@ export class MessageComponent implements OnInit {
     //   alert("群组" + dataContent.f);
     // });
 
-    this.messageDistributeService.MT45_OF_GROUP$CHAT$MSG_SERVER$TO$B$.subscribe((data: OriginData) => {
+    this.messageDistributeService.MT45_OF_GROUP$CHAT$MSG_SERVER$TO$B$.subscribe((data: ProtocalModel) => {
       const dataContent: any = JSON.parse(data.dataContent);
       // alert("群组" + dataContent.t);
       this.massageBadges[dataContent.t.trim()] = 99;
@@ -122,7 +124,7 @@ export class MessageComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.alarmsProviderService.refreshHistoryChattingAlarmsAsync().subscribe((res: HttpResponse) => {
+    this.alarmsProviderService.refreshHistoryChattingAlarmsAsync().subscribe((res: HttpPresponseModel) => {
       if (res.success) {
         const list = JSON.parse(res.returnValue);
         this.showChattingList(list);
@@ -155,7 +157,7 @@ export class MessageComponent implements OnInit {
       // const isonLine = row[12];//111 置顶
 
 
-      let alarmData: Chatting = null;
+      let alarmData: ChattingModel = null;
 
       // 群聊消息
       if (chatType === ChatModeType.CHAT_TYPE_GROUP$CHAT) {
@@ -214,7 +216,7 @@ export class MessageComponent implements OnInit {
     }
   }
 
-  pushMessageToPanel(chat: ChatMsgEntity) {
+  pushMessageToPanel(chat: ChatmsgEntityModel) {
     if(this.chatMsgEntityList) {
       this.chatMsgEntityList.push(chat);
       this.scrollToBottom();
@@ -338,7 +340,7 @@ export class MessageComponent implements OnInit {
         }
         //## Bug FIX END
 
-        let chatMsgEntity: ChatMsgEntity;
+        let chatMsgEntity: ChatmsgEntityModel;
         if (isOutgoing) {
           chatMsgEntity = this.messageEntityService.prepareSendedMessage(msgContent,
             msgTime2Timestamp ? msgTime2Timestamp : 0, fingerPrint, msg_type);
@@ -374,7 +376,7 @@ export class MessageComponent implements OnInit {
     }, 500);
   }
 
-  textMenuForMessage(e: MouseEvent, menu: MatMenuTrigger, span: HTMLSpanElement, chat: ChatMsgEntity) {
+  textMenuForMessage(e: MouseEvent, menu: MatMenuTrigger, span: HTMLSpanElement, chat: ChatmsgEntityModel) {
     this.contextMenu = this.contextMenuService.getContextMenuForChat(chat);
     if (this.contextMenu.length > 0) {
       menu.openMenu();

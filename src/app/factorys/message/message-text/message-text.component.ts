@@ -1,5 +1,5 @@
 import {Component, Inject, Input, OnInit} from '@angular/core';
-import ChatMsgEntity from "@app/models/ChatMsgEntity";
+import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 import EmojiMap from "./EmojiMap";
 import {DomSanitizer} from "@angular/platform-browser";
 
@@ -9,7 +9,7 @@ import {DomSanitizer} from "@angular/platform-browser";
   styleUrls: ['./message-text.component.scss']
 })
 export class MessageTextComponent implements OnInit {
-  @Input() chatMsg: ChatMsgEntity;
+  @Input() chatMsg: ChatmsgEntityModel;
 
   constructor(
     private dom: DomSanitizer,

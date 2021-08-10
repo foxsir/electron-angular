@@ -5,7 +5,7 @@ import {Subject} from "rxjs";
 import MBDataSender from "../../client/mb_data_sender";
 import {MBErrorCode, MBKickoutCode, MBSocketEvent} from "../../client/mb_constants";
 import MBCore from "../../client/mb_core";
-import LoginInfo from "../../models/LoginInfo";
+import LoginInfoModel from "../../models/login-info.model";
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +23,7 @@ export class ImService {
               陆跟掉线重连的ui表现上肯定是有不同的 */
   _logined = false;
   // /* 【内部变量：存储登陆认证需要的信息（用户名、密码等）】：用于连接断掉后自动重连时的认证token */
-  _loginInfo: LoginInfo = null;
+  _loginInfo: LoginInfoModel = null;
   private _loginInfoSource = new Subject();
   // Observable string streams
   loginInfo$ = this._loginInfoSource.asObservable();

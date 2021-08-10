@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {MsgType} from "@app/config/rbchat-config";
 import RBChatUtils from "@app/libs/rbchat-utils";
-import ChatMsgEntity from "@app/models/ChatMsgEntity";
+import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 import {LocalUserService} from "@services/local-user/local-user.service";
 import {ImService} from "@services/im/im.service";
 
@@ -280,7 +280,7 @@ export class MessageEntityService {
 
   createChatMsgEntity_COME_TEXT(fromUid, nickName, message, time, fingerPrint, xu_isRead_type = null) {
     // debugger
-    const chatMsgEntityObj = new ChatMsgEntity();
+    const chatMsgEntityObj = new ChatmsgEntityModel();
     chatMsgEntityObj.uid = fromUid;
     chatMsgEntityObj.name = nickName;
     chatMsgEntityObj.date = time <= 0 ? RBChatUtils.getCurrentUTCTimestamp() : time;
@@ -295,7 +295,7 @@ export class MessageEntityService {
 
   createChatMsgEntity_COME_IMAGE(fromUid, nickName, fileName, time, fingerPrint, xu_isRead_type = null) {
 
-    const chatMsgEntityObj = new ChatMsgEntity();
+    const chatMsgEntityObj = new ChatmsgEntityModel();
     chatMsgEntityObj.uid = fromUid;
     chatMsgEntityObj.name = nickName;
     chatMsgEntityObj.date = time <= 0 ? RBChatUtils.getCurrentUTCTimestamp() : time;
@@ -311,7 +311,7 @@ export class MessageEntityService {
 
   createChatMsgEntity_COME_VOICE(fromUid, nickName, fileName, time, fingerPrint, xu_isRead_type = null) {
 
-    const chatMsgEntityObj = new ChatMsgEntity();
+    const chatMsgEntityObj = new ChatmsgEntityModel();
     chatMsgEntityObj.uid = fromUid;
     chatMsgEntityObj.name = nickName;
     chatMsgEntityObj.date = time <= 0 ? RBChatUtils.getCurrentUTCTimestamp() : time;
@@ -327,7 +327,7 @@ export class MessageEntityService {
 
   createChatMsgEntity_COME_GIFT$FOR$SEND(fromUid, nickName, giftIdent, time, fingerPrint, xu_isRead_type = null) {
 
-    const chatMsgEntityObj = new ChatMsgEntity();
+    const chatMsgEntityObj = new ChatmsgEntityModel();
     chatMsgEntityObj.uid = fromUid;
     chatMsgEntityObj.name = nickName;
     chatMsgEntityObj.date = time <= 0 ? RBChatUtils.getCurrentUTCTimestamp() : time;
@@ -342,7 +342,7 @@ export class MessageEntityService {
 
   createChatMsgEntity_COME_GIFT$FOR$GET(fromUid, nickName, giftIdent, time, fingerPrint, xu_isRead_type = null) {
 
-    const chatMsgEntityObj = new ChatMsgEntity();
+    const chatMsgEntityObj = new ChatmsgEntityModel();
     chatMsgEntityObj.uid = fromUid;
     chatMsgEntityObj.name = nickName;
     chatMsgEntityObj.date = time <= 0 ? RBChatUtils.getCurrentUTCTimestamp() : time;
@@ -365,7 +365,7 @@ export class MessageEntityService {
       fileLength: fileLength
     };
 
-    const chatMsgEntityObj = new ChatMsgEntity();
+    const chatMsgEntityObj = new ChatmsgEntityModel();
     chatMsgEntityObj.uid = fromUid;
     chatMsgEntityObj.name = nickName;
     chatMsgEntityObj.date = time <= 0 ? RBChatUtils.getCurrentUTCTimestamp() : time;
@@ -388,7 +388,7 @@ export class MessageEntityService {
       fileLength: fileLength
     };
 
-    const chatMsgEntityObj = new ChatMsgEntity();
+    const chatMsgEntityObj = new ChatmsgEntityModel();
     chatMsgEntityObj.uid = fromUid;
     chatMsgEntityObj.name = nickName;
     chatMsgEntityObj.date = time <= 0 ? RBChatUtils.getCurrentUTCTimestamp() : time;
@@ -409,7 +409,7 @@ export class MessageEntityService {
       nickName: theNickName
     };
 
-    const chatMsgEntityObj = new ChatMsgEntity();
+    const chatMsgEntityObj = new ChatmsgEntityModel();
     chatMsgEntityObj.uid = fromUid;
     chatMsgEntityObj.name = nickName;
     chatMsgEntityObj.date = time <= 0 ? RBChatUtils.getCurrentUTCTimestamp() : time;
@@ -438,7 +438,7 @@ export class MessageEntityService {
       prewviewImgFileName: thPrewviewImgFileName
     };
 
-    const chatMsgEntityObj = new ChatMsgEntity();
+    const chatMsgEntityObj = new ChatmsgEntityModel();
     chatMsgEntityObj.uid = fromUid;
     chatMsgEntityObj.name = nickName;
     chatMsgEntityObj.date = time <= 0 ? RBChatUtils.getCurrentUTCTimestamp() : time;
@@ -452,7 +452,7 @@ export class MessageEntityService {
 
   createSystemMsgEntity_TEXT(message, time, fingerPrint, xu_isRead_type = null) {
 
-    const chatMsgEntityObj = new ChatMsgEntity();
+    const chatMsgEntityObj = new ChatmsgEntityModel();
     chatMsgEntityObj.uid = "0";
     chatMsgEntityObj.name = "";
     chatMsgEntityObj.date = time <= 0 ? RBChatUtils.getCurrentUTCTimestamp() : time;

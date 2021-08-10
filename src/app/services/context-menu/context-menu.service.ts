@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import ChatMsgEntity from "@app/models/ChatMsgEntity";
+import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 import {MsgType} from "@app/config/rbchat-config";
-import ContextMenu from "@app/models/ContextMenu";
+import ContextMenuModel from "@app/models/context-menu.model";
 import {Clipboard} from "@angular/cdk/clipboard";
 
 @Injectable({
@@ -11,7 +11,7 @@ export class ContextMenuService {
 
   public msgType = MsgType;
 
-  private contextMenu: ContextMenu[][] = [];
+  private contextMenu: ContextMenuModel[][] = [];
 
   private common = ['common'];
   private commonManage = ['common', 'manage'];
@@ -21,21 +21,21 @@ export class ContextMenuService {
     copyText: {
       label: "复制",
       limits: this.common,
-      action: (chat: ChatMsgEntity, messageContainer: HTMLDivElement) => {
+      action: (chat: ChatmsgEntityModel, messageContainer: HTMLDivElement) => {
         this.copyTextToClipboard(messageContainer);
       }
     },
     copyImage: {
       label: "复制",
       limits: this.common,
-      action: (chat: ChatMsgEntity, messageContainer: HTMLDivElement) => {
+      action: (chat: ChatmsgEntityModel, messageContainer: HTMLDivElement) => {
         this.copyImageToClipboard(messageContainer);
       }
     },
     repeal: {
       label: "撤回",
       limits: this.common,
-      action: (chat: ChatMsgEntity, messageContainer: HTMLDivElement) => {
+      action: (chat: ChatmsgEntityModel, messageContainer: HTMLDivElement) => {
         chat.msgType = this.msgType.TYPE_BACK;
       }
     },
@@ -95,12 +95,12 @@ export class ContextMenuService {
     return navigator.clipboard.write(data);
   }
 
-  getContextMenuForChat(chat: ChatMsgEntity, chatOwner: any = null) {
+  getContextMenuForChat(chat: ChatmsgEntityModel, chatOwner: any = null) {
     // chat.msgType
     return this.contextMenu[chat.msgType] || [];
   }
 
-  getContextMenuForAvatar(chat: ChatMsgEntity, chatOwner) {
+  getContextMenuForAvatar(chat: ChatmsgEntityModel, chatOwner) {
 
   }
 

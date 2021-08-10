@@ -13,8 +13,8 @@ import {DomSanitizer} from "@angular/platform-browser";
 import uploadOptions from "@app/factorys/upload/uploadOptions";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {RestService} from "@services/rest/rest.service";
-import NewHttpResponse from "@app/models/NewHttpResponse";
-import RegisterResponse from "@app/models/RegisterResponse";
+import NewHttpResponseModel from "@app/models/new-http-response.model";
+import RegisterResponseModel from "@app/models/register-response.model";
 import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 import {LocalUserService} from "@services/local-user/local-user.service";
 import {ActivatedRoute, NavigationEnd, Router, RouterEvent} from "@angular/router";
@@ -79,7 +79,7 @@ export class RegisterComponent implements OnInit {
   }
 
   checkRegisterTYpe() {
-    this.restService.getAppConfig().subscribe((res: NewHttpResponse<any>) => {
+    this.restService.getAppConfig().subscribe((res: NewHttpResponseModel<any>) => {
       if(res.data.registerType !== this.registerType) {
         if(res.data.registerType === 1) {
           this.form = this.signupFormMobile;
@@ -98,7 +98,7 @@ export class RegisterComponent implements OnInit {
         vCode: this.form.form.value.code
       };
       if (this.registerType === 1) {
-        this.restService.submitVerifyCodeToServer(data).subscribe((res: NewHttpResponse<any>) => {
+        this.restService.submitVerifyCodeToServer(data).subscribe((res: NewHttpResponseModel<any>) => {
           if (res.status === 200) {
             this.gotoStepTwo();
           } else {
@@ -127,7 +127,7 @@ export class RegisterComponent implements OnInit {
     } else {
       params = "?username="+data.username;
     }
-    this.restService.checkUsernameAndPhone(params, data).subscribe((res: NewHttpResponse<any>) => {
+    this.restService.checkUsernameAndPhone(params, data).subscribe((res: NewHttpResponseModel<any>) => {
       if(res.status === 200) {
         this.step = 'two';
       } else {
@@ -151,7 +151,7 @@ export class RegisterComponent implements OnInit {
         data = Object.assign(data, {userAvatarFileName: this.avatarUrl.pathname});
       }
 
-      this.restService.submitRegisterToServer(data).subscribe((res: NewHttpResponse<RegisterResponse>) => {
+      this.restService.submitRegisterToServer(data).subscribe((res: NewHttpResponseModel<RegisterResponseModel>) => {
         if (res.status === 200) {
           const userInfo = res.data;
 

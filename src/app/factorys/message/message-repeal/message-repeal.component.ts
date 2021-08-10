@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import ChatMsgEntity from "@app/models/ChatMsgEntity";
+import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 
 @Component({
   selector: 'app-message-repeal',
@@ -7,7 +7,7 @@ import ChatMsgEntity from "@app/models/ChatMsgEntity";
   styleUrls: ['./message-repeal.component.scss']
 })
 export class MessageRepealComponent implements OnInit {
-  @Input() chatMsg: ChatMsgEntity;
+  @Input() chatMsg: ChatmsgEntityModel;
 
   constructor() { }
 

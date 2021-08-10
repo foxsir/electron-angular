@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import ChatMsgEntity from "@app/models/ChatMsgEntity";
+import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 
 interface FileInfo {
   fileName: string;
@@ -14,7 +14,7 @@ interface FileInfo {
   styleUrls: ['./message-file.component.scss']
 })
 export class MessageFileComponent implements OnInit {
-  @Input() chatMsg: ChatMsgEntity;
+  @Input() chatMsg: ChatmsgEntityModel;
   public fileInfo: FileInfo;
 
   constructor() { }

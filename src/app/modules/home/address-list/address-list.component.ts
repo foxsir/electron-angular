@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {RosterProviderService} from "@services/roster-provider/roster-provider.service";
-import Friend from "@app/models/Friend";
+import FriendModel from "@app/models/friend.model";
 import {DomSanitizer} from "@angular/platform-browser";
 
 // import image
@@ -17,7 +17,7 @@ import groupChattingIcon from "@app/assets/icons/group-chatting-circle.svg";
   styleUrls: ['./address-list.component.scss']
 })
 export class AddressListComponent implements OnInit {
-  friendList: Friend[] = [];
+  friendList: FriendModel[] = [];
 
   leftMenuList = [
     {

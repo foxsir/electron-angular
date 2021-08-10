@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {RestService} from "@services/rest/rest.service";
-import HttpResponse from "@app/models/HttpResponse";
+import HttpPresponseModel from "@app/models/http-response.model";
 
 @Component({
   selector: 'app-black-list',
@@ -12,7 +12,7 @@ export class BlackListComponent implements OnInit {
   constructor(
     private restService: RestService
   ) {
-    this.restService.getMyBlackList().subscribe((res: HttpResponse) => {
+    this.restService.getMyBlackList().subscribe((res: HttpPresponseModel) => {
       console.dir(res.data === null);
       console.dir(res);
     });

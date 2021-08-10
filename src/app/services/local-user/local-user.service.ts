@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {RestService} from "@services/rest/rest.service";
 import RBChatUtils from "@app/libs/rbchat-utils";
-import LocalUserInfo from "@app/models/LocalUserInfo";
+import LocalUserinfoModel from "@app/models/local-userinfo.model";
 
 /**
  * 缓存管理类。
@@ -22,7 +22,7 @@ import LocalUserInfo from "@app/models/LocalUserInfo";
   providedIn: 'root'
 })
 export class LocalUserService {
-  public localUserInfo: LocalUserInfo;
+  public localUserInfo: LocalUserinfoModel;
   public token;
 
   constructor(

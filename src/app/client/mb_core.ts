@@ -25,7 +25,7 @@ import MBAutoReLoginDaemon from "./mb_daemon_auto_relogin";
 import MBQoS4SendDaemon from "./mb_daemon_qos_send";
 import MBQoS4ReciveDaemon from "./mb_daemon_qos_recieve";
 import MBUtils from "./mb_utils";
-import LoginInfo from "../models/LoginInfo";
+import LoginInfoModel from "../models/login-info.model";
 import InstanceFactory from "@app/client/InstanceFactory";
 
 /**
@@ -98,7 +98,7 @@ export default class MBCore {
    *
    * 登陆信息各字段定义见：http://docs.52im.net/extend/docs/api/mobileimsdk/server_tcp/net/x52im/mobileimsdk/server/protocal/c/PLoginInfo.html
    */
-  public static currenetLoginInfo: LoginInfo = {
+  public static currenetLoginInfo: LoginInfoModel = {
     // 保存提交到服务端的准一身份id，可能是登陆用户名、任意不重复的id等，具体意义由开发者业务层决定
     loginUserId: null,
     // 保存提交到服务端用于身份鉴别和合法性检查的token，它可能是登陆密码、也可能是通过前置http单点

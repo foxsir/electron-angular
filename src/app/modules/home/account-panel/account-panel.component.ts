@@ -6,7 +6,7 @@ import {DomSanitizer, SafeResourceUrl} from "@angular/platform-browser";
 import {MatDrawer} from "@angular/material/sidenav";
 import {LocalUserService} from "@services/local-user/local-user.service";
 import {AvatarService} from "@services/avatar/avatar.service";
-import LocalUserInfo from "@app/models/LocalUserInfo";
+import LocalUserinfoModel from "@app/models/local-userinfo.model";
 
 // import icons
 import qrIcon from "@app/assets/icons/qr.svg";
@@ -49,7 +49,7 @@ export class AccountPanelComponent implements OnInit {
     this.avatarService.defaultLocalAvatar
   );
 
-  public localUserInfo: LocalUserInfo;
+  public localUserInfo: LocalUserinfoModel;
 
   public userSettingMenu = [
     {

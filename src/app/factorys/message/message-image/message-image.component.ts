@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import ChatMsgEntity from "@app/models/ChatMsgEntity";
+import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 import {ImageTools} from "@app/common/image.tools";
 
 @Component({
@@ -8,7 +8,7 @@ import {ImageTools} from "@app/common/image.tools";
   styleUrls: ['./message-image.component.scss']
 })
 export class MessageImageComponent implements OnInit {
-  @Input() chatMsg: ChatMsgEntity;
+  @Input() chatMsg: ChatmsgEntityModel;
   public imageTools = new ImageTools();
 
   constructor() { }

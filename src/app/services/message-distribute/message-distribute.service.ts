@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import OriginData from "@app/models/OriginData";
+import ProtocalModel from "@app/models/protocal.model";
 import {Subject} from "rxjs";
 import {UserProtocalsType} from "@app/config/rbchat-config";
 
@@ -46,40 +46,40 @@ export class MessageDistributeService {
   public MT06_OF_ADD_FRIEND_REQUEST_RESPONSE$FOR$ERROR_SERVER$TO$A$ =
     this.MT06_OF_ADD_FRIEND_REQUEST_RESPONSE$FOR$ERROR_SERVER$TO$ASource.asObservable();
 
-  private MT07_OF_ADD_FRIEND_REQUEST_INFO_SERVER$TO$BSource = new Subject<OriginData>();
+  private MT07_OF_ADD_FRIEND_REQUEST_INFO_SERVER$TO$BSource = new Subject<ProtocalModel>();
   public MT07_OF_ADD_FRIEND_REQUEST_INFO_SERVER$TO$B$ = this.MT07_OF_ADD_FRIEND_REQUEST_INFO_SERVER$TO$BSource.asObservable();
 
-  private MT10_OF_PROCESS_ADD$FRIEND$REQ_FRIEND$INFO$SERVER$TO$CLIENTSource = new Subject<OriginData>();
+  private MT10_OF_PROCESS_ADD$FRIEND$REQ_FRIEND$INFO$SERVER$TO$CLIENTSource = new Subject<ProtocalModel>();
   public MT10_OF_PROCESS_ADD$FRIEND$REQ_FRIEND$INFO$SERVER$TO$CLIENT$ =
     this.MT10_OF_PROCESS_ADD$FRIEND$REQ_FRIEND$INFO$SERVER$TO$CLIENTSource.asObservable();
 
-  private MT12_OF_PROCESS_ADD$FRIEND$REQ_SERVER$TO$A_REJECT_RESULTSource = new Subject<OriginData>();
+  private MT12_OF_PROCESS_ADD$FRIEND$REQ_SERVER$TO$A_REJECT_RESULTSource = new Subject<ProtocalModel>();
   public MT12_OF_PROCESS_ADD$FRIEND$REQ_SERVER$TO$A_REJECT_RESULT$ =
     this.MT12_OF_PROCESS_ADD$FRIEND$REQ_SERVER$TO$A_REJECT_RESULTSource.asObservable();
 
-  private MT03_OF_CHATTING_MESSAGESource = new Subject<OriginData>();
+  private MT03_OF_CHATTING_MESSAGESource = new Subject<ProtocalModel>();
   public MT03_OF_CHATTING_MESSAGE$ = this.MT03_OF_CHATTING_MESSAGESource.asObservable();
 
-  private MT16_OF_VIDEO$VOICE_SWITCH$TO$VOICE$AND$VIDEOSource = new Subject<OriginData>();
+  private MT16_OF_VIDEO$VOICE_SWITCH$TO$VOICE$AND$VIDEOSource = new Subject<ProtocalModel>();
   public MT16_OF_VIDEO$VOICE_SWITCH$TO$VOICE$AND$VIDEO$ =
     this.MT16_OF_VIDEO$VOICE_SWITCH$TO$VOICE$AND$VIDEOSource.asObservable();
 
-  private MT17_OF_VIDEO$VOICE$REQUEST_REQUESTING$FROM$ASource = new Subject<OriginData>();
+  private MT17_OF_VIDEO$VOICE$REQUEST_REQUESTING$FROM$ASource = new Subject<ProtocalModel>();
   public MT17_OF_VIDEO$VOICE$REQUEST_REQUESTING$FROM$A$ = this.MT17_OF_VIDEO$VOICE$REQUEST_REQUESTING$FROM$ASource.asObservable();
 
-  private MT18_OF_VIDEO$VOICE$REQUEST_ABRORT$FROM$ASource = new Subject<OriginData>();
+  private MT18_OF_VIDEO$VOICE$REQUEST_ABRORT$FROM$ASource = new Subject<ProtocalModel>();
   public MT18_OF_VIDEO$VOICE$REQUEST_ABRORT$FROM$A$ = this.MT18_OF_VIDEO$VOICE$REQUEST_ABRORT$FROM$ASource.asObservable();
 
-  private MT19_OF_VIDEO$VOICE$REQUEST_ACCEPT$TO$ASource = new Subject<OriginData>();
+  private MT19_OF_VIDEO$VOICE$REQUEST_ACCEPT$TO$ASource = new Subject<ProtocalModel>();
   public MT19_OF_VIDEO$VOICE$REQUEST_ACCEPT$TO$A$ = this.MT19_OF_VIDEO$VOICE$REQUEST_ACCEPT$TO$ASource.asObservable();
 
-  private illegalMessageSource = new Subject<OriginData>();
+  private illegalMessageSource = new Subject<ProtocalModel>();
   public illegalMessage$ = this.MT19_OF_VIDEO$VOICE$REQUEST_ACCEPT$TO$ASource.asObservable();
 
 
   constructor() { }
 
-  inceptMessage(originData: OriginData) {
+  inceptMessage(originData: ProtocalModel) {
     const typeu = originData.typeu;
 
     switch (typeu) {
@@ -155,7 +155,7 @@ export class MessageDistributeService {
    * @constructor
    * @private
    */
-  private MT01_OF_ONLINE_NOTIVICATION(originData: OriginData) {
+  private MT01_OF_ONLINE_NOTIVICATION(originData: ProtocalModel) {
     this.MT01_OF_ONLINE_NOTIVICATIONSource.next(originData);
 
   }
@@ -166,7 +166,7 @@ export class MessageDistributeService {
    * @constructor
    * @private
    */
-  private MT02_OF_OFFLINE_NOTIVICATION(originData: OriginData) {
+  private MT02_OF_OFFLINE_NOTIVICATION(originData: ProtocalModel) {
     this.MT02_OF_OFFLINE_NOTIVICATIONSource.next(originData);
   }
 
@@ -177,7 +177,7 @@ export class MessageDistributeService {
    * @constructor
    * @private
    */
-  private MT43_OF_TEMP$CHAT$MSG_SERVER$TO$B(originData: OriginData) {
+  private MT43_OF_TEMP$CHAT$MSG_SERVER$TO$B(originData: ProtocalModel) {
     this.MT43_OF_TEMP$CHAT$MSG_SERVER$TO$BSource.next(originData);
   }
 
@@ -187,7 +187,7 @@ export class MessageDistributeService {
    * @constructor
    * @private
    */
-  private MT45_OF_GROUP$CHAT$MSG_SERVER$TO$B(originData: OriginData) {
+  private MT45_OF_GROUP$CHAT$MSG_SERVER$TO$B(originData: ProtocalModel) {
     this.MT45_OF_GROUP$CHAT$MSG_SERVER$TO$BSource.next(originData);
 
   }
@@ -198,7 +198,7 @@ export class MessageDistributeService {
    * @constructor
    * @private
    */
-  private MT44_OF_GROUP$CHAT$MSG_A$TO$SERVER(originData: OriginData) {
+  private MT44_OF_GROUP$CHAT$MSG_A$TO$SERVER(originData: ProtocalModel) {
     this.MT44_OF_GROUP$CHAT$MSG_A$TO$SERVERSource.next(originData);
   }
 
@@ -208,7 +208,7 @@ export class MessageDistributeService {
    * @constructor
    * @private
    */
-  private MT46_OF_GROUP$SYSCMD_MYSELF$BE$INVITE_FROM$SERVER(originData: OriginData) {
+  private MT46_OF_GROUP$SYSCMD_MYSELF$BE$INVITE_FROM$SERVER(originData: ProtocalModel) {
     this.MT46_OF_GROUP$SYSCMD_MYSELF$BE$INVITE_FROM$SERVERSource.next(originData);
   }
 
@@ -218,7 +218,7 @@ export class MessageDistributeService {
    * @constructor
    * @private
    */
-  private MT47_OF_GROUP$SYSCMD_COMMON$INFO_FROM$SERVER(originData: OriginData) {
+  private MT47_OF_GROUP$SYSCMD_COMMON$INFO_FROM$SERVER(originData: ProtocalModel) {
     this.MT47_OF_GROUP$SYSCMD_COMMON$INFO_FROM$SERVERSource.next(originData);
   }
 
@@ -228,7 +228,7 @@ export class MessageDistributeService {
    * @constructor
    * @private
    */
-  private MT48_OF_GROUP$SYSCMD_DISMISSED_FROM$SERVER(originData: OriginData) {
+  private MT48_OF_GROUP$SYSCMD_DISMISSED_FROM$SERVER(originData: ProtocalModel) {
     this.MT48_OF_GROUP$SYSCMD_DISMISSED_FROM$SERVERSource.next(originData);
   }
 
@@ -238,7 +238,7 @@ export class MessageDistributeService {
    * @constructor
    * @private
    */
-  private MT49_OF_GROUP$SYSCMD_YOU$BE$KICKOUT_FROM$SERVER(originData: OriginData) {
+  private MT49_OF_GROUP$SYSCMD_YOU$BE$KICKOUT_FROM$SERVER(originData: ProtocalModel) {
     this.MT49_OF_GROUP$SYSCMD_YOU$BE$KICKOUT_FROM$SERVERSource.next(originData);
   }
 
@@ -248,7 +248,7 @@ export class MessageDistributeService {
    * @constructor
    * @private
    */
-  private MT50_OF_GROUP$SYSCMD_SOMEONEB$REMOVED_FROM$SERVER(originData: OriginData) {
+  private MT50_OF_GROUP$SYSCMD_SOMEONEB$REMOVED_FROM$SERVER(originData: ProtocalModel) {
     this.MT50_OF_GROUP$SYSCMD_SOMEONEB$REMOVED_FROM$SERVERSource.next(originData);
   }
 
@@ -258,7 +258,7 @@ export class MessageDistributeService {
    * @constructor
    * @private
    */
-  private MT51_OF_GROUP$SYSCMD_GROUP$NAME$CHANGED_FROM$SERVER(originData: OriginData) {
+  private MT51_OF_GROUP$SYSCMD_GROUP$NAME$CHANGED_FROM$SERVER(originData: ProtocalModel) {
     this.MT51_OF_GROUP$SYSCMD_GROUP$NAME$CHANGED_FROM$SERVERSource.next(originData);
   }
 
@@ -270,7 +270,7 @@ export class MessageDistributeService {
    * @constructor
    * @private
    */
-  private MT06_OF_ADD_FRIEND_REQUEST_RESPONSE$FOR$ERROR_SERVER$TO$A(originData: OriginData) {
+  private MT06_OF_ADD_FRIEND_REQUEST_RESPONSE$FOR$ERROR_SERVER$TO$A(originData: ProtocalModel) {
     this.MT06_OF_ADD_FRIEND_REQUEST_RESPONSE$FOR$ERROR_SERVER$TO$ASource.next(originData);
   }
 
@@ -280,7 +280,7 @@ export class MessageDistributeService {
    * @constructor
    * @private
    */
-  private MT07_OF_ADD_FRIEND_REQUEST_INFO_SERVER$TO$B(originData: OriginData) {
+  private MT07_OF_ADD_FRIEND_REQUEST_INFO_SERVER$TO$B(originData: ProtocalModel) {
     this.MT07_OF_ADD_FRIEND_REQUEST_INFO_SERVER$TO$BSource.next(originData);
     // 解析后便是RosterElementEntity对象，
   }
@@ -294,7 +294,7 @@ export class MessageDistributeService {
    * @constructor
    * @private
    */
-  private MT10_OF_PROCESS_ADD$FRIEND$REQ_FRIEND$INFO$SERVER$TO$CLIENT(originData: OriginData) {
+  private MT10_OF_PROCESS_ADD$FRIEND$REQ_FRIEND$INFO$SERVER$TO$CLIENT(originData: ProtocalModel) {
     this.MT10_OF_PROCESS_ADD$FRIEND$REQ_FRIEND$INFO$SERVER$TO$CLIENTSource.next(originData);
     // RosterElementEntity对象，
   }
@@ -305,7 +305,7 @@ export class MessageDistributeService {
    * @constructor
    * @private
    */
-  private MT12_OF_PROCESS_ADD$FRIEND$REQ_SERVER$TO$A_REJECT_RESULT(originData: OriginData) {
+  private MT12_OF_PROCESS_ADD$FRIEND$REQ_SERVER$TO$A_REJECT_RESULT(originData: ProtocalModel) {
     this.MT12_OF_PROCESS_ADD$FRIEND$REQ_SERVER$TO$A_REJECT_RESULTSource.next(originData);
     // RosterElementEntity对象，
     // 详见：http://docs.52im.net/extend/docs/api/rainbowchatserver4_pro/com/x52im/rainbowchat/http/logic/dto/RosterElementEntity.html
@@ -318,7 +318,7 @@ export class MessageDistributeService {
    * @constructor
    * @private
    */
-  private MT03_OF_CHATTING_MESSAGE(originData: OriginData) {
+  private MT03_OF_CHATTING_MESSAGE(originData: ProtocalModel) {
     this.MT03_OF_CHATTING_MESSAGESource.next(originData);
   }
 
@@ -328,7 +328,7 @@ export class MessageDistributeService {
    * @constructor
    * @private
    */
-  private MT16_OF_VIDEO$VOICE_SWITCH$TO$VOICE$AND$VIDEO(originData: OriginData) {
+  private MT16_OF_VIDEO$VOICE_SWITCH$TO$VOICE$AND$VIDEO(originData: ProtocalModel) {
     this.MT16_OF_VIDEO$VOICE_SWITCH$TO$VOICE$AND$VIDEOSource.next(originData);
 
   }
@@ -339,7 +339,7 @@ export class MessageDistributeService {
    * @constructor
    * @private
    */
-  private MT17_OF_VIDEO$VOICE$REQUEST_REQUESTING$FROM$A(originData: OriginData) {
+  private MT17_OF_VIDEO$VOICE$REQUEST_REQUESTING$FROM$A(originData: ProtocalModel) {
     this.MT17_OF_VIDEO$VOICE$REQUEST_REQUESTING$FROM$ASource.next(originData);
 
   }
@@ -350,7 +350,7 @@ export class MessageDistributeService {
    * @constructor
    * @private
    */
-  private MT18_OF_VIDEO$VOICE$REQUEST_ABRORT$FROM$A(originData: OriginData) {
+  private MT18_OF_VIDEO$VOICE$REQUEST_ABRORT$FROM$A(originData: ProtocalModel) {
     this.MT18_OF_VIDEO$VOICE$REQUEST_ABRORT$FROM$ASource.next(originData);
 
   }
@@ -361,7 +361,7 @@ export class MessageDistributeService {
    * @constructor
    * @private
    */
-  private MT19_OF_VIDEO$VOICE$REQUEST_ACCEPT$TO$A(originData: OriginData) {
+  private MT19_OF_VIDEO$VOICE$REQUEST_ACCEPT$TO$A(originData: ProtocalModel) {
     this.MT19_OF_VIDEO$VOICE$REQUEST_ACCEPT$TO$ASource.next(originData);
 
   }
@@ -371,7 +371,7 @@ export class MessageDistributeService {
    * @param originData
    * @private
    */
-  private illegalMessage(originData: OriginData) {
+  private illegalMessage(originData: ProtocalModel) {
     this.illegalMessageSource.next(originData);
     // log("【onIMData】【非法】来自" + userid + "的未定义typeu=" + typeu + "数据包，无法继续处理，请核实协议定义！", true);
   }

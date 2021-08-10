@@ -6,7 +6,7 @@ import {SnackBarService} from '@services/snack-bar/snack-bar.service';
 import {APP_CONFIG as environment} from "environments/environment";
 import {FormControl} from "@angular/forms";
 import {getVerifyCode} from "@app/config/post-api";
-import NewHttpResponse from "@app/models/NewHttpResponse";
+import NewHttpResponseModel from "@app/models/new-http-response.model";
 
 
 @Component({
@@ -67,7 +67,7 @@ export class SmsCodeTypeComponent extends FieldType implements OnInit {
     if (mobile > 0) {
       // alert(this.formControl.value);
       // button.disabled = true;
-      this.http.postForm(getVerifyCode, {phone: [areaCode, mobile].join("-")}).subscribe((res: NewHttpResponse<any>) => {
+      this.http.postForm(getVerifyCode, {phone: [areaCode, mobile].join("-")}).subscribe((res: NewHttpResponseModel<any>) => {
         if (Number(res.status) === 200) {
           // if (res.data.seconds) {
           //   this.counter = res.data.seconds;

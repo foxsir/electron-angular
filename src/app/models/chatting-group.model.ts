@@ -1,4 +1,4 @@
-export default class ChattingGroup {
+export default class ChattingGroupModel {
   create_time: string;
   create_user_name: string;
   g_id: string;

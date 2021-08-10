@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import ChatMsgEntity from "@app/models/ChatMsgEntity";
+import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 
 @Component({
   selector: 'app-message-no-talk',
@@ -7,7 +7,7 @@ import ChatMsgEntity from "@app/models/ChatMsgEntity";
   styleUrls: ['./message-no-talk.component.scss']
 })
 export class MessageNoTalkComponent implements OnInit {
-  @Input() chatMsg: ChatMsgEntity;
+  @Input() chatMsg: ChatmsgEntityModel;
 
   constructor() { }
 

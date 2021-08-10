@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import Chatting from "@app/models/Chatting";
+import ChattingModel from "@app/models/chatting.model";
 
 @Component({
   selector: 'app-group-chatting-setting',
@@ -7,7 +7,7 @@ import Chatting from "@app/models/Chatting";
   styleUrls: ['./group-chatting-setting.component.scss']
 })
 export class GroupChattingSettingComponent implements OnInit {
-  @Input() currentChat: Chatting;
+  @Input() currentChat: ChattingModel;
 
   constructor() { }
 

@@ -7,11 +7,11 @@ import emojiActiveIcon from "@app/assets/icons/emoji-active.svg";
 import sendIcon from "@app/assets/icons/send.svg";
 import sendActiveIcon from "@app/assets/icons/send-active.svg";
 import {DomSanitizer} from "@angular/platform-browser";
-import Chatting from "@app/models/Chatting";
+import ChattingModel from "@app/models/chatting.model";
 import {ImService} from "@services/im/im.service";
 import {MessageService} from "@services/message/message.service";
 import {MsgType} from "@app/config/rbchat-config";
-import ChatMsgEntity from "@app/models/ChatMsgEntity";
+import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 import {RosterProviderService} from "@services/roster-provider/roster-provider.service";
 import {AlarmsProviderService} from "@services/alarms-provider/alarms-provider.service";
 import {MessageEntityService} from "@services/message-entity/message-entity.service";
@@ -25,8 +25,8 @@ import {Router} from "@angular/router";
   styleUrls: ['./input-area.component.scss']
 })
 export class InputAreaComponent implements OnInit {
-  @Input() currentChat: Chatting;
-  @Output() sendMessage = new EventEmitter<ChatMsgEntity>();
+  @Input() currentChat: ChattingModel;
+  @Output() sendMessage = new EventEmitter<ChatmsgEntityModel>();
 
   public attachmentIcon = this.dom.bypassSecurityTrustResourceUrl(attachmentIcon);
   public attachmentActiveIcon = this.dom.bypassSecurityTrustResourceUrl(attachmentActiveIcon);
