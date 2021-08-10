@@ -8,6 +8,23 @@ UI框架：使用https://material.angular.io 12
 
 布局框架：https://github.com/angular/flex-layout
 
+## 安装
+
+```shell
+cd caomei-desktop-angular
+yarn
+```
+
+## 运行
+```shell
+yarn start
+```
+
+## 打包，默认生产mac和win系统应用到release文件夹
+```shell
+yarn electron:build
+```
+
 ## 项目结构
 
 - assets：资源
