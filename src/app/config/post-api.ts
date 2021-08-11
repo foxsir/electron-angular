@@ -70,6 +70,13 @@ export const getGroupAdminInfo=  _HTTP_YUEKU_SERVER_URL +"/api/groupBase/getAdmi
 //根据群id查询群管理员信息
 export const getMyBlackUser =  _HTTP_YUEKU_SERVER_URL +"/api/user/getMyBlackUser";
 
+//隐私设置-隐私设置详情
+export const getPrivacyConfigById = _HTTP_YUEKU_SERVER_URL + "/api/privacyConfig/getPrivacyConfigById";
+
+//隐私设置-更新隐私设置
+export const updatePrivacyConfig = _HTTP_YUEKU_SERVER_URL + "/api/privacyConfig/updatePrivacyConfig";
+
+
 
 //
 //  //封装请求函数

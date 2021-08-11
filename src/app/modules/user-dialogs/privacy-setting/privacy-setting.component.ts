@@ -22,25 +22,52 @@ export class PrivacySettingComponent implements OnInit {
   public backspaceActiveIcon = this.dom.bypassSecurityTrustResourceUrl(backspaceActiveIcon);
 
   public findMeByPhone = false;
-  public findMeByQRCode = false;
+    public findMeByQRCode = false;
+    public privacySetting;
 
   constructor(
     private dom: DomSanitizer,
     private restService: RestService,
-  ) { }
+  ) {
+      this.restService.getPrivacyConfigById().subscribe(res => {
+          console.log('getPrivacyConfigById result: ', res);
+          this.privacySetting = res.data;
 
-  ngOnInit(): void {
+          this.findMeByPhone = this.privacySetting.privacyConfig.isSearchPhone == 1;
+          this.findMeByQRCode = this.privacySetting.privacyConfig.isQr == 1;
+      });
   }
 
-  byPhone() {
-    // this.restService
-    // RestService 中没有设置隐私的方法需要新添加
-    // 隐私设置接口地址 http://120.79.90.66:3000/project/17/interface/api/49
-    console.dir(this.findMeByPhone);
-  }
+    ngOnInit(): void {
+        
+    }
 
-  byQRCode() {
-    console.dir(this.findMeByQRCode);
-  }
+    byPhone() {
+        // this.restService
+        // RestService 中没有设置隐私的方法需要新添加
+        // 隐私设置接口地址 http://120.79.90.66:3000/project/17/interface/api/49
+        console.dir(this.findMeByPhone);
+        console.log('privacysetting: ', this.privacySetting);
+
+        var data = {
+            id: this.privacySetting.privacyConfig.id,
+            isSearchPhone: this.findMeByPhone == true ? 1 : 0,
+        };
+        this.restService.updatePrivacyConfig(data).subscribe(res => {
+
+        });
+    }
+
+    byQRCode() {
+        console.dir(this.findMeByQRCode);
+
+        var data = {
+            id: this.privacySetting.privacyConfig.id,
+            isQr: this.findMeByQRCode == true ? 1 : 0,
+        };
+        this.restService.updatePrivacyConfig(data).subscribe(res => {
+
+        });
+    }
 
 }
