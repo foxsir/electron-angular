@@ -3,7 +3,7 @@ const OssConfig = {
   AccessKeySecret: "ovIStvluo2IawS1fgbZqhKWbTzUvj3",
   endpoint: "https://oss-cn-shenzhen.aliyuncs.com",
   bucketName: "strawberry-im",
-  // bucketDomain: "https://strawberry-im.oss-cn-shenzhen.aliyuncs.com",
+  bucketDomain: "https://strawberry-im.oss-cn-shenzhen.aliyuncs.com",
   region: "cn-shenzhen"
 };
 
