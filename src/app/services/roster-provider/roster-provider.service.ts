@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {LocalUserService} from "@services/local-user/local-user.service";
 import {RestService} from "@services/rest/rest.service";
 import RBChatUtils from "@app/libs/rbchat-utils";
-import NewHttpResponseModel from "@app/models/new-http-response.model";
+import NewHttpResponseInterface from "@app/interfaces/new-http-response.interface";
 
 /**
  * 好友列表数据提供者（即好友列表全局数据模型）.
@@ -27,7 +27,7 @@ export class RosterProviderService {
     const localUserUid = this.localUserService.getObj().userId;
     // return this.restServiceService.submitGetRosterToServer(localUserUid);
     // 通过rest接口获取好友列表数据
-    this.restServiceService.submitGetRosterToServer(localUserUid).subscribe((res: NewHttpResponseModel<any>) => {
+    this.restServiceService.submitGetRosterToServer(localUserUid).subscribe((res: NewHttpResponseInterface<any>) => {
       // 服务端返回的是一维RosterElementEntity对象数组
       if(res.status === 200) {
         const rosterList = res.data;
