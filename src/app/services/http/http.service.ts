@@ -4,16 +4,19 @@ import { catchError } from 'rxjs/operators';
 import {throwError} from 'rxjs';
 import {APP_CONFIG} from '@environments/environment';
 import {SnackBarService} from '@services/snack-bar/snack-bar.service';
+import RBChatUtils from "@app/libs/rbchat-utils";
 
 @Injectable({
   providedIn: 'root'
 })
 export class HttpService {
   private host = APP_CONFIG.api;
+  private localAuthedUserInfo = RBChatUtils.getAuthedLocalUserInfoFromCookie();
+  private tokenPrefix = "Bearer";
 
   constructor(
     private http: HttpClient,
-    private snackBar: SnackBarService
+    private snackBar: SnackBarService,
   ) {
   }
 
@@ -78,7 +81,7 @@ export class HttpService {
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
-        // Authorization: localStorage.getItem('Authorization') || "",
+        // Authorization: [this.tokenPrefix, this.localAuthedUserInfo.token].join(" "),
       })
     };
     return this.http.post(request, body, httpOptions).pipe(
@@ -105,7 +108,8 @@ export class HttpService {
 
     const httpOptions = {
       headers: new HttpHeaders({
-        'Content-Type': 'application/x-www-form-urlencoded'
+        'Content-Type': 'application/x-www-form-urlencoded',
+        // Authorization: [this.tokenPrefix, this.localAuthedUserInfo.token].join(" "),
       })
     };
     return this.http.get(request + "?" + params.join("&"), httpOptions).pipe(
@@ -137,7 +141,8 @@ export class HttpService {
 
     const httpOptions = {
       headers: new HttpHeaders({
-        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        // Authorization: [this.tokenPrefix, this.localAuthedUserInfo.token].join(" "),
       })
     };
     return this.http.post(request, params.join("&"), httpOptions).pipe(
@@ -151,7 +156,11 @@ export class HttpService {
    */
   getContentLength(url: string) {
     return new Promise((resolve, reject) => {
-      fetch(url).then(response => {
+      fetch(url, {
+        headers: {
+          // Authorization: [this.tokenPrefix, this.localAuthedUserInfo.token].join(" "),
+        }
+      }).then(response => {
         resolve(response.headers.get("content-length"));
       });
     });
