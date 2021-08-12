@@ -13,7 +13,10 @@ export const verifyCode = _HTTP_YUEKU_SERVER_URL +"/api/sms/verifyCode";
 export const getAppConfig = _HTTP_YUEKU_SERVER_URL +"/api/appConfig/getAppConfig";
 
 //查询资料
-export const getUserBaseById = _HTTP_YUEKU_SERVER_URL +"/api/user/getUserBaseById";
+export const getUserBaseById = _HTTP_YUEKU_SERVER_URL + "/api/user/getUserBaseById";
+
+//编辑个人信息
+export const updateUserBaseById = _HTTP_YUEKU_SERVER_URL + "/api/user/updateUserBaseById";
 
 //新增个人群禁言
 export const addGroupSlience = _HTTP_YUEKU_SERVER_URL +"/api/groupSlience/addGroupSlience";
@@ -69,6 +72,13 @@ export const getGroupAdminInfo=  _HTTP_YUEKU_SERVER_URL +"/api/groupBase/getAdmi
 
 //根据群id查询群管理员信息
 export const getMyBlackUser =  _HTTP_YUEKU_SERVER_URL +"/api/user/getMyBlackUser";
+
+//隐私设置-隐私设置详情
+export const getPrivacyConfigById = _HTTP_YUEKU_SERVER_URL + "/api/privacyConfig/getPrivacyConfigById";
+
+//隐私设置-更新隐私设置
+export const updatePrivacyConfig = _HTTP_YUEKU_SERVER_URL + "/api/privacyConfig/updatePrivacyConfig";
+
 
 
 //

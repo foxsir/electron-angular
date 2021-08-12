@@ -11,7 +11,10 @@ import {FlexLayoutModule} from "@angular/flex-layout";
 import {TitleBarModule} from "../../factorys/title-bar/title-bar.module";
 import {MatIconModule} from "@angular/material/icon";
 import {FormsModule} from "@angular/forms";
-import {NzSwitchModule} from "ng-zorro-antd/switch";
+import { NzSwitchModule } from "ng-zorro-antd/switch";
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzButtonModule } from 'ng-zorro-antd/button';
 
 
 
@@ -25,16 +28,19 @@ import {NzSwitchModule} from "ng-zorro-antd/switch";
     exports: [
         PrivacySettingComponent
     ],
-  imports: [
-    CommonModule,
-    MatDialogModule,
-    MatButtonModule,
-    MatCardModule,
-    FlexLayoutModule,
-    TitleBarModule,
-    MatIconModule,
-    FormsModule,
-    NzSwitchModule
+    imports: [
+        CommonModule,
+        MatDialogModule,
+        MatButtonModule,
+        MatCardModule,
+        FlexLayoutModule,
+        TitleBarModule,
+        MatIconModule,
+        FormsModule,
+        NzSwitchModule,
+        NzSelectModule,
+        NzInputModule,
+        NzButtonModule
   ]
 })
 export class UserDialogsModule { }
