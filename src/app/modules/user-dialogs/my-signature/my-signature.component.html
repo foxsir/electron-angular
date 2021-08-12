@@ -1,1 +1,19 @@
-<p>my-signature works!</p>
+<div fxLayout="column">
+    <div>
+        <label>设置个性签名</label>
+    </div>
+    <div fxFlex>
+        <mat-card class="mat-elevation-z0">
+            <mat-card-content>
+                <div fxLayout="column" fxLayoutGap="10px">
+                    <!--<nz-input [(ngModel)]="whatSUp"></nz-input>-->
+                    <input type="text" nz-input [(ngModel)]="whatSUp" />
+                </div>
+                <div style="margin-top:10px;display:flex;"> 
+                    <button nz-button nzType="default" style="width:100px;" mat-dialog-close>取消</button>
+                    <button nz-button nzType="primary" style="width:100px;margin-left:10px;" (click)="save()" mat-dialog-close>保存</button>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>

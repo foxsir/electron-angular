@@ -5,7 +5,10 @@ import {HttpService} from "@services/http/http.service";
 import {Observable} from "rxjs";
 import {LocalUserService} from "@services/local-user/local-user.service";
 import {ImService} from "@services/im/im.service";
-import { getAppConfig, getMissuCollectById, getMyBlackUser, getUserBaseById, verifyCode, getPrivacyConfigById, updatePrivacyConfig} from "@app/config/post-api";
+import {
+    getAppConfig, getMissuCollectById, getMyBlackUser, getUserBaseById, updateUserBaseById,
+    verifyCode, getPrivacyConfigById, updatePrivacyConfig
+} from "@app/config/post-api";
 import {HttpHeaders} from "@angular/common/http";
 
 @Injectable({
@@ -744,6 +747,17 @@ export class RestService {
    */
   getUserBaseById(user_id: string): Observable<any> {
     return this.http.postForm(getUserBaseById, {userUid: user_id});
+    }
+
+    /**
+     * 编辑个人信息
+     * @param user_id
+     */
+    updateUserBaseById(data: any): Observable<any> {
+        const localUserInfo = this.localUserService.getObj();
+        data.userUid = localUserInfo.userId;
+
+        return this.http.post(updateUserBaseById, data);
     }
 
    /**

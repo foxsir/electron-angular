@@ -13,6 +13,8 @@ import {MatIconModule} from "@angular/material/icon";
 import {FormsModule} from "@angular/forms";
 import { NzSwitchModule } from "ng-zorro-antd/switch";
 import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzButtonModule } from 'ng-zorro-antd/button';
 
 
 
@@ -26,17 +28,19 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
     exports: [
         PrivacySettingComponent
     ],
-  imports: [
-    CommonModule,
-    MatDialogModule,
-    MatButtonModule,
-    MatCardModule,
-    FlexLayoutModule,
-    TitleBarModule,
-    MatIconModule,
-    FormsModule,
-      NzSwitchModule,
-      NzSelectModule
+    imports: [
+        CommonModule,
+        MatDialogModule,
+        MatButtonModule,
+        MatCardModule,
+        FlexLayoutModule,
+        TitleBarModule,
+        MatIconModule,
+        FormsModule,
+        NzSwitchModule,
+        NzSelectModule,
+        NzInputModule,
+        NzButtonModule
   ]
 })
 export class UserDialogsModule { }
