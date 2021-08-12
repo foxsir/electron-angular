@@ -29,7 +29,15 @@ export class PrivacySettingComponent implements OnInit {
         isGroup: false,
         isCard: false,
         isTemporary: false,
+        isPublishLimit: '0',
     };
+
+    public publish_limit_list = [
+        { value: 0, label: 'x' },
+        { value: 1, label: 'x' },
+        { value: 2, label: 'xx' },
+        { value: 3, label: 'xx' },
+    ];
 
     constructor(private dom: DomSanitizer, private restService: RestService) {
         this.restService.getPrivacyConfigById().subscribe(res => {
@@ -42,6 +50,7 @@ export class PrivacySettingComponent implements OnInit {
             this.setting_data.isGroup = this.privacySetting.privacyConfig.isGroup == 1;
             this.setting_data.isCard = this.privacySetting.privacyConfig.isCard == 1;
             this.setting_data.isTemporary = this.privacySetting.privacyConfig.isTemporary == 1;
+            this.setting_data.isPublishLimit = '' + this.privacySetting.privacyConfig.isPublishLimit + '';
         });
     }
 
@@ -57,6 +66,19 @@ export class PrivacySettingComponent implements OnInit {
 
         this.restService.updatePrivacyConfig(data).subscribe(res => {
 
+        });
+    }
+
+    setPublishLimit() {
+        console.log('setting_data.isPublishLimit: ', this.setting_data.isPublishLimit);
+
+        var data = {
+            id: this.privacySetting.privacyConfig.id
+        };
+        data['isPublishLimit'] = this.setting_data.isPublishLimit,
+
+        this.restService.updatePrivacyConfig(data).subscribe(res => {
+             
         });
     }
 

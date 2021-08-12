@@ -11,7 +11,8 @@ import {FlexLayoutModule} from "@angular/flex-layout";
 import {TitleBarModule} from "../../factorys/title-bar/title-bar.module";
 import {MatIconModule} from "@angular/material/icon";
 import {FormsModule} from "@angular/forms";
-import {NzSwitchModule} from "ng-zorro-antd/switch";
+import { NzSwitchModule } from "ng-zorro-antd/switch";
+import { NzSelectModule } from 'ng-zorro-antd/select';
 
 
 
@@ -34,7 +35,8 @@ import {NzSwitchModule} from "ng-zorro-antd/switch";
     TitleBarModule,
     MatIconModule,
     FormsModule,
-    NzSwitchModule
+      NzSwitchModule,
+      NzSelectModule
   ]
 })
 export class UserDialogsModule { }

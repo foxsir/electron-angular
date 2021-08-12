@@ -51,6 +51,19 @@
                 <span class="privacy-item-text">允许临时会话添加</span>
                 <nz-switch [(ngModel)]="setting_data.isTemporary" (ngModelChange)="bySwitch('isTemporary')"></nz-switch>
             </div>
+            <div fxFlex fxLayoutAlign="space-between center">
+                <!--<mat-select [(ngModel)]="setting_data.isPublishLimit" (selectionChange)='setDetail()'>
+                    <mat-option *ngFor="let item of publish_limit_list" [value]="item.value">{{item.label}}</mat-option>
+                </mat-select>-->
+                <span class="privacy-item-text">动态可见时间</span>
+                <nz-select [(ngModel)]="setting_data.isPublishLimit" (ngModelChange)="setPublishLimit()" 
+                           style="width:120px;margin-right:20px;">
+                    <nz-option nzValue="0" nzLabel="最近半年"></nz-option>
+                    <nz-option nzValue="1" nzLabel="最近一个月"></nz-option>
+                    <nz-option nzValue="2" nzLabel="最近三天"></nz-option>
+                    <nz-option nzValue="3" nzLabel="全部"></nz-option>
+                </nz-select>
+            </div>
         </div>
       </mat-card-content>
     </mat-card>
