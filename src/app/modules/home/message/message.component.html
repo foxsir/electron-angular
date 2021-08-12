@@ -124,12 +124,12 @@
             <mat-card-content *ngIf="chatMsgEntityList">
               <div fxLayout="column" fxLayoutGap="20px" class="chatting-panel-container" #chattingContainer>
                 <div fxLayout="row" *ngFor="let chat of chatMsgEntityList"
-                     [fxLayoutAlign]="chat.uid === localUserInfo.userId ? 'end' : 'start'"
-                     [ngClass]="{'self-message': chat.uid === localUserInfo.userId}">
+                     [fxLayoutAlign]="chat.uid.toString() === localUserInfo.userId.toString() ? 'end' : 'start'"
+                     [ngClass]="{'self-message': chat.uid.toString() === localUserInfo.userId.toString()}">
                   <div fxFlex="65"
                        [fxLayoutAlign]="chat.uid.toString() === localUserInfo.userId.toString() ? 'end' : 'start'">
                     <div fxLayout="column" class="message-container" fxLayoutGap="5px"
-                         [fxLayoutAlign]="chat.uid === localUserInfo.userId ? 'end end' : 'start'">
+                         [fxLayoutAlign]="chat.uid.toString() === localUserInfo.userId.toString() ? 'end end' : 'start'">
                       <div class="message-time">
                         {{formatDate(chat.date, 'M-dd hh:m')}}
                       </div>
@@ -145,6 +145,9 @@
                             {{item.label}}
                           </button>
                         </mat-menu>
+                        <div *ngIf="chat.isOutgoing === false">
+                          wait
+                        </div>
                       </div>
                     </div>
                   </div>

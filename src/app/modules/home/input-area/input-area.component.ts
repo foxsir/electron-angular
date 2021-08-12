@@ -15,9 +15,12 @@ import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 import {RosterProviderService} from "@services/roster-provider/roster-provider.service";
 import {AlarmsProviderService} from "@services/alarms-provider/alarms-provider.service";
 import {MessageEntityService} from "@services/message-entity/message-entity.service";
-import {RestService} from "@services/rest/rest.service";
-import {LocalUserService} from "@services/local-user/local-user.service";
 import {Router} from "@angular/router";
+import {NzUploadFile} from "ng-zorro-antd/upload";
+import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
+import CommonTools from "@app/common/common.tools";
+import {FileService} from "@services/file/file.service";
+import {CacheService} from "@services/cache/cache.service";
 
 @Component({
   selector: 'app-input-area',
@@ -25,7 +28,7 @@ import {Router} from "@angular/router";
   styleUrls: ['./input-area.component.scss']
 })
 export class InputAreaComponent implements OnInit {
-  @Input() currentChat: ChattingModel;
+  @Input() currentChat: AlarmItemInterface;
   @Output() sendMessage = new EventEmitter<ChatmsgEntityModel>();
 
   public attachmentIcon = this.dom.bypassSecurityTrustResourceUrl(attachmentIcon);
@@ -37,6 +40,8 @@ export class InputAreaComponent implements OnInit {
 
   public messageText: string;
 
+  private sendChat: ChatmsgEntityModel;
+
   constructor(
     private router: Router,
     private dom: DomSanitizer,
@@ -45,9 +50,30 @@ export class InputAreaComponent implements OnInit {
     private rosterProviderService: RosterProviderService,
     private alarmsProviderService: AlarmsProviderService,
     private messageEntityService: MessageEntityService,
+    private fileService: FileService,
+    private cacheService: CacheService,
   ) { }
 
   ngOnInit(): void {
+  }
+
+  getImageInfo(file: File) {
+    CommonTools.getBlobUrlFromFile(file).then(blob => {
+      this.sendChat = this.messageEntityService.createChatMsgEntity_TO_IMAGE(
+        blob, 0, CommonTools.fingerPrint(), 0
+      );
+      this.sendChat.isOutgoing = false;
+      this.sendMessage.emit(this.sendChat);
+    });
+  }
+
+  imageUploaded(fileUrl: URL) {
+    this.sendChat.text = fileUrl.href;
+    this.sendChat.isOutgoing = true;
+    // this.fileService.getFile(fileUrl.pathname).then(res => {
+    //   this.sendChat.text = this.dom.bypassSecurityTrustResourceUrl(CommonTools.getBlobUrlFromOSSRes(res));
+    //   // CommonTools.downloadBlob(res);
+    // });
   }
 
   doSend() {
@@ -84,9 +110,9 @@ export class InputAreaComponent implements OnInit {
       });
     }
 
-    this.messageService.sendMessage(MsgType.TYPE_TEXT, this.currentChat.dataId, this.messageText).then(res => {
+    this.messageService.sendMessage(MsgType.TYPE_TEXT, this.currentChat.alarmItem.dataId, this.messageText).then(res => {
       if(res.success === true) {
-        const friendUid = this.currentChat.dataId;
+        const friendUid = this.currentChat.alarmItem.dataId;
         const ree = this.rosterProviderService.getFriendInfoByUid(friendUid);
 
         // 自已发出的消息，也要显示在相应的UI界面上
@@ -98,8 +124,18 @@ export class InputAreaComponent implements OnInit {
         const chatMsgEntity = this.messageEntityService.prepareSendedMessage(
           message, 0, res.fingerPrint, MsgType.TYPE_TEXT, MsgType.TYPE_TEXT.toString()
         );
+        chatMsgEntity.isOutgoing = false;
+        this.cacheService.putChattingCache(this.currentChat, chatMsgEntity);
         this.sendMessage.emit(chatMsgEntity);
+        this.clearTextArea();
       }
     });
+  }
+
+  /**
+   * 清空输入框
+   */
+  clearTextArea() {
+    this.messageText = "";
   }
 }

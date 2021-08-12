@@ -17,11 +17,13 @@ import CommonTools from "@app/common/common.tools";
   styleUrls: ['./upload-file.component.scss']
 })
 export class UploadFileComponent implements OnInit {
+  @Input() showText: string;
   loading = false;
   fileUrl?: string;
 
   @Input() options: Partial<uploadOptions>;
-  @Output() fileChange = new EventEmitter<URL>();
+  @Output() fileUploaded = new EventEmitter<URL>();
+  @Output() getFileInfo = new EventEmitter<NzUploadFile>();
 
   public defaultOptions: uploadOptions = {
     size: {width: '100px'},
@@ -45,6 +47,8 @@ export class UploadFileComponent implements OnInit {
 
   beforeUpload = (file: NzUploadFile, _fileList: NzUploadFile[]) =>
     new Observable((observer: Observer<boolean>) => {
+      this.getFileInfo.emit(file);
+
       const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
       if (!isJpgOrPng) {
         this.msg.error('You can only upload JPG file!');
@@ -64,7 +68,7 @@ export class UploadFileComponent implements OnInit {
         filename = [filename, CommonTools.getFileExt(file.type)].join(".");
 
         this.fileService.upload(buffer, filename, DirectoryType.OSS_FILE).then(res => {
-          this.fileChange.emit(new URL(res.url));
+          this.fileUploaded.emit(new URL(res.url));
           this.loading = false;
           this.fileUrl = res.url;
         });

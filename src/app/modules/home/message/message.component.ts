@@ -31,21 +31,14 @@ import {RosterProviderService} from "@services/roster-provider/roster-provider.s
 import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 import ProtocalModel from "@app/models/protocal.model";
 import {MessageDistributeService} from "@services/message-distribute/message-distribute.service";
-import HttpPresponseModel from "@app/models/http-response.model";
+import HttpPresponseModel from "@app/interfaces/http-response.interface";
 import ChattingModel from "@app/models/chatting.model";
 import {DomSanitizer, SafeResourceUrl} from "@angular/platform-browser";
 import {ContextMenuService} from "@services/context-menu/context-menu.service";
 import ContextMenuModel from "@app/models/context-menu.model";
 import {AvatarService} from "@services/avatar/avatar.service";
-
-interface AlarmItemInterface {
-  // 聊天信息
-  alarmItem: ChattingModel;
-  // 聊天元数据
-  metadata: {
-    msgType: number; // 0=单聊 1=临时聊天/陌生人聊天  2=群聊
-  };
-}
+import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
+import {CacheService} from "@services/cache/cache.service";
 
 @Component({
   selector: 'app-message',
@@ -96,6 +89,7 @@ export class MessageComponent implements OnInit {
     private dom: DomSanitizer,
     private contextMenuService: ContextMenuService,
     private avatarService: AvatarService,
+    private cacheService: CacheService,
   ) {
     this.localUserInfo = this.localUserService.localUserInfo;
 
@@ -105,19 +99,45 @@ export class MessageComponent implements OnInit {
       this.massageBadges[res.from.trim()] = 4;
 
       const chatMsgEntity = this.messageEntityService.prepareRecievedMessage(
-        res.from, dataContent.nickName, dataContent.m, (new Date()).getTime(), MsgType.TYPE_TEXT, res.fp
+        res.from, dataContent.nickName, dataContent.m, (new Date()).getTime(), dataContent.ty, res.fp
+      );
+      // fromUid, nickName, msg, time, msgType, fp = null
+      console.dir(res.fp);
+      chatMsgEntity.isOutgoing = true;
+      this.cacheService.putChattingCache(this.currentChat, chatMsgEntity);
+      this.pushMessageToPanel(chatMsgEntity);
+    });
+
+    this.imService.callback_messagesBeReceived = (fingerPrint) => {
+      if (fingerPrint) {
+        this.cacheService.getChattingCache(this.currentChat).then(data => {
+          if(data[fingerPrint]) {
+            const chat: ChatmsgEntityModel = data[fingerPrint];
+            chat.isOutgoing = true;
+            this.cacheService.putChattingCache(this.currentChat, chat);
+            this.cacheService.getChattingCache(this.currentChat).then(data => {
+              if(!!data) {
+                this.chatMsgEntityList = Object.values(data);
+              }
+            });
+          }
+        });
+      }
+    };
+
+    // 由用户转发
+    this.messageDistributeService.MT44_OF_GROUP$CHAT$MSG_A$TO$SERVER$.subscribe((res: ProtocalModel) => {
+      const dataContent: any = JSON.parse(res.dataContent);
+      const chatMsgEntity = this.messageEntityService.prepareRecievedMessage(
+        res.from, dataContent.nickName, dataContent.m, (new Date()).getTime(), dataContent.ty, res.fp
       );
       // fromUid, nickName, msg, time, msgType, fp = null
       this.pushMessageToPanel(chatMsgEntity);
     });
 
-    // this.messageDistributeService.MT44_OF_GROUP$CHAT$MSG_A$TO$SERVER$.subscribe((data: OriginData) => {
-    //   const dataContent: any = JSON.parse(data.dataContent);
-    //   alert("群组" + dataContent.f);
-    // });
-
-    this.messageDistributeService.MT45_OF_GROUP$CHAT$MSG_SERVER$TO$B$.subscribe((data: ProtocalModel) => {
-      const dataContent: any = JSON.parse(data.dataContent);
+    // 由服务端转发
+    this.messageDistributeService.MT45_OF_GROUP$CHAT$MSG_SERVER$TO$B$.subscribe((res: ProtocalModel) => {
+      const dataContent: any = JSON.parse(res.dataContent);
       // alert("群组" + dataContent.t);
       this.massageBadges[dataContent.t.trim()] = 99;
     });
@@ -221,6 +241,7 @@ export class MessageComponent implements OnInit {
       this.chatMsgEntityList.push(chat);
       this.scrollToBottom();
     }
+    // chatMsg.fingerPrintOfProtocal
   }
 
   /**
@@ -229,8 +250,14 @@ export class MessageComponent implements OnInit {
    */
   switchChat(alarm: AlarmItemInterface) {
     this.resetUI();
-
     this.currentChat = alarm;
+
+    this.cacheService.getChattingCache(this.currentChat).then(data => {
+      if(!!data) {
+        this.chatMsgEntityList = Object.values(data);
+      }
+    });
+
     this.avatarService.getAvatar(alarm.alarmItem.dataId).then(url => {
       this.currentChatAvatar = this.dom.bypassSecurityTrustResourceUrl(url);
     });
@@ -243,7 +270,7 @@ export class MessageComponent implements OnInit {
       }
     });
     this.chatMsgEntityList = [];
-    this.loadChattingHistoryFromServer(this.currentChat);
+    // this.loadChattingHistoryFromServer(this.currentChat);
   }
 
   resetUI() {

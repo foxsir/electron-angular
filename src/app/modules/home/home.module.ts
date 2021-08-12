@@ -29,6 +29,7 @@ import {FormsModule} from "@angular/forms";
 import {UserDialogsModule} from "../user-dialogs/user-dialogs.module";
 import { ChattingSettingComponent } from './chatting-setting/chatting-setting.component';
 import { GroupChattingSettingComponent } from './group-chatting-setting/group-chatting-setting.component';
+import {UploadModule} from "../../factorys/upload/upload.module";
 
 @NgModule({
   declarations: [
@@ -64,6 +65,7 @@ import { GroupChattingSettingComponent } from './group-chatting-setting/group-ch
     TitleBarModule,
     FormsModule,
     UserDialogsModule,
+    UploadModule,
   ]
 })
 export class HomeModule { }

@@ -1,5 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import ChattingModel from "@app/models/chatting.model";
+import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 
 @Component({
   selector: 'app-search-chatting',
@@ -7,7 +8,7 @@ import ChattingModel from "@app/models/chatting.model";
   styleUrls: ['./search-chatting.component.scss']
 })
 export class SearchChattingComponent implements OnInit {
-  @Input() chatting: ChattingModel;
+  @Input() chatting: AlarmItemInterface;
 
   currentTab: "chat" | "media" | "file" = "chat";
 

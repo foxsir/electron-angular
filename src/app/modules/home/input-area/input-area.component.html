@@ -1,6 +1,24 @@
 <div fxLayout="row" fxFlex="100">
   <div fxFlex="60px" fxLayoutAlign="center end" style="background: rgba(0,0,0,.04)">
-    <button mat-icon-button>
+
+    <mat-menu #attachmentMenu="matMenu">
+      <button mat-menu-item>
+        <app-upload-file showText="发送图片"
+                         (getFileInfo)="getImageInfo($event)"
+                         (fileUploaded)="imageUploaded($event)"></app-upload-file>
+      </button>
+      <button mat-menu-item>
+        <app-upload-file showText="文件发送"></app-upload-file>
+      </button>
+      <button mat-menu-item>
+        名片发送
+      </button>
+      <button mat-menu-item>
+        截图
+      </button>
+    </mat-menu>
+
+    <button mat-icon-button [matMenuTriggerFor]="attachmentMenu">
       <mat-icon class="hover-icon">
         <img class="icon" [src]="attachmentIcon" alt="">
         <img class="icon-active" [src]="attachmentActiveIcon" alt="">

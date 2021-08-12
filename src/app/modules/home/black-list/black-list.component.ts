@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {RestService} from "@services/rest/rest.service";
-import HttpPresponseModel from "@app/models/http-response.model";
+import HttpPresponseModel from "@app/interfaces/http-response.interface";
 
 @Component({
   selector: 'app-black-list',

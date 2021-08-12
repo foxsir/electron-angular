@@ -13,7 +13,7 @@ import {DomSanitizer} from "@angular/platform-browser";
 import uploadOptions from "@app/factorys/upload/uploadOptions";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {RestService} from "@services/rest/rest.service";
-import NewHttpResponseModel from "@app/models/new-http-response.model";
+import NewHttpResponseInterface from "@app/interfaces/new-http-response.interface";
 import RegisterResponseModel from "@app/models/register-response.model";
 import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 import {LocalUserService} from "@services/local-user/local-user.service";
@@ -79,7 +79,7 @@ export class RegisterComponent implements OnInit {
   }
 
   checkRegisterTYpe() {
-    this.restService.getAppConfig().subscribe((res: NewHttpResponseModel<any>) => {
+    this.restService.getAppConfig().subscribe((res: NewHttpResponseInterface<any>) => {
       if(res.data.registerType !== this.registerType) {
         if(res.data.registerType === 1) {
           this.form = this.signupFormMobile;
@@ -98,7 +98,7 @@ export class RegisterComponent implements OnInit {
         vCode: this.form.form.value.code
       };
       if (this.registerType === 1) {
-        this.restService.submitVerifyCodeToServer(data).subscribe((res: NewHttpResponseModel<any>) => {
+        this.restService.submitVerifyCodeToServer(data).subscribe((res: NewHttpResponseInterface<any>) => {
           if (res.status === 200) {
             this.gotoStepTwo();
           } else {
@@ -127,7 +127,7 @@ export class RegisterComponent implements OnInit {
     } else {
       params = "?username="+data.username;
     }
-    this.restService.checkUsernameAndPhone(params, data).subscribe((res: NewHttpResponseModel<any>) => {
+    this.restService.checkUsernameAndPhone(params, data).subscribe((res: NewHttpResponseInterface<any>) => {
       if(res.status === 200) {
         this.step = 'two';
       } else {
@@ -151,7 +151,7 @@ export class RegisterComponent implements OnInit {
         data = Object.assign(data, {userAvatarFileName: this.avatarUrl.pathname});
       }
 
-      this.restService.submitRegisterToServer(data).subscribe((res: NewHttpResponseModel<RegisterResponseModel>) => {
+      this.restService.submitRegisterToServer(data).subscribe((res: NewHttpResponseInterface<RegisterResponseModel>) => {
         if (res.status === 200) {
           const userInfo = res.data;
 

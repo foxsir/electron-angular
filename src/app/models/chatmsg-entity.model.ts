@@ -17,7 +17,7 @@ export default class ChatmsgEntityModel {
    * 消息内容（注意：此消息内容可能并非文本，以不同消息定义的封装对象为准）。
    * 当前除了文件消息外（文件消息放的是{@link FileMeta}对象），其它消息类型存放的都是文本内容。
    * */
-  text: string = null;
+  text: any = null;
   /** 消息类型 */
   msgType: number = MsgType.TYPE_TEXT;
   /** 消息所对应的原始协议包指纹，目前只在发出的消息对象中有意义 */

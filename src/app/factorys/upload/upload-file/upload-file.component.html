@@ -3,13 +3,16 @@
   [nzShowUploadList]="false"
   [nzBeforeUpload]="beforeUpload"
 >
-  <ng-container *ngIf="!fileUrl">
+  <ng-container *ngIf="!showText">
     <div>
       <div class="ant-upload-text">
         <img [src]="defaultOptions.icon" alt="" [ngStyle]="defaultOptions.size">
       </div>
       <mat-progress-bar *ngIf="loading && this.defaultOptions.showProgress" mode="indeterminate"></mat-progress-bar>
     </div>
+    <img *ngIf="fileUrl" [src]="fileUrl" style="width: 100%"  alt=""/>
   </ng-container>
-  <img *ngIf="fileUrl" [src]="fileUrl" style="width: 100%"  alt=""/>
+  <ng-container *ngIf="showText">
+    <span>{{showText}}</span>
+  </ng-container>
 </nz-upload>

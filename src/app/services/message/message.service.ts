@@ -208,7 +208,6 @@ export class MessageService {
       } else {
         // 消息发送者uid（就是本地用户的uid了）
         // var fromUid = this.imService.getLoginInfo().loginUserId;
-        //111 设备需要加web
         this.imService.promiseUserInfo().then(loginInfo => {
           const fromUid = loginInfo.loginUserId;
 
@@ -228,7 +227,8 @@ export class MessageService {
           // 详见：http://docs.52im.net/extend/docs/api/mobileimsdk/server/net/openmob/mobileimsdk/server/protocal/Protocal.html）
           p = createCommonData2(JSON.stringify(msgBody), fromUid, friendUID, UserProtocalsType.MT03_OF_CHATTING_MESSAGE);
           // 将消息通过websocket发送出去
-
+          // QoS = true 需要质量保证
+          p.QoS = true;
           this.imService.sendData(p);
           sucess = true;
           //    111

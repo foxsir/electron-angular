@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {RestService} from "@services/rest/rest.service";
 import LocalUserinfoModel from "@app/models/local-userinfo.model";
 import {LocalUserService} from "@services/local-user/local-user.service";
-import HttpPresponseModel from "@app/models/http-response.model";
+import HttpPresponseModel from "@app/interfaces/http-response.interface";
 import ChattingGroupModel from "@app/models/chatting-group.model";
 
 @Component({

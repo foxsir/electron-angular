@@ -40,6 +40,14 @@ export class FileService {
     return this.client.get(fileName);
   }
 
+  /**
+   * 获取访问路径
+   * @param pathname
+   */
+  getFileUrl(pathname: string): string {
+    return [OssConfig.bucketDomain, pathname].join("");
+  }
+
 }
 
 //
