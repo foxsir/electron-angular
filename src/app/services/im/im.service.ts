@@ -6,6 +6,10 @@ import MBDataSender from "../../client/mb_data_sender";
 import {MBErrorCode, MBKickoutCode, MBSocketEvent} from "../../client/mb_constants";
 import MBCore from "../../client/mb_core";
 import LoginInfoModel from "../../models/login-info.model";
+import {CacheService} from "@services/cache/cache.service";
+import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
+
+type ReceivedMessageType = (fingerPrint: string) => void;
 
 @Injectable({
   providedIn: 'root'
@@ -115,6 +119,20 @@ export class ImService {
   callback_onIMKickout = null;
   //*************************************************** 【2】以下属性供开发者在外部设置回调时使用 END
 
+  // 消息已被对方收到的回调事件通知
+  callback_messagesBeReceived: ReceivedMessageType = (theFingerPrint) => {
+    if(theFingerPrint){
+      this.callback_onIMLog('[SDK]  收到对方已收到消息事件的通知，fp='+theFingerPrint, false);
+
+      // TODO: 可以进一步将此事件开放给开发者（允许开发者通过回调得到这个事件通知！）
+    }
+  };
+
+
+  constructor(
+    private cacheService: CacheService
+  ) {
+  }
 
   // TODO 如需要其它更多回调的话，请开发者自行添加即可！
 
@@ -453,13 +471,7 @@ export class ImService {
        * @param theFingerPrint {String} 已被收到的消息的指纹特征码（唯一ID），应用层可据此ID来找到原先已发生的消息并可在
        *                          UI是将其标记为”已送达“或”已读“以便提升用户体验
        */
-      this.mbCore.on(MBSocketEvent.SOCKET_EVENT_MESSAGE_BE_RECIEVED, (theFingerPrint) => {
-        if(theFingerPrint){
-          this.callback_onIMLog('[SDK]  收到对方已收到消息事件的通知，fp='+theFingerPrint, false);
-
-          // TODO: 可以进一步将此事件开放给开发者（允许开发者通过回调得到这个事件通知！）
-        }
-      });
+      this.mbCore.on(MBSocketEvent.SOCKET_EVENT_MESSAGE_BE_RECIEVED, this.callback_messagesBeReceived);
 
       /* “自动重连尝试中”事件 */
       this.mbCore.on(MBSocketEvent.SOCKET_EVENT_RECONNECT_ATTEMPT, () => {
