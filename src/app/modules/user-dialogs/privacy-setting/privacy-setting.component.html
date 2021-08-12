@@ -29,12 +29,28 @@
         <div fxLayout="column" fxLayoutGap="10px">
           <div fxFlex fxLayoutAlign="space-between center">
             <span class="privacy-item-text">允许通过手机搜到我</span>
-            <nz-switch [(ngModel)]="findMeByPhone" (ngModelChange)="byPhone()"></nz-switch>
+            <nz-switch [(ngModel)]="setting_data.isSearchPhone" (ngModelChange)="bySwitch('isSearchPhone')"></nz-switch>
           </div>
+            <div fxFlex fxLayoutAlign="space-between center">
+                <span class="privacy-item-text">允许通过账户UID搜到我</span>
+                <nz-switch [(ngModel)]="setting_data.isSearchUid" (ngModelChange)="bySwitch('isSearchUid')"></nz-switch>
+            </div>
           <div fxFlex fxLayoutAlign="space-between center">
-            <span class="privacy-item-text">二维码搜到我</span>
-            <nz-switch [(ngModel)]="findMeByQRCode" (ngModelChange)="byQRCode()"></nz-switch>
+            <span class="privacy-item-text">允许通过二维码添加</span>
+            <nz-switch [(ngModel)]="setting_data.isQr" (ngModelChange)="bySwitch('isQr')"></nz-switch>
           </div>
+            <div fxFlex fxLayoutAlign="space-between center">
+                <span class="privacy-item-text">允许通过群聊添加</span>
+                <nz-switch [(ngModel)]="setting_data.isGroup" (ngModelChange)="bySwitch('isGroup')"></nz-switch>
+            </div>
+            <div fxFlex fxLayoutAlign="space-between center">
+                <span class="privacy-item-text">允许通过名片添加</span>
+                <nz-switch [(ngModel)]="setting_data.isCard" (ngModelChange)="bySwitch('isCard')"></nz-switch>
+            </div>
+            <div fxFlex fxLayoutAlign="space-between center">
+                <span class="privacy-item-text">允许临时会话添加</span>
+                <nz-switch [(ngModel)]="setting_data.isTemporary" (ngModelChange)="bySwitch('isTemporary')"></nz-switch>
+            </div>
         </div>
       </mat-card-content>
     </mat-card>

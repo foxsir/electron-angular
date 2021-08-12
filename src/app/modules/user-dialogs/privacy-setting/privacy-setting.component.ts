@@ -16,55 +16,45 @@ import {RestService} from "@services/rest/rest.service";
 export class PrivacySettingComponent implements OnInit {
   @Input() drawer: MatDrawer;
 
-  public closeIcon = this.dom.bypassSecurityTrustResourceUrl(closeIcon);
-  public closeActiveIcon = this.dom.bypassSecurityTrustResourceUrl(closeActiveIcon);
-  public backspaceIcon = this.dom.bypassSecurityTrustResourceUrl(backspaceIcon);
-  public backspaceActiveIcon = this.dom.bypassSecurityTrustResourceUrl(backspaceActiveIcon);
+    public closeIcon = this.dom.bypassSecurityTrustResourceUrl(closeIcon);
+    public closeActiveIcon = this.dom.bypassSecurityTrustResourceUrl(closeActiveIcon);
+    public backspaceIcon = this.dom.bypassSecurityTrustResourceUrl(backspaceIcon);
+    public backspaceActiveIcon = this.dom.bypassSecurityTrustResourceUrl(backspaceActiveIcon);
 
-  public findMeByPhone = false;
-    public findMeByQRCode = false;
     public privacySetting;
+    public setting_data = {
+        isSearchPhone: false,
+        isSearchUid: false,
+        isQr: false,
+        isGroup: false,
+        isCard: false,
+        isTemporary: false,
+    };
 
-  constructor(
-    private dom: DomSanitizer,
-    private restService: RestService,
-  ) {
-      this.restService.getPrivacyConfigById().subscribe(res => {
-          console.log('getPrivacyConfigById result: ', res);
-          this.privacySetting = res.data;
+    constructor(private dom: DomSanitizer, private restService: RestService) {
+        this.restService.getPrivacyConfigById().subscribe(res => {
+            console.log('getPrivacyConfigById result: ', res);
+            this.privacySetting = res.data;
 
-          this.findMeByPhone = this.privacySetting.privacyConfig.isSearchPhone == 1;
-          this.findMeByQRCode = this.privacySetting.privacyConfig.isQr == 1;
-      });
-  }
-
-    ngOnInit(): void {
-        
-    }
-
-    byPhone() {
-        // this.restService
-        // RestService 中没有设置隐私的方法需要新添加
-        // 隐私设置接口地址 http://120.79.90.66:3000/project/17/interface/api/49
-        console.dir(this.findMeByPhone);
-        console.log('privacysetting: ', this.privacySetting);
-
-        var data = {
-            id: this.privacySetting.privacyConfig.id,
-            isSearchPhone: this.findMeByPhone == true ? 1 : 0,
-        };
-        this.restService.updatePrivacyConfig(data).subscribe(res => {
-
+            this.setting_data.isSearchPhone = this.privacySetting.privacyConfig.isSearchPhone == 1;
+            this.setting_data.isSearchUid = this.privacySetting.privacyConfig.isSearchUid == 1;
+            this.setting_data.isQr = this.privacySetting.privacyConfig.isQr == 1;
+            this.setting_data.isGroup = this.privacySetting.privacyConfig.isGroup == 1;
+            this.setting_data.isCard = this.privacySetting.privacyConfig.isCard == 1;
+            this.setting_data.isTemporary = this.privacySetting.privacyConfig.isTemporary == 1;
         });
     }
 
-    byQRCode() {
-        console.dir(this.findMeByQRCode);
+    ngOnInit(): void {
 
+    }
+
+    bySwitch(key) {
         var data = {
-            id: this.privacySetting.privacyConfig.id,
-            isQr: this.findMeByQRCode == true ? 1 : 0,
+            id: this.privacySetting.privacyConfig.id
         };
+        data[key] = this.setting_data[key] == true ? 1 : 0,
+
         this.restService.updatePrivacyConfig(data).subscribe(res => {
 
         });
