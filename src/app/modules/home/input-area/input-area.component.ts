@@ -21,6 +21,7 @@ import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 import CommonTools from "@app/common/common.tools";
 import {FileService} from "@services/file/file.service";
 import {CacheService} from "@services/cache/cache.service";
+import {UploadedFile} from "@app/factorys/upload/upload-file/upload-file.component";
 
 @Component({
   selector: 'app-input-area',
@@ -40,7 +41,7 @@ export class InputAreaComponent implements OnInit {
 
   public messageText: string;
 
-  private sendChat: ChatmsgEntityModel;
+  private sendChatMap = {};
 
   constructor(
     private router: Router,
@@ -57,50 +58,30 @@ export class InputAreaComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  getImageInfo(file: File) {
+  getImageInfo(file: any) {
     CommonTools.getBlobUrlFromFile(file).then(blob => {
-      this.sendChat = this.messageEntityService.createChatMsgEntity_TO_IMAGE(
+      this.sendChatMap[file.uid] = this.messageEntityService.createChatMsgEntity_TO_IMAGE(
         blob, 0, CommonTools.fingerPrint(), 0
       );
-      this.sendChat.isOutgoing = false;
-      this.sendMessage.emit(this.sendChat);
+      // 尚未发出
+      this.sendChatMap[file.uid].isOutgoing = false;
+      this.sendMessage.emit(this.sendChatMap[file.uid]);
     });
   }
 
-  imageUploaded(fileUrl: URL) {
-    this.sendChat.text = fileUrl.href;
-    this.sendChat.isOutgoing = true;
-    // this.fileService.getFile(fileUrl.pathname).then(res => {
-    //   this.sendChat.text = this.dom.bypassSecurityTrustResourceUrl(CommonTools.getBlobUrlFromOSSRes(res));
-    //   // CommonTools.downloadBlob(res);
-    // });
+  imageUploaded(uploadedFile: UploadedFile) {
+    const msg = this.sendChatMap[uploadedFile.file.uid];
+    const messageText = msg.text = uploadedFile.url.href;
+    return this.doSend(messageText, MsgType.TYPE_IMAGE,false, msg);
   }
 
-  doSend() {
-    //     const message = `{
-    // "cy":"0",
-    // "f":"400300",
-    // "m":"发送给400301的数据",
-    // "t":"400301",
-    // "ty":"0",
-    // "fromUserId":"400300",
-    // "m3":"android",
-    // "sync":"1"
-    // }`;
-
-    // const protocal = this.mbProtocalFactory.createCommonData2(
-    //   message, this.imService.getLoginInfo().loginUserId, this.currentChat.dataId, -1
-    // );
-    // console.dir("ppppppppppppppppppppp");
-    // console.dir(protocal);
-    // console.dir("ppppppppppppppppppppp");
-    //
-    // // 将本地发出的消息显示在消息列表
-    //
-    // // 将消息通过websocket发送出去
-    // this.imService.sendData(protocal); // return 0
-
-    if (!this.messageText || this.messageText.trim().length === 0) {
+  doSend(
+    messageText: string = this.messageText,
+    messageType: number = MsgType.TYPE_TEXT,
+    emitToUI: boolean = true,
+    replaceEntity: ChatmsgEntityModel = null
+  ) {
+    if (!messageText || messageText.trim().length === 0) {
       return;
     }
 
@@ -110,23 +91,30 @@ export class InputAreaComponent implements OnInit {
       });
     }
 
-    this.messageService.sendMessage(MsgType.TYPE_TEXT, this.currentChat.alarmItem.dataId, this.messageText).then(res => {
+    this.messageService.sendMessage(messageType, this.currentChat.alarmItem.dataId, messageText).then(res => {
       if(res.success === true) {
         const friendUid = this.currentChat.alarmItem.dataId;
         const ree = this.rosterProviderService.getFriendInfoByUid(friendUid);
 
         // 自已发出的消息，也要显示在相应的UI界面上
         const message = res.msgBody.m;
-        const alarmMessageDTO = this.alarmsProviderService.createChatMsgAlarmForLocal(res.msgBody.ty, message, "ree.nickname", friendUid);
+        const alarmMessageDTO = this.alarmsProviderService.createChatMsgAlarmForLocal(
+          res.msgBody.ty, message, "ree.nickname", friendUid
+        );
 
         //111 新增指纹码 he 消息类型msgType
         // debugger
         const chatMsgEntity = this.messageEntityService.prepareSendedMessage(
-          message, 0, res.fingerPrint, MsgType.TYPE_TEXT, MsgType.TYPE_TEXT.toString()
+          message, 0, res.fingerPrint, messageType
         );
+        if (replaceEntity) {
+          replaceEntity.fingerPrintOfProtocal = chatMsgEntity.fingerPrintOfProtocal;
+        }
         chatMsgEntity.isOutgoing = false;
         this.cacheService.putChattingCache(this.currentChat, chatMsgEntity);
-        this.sendMessage.emit(chatMsgEntity);
+        if(emitToUI) {
+          this.sendMessage.emit(chatMsgEntity);
+        }
         this.clearTextArea();
       }
     });

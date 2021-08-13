@@ -156,9 +156,10 @@
             </mat-card-content>
           </mat-card>
         </div>
-        <div fxFlex="50px" fxLayout="row" style="background: #f1eded;">
+        <div fxFlex="50px" fxLayout="row" style="background: #f1eded;" *ngIf="quoteMessage">
           <div fxFlex="100" fxFlexFill fxLayoutAlign="center center">
-            回复消息区域
+            {{quoteMessage | json}}
+            <button (click)="clearSubscribeQuote()">X</button>
           </div>
         </div>
         <div fxLayout="row">

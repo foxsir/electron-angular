@@ -39,6 +39,7 @@ import ContextMenuModel from "@app/models/context-menu.model";
 import {AvatarService} from "@services/avatar/avatar.service";
 import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 import {CacheService} from "@services/cache/cache.service";
+import {QuoteMessageService} from "@services/quote-message/quote-message.service";
 
 @Component({
   selector: 'app-message',
@@ -65,11 +66,17 @@ export class MessageComponent implements OnInit {
   public formatDate = formatDate;
   public localUserInfo: LocalUserinfoModel;
 
+  // 新消息提醒
   public massageBadges = {};
 
+  // 右键菜单
   public contextMenu: ContextMenuModel[] = [];
 
+  // 是否正在搜索
   public searching = false;
+
+  // 引用回复消息
+  public quoteMessage: ChatmsgEntityModel = null;
 
   constructor(
     private alarmsProviderService: AlarmsProviderService,
@@ -90,6 +97,7 @@ export class MessageComponent implements OnInit {
     private contextMenuService: ContextMenuService,
     private avatarService: AvatarService,
     private cacheService: CacheService,
+    private quoteMessageService: QuoteMessageService,
   ) {
     this.localUserInfo = this.localUserService.localUserInfo;
 
@@ -102,7 +110,6 @@ export class MessageComponent implements OnInit {
         res.from, dataContent.nickName, dataContent.m, (new Date()).getTime(), dataContent.ty, res.fp
       );
       // fromUid, nickName, msg, time, msgType, fp = null
-      console.dir(res.fp);
       chatMsgEntity.isOutgoing = true;
       this.cacheService.putChattingCache(this.currentChat, chatMsgEntity);
       this.pushMessageToPanel(chatMsgEntity);
@@ -115,9 +122,9 @@ export class MessageComponent implements OnInit {
             const chat: ChatmsgEntityModel = data[fingerPrint];
             chat.isOutgoing = true;
             this.cacheService.putChattingCache(this.currentChat, chat);
-            this.cacheService.getChattingCache(this.currentChat).then(data => {
-              if(!!data) {
-                this.chatMsgEntityList = Object.values(data);
+            this.cacheService.getChattingCache(this.currentChat).then(res => {
+              if(!!res) {
+                this.chatMsgEntityList = Object.values(res);
               }
             });
           }
@@ -153,6 +160,18 @@ export class MessageComponent implements OnInit {
         this.snackBarService.openSnackBar("数据加载失败");
       }
     });
+
+    this.subscribeQuote();
+  }
+
+  private subscribeQuote() {
+    this.quoteMessageService.message$.subscribe((meg) => {
+      this.quoteMessage = meg;
+    });
+  }
+
+  clearSubscribeQuote() {
+    this.quoteMessageService.setQuoteMessage(null);
   }
 
   showChattingList(list: []) {
@@ -252,6 +271,7 @@ export class MessageComponent implements OnInit {
     this.resetUI();
     this.currentChat = alarm;
 
+    // 获取缓存
     this.cacheService.getChattingCache(this.currentChat).then(data => {
       if(!!data) {
         this.chatMsgEntityList = Object.values(data);
@@ -271,6 +291,7 @@ export class MessageComponent implements OnInit {
     });
     this.chatMsgEntityList = [];
     // this.loadChattingHistoryFromServer(this.currentChat);
+    this.scrollToBottom('auto');
   }
 
   resetUI() {

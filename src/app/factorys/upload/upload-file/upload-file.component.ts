@@ -11,6 +11,11 @@ import {FileService} from "@services/file/file.service";
 import DirectoryType from "@services/file/config/DirectoryType";
 import CommonTools from "@app/common/common.tools";
 
+export type UploadedFile = {
+  file: NzUploadFile;
+  url: URL;
+};
+
 @Component({
   selector: 'app-upload-file',
   templateUrl: './upload-file.component.html',
@@ -22,7 +27,7 @@ export class UploadFileComponent implements OnInit {
   fileUrl?: string;
 
   @Input() options: Partial<uploadOptions>;
-  @Output() fileUploaded = new EventEmitter<URL>();
+  @Output() fileUploaded = new EventEmitter<UploadedFile>();
   @Output() getFileInfo = new EventEmitter<NzUploadFile>();
 
   public defaultOptions: uploadOptions = {
@@ -68,7 +73,10 @@ export class UploadFileComponent implements OnInit {
         filename = [filename, CommonTools.getFileExt(file.type)].join(".");
 
         this.fileService.upload(buffer, filename, DirectoryType.OSS_FILE).then(res => {
-          this.fileUploaded.emit(new URL(res.url));
+          this.fileUploaded.emit({
+            file: file,
+            url: new URL(res.url)
+          });
           this.loading = false;
           this.fileUrl = res.url;
         });

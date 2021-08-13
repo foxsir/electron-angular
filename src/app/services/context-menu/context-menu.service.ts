@@ -3,6 +3,7 @@ import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 import {MsgType} from "@app/config/rbchat-config";
 import ContextMenuModel from "@app/models/context-menu.model";
 import {Clipboard} from "@angular/cdk/clipboard";
+import {QuoteMessageService} from "@services/quote-message/quote-message.service";
 
 @Injectable({
   providedIn: 'root'
@@ -39,20 +40,32 @@ export class ContextMenuService {
         chat.msgType = this.msgType.TYPE_BACK;
       }
     },
+    quote: {
+      label: "回复",
+      limits: this.common,
+      action: (chat: ChatmsgEntityModel, messageContainer: HTMLDivElement) => {
+        // chat.msgType = this.msgType.TYPE_BACK;
+        this.quoteMessageService.setQuoteMessage(chat);
+      }
+    },
   };
 
-  constructor() {
+  constructor(
+    private quoteMessageService: QuoteMessageService,
+  ) {
     this.initMenu();
   }
 
   private initMenu() {
     this.contextMenu[this.msgType.TYPE_TEXT] = [
       this.actionCollection.copyText,
+      this.actionCollection.quote,
       this.actionCollection.repeal,
     ];
 
     this.contextMenu[this.msgType.TYPE_IMAGE] = [
       this.actionCollection.copyImage,
+      this.actionCollection.quote,
       this.actionCollection.repeal,
     ];
   }

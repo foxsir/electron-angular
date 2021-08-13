@@ -19,6 +19,7 @@ import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 import {LocalUserService} from "@services/local-user/local-user.service";
 import {ActivatedRoute, NavigationEnd, Router, RouterEvent} from "@angular/router";
 import {WindowService} from "@services/window/window.service";
+import {UploadedFile} from "@app/factorys/upload/upload-file/upload-file.component";
 
 @Component({
   selector: 'app-register',
@@ -59,7 +60,7 @@ export class RegisterComponent implements OnInit {
     public signupForm: SignupForm,
     public signupFormMobile: SignupMobileForm,
   ) {
-    this.checkRegisterTYpe();
+    this.checkRegisterType();
   }
 
   ngOnInit(): void {
@@ -78,7 +79,7 @@ export class RegisterComponent implements OnInit {
     this.registerType = type;
   }
 
-  checkRegisterTYpe() {
+  checkRegisterType() {
     this.restService.getAppConfig().subscribe((res: NewHttpResponseInterface<any>) => {
       if(res.data.registerType !== this.registerType) {
         if(res.data.registerType === 1) {
@@ -136,8 +137,8 @@ export class RegisterComponent implements OnInit {
     });
   }
 
-  public setAvatar(url: URL) {
-    this.avatarUrl = url;
+  public setAvatar(upload: UploadedFile) {
+    this.avatarUrl = upload.url;
   }
 
   public onSubmit() {
