@@ -26,45 +26,42 @@
   <div fxFlex style="margin-top: 10px;">
     <mat-card class="mat-elevation-z0">
       <mat-card-content>
-        <div fxLayout="column" fxLayoutGap="10px">
-          <div fxFlex fxLayoutAlign="space-between center">
-            <span class="privacy-item-text">允许通过手机搜到我</span>
-            <nz-switch [(ngModel)]="setting_data.isSearchPhone" (ngModelChange)="bySwitch('isSearchPhone')"></nz-switch>
+          <div fxLayout="column" fxLayoutGap="10px">
+              <!--<div fxFlex fxLayoutAlign="space-between center">
+                  <span class="privacy-item-text">允许通过手机搜到我</span>
+                  <nz-switch [(ngModel)]="setting_data.isSearchPhone" (ngModelChange)="bySwitch('isSearchPhone')"></nz-switch>
+              </div>-->
+              <div fxFlex fxLayoutAlign="space-between center">
+                  <span class="privacy-item-text">允许通过账号搜到我</span>
+                  <nz-switch [(ngModel)]="setting_data.isSearchUid" (ngModelChange)="bySwitch('isSearchUid')" nzSize="small"></nz-switch>
+              </div>
+              <div fxFlex fxLayoutAlign="space-between center">
+                  <span class="privacy-item-text">二维码搜到我</span>
+                  <nz-switch [(ngModel)]="setting_data.isQr" (ngModelChange)="bySwitch('isQr')" nzSize="small"></nz-switch>
+              </div>
+              <div fxFlex fxLayoutAlign="space-between center">
+                  <span class="privacy-item-text">群聊</span>
+                  <nz-switch [(ngModel)]="setting_data.isGroup" (ngModelChange)="bySwitch('isGroup')" nzSize="small"></nz-switch>
+              </div>
+              <div fxFlex fxLayoutAlign="space-between center">
+                  <span class="privacy-item-text">名片</span>
+                  <nz-switch [(ngModel)]="setting_data.isCard" (ngModelChange)="bySwitch('isCard')" nzSize="small"></nz-switch>
+              </div>
+              <!--<div fxFlex fxLayoutAlign="space-between center">
+                  <span class="privacy-item-text">允许临时会话添加</span>
+                  <nz-switch [(ngModel)]="setting_data.isTemporary" (ngModelChange)="bySwitch('isTemporary')"></nz-switch>
+              </div>-->
+              <!--<div fxFlex fxLayoutAlign="space-between center">                  
+                  <span class="privacy-item-text">动态可见时间</span>
+                  <nz-select [(ngModel)]="setting_data.isPublishLimit" (ngModelChange)="setPublishLimit()"
+                             style="width:120px;margin-right:20px;">
+                      <nz-option nzValue="0" nzLabel="最近半年"></nz-option>
+                      <nz-option nzValue="1" nzLabel="最近一个月"></nz-option>
+                      <nz-option nzValue="2" nzLabel="最近三天"></nz-option>
+                      <nz-option nzValue="3" nzLabel="全部"></nz-option>
+                  </nz-select>
+              </div>-->
           </div>
-            <div fxFlex fxLayoutAlign="space-between center">
-                <span class="privacy-item-text">允许通过账户UID搜到我</span>
-                <nz-switch [(ngModel)]="setting_data.isSearchUid" (ngModelChange)="bySwitch('isSearchUid')"></nz-switch>
-            </div>
-          <div fxFlex fxLayoutAlign="space-between center">
-            <span class="privacy-item-text">允许通过二维码添加</span>
-            <nz-switch [(ngModel)]="setting_data.isQr" (ngModelChange)="bySwitch('isQr')"></nz-switch>
-          </div>
-            <div fxFlex fxLayoutAlign="space-between center">
-                <span class="privacy-item-text">允许通过群聊添加</span>
-                <nz-switch [(ngModel)]="setting_data.isGroup" (ngModelChange)="bySwitch('isGroup')"></nz-switch>
-            </div>
-            <div fxFlex fxLayoutAlign="space-between center">
-                <span class="privacy-item-text">允许通过名片添加</span>
-                <nz-switch [(ngModel)]="setting_data.isCard" (ngModelChange)="bySwitch('isCard')"></nz-switch>
-            </div>
-            <div fxFlex fxLayoutAlign="space-between center">
-                <span class="privacy-item-text">允许临时会话添加</span>
-                <nz-switch [(ngModel)]="setting_data.isTemporary" (ngModelChange)="bySwitch('isTemporary')"></nz-switch>
-            </div>
-            <div fxFlex fxLayoutAlign="space-between center">
-                <!--<mat-select [(ngModel)]="setting_data.isPublishLimit" (selectionChange)='setDetail()'>
-                    <mat-option *ngFor="let item of publish_limit_list" [value]="item.value">{{item.label}}</mat-option>
-                </mat-select>-->
-                <span class="privacy-item-text">动态可见时间</span>
-                <nz-select [(ngModel)]="setting_data.isPublishLimit" (ngModelChange)="setPublishLimit()" 
-                           style="width:120px;margin-right:20px;">
-                    <nz-option nzValue="0" nzLabel="最近半年"></nz-option>
-                    <nz-option nzValue="1" nzLabel="最近一个月"></nz-option>
-                    <nz-option nzValue="2" nzLabel="最近三天"></nz-option>
-                    <nz-option nzValue="3" nzLabel="全部"></nz-option>
-                </nz-select>
-            </div>
-        </div>
       </mat-card-content>
     </mat-card>
   </div>
