@@ -1,13 +1,24 @@
 <mat-card class="mat-elevation-z0">
-  <mat-card-content>
-    <mat-list>
-      <div mat-subheader>Groups</div>
-      <mat-list-item *ngFor="let collect of collectList">
-        <mat-icon mat-list-icon>folder</mat-icon>
-        <div mat-line>collect</div>
-        <div mat-line> collect </div>
-      </mat-list-item>
-      <mat-divider></mat-divider>
-    </mat-list>
-  </mat-card-content>
+    <mat-card-content>
+        <mat-list>
+            <div mat-subheader style="color:#333333;">收藏</div>
+            <mat-list-item *ngFor="let item of collectList" style="padding-top:10px;">                
+                <div mat-line *ngIf="item.type == 0">{{item.content}}</div>
+                <div mat-line *ngIf="item.type == 16">[聊天记录]</div>
+                <div mat-line style="margin-top:15px;">{{item.createTime}} {{item.nickname}}</div>
+                <mat-divider></mat-divider>
+            </mat-list-item>            
+        </mat-list>
+    </mat-card-content>
 </mat-card>
+
+<!--<nz-list>
+    <nz-list-item *ngFor="let item of collectList">
+        <nz-skeleton *ngIf="!item" [nzAvatar]="true" [nzParagraph]="{ rows: 1 }"></nz-skeleton>
+        <nz-list-item-meta [nzDescription]="item.content">
+            <nz-list-item-meta-title>
+                <a href="#">{{ item.createTime }}</a>
+            </nz-list-item-meta-title>
+        </nz-list-item-meta>
+    </nz-list-item>
+</nz-list>-->
