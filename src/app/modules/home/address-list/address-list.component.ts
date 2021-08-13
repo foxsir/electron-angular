@@ -26,7 +26,7 @@ export class AddressListComponent implements OnInit {
       icon: this.dom.bypassSecurityTrustResourceUrl(newFriendIcon)
     },
     {
-      label: "我的群聊",
+      label: "我的群组",
       router: 'group',
       icon: this.dom.bypassSecurityTrustResourceUrl(groupChattingIcon)
     },

@@ -3,22 +3,21 @@ import {RestService} from "@services/rest/rest.service";
 import HttpPresponseModel from "@app/interfaces/http-response.interface";
 
 @Component({
-  selector: 'app-black-list',
-  templateUrl: './black-list.component.html',
-  styleUrls: ['./black-list.component.scss']
+    selector: 'app-black-list',
+    templateUrl: './black-list.component.html',
+    styleUrls: ['./black-list.component.scss']
 })
 export class BlackListComponent implements OnInit {
 
-  constructor(
-    private restService: RestService
-  ) {
-    this.restService.getMyBlackList().subscribe((res: HttpPresponseModel) => {
-      console.dir(res.data === null);
-      console.dir(res);
-    });
-  }
+    blacklist: any[];
 
-  ngOnInit(): void {
-  }
+    constructor(private restService: RestService) {
+        this.restService.getMyBlackList().subscribe(res => {
+            this.blacklist = res.data;
+        });
+    }
+
+    ngOnInit(): void {
+    }
 
 }

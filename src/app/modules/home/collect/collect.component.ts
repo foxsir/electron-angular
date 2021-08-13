@@ -5,26 +5,21 @@ import {HttpResponse} from "@angular/common/http";
 import {HttpService} from "@services/http/http.service";
 
 @Component({
-  selector: 'app-collect',
-  templateUrl: './collect.component.html',
-  styleUrls: ['./collect.component.scss']
+    selector: 'app-collect',
+    templateUrl: './collect.component.html',
+    styleUrls: ['./collect.component.scss']
 })
 export class CollectComponent implements OnInit {
-  collectList: any[];
+    collectList: any[];
 
-  constructor(
-    private restService: RestService,
-    private localUserService: LocalUserService,
-    private http: HttpService,
-  ) {
-    this.restService.getMyCollectList().subscribe(res => {
-      if (res.success) {
-        this.collectList = JSON.parse(res.returnValue);
-      }
-    });
-  }
+    constructor(private restService: RestService, private localUserService: LocalUserService, private http: HttpService) {
+        this.restService.getMyCollectList().subscribe(res => {            
+            this.collectList = res.data;
+        });
+    }
 
-  ngOnInit(): void {
-  }
+    ngOnInit(): void {
+
+    }
 
 }
