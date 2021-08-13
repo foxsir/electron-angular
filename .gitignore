@@ -47,3 +47,8 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+/caomei-desktop-angular.sln
+/caomei-desktop-angular.csproj.user
+/caomei-desktop-angular.csproj
+/.vs/caomei-desktop-angular/v14/.suo
+/.vs/config/applicationhost.config
