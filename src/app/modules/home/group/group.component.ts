@@ -12,15 +12,11 @@ import ChattingGroupModel from "@app/models/chatting-group.model";
 })
 export class GroupComponent implements OnInit {
     private localUserInfo: LocalUserinfoModel = this.localUserService.localUserInfo;
-    public chattingGroup: ChattingGroupModel[];
+    public chattingGroup: any[];
 
     constructor(private restService: RestService, private localUserService: LocalUserService) {
-        this.restService.submitGetGroupsListFromServer(this.localUserInfo.userId).subscribe((res: HttpPresponseModel) => {
-            if (res.success) {
-                this.chattingGroup = JSON.parse(res.returnValue);
-
-                console.log('chattingGroup: ', this.chattingGroup);
-            }
+        this.restService.getUserJoinGroup().subscribe(res => {
+            this.chattingGroup = res.data;
         });
     }
 

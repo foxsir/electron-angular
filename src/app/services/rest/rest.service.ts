@@ -7,7 +7,7 @@ import {LocalUserService} from "@services/local-user/local-user.service";
 import {ImService} from "@services/im/im.service";
 import {
     getAppConfig, getMissuCollectById, getMyBlackUser, getUserBaseById, updateUserBaseById,
-    verifyCode, getPrivacyConfigById, updatePrivacyConfig
+    verifyCode, getPrivacyConfigById, updatePrivacyConfig, getUserJoinGroup
 } from "@app/config/post-api";
 import {HttpHeaders} from "@angular/common/http";
 
@@ -779,6 +779,15 @@ export class RestService {
         data.userId = localUserInfo.userId;
 
         return this.http.post(updatePrivacyConfig, data); 
+    }
+
+    /**
+   * 用户相关-用户群聊列表
+   * @param user_id
+   */
+    getUserJoinGroup(): Observable<any> {
+        const localUserInfo = this.localUserService.getObj();
+        return this.http.get(getUserJoinGroup, { userId: localUserInfo.userId });
     }
 
 }

@@ -79,6 +79,9 @@ export const getPrivacyConfigById = _HTTP_YUEKU_SERVER_URL + "/api/privacyConfig
 //隐私设置-更新隐私设置
 export const updatePrivacyConfig = _HTTP_YUEKU_SERVER_URL + "/api/privacyConfig/updatePrivacyConfig";
 
+//用户相关-用户群聊列表
+export const getUserJoinGroup = _HTTP_YUEKU_SERVER_URL + "/api/groupBase/getUserJoinGroup";
+
 
 
 //
