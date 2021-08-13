@@ -1,23 +1,24 @@
-<div class="title-bar"
-     unselectable="on"
-     onselectstart="return false;"
-     [ngStyle]="{height: height}"
-     [ngClass]="{'background': !transparent, 'sticky-top': stickyTop}" (dblclick)="maximize()">
-  <div fxLayout="row" fxFlexFill fxLayoutAlign="end center" fxLayoutGap="20px" *ngIf="visibilityActions">
-    <div fxFlex="14px" class="action-button">
-      <div fxLayout="column" fxFlexFill fxFlexAlign="center center">
-        <mat-icon class="hover-icon action" (click)="minimize()">
-          <img [src]="minIcon" alt="" class="icon">
-          <img [src]="minActiveIcon" alt="" class="icon-active">
-        </mat-icon>
+<div class="title-bar-container" [ngClass]="{'background': !transparent, 'sticky-top': stickyTop}">
+  <div class="title-bar"
+       unselectable="on"
+       onselectstart="return false;"
+       [ngStyle]="{height: height}" (dblclick)="maximize()">
+    <div fxLayout="row" fxFlexFill fxLayoutAlign="end center" fxLayoutGap="20px" *ngIf="visibilityActions">
+      <div fxFlex="14px" class="action-button">
+        <div fxLayout="column" fxFlexFill fxFlexAlign="center center">
+          <mat-icon class="hover-icon action" (click)="minimize()">
+            <img [src]="minIcon" alt="" class="icon">
+            <img [src]="minActiveIcon" alt="" class="icon-active">
+          </mat-icon>
+        </div>
       </div>
-    </div>
-    <div fxFlex="14px" class="action-button">
-      <div fxLayout="column" fxFlexFill fxFlexAlign="center center">
-        <mat-icon class="hover-icon action" (click)="close()">
-          <img [src]="closeIcon" alt="" class="icon">
-          <img [src]="closeActiveIcon" alt="" class="icon-active">
-        </mat-icon>
+      <div fxFlex="14px" class="action-button">
+        <div fxLayout="column" fxFlexFill fxFlexAlign="center center">
+          <mat-icon class="hover-icon action" (click)="close()">
+            <img [src]="closeIcon" alt="" class="icon">
+            <img [src]="closeActiveIcon" alt="" class="icon-active">
+          </mat-icon>
+        </div>
       </div>
     </div>
   </div>
