@@ -1,13 +1,30 @@
 <mat-card class="mat-elevation-z0">
-  <mat-card-content>
-    <mat-list>
-      <div mat-subheader>Groups</div>
-      <mat-list-item *ngFor="let group of chattingGroup">
-        <mat-icon mat-list-icon>folder</mat-icon>
-        <div mat-line>{{group.g_name}}</div>
-        <div mat-line> {{group.create_time | date}} </div>
-      </mat-list-item>
-      <mat-divider></mat-divider>
-    </mat-list>
-  </mat-card-content>
+    <mat-card-content>
+        <mat-list>
+            <div mat-subheader style="color:#333333;">我的群组</div>
+            <mat-list-item *ngFor="let item of chattingGroup" style="padding-top:10px;">
+                <div mat-line>{{item.g_name}}...</div>                
+                <div mat-line style="margin-top:15px;">
+                    <span>{{item.g_member_count}}人</span>
+                    <span style="margin-left:12px;">创建于：{{item.create_time}}</span>
+                </div>
+                <mat-divider></mat-divider>
+            </mat-list-item>
+        </mat-list>
+    </mat-card-content>
 </mat-card>
+
+
+<!--<mat-card class="mat-elevation-z0">
+    <mat-card-content>
+        <mat-list>
+            <div mat-subheader>群聊</div>
+            <mat-list-item *ngFor="let group of chattingGroup">
+                <mat-icon mat-list-icon>folder</mat-icon>
+                <div mat-line>{{group.g_name}}</div>
+                <div mat-line> {{group.create_time | date}} </div>
+            </mat-list-item>
+            <mat-divider></mat-divider>
+        </mat-list>
+    </mat-card-content>
+</mat-card>-->
