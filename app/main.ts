@@ -9,17 +9,18 @@ import defaultOptions from "./DefaultOptions";
 // Initialize remote module
 require('@electron/remote/main').initialize();
 
-let win: BrowserWindow = null;
 const args = process.argv.slice(1),
   serve = args.some(val => val === '--serve');
 
+const windows: Set<BrowserWindow> = new Set();
+const wel = new WindowEventListen();
+
 function createWindow(): BrowserWindow {
 
-  const electronScreen = screen;
-  const size = electronScreen.getPrimaryDisplay().workAreaSize;
-
+  // const electronScreen = screen;
+  // const size = electronScreen.getPrimaryDisplay().workAreaSize;
   // Create the browser window.
-  win = new BrowserWindow({
+  const win: BrowserWindow = new BrowserWindow({
     // x: 0,
     // y: 0,
     // width: size.width,
@@ -66,21 +67,12 @@ function createWindow(): BrowserWindow {
   }
 
   // Emitted when the window is closed.
-  win.on('closed', () => {
-    // Dereference the window object, usually you would store window
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
-    win = null;
-  });
-
-  // 登录后窗口变大
-  // ipcMain.on('large-window', function (event, arg) {
-  //   win.setSize(800, 600);
-  //   const position: number[] = win.getPosition();
-  //   win.setPosition(position[0]-200, position[1]-80);
-  // })
-  WindowEventListen.listen(win)
-
+  // win.on('closed', () => {
+  //   // Dereference the window object, usually you would store window
+  //   // in an array if your app supports multi windows, this is the time
+  //   // when you should delete the corresponding element.
+  //   win = null;
+  // });
 
   let template = [
     {
@@ -106,7 +98,7 @@ function createWindow(): BrowserWindow {
   //
   // // 3.设置菜单到应用中
   // Menu.setApplicationMenu(menu)
-
+  windows.add(win);
   return win;
 }
 
@@ -115,7 +107,11 @@ try {
   // initialization and is ready to create browser windows.
   // Some APIs can only be used after this event occurs.
   // Added 400 ms to fix the black background issue while using transparent window. More detais at https://github.com/electron/electron/issues/15947
-  app.on('ready', () => setTimeout(createWindow, 400));
+  app.on('ready', () => setTimeout(() => {
+    createWindow();
+
+    wel.setWindows(windows)
+  }, 400));
 
   // Quit when all windows are closed.
   app.on('window-all-closed', () => {
@@ -129,12 +125,25 @@ try {
   app.on('activate', () => {
     // On OS X it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
-    if (win === null) {
+    if (windows.size === 0) {
       createWindow();
     } else {
-      win.show();
+      // windows[0].show();
+      app.show();
     }
   });
+
+  // 使用单例模式打开多个窗口
+  const gotTheLock = app.requestSingleInstanceLock()
+  if (!gotTheLock) {
+    app.quit()
+  } else {
+    app.on('second-instance', (event, commandLine, workingDirectory) => {
+      // 当运行第二个实例时,将会聚焦到myWindow这个窗口
+      createWindow();
+    })
+  }
+
 } catch (e) {
   // Catch Error
   // throw e;
