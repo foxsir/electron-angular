@@ -25,6 +25,7 @@ function createWindow(): BrowserWindow {
     // y: 0,
     // width: size.width,
     // height: size.height,
+    show: false,
     resizable: false,
     width: defaultOptions.size.width,
     height: defaultOptions.size.height,
@@ -37,6 +38,10 @@ function createWindow(): BrowserWindow {
       contextIsolation: false,  // false if you want to run e2e test with Spectron
       enableRemoteModule : true // true if you want to run e2e test with Spectron or use remote module in renderer context (ie. Angular)
     },
+  });
+
+  win.once('ready-to-show', () => {
+    win.show();
   });
 
   if (serve) {
@@ -62,7 +67,6 @@ function createWindow(): BrowserWindow {
     // }));
     win.loadFile(path.join(__dirname, pathIndex)).then(res => {
       // console.dir(res);
-      win.webContents.openDevTools();
     });
   }
 

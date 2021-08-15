@@ -1,11 +1,9 @@
 {
-  "name": "angular-electron",
+  "name": "caomei",
   "version": "10.1.0",
   "main": "main.js",
   "private": true,
   "dependencies": {
-    "@electron/remote": "1.2.0",
-    "socket.io-client": "^2.1.1",
-    "uuid": "8.3.2"
+    "@electron/remote": "1.2.0"
   }
 }
