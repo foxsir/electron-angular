@@ -8,6 +8,8 @@ import MBCore from "../../client/mb_core";
 import LoginInfoModel from "../../models/login-info.model";
 import {CacheService} from "@services/cache/cache.service";
 import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
+import {Router} from "@angular/router";
+import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 
 type ReceivedMessageType = (fingerPrint: string) => void;
 
@@ -130,7 +132,9 @@ export class ImService {
 
 
   constructor(
-    private cacheService: CacheService
+    private cacheService: CacheService,
+    private router: Router,
+    private snackBarService: SnackBarService,
   ) {
   }
 
@@ -146,6 +150,17 @@ export class ImService {
    */
   isLogined(){
     return this._logined;
+  }
+
+  /**
+   * 如果没有登录跳转回到登录页面并提示
+   */
+  checkLogined(){
+    if (!this.isLogined()) {
+      return this.router.navigate(['/session/login']).then(() => {
+        return this.snackBarService.openMessage("请先登录后在使用");
+      });
+    }
   }
 
   /**
