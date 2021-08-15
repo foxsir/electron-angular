@@ -48,6 +48,15 @@ export class ContextMenuService {
         this.quoteMessageService.setQuoteMessage(chat);
       }
     },
+    download: {
+      label: "下载",
+      limits: this.common,
+      action: (chat: ChatmsgEntityModel, messageContainer: HTMLDivElement) => {
+        alert("下载文件");
+        // chat.msgType = this.msgType.TYPE_BACK;
+        // this.quoteMessageService.setQuoteMessage(chat);
+      }
+    },
   };
 
   constructor(
@@ -59,6 +68,12 @@ export class ContextMenuService {
   private initMenu() {
     this.contextMenu[this.msgType.TYPE_TEXT] = [
       this.actionCollection.copyText,
+      this.actionCollection.quote,
+      this.actionCollection.repeal,
+    ];
+
+    this.contextMenu[this.msgType.TYPE_FILE] = [
+      this.actionCollection.download,
       this.actionCollection.quote,
       this.actionCollection.repeal,
     ];
