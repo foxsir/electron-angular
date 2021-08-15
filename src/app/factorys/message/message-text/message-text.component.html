@@ -1,1 +1,35 @@
-{{chatMsg.text}}
+<!--文本消息-->
+<ng-template [ngIf]="pureTextMessage">
+  {{chatMsg.text}}
+</ng-template>
+<!--非文本消息-->
+<ng-template [ngIf]="pureTextMessage === false">
+  <div fxLayout="column">
+    <div class="quote-message" fxLayout="row">
+      <div fxFlex="38px" class="quote-thumbnail" *ngIf="replyContentText && newChatMsg.fileName">
+        <img [src]="newChatMsg.fileName" alt="">
+      </div>
+      <div fxFlex="38px" class="quote-thumbnail" *ngIf="replyContentData">
+        <div *ngIf="replyContentData" fxLayoutAlign="center center" fxFlexFill class="filetype">
+          <span>
+            .{{replyContentData.fileName.split('.').pop()}}
+          </span>
+        </div>
+      </div>
+      <div fxFlex class="quote-content">
+        <div class="quote-title">
+          {{newChatMsg.userName}}
+        </div>
+        <div class="quote-reply">
+          <ng-template [ngIf]="replyContentText">
+            {{replyContentText}}
+          </ng-template>
+          <ng-template [ngIf]="replyContentData">
+            {{replyContentData.fileName}}
+          </ng-template>
+        </div>
+      </div>
+    </div>
+    <div>{{newChatMsg.msg}}</div>
+  </div>
+</ng-template>

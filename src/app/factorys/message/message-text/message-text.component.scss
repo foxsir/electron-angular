@@ -4,3 +4,35 @@
     height: 20px;
   }
 }
+
+.quote-message {
+  height: 38px;
+  border-left: 2px solid #0091FF;
+  padding-left: 10px;
+
+  .quote-content {
+    overflow: hidden;
+
+    .quote-reply {
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+      width: 100%;
+    }
+  }
+
+  .quote-thumbnail {
+    margin-right: 10px;
+
+    .filetype {
+      background: #4AB7ED;
+      border-radius: 4px;
+      color: white;
+      font-weight: 600;
+    }
+  }
+  .quote-thumbnail>img {
+    width: 38px;
+    height: 38px;
+  }
+}
