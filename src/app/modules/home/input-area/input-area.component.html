@@ -28,8 +28,7 @@
   <div fxFlex>
     <mat-form-field fxFlex="100" class="message-textarea" floatLabel="never">
       <textarea matInput cdkTextareaAutosize [(ngModel)]="messageText"
-                (keydown.meta.enter)="doSend()"
-                (keydown.control.enter)="doSend()"
+                (keydown.enter)="doSend()"
                 cdkAutosizeMaxRows="10" placeholder="发送消息"></textarea>
     </mat-form-field>
   </div>

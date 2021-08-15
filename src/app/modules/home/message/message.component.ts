@@ -9,7 +9,9 @@ import {GroupChattingCacheService} from "@services/group-chatting-cache/group-ch
 import {SingleChattingCacheService} from "@services/single-chatting-cache/single-chatting-cache.service";
 import {MessageEntityService} from "@services/message-entity/message-entity.service";
 
-// import image
+// import icon
+import closeCircleIcon from "@app/assets/icons/close-circle.svg";
+import closeCircleActiveIcon from "@app/assets/icons/close-circle-active.svg";
 import editIcon from "@app/assets/icons/edit.svg";
 import settingIcon from "@app/assets/icons/setting.svg";
 import settingActiveIcon from "@app/assets/icons/setting-active.svg";
@@ -17,7 +19,8 @@ import searchIcon from "@app/assets/icons/search.svg";
 import searchActiveIcon from "@app/assets/icons/search-active.svg";
 import voiceIcon from "@app/assets/icons/voice.svg";
 import voiceActiveIcon from "@app/assets/icons/voice-active.svg";
-// import image end
+import closePromptIcon from "@app/assets/icons/close-prompt.svg";
+// import icon end
 
 import LocalUserinfoModel from "@app/models/local-userinfo.model";
 import {MatMenuTrigger} from "@angular/material/menu";
@@ -49,7 +52,9 @@ import {QuoteMessageService} from "@services/quote-message/quote-message.service
 export class MessageComponent implements OnInit {
   @ViewChild("chattingContainer") chattingContainer: ElementRef;
 
-  // image
+  // icon
+  public closeCircleIcon = this.dom.bypassSecurityTrustResourceUrl(closeCircleIcon);
+  public closeCircleActiveIcon = this.dom.bypassSecurityTrustResourceUrl(closeCircleActiveIcon);
   public editIcon = this.dom.bypassSecurityTrustResourceUrl(editIcon);
   public settingIcon = this.dom.bypassSecurityTrustResourceUrl(settingIcon);
   public settingActiveIcon = this.dom.bypassSecurityTrustResourceUrl(settingActiveIcon);
@@ -57,6 +62,8 @@ export class MessageComponent implements OnInit {
   public searchActiveIcon = this.dom.bypassSecurityTrustResourceUrl(searchActiveIcon);
   public voiceIcon = this.dom.bypassSecurityTrustResourceUrl(voiceIcon);
   public voiceActiveIcon = this.dom.bypassSecurityTrustResourceUrl(voiceActiveIcon);
+  public closePromptIcon = this.dom.bypassSecurityTrustResourceUrl(closePromptIcon);
+  // end icon
 
   public alarmItemList: AlarmItemInterface[] = [];
   public chatMsgEntityList: ChatmsgEntityModel[];
@@ -167,6 +174,7 @@ export class MessageComponent implements OnInit {
   private subscribeQuote() {
     this.quoteMessageService.message$.subscribe((meg) => {
       this.quoteMessage = meg;
+      this.scrollToBottom();
     });
   }
 

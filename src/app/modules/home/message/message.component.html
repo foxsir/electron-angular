@@ -42,7 +42,7 @@
                  matBadgeOverlap="true">
               <img src="https://material.angular.io/assets/img/examples/shiba1.jpg" mat-card-avatar alt="">
             </div>
-            <div fxFlex="calc(100% - 200px)">
+            <div fxFlex="calc(100% - 110px)">
               <div fxLayout="column">
                 <div fxFlex="100">
                   <mat-card-subtitle>{{alarm.alarmItem.title}}</mat-card-subtitle>
@@ -53,13 +53,19 @@
               </div>
             </div>
             <div fxFlex="70px" fxLayoutAlign="center">
-              <div fxLayout="column">
+              <div fxLayout="column" fxFlex="100">
                 <div fxFlex="100" fxLayout="row">
                   <div style="font-size: 12px;">{{formatDate(alarm.alarmItem.date, 'M-d h:m')}}</div>
                 </div>
                 <div fxFlex="100" fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="end">
-                  <mat-icon class="chatting-action-button">volume_up</mat-icon>
-                  <mat-icon class="chatting-action-button">volume_up</mat-icon>
+                  <div fxFlex="50">
+                    <mat-icon class="chatting-action-button mini">
+                      <img [src]="closePromptIcon" alt="">
+                    </mat-icon>
+                  </div>
+                  <div fxFlex="50">
+                    1
+                  </div>
                 </div>
               </div>
             </div>
@@ -157,9 +163,23 @@
           </mat-card>
         </div>
         <div fxFlex="50px" fxLayout="row" style="background: #f1eded;" *ngIf="quoteMessage">
-          <div fxFlex="100" fxFlexFill fxLayoutAlign="center center">
-            {{quoteMessage | json}}
-            <button (click)="clearSubscribeQuote()">X</button>
+          <div fxFlex="100" fxFlexFill>
+            <div fxLayout="row" fxFlexFill>
+              <div fxFlex="60px">
+                <div fxFlexFill fxLayoutAlign="center center">
+                  <button mat-icon-button (click)="clearSubscribeQuote()">
+                    <mat-icon class="hover-icon">
+                      <img [src]="closeCircleIcon" class="icon" alt="">
+                      <img [src]="closeCircleActiveIcon" class="icon-active" alt="">
+                    </mat-icon>
+                  </button>
+                </div>
+              </div>
+              <div fxFlex>
+                <div>{{quoteMessage.name || quoteMessage.uid}}</div>
+                <div>{{quoteMessage.text}}</div>
+              </div>
+            </div>
           </div>
         </div>
         <div fxLayout="row">

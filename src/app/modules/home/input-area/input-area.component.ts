@@ -22,6 +22,7 @@ import CommonTools from "@app/common/common.tools";
 import {FileService} from "@services/file/file.service";
 import {CacheService} from "@services/cache/cache.service";
 import {UploadedFile} from "@app/factorys/upload/upload-file/upload-file.component";
+import {QuoteMessageService} from "@services/quote-message/quote-message.service";
 
 @Component({
   selector: 'app-input-area',
@@ -42,6 +43,8 @@ export class InputAreaComponent implements OnInit {
   public messageText: string;
 
   private sendChatMap = {};
+  // 引用回复消息
+  public quoteMessage: ChatmsgEntityModel = null;
 
   constructor(
     private router: Router,
@@ -53,9 +56,14 @@ export class InputAreaComponent implements OnInit {
     private messageEntityService: MessageEntityService,
     private fileService: FileService,
     private cacheService: CacheService,
+    private quoteMessageService: QuoteMessageService,
   ) { }
 
   ngOnInit(): void {
+    // 订阅回复消息
+    this.quoteMessageService.message$.subscribe((meg) => {
+      this.quoteMessage = meg;
+    });
   }
 
   getImageInfo(file: any) {
@@ -84,12 +92,11 @@ export class InputAreaComponent implements OnInit {
     if (!messageText || messageText.trim().length === 0) {
       return;
     }
-
-    if(!this.imService.isLogined()) {
-      return this.router.navigate(['/session/login']).then(() => {
-        // goto login page
-      });
+    if (!this.imService.checkLogined()) {
+      return this.imService.checkLogined();
     }
+
+    messageText = this.parseReplyMessage(messageText, messageType);
 
     this.messageService.sendMessage(messageType, this.currentChat.alarmItem.dataId, messageText).then(res => {
       if(res.success === true) {
@@ -118,6 +125,31 @@ export class InputAreaComponent implements OnInit {
         this.clearTextArea();
       }
     });
+
+    // 阻止事件
+    return false;
+  }
+
+  /**
+   * 解析回复消息
+   * @param messageText
+   * @param messageType
+   */
+  parseReplyMessage(messageText: string, messageType: number): string {
+    if (this.quoteMessage !== null) {
+      const replyMsg = {
+        duration: 0,
+        fileLength: 0,
+        fileName: "",
+        msg: messageText,
+        msgType: messageType,
+        reply: this.quoteMessage.text,
+        userName: "普通管理员",
+      };
+      return JSON.stringify(replyMsg);
+    } else {
+      return messageText;
+    }
   }
 
   /**
