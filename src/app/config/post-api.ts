@@ -85,6 +85,8 @@ export const updatePrivacyConfig = _HTTP_YUEKU_SERVER_URL + "/api/privacyConfig/
 //用户相关-用户群聊列表
 export const getUserJoinGroup = _HTTP_YUEKU_SERVER_URL + "/api/groupBase/getUserJoinGroup";
 
+//分组列表
+export const getFriendGroupList = _HTTP_YUEKU_SERVER_URL + "/api/friendGroup/list";
 
 
 //

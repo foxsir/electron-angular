@@ -18,6 +18,7 @@ import {NzInputModule} from "ng-zorro-antd/input";
 import {MatMenuModule} from "@angular/material/menu";
 import {MessageModule} from "../../factorys/message/message.module";
 import { BlackListComponent } from './black-list/black-list.component';
+import { FriendGroupComponent } from './friend-group/friend-group.component';
 import { GroupingComponent } from './grouping/grouping.component';
 import { NewFriendComponent } from './new-friend/new-friend.component';
 import {EmptyDataModule} from "../../factorys/empty-data/empty-data.module";
@@ -39,7 +40,8 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
     AddressListComponent,
     GroupComponent,
     CollectComponent,
-    BlackListComponent,
+        BlackListComponent,
+        FriendGroupComponent,
     GroupingComponent,
     NewFriendComponent,
     AccountPanelComponent,

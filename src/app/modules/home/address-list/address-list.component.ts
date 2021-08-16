@@ -32,7 +32,7 @@ export class AddressListComponent implements OnInit {
     },
     {
       label: "我的分组",
-      router: 'new-friend',
+        router: 'friend-group',
       icon: this.dom.bypassSecurityTrustResourceUrl(collectIcon)
     },
     {
