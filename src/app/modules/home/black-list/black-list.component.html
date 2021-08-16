@@ -7,9 +7,15 @@
                 <div mat-line>{{item.nickname}}</div>
                 <mat-divider></mat-divider>
                 <mat-action-list>
-                    <button mat-list-item (click)="save()" style="color:#50b3ff;">移除</button>
+                    <button mat-list-item (click)="remove(item)" style="color:#50b3ff;">移除</button>
                 </mat-action-list>
             </mat-list-item>
         </mat-list>
     </mat-card-content>
 </mat-card>
+
+<nz-modal [(nzVisible)]="show_modal" nzTitle="操作提示" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
+    <ng-container *nzModalContent>
+        <p>确定删除该黑名单吗？</p>
+    </ng-container>
+</nz-modal>

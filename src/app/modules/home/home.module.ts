@@ -29,7 +29,8 @@ import {FormsModule} from "@angular/forms";
 import {UserDialogsModule} from "../user-dialogs/user-dialogs.module";
 import { ChattingSettingComponent } from './chatting-setting/chatting-setting.component';
 import { GroupChattingSettingComponent } from './group-chatting-setting/group-chatting-setting.component';
-import {UploadModule} from "../../factorys/upload/upload.module";
+import { UploadModule } from "../../factorys/upload/upload.module";
+import { NzModalModule } from 'ng-zorro-antd/modal';
 
 @NgModule({
   declarations: [
@@ -65,7 +66,8 @@ import {UploadModule} from "../../factorys/upload/upload.module";
     TitleBarModule,
     FormsModule,
     UserDialogsModule,
-    UploadModule,
+      UploadModule,
+      NzModalModule,
   ]
 })
 export class HomeModule { }

@@ -10,6 +10,8 @@ import HttpPresponseModel from "@app/interfaces/http-response.interface";
 export class BlackListComponent implements OnInit {
 
     blacklist: any[];
+    public show_modal = false;
+    public current_model: any;
 
     constructor(private restService: RestService) {
         this.restService.getMyBlackList().subscribe(res => {
@@ -18,6 +20,31 @@ export class BlackListComponent implements OnInit {
     }
 
     ngOnInit(): void {
+
+    }
+
+    remove(item) {
+        this.show_modal = true;
+        this.current_model = item;
+    }
+
+    handleCancel() {
+        this.show_modal = false;
+    }
+
+    handleOk() {
+        var data = {
+            blackUserId: this.current_model.userUid,            
+        };
+        data['type'] = 0;
+
+        this.restService.blackUser(data).subscribe(res => {
+            this.show_modal = false;
+
+            this.restService.getMyBlackList().subscribe(res => {
+                this.blacklist = res.data;
+            });
+        });
     }
 
 }

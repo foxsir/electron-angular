@@ -7,7 +7,7 @@ import {LocalUserService} from "@services/local-user/local-user.service";
 import {ImService} from "@services/im/im.service";
 import {
     getAppConfig, getMissuCollectById, getMyBlackUser, getUserBaseById, updateUserBaseById,
-    verifyCode, getPrivacyConfigById, updatePrivacyConfig, getUserJoinGroup
+    verifyCode, getPrivacyConfigById, updatePrivacyConfig, getUserJoinGroup, blackUser
 } from "@app/config/post-api";
 import {HttpHeaders} from "@angular/common/http";
 
@@ -739,7 +739,17 @@ export class RestService {
       userId: localUser.userId,
     };
     return this.http.get(getMyBlackUser, data);
-  }
+    }
+
+    /**
+       * 拉黑/取消拉黑
+       */
+    blackUser(data: any) {
+        const localUserInfo = this.localUserService.getObj();
+        data.userId = localUserInfo.userId;
+
+        return this.http.postForm(blackUser, data);
+    }
 
   /**
    * 查询用户资料
