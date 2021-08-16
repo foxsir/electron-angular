@@ -7,6 +7,8 @@ export default class ProtocalModel {
   dataContent: string; // JSON.stringify
   fp: string;
   from: string;
+  recvTime: number;
+  sm: number;
   to: string;
   type: number;
   typeu: number;
