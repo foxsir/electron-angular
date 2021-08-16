@@ -1,7 +1,20 @@
-.mat-icon > img {
+.mat-icon {
   width: 20px;
-  height: auto;
+  height: 20px;
   line-height: 20px;
+  img {
+    width: 20px;
+    height: 20px;
+  }
+}
+.mat-icon {
+  width: 16px;
+  height: 16px;
+  line-height: 16px;
+  &.mini > img {
+    width: 16px;
+    height: 16px;
+  }
 }
 
 // antd
