@@ -95,6 +95,19 @@ export class InputAreaComponent implements OnInit {
     }
 
     messageText = this.parseReplyMessage(messageText, messageType);
+
+    if(this.currentChat.metadata.chatType === 'friend') {
+      this.sendFriendMessage(messageType, messageText, emitToUI, replaceEntity);
+    } else if (this.currentChat.metadata.chatType === 'group') {
+      this.sendGroupMessage(messageType, messageText, emitToUI, replaceEntity);
+    }
+  }
+
+  sendFriendMessage(
+    messageType: number, messageText: string,
+    emitToUI: boolean = true,
+    replaceEntity: ChatmsgEntityModel = null
+  ) {
     this.messageService.sendMessage(messageType, this.currentChat.alarmItem.dataId, messageText).then(res => {
       if(res.success === true) {
         const friendUid = this.currentChat.alarmItem.dataId;
@@ -122,9 +135,16 @@ export class InputAreaComponent implements OnInit {
         this.clearTextArea();
       }
     });
+  }
 
-    // 阻止事件
-    return false;
+  sendGroupMessage(
+    messageType: number, messageText: string,
+    emitToUI: boolean = true,
+    replaceEntity: ChatmsgEntityModel = null
+  ) {
+    this.messageService.sendGroupMessage(messageType, this.currentChat.alarmItem.dataId, messageText).then(res => {
+      console.dir(res);
+    });
   }
 
   /**

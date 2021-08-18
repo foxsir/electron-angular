@@ -5,11 +5,15 @@ import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 import {createCommonData2} from "@app/libs/mobileimsdk-client-common";
 import {ImService} from "@services/im/im.service";
 import {CacheService} from "@services/cache/cache.service";
+import * as uuid from "uuid";
+import {GroupsProviderService} from "@services/groups-provider/groups-provider.service";
+import {LocalUserService} from "@services/local-user/local-user.service";
 
 interface SendMessageResponse {
   success: boolean;
   msgBody: any;
   fingerPrint: string;
+  currentChattingGe?: any;
 }
 
 @Injectable({
@@ -19,6 +23,8 @@ export class MessageService {
   constructor(
     private snackBarService: SnackBarService,
     private imService: ImService,
+    private localUserService: LocalUserService,
+    private groupsProviderService: GroupsProviderService,
   ) {
   }
 
@@ -235,6 +241,7 @@ export class MessageService {
           sucess = true;
           //    111
           // resolve, reject
+
           resolve({
             success: sucess,
             msgBody: msgBody,
@@ -242,6 +249,63 @@ export class MessageService {
           });
         });
       }
+    });
+  }
+
+
+  sendGroupMessage(msgType, toGid, msgContent): Promise<SendMessageResponse> {
+    return new Promise((resolve, reject) => {
+
+
+      console.log(toGid);
+      // debugger
+
+      let success = false;
+      let msgBody = null;
+
+      // 当前群组基本信息封装对象GroupEntity（
+      // 详见：http://docs.52im.net/extend/docs/api/rainbowchatserver4_pro/com/x52im/rainbowchat/http/logic/dto/GroupEntity.html）
+      // 检查是否是群成员
+      const currentChattingGe = this.groupsProviderService.getGroupInfoByGid(toGid);
+
+
+      // 消息发送者uid（就是本地用户的uid了）
+      // var fromUid = IMSDK.getLoginInfo().loginUserId;
+
+      const fromUid = this.imService.getLoginInfo().loginUserId;
+
+      // console.log(fromUid)
+
+      const localAuthedUserInfo = this.localUserService.getObj();
+
+      let fromNickname = localAuthedUserInfo.nickname;
+      fromNickname = (fromNickname ? fromNickname : fromUid);
+
+      // console.log(fromNickname);
+      // debugger
+      // 要发送的昨时聊天消息内容，实际上是一个MsgBody4Group对象
+      // （详见：http://docs.52im.net/extend/docs/api/rainbowchatserver4_pro/com/x52im/rainbowchat/im/dto/MsgBody4Group.html）
+      msgBody = this.constructGroupChatMsgBody(msgType, fromUid, fromNickname, toGid, msgContent);
+      // 构建建IM协议报文包（即Protocal对象，详见：
+      // http://docs.52im.net/extend/docs/api/mobileimsdk/server/net/openmob/mobileimsdk/server/protocal/Protocal.html）
+      const p = createCommonData2(
+        JSON.stringify(msgBody)  // 协议体内容
+        , fromUid                // 消息发起者
+        , '0'                    // 消息中转接收者（因群聊消息为扩散写逻辑，所以必须由服务端代为转发）
+        , UserProtocalsType.MT44_OF_GROUP$CHAT$MSG_A$TO$SERVER);
+
+      // console.log(p)
+      // debugger
+      // 将消息通过websocket发送出去
+      this.imService.sendData(p);
+      success = true;
+
+      resolve({
+        success: success,
+        msgBody:msgBody,
+        currentChattingGe: currentChattingGe,
+        fingerPrint: p.fp,
+      });
     });
   }
 
@@ -268,6 +332,49 @@ export class MessageService {
     };
   }
 
-  // friendUID
+  /**
+   * 构造群组聊天消息协议体的 MsgBody4Group DTO对象.
+   * （MsgBody4Group对象详见：http://docs.52im.net/extend/docs/api/rainbowchatserver4_pro/com/x52im/rainbowchat/im/dto/MsgBody4Group.html）
+   *
+   * @param msgType 聊天消息类型
+   * @param srcUserUid 发送方的uid
+   * @param srcNickName 发送方的昵称
+   * @param toGid 要发送到的群id
+   * @param msg 消息内容，纯文本字串，可能是聊天文字、图片文件名或语音文件名等，但一定不是JSON字串
+   * @return 返回MsgBody4Group对象，详见：http://docs.52im.net/extend/docs/api/rainbowchatserver4_pro/com/x52im/rainbowchat/im/dto/MsgBody4Group.html
+   */
+  constructGroupChatMsgBody(msgType, srcUserUid, srcNickName, toGid, msg) {
+    // 新的MsgBody4Group对象
+    var tcmd = {
+      cy: ChatModeType.CHAT_TYPE_GROUP$CHAT, // 聊天模式类型：群组聊天
+      f: srcUserUid,
+      nickName: srcNickName,
+      t: toGid,
+      m: msg,
+      ty: msgType,
+      //111 这个是群多端同步时要加的消息指纹，只能放到这里
+      pcTypeMsg: uuid.v1(),
+    };
+    return tcmd;
+  }
+
+  /**
+   * 构造世界频道/普通群聊系统通知(消息)协议体的DTO对象.
+   *
+   * @msgType 聊天消息类型
+   * @param toGid 要发送到的群id
+   * @param msg 消息内容，纯文本字串，可能是聊天文字、图片文件名或语音文件名等，但一定不是JSON字串
+   * @return 返回MsgBody4Group对象，详见：http://docs.52im.net/extend/docs/api/rainbowchatserver4_pro/com/x52im/rainbowchat/im/dto/MsgBody4Group.html
+   */
+  constructGroupSystenMsgBody(toGid, msg) {
+    return this.constructGroupChatMsgBody(
+      MsgType.TYPE_SYSTEAM$INFO
+      // 此值一定是"0"，因为是服务端发给客户端的嘛
+      , "0"
+      // 服务端发送的系统级消息，没昵称
+      , ""
+      , toGid
+      , msg);
+  }
 
 }

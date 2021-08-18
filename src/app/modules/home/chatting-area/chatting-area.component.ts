@@ -85,6 +85,9 @@ export class ChattingAreaComponent implements OnInit {
     this.localUserInfo = this.localUserService.localUserInfo;
 
     this.subscribeMessagesBeReceived();
+    this.subscribeOfGroupChatMsgToServer();
+    this.subscribeOfGroupChatMsgServerToB();
+    this.subscribeChattingMessage();
   }
 
   ngOnInit(): void {
@@ -123,10 +126,13 @@ export class ChattingAreaComponent implements OnInit {
     });
   }
 
-  pushMessageToPanel(chat: ChatmsgEntityModel) {
-    if(this.chatMsgEntityList) {
-      this.chatMsgEntityList.push(chat);
-      this.scrollToBottom();
+  pushMessageToPanel(chat: ChatmsgEntityModel, res: ProtocalModel) {
+    if(this.currentChat.alarmItem.dataId.toString() === res.to.toString()) {
+      if(this.chatMsgEntityList) {
+        console.dir(chat);
+        this.chatMsgEntityList.push(chat);
+        this.scrollToBottom();
+      }
     }
     // chatMsg.fingerPrintOfProtocal
   }
@@ -157,7 +163,7 @@ export class ChattingAreaComponent implements OnInit {
       // fromUid, nickName, msg, time, msgType, fp = null
       chatMsgEntity.isOutgoing = true;
       this.cacheService.putChattingCache(this.currentChat, chatMsgEntity).then(() => {
-        this.pushMessageToPanel(chatMsgEntity);
+        this.pushMessageToPanel(chatMsgEntity, res);
       });
     });
   }
@@ -173,7 +179,23 @@ export class ChattingAreaComponent implements OnInit {
         res.from, dataContent.nickName, dataContent.m, (new Date()).getTime(), dataContent.ty, res.fp
       );
       // fromUid, nickName, msg, time, msgType, fp = null
-      this.pushMessageToPanel(chatMsgEntity);
+      this.pushMessageToPanel(chatMsgEntity, res);
+    });
+  }
+
+  /**
+   * 由服务端转发
+   * @private
+   */
+  private subscribeOfGroupChatMsgServerToB() {
+    this.messageDistributeService.MT45_OF_GROUP$CHAT$MSG_SERVER$TO$B$.subscribe((res: ProtocalModel) => {
+      const dataContent: any = JSON.parse(res.dataContent);
+      // alert("群组" + dataContent.t);
+      // this.massageBadges[dataContent.t.trim()] = 99;
+      const chatMsgEntity = this.messageEntityService.prepareRecievedMessage(
+        res.from, dataContent.nickName, dataContent.m, (new Date()).getTime(), dataContent.ty, res.fp
+      );
+      this.pushMessageToPanel(chatMsgEntity, res);
     });
   }
 

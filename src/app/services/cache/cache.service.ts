@@ -178,7 +178,7 @@ export class CacheService {
     this.rosterProviderService.refreshRosterAsync().subscribe((res: NewHttpResponseInterface<any>) => {
       // 服务端返回的是一维RosterElementEntity对象数组
       if(res.status === 200) {
-        const friendList: FriendModel[] = res.data.list;
+        const friendList: FriendModel[] = res.data;
         if (friendList.length > 0) {
           const data = {};
           friendList.forEach(f => {
