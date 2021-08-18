@@ -1,0 +1,18 @@
+.create-group-container {
+  background: #f0f2f5;
+  .create-group-header {
+    border-bottom: solid #CCCCCC 1px;
+  }
+
+  .friend-item-list {
+    .friend-avatar, .friend-avatar>img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+    }
+  }
+
+  //::ng-deep .mat-pseudo-checkbox {
+  //  border-radius: 50%;
+  //}
+}

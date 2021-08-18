@@ -1,1 +1,91 @@
-<button (click)="goBack()">goBack</button>
+<div fxLayout="column" fxFlexFill class="create-group-container">
+  <div fxFlex="60px" class="create-group-header" fxFlexFill fxLayoutAlign="start center">
+    <div fxLayout="row" fxFlex="100">
+      <div fxFlex="60px" fxLayoutAlign="center">
+        <button (click)="goBack()" mat-icon-button>
+          <mat-icon class="hover-icon">
+            <img [src]="backspaceIcon" class="icon" alt="">
+            <img [src]="backspaceActiveIcon" class="icon-active" alt="">
+          </mat-icon>
+        </button>
+      </div>
+      <div fxFlex fxLayoutAlign="center center">
+        选择用户
+      </div>
+      <div fxFlex="100px" fxLayoutAlign="center" [fxShow]="step === 'one'">
+        <button [disabled]="friendSelect.selectedOptions.selected.length === 0"
+                (click)="nextStep(friendSelect)" mat-button color="primary">
+          下一步
+        </button>
+      </div>
+      <div fxFlex="100px" fxLayoutAlign="center" [fxShow]="step === 'two'">
+        <button (click)="doCreate()" mat-button color="primary">
+          创建
+        </button>
+      </div>
+    </div>
+  </div>
+  <div fxFlex [fxShow]="step === 'one'">
+    <mat-card class="mat-elevation-z0 transparent">
+      <mat-card-content>
+        <nz-input-group fxFlex="100" [nzSuffix]="suffixTemplateInfo">
+          <input nz-input placeholder="搜索"
+                 (keydown.enter)="doSearchFriend()"
+                 (ngModelChange)="doSearchFriend()" [(ngModel)]="searchFriend" />
+        </nz-input-group>
+        <ng-template #suffixTemplateInfo>
+          <mat-icon (click)="searchFriend = null; getFriendList()" class="hover-icon icon14">
+            <img [src]="closeIcon" class="icon" alt="">
+            <img [src]="closeActiveIcon" class="icon-active" alt="">
+          </mat-icon>
+        </ng-template>
+      </mat-card-content>
+      <mat-card-content>
+        <mat-selection-list class="friend-item-list" #friendSelect disableRipple color="primary">
+          <mat-list-option *ngFor="let friend of friendList" [value]="friend">
+            <mat-icon mat-list-icon class="friend-avatar">
+              <img [src]="friend.base64Avatar || friend.userAvatarFileName" alt="">
+            </mat-icon>
+            <div mat-line>{{friend.nickname}}</div>
+            <div mat-line *ngIf="!!friend.isOnline === true" style="color: #0091FF;">[在线]</div>
+            <div mat-line *ngIf="!!friend.isOnline === false" style="color: #CCCCCC;">[离线]</div>
+          </mat-list-option>
+        </mat-selection-list>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div fxFlex [fxShow]="step === 'two'">
+    <div fxLayout="column">
+      <div fxFlex="90px" class="border1px bottom">
+        <mat-card class="mat-elevation-z0 transparent">
+          <mat-card-content>
+            <div fxLayout="row" fxLayoutGap="10px">
+              <div fxFlex="50px">
+                <img [src]="defaultGroupAvatar" style="width: 50px; height: 50px" mat-card-avatar alt="">
+              </div>
+              <div fxFlex fxFlexAlign="center">
+                  {{defaultGroupName}}
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      <div fxFlex>
+        <mat-card class="mat-elevation-z0 transparent">
+          <mat-card-content>
+            <mat-list class="friend-item-list">
+              <mat-list-item *ngFor="let friend of selectedFriends">
+                <mat-icon mat-list-icon class="friend-avatar">
+                  <img [src]="friend.base64Avatar || friend.userAvatarFileName" alt="">
+                </mat-icon>
+                <div mat-line>{{friend.nickname}}</div>
+                <div mat-line *ngIf="!!friend.isOnline === true" style="color: #0091FF;">[在线]</div>
+                <div mat-line *ngIf="!!friend.isOnline === false" style="color: #CCCCCC;">[离线]</div>
+              </mat-list-item>
+            </mat-list>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</div>
