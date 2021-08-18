@@ -25,6 +25,7 @@ function createWindow(): BrowserWindow {
     // y: 0,
     // width: size.width,
     // height: size.height,
+    backgroundColor: "#F1F1F1;",
     show: false,
     resizable: false,
     width: defaultOptions.size.width,
