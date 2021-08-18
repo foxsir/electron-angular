@@ -14,7 +14,7 @@
 html, body {
   margin: 0;
   padding: 0;
-  background: white;
+  background: #f0f2f5;
   height: 100%;
   font-family: Arial, Helvetica, sans-serif;
 }
@@ -118,4 +118,23 @@ html, body {
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+}
+
+.transparent {
+  background: transparent !important;
+}
+
+.border1px {
+  &.top {
+    border-top: solid #CCCCCC 1px;
+  }
+  &.left {
+    border-left: solid #CCCCCC 1px;
+  }
+  &.right {
+    border-right: solid #CCCCCC 1px;
+  }
+  &.bottom {
+    border-bottom: solid #CCCCCC 1px;
+  }
 }
