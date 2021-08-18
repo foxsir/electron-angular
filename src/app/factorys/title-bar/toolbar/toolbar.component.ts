@@ -2,10 +2,12 @@ import {Component, Input, OnInit} from '@angular/core';
 import {WindowService} from "@services/window/window.service";
 import {DomSanitizer} from "@angular/platform-browser";
 
+import bugIcon from '@app/assets/icons/adb_black.svg';
 import closeIcon from '@app/assets/icons/close.svg';
 import closeActiveIcon from '@app/assets/icons/close-active.svg';
 import minIcon from '@app/assets/icons/min.svg';
 import minActiveIcon from '@app/assets/icons/min-active.svg';
+
 
 @Component({
   selector: 'app-toolbar',
@@ -18,6 +20,7 @@ export class ToolbarComponent implements OnInit {
   @Input() stickyTop: boolean = false;
   @Input() height: string = '30px';
 
+  public bugIcon = this.dom.bypassSecurityTrustResourceUrl(bugIcon);
   public closeIcon = this.dom.bypassSecurityTrustResourceUrl(closeIcon);
   public closeActiveIcon = this.dom.bypassSecurityTrustResourceUrl(closeActiveIcon);
   public minIcon = this.dom.bypassSecurityTrustResourceUrl(minIcon);
