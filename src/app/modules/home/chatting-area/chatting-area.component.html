@@ -11,13 +11,13 @@
       </mat-card>
     </div>
   </mat-drawer>
-  <mat-drawer-content fxFlexFill>
+  <mat-drawer-content>
     <ng-template [ngIf]="!currentChat">
       <div fxFlexFill fxLayoutAlign="center center">
         <empty-data></empty-data>
       </div>
     </ng-template>
-    <div fxLayout="column" *ngIf="currentChat">
+    <div fxLayout="column" *ngIf="currentChat" fxFlexFill>
       <div fxLayout="column" fxFlex="60px" class="chatting-header">
         <div fxLayout="row" fxFlexFill>
           <div fxFlex="60">

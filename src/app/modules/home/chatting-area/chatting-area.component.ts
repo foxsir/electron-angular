@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
+import {AfterViewChecked, AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
 import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 import {DomSanitizer, SafeResourceUrl} from "@angular/platform-browser";
 import {AvatarService} from "@services/avatar/avatar.service";
@@ -21,6 +21,14 @@ import {LocalUserService} from "@services/local-user/local-user.service";
 import {MatMenuTrigger} from "@angular/material/menu";
 import {ContextMenuModel} from "@app/models/context-menu.model";
 import {ContextMenuService} from "@services/context-menu/context-menu.service";
+import {ProtocalModel} from "@app/models/protocal.model";
+import {MessageDistributeService} from "@services/message-distribute/message-distribute.service";
+import {MessageEntityService} from "@services/message-entity/message-entity.service";
+import {CacheService} from "@services/cache/cache.service";
+import {ImService} from "@services/im/im.service";
+import {CurrentChattingChangeService} from "@modules/home/chatting-area/current-chatting-change/current-chatting-change.service";
+import {RestService} from "@services/rest/rest.service";
+import {MatDrawer} from "@angular/material/sidenav";
 
 @Component({
   selector: 'app-chatting-area',
@@ -28,8 +36,10 @@ import {ContextMenuService} from "@services/context-menu/context-menu.service";
   styleUrls: ['./chatting-area.component.scss']
 })
 export class ChattingAreaComponent implements OnInit {
-  @Input() currentChat: AlarmItemInterface;
   @ViewChild("chattingContainer") chattingContainer: ElementRef;
+  @ViewChild("chattingSetting") chattingSetting: MatDrawer;
+
+  public currentChat: AlarmItemInterface;
 
   public formatDate = formatDate;
 
@@ -65,16 +75,52 @@ export class ChattingAreaComponent implements OnInit {
     private localUserService: LocalUserService,
     private contextMenuService: ContextMenuService,
     private quoteMessageService: QuoteMessageService,
+    private messageDistributeService: MessageDistributeService,
+    private messageEntityService: MessageEntityService,
+    private cacheService: CacheService,
+    private imService: ImService,
+    private restService: RestService,
+    private currentChattingChangeService: CurrentChattingChangeService,
   ) {
     this.localUserInfo = this.localUserService.localUserInfo;
+
+    this.subscribeMessagesBeReceived();
   }
 
   ngOnInit(): void {
-    this.avatarService.getAvatar(this.currentChat.alarmItem.dataId).then(url => {
-      this.currentChatAvatar = this.dom.bypassSecurityTrustResourceUrl(url);
-    });
-
     this.subscribeQuote();
+
+    if(this.currentChattingChangeService.currentChatting) {
+      this.currentChat = this.currentChattingChangeService.currentChatting;
+      this.cacheService.getChattingCache(this.currentChat).then(data => {
+        if(!!data) {
+          this.chatMsgEntityList = Object.values(data);
+          this.scrollToBottom('auto');
+        }
+      });
+    }
+
+    // 获取缓存
+    this.currentChattingChangeService.currentChatting$.subscribe(currentChat => {
+      this.currentChat = currentChat;
+      this.chattingSetting.close();
+      this.avatarService.getAvatar(this.currentChat.alarmItem.dataId).then(url => {
+        this.currentChatAvatar = this.dom.bypassSecurityTrustResourceUrl(url);
+      });
+      this.cacheService.getChattingCache(this.currentChat).then(data => {
+        if(!!data) {
+          this.chatMsgEntityList = Object.values(data);
+          this.scrollToBottom('auto');
+        }
+      });
+      this.restService.getUserBaseById(this.currentChat.alarmItem.dataId).subscribe(res => {
+        if (res.data !== null) {
+          this.currentChatSubtitle = [res.data.latestLoginAddres, res.data.registerIp].join(": ");
+        } else {
+          this.currentChatSubtitle = null;
+        }
+      });
+    });
   }
 
   pushMessageToPanel(chat: ChatmsgEntityModel) {
@@ -94,6 +140,65 @@ export class ChattingAreaComponent implements OnInit {
 
   clearSubscribeQuote() {
     this.quoteMessageService.setQuoteMessage(null);
+  }
+
+  /**
+   * 普通一对一聊天消息的报文头（聊天消息可能是：文本、图片、语音留言、礼物等）
+   * @private
+   */
+  private subscribeChattingMessage() {
+    this.messageDistributeService.MT03_OF_CHATTING_MESSAGE$.subscribe((res: ProtocalModel) => {
+      const dataContent: any = JSON.parse(res.dataContent);
+      // alert("单聊" + data.from);
+
+      const chatMsgEntity = this.messageEntityService.prepareRecievedMessage(
+        res.from, dataContent.nickName, dataContent.m, (new Date()).getTime(), dataContent.ty, res.fp
+      );
+      // fromUid, nickName, msg, time, msgType, fp = null
+      chatMsgEntity.isOutgoing = true;
+      this.cacheService.putChattingCache(this.currentChat, chatMsgEntity).then(() => {
+        this.pushMessageToPanel(chatMsgEntity);
+      });
+    });
+  }
+
+  /**
+   * 群聊/世界频道聊天消息：由发送人A发给服务端
+   * @private
+   */
+  private subscribeOfGroupChatMsgToServer() {
+    this.messageDistributeService.MT44_OF_GROUP$CHAT$MSG_A$TO$SERVER$.subscribe((res: ProtocalModel) => {
+      const dataContent: any = JSON.parse(res.dataContent);
+      const chatMsgEntity = this.messageEntityService.prepareRecievedMessage(
+        res.from, dataContent.nickName, dataContent.m, (new Date()).getTime(), dataContent.ty, res.fp
+      );
+      // fromUid, nickName, msg, time, msgType, fp = null
+      this.pushMessageToPanel(chatMsgEntity);
+    });
+  }
+
+  /**
+   * 消息已被对方收到的回调事件通知
+   * @private
+   */
+  private subscribeMessagesBeReceived() {
+    this.imService.callback_messagesBeReceived = (fingerPrint) => {
+      if (fingerPrint) {
+        this.cacheService.getChattingCache(this.currentChat).then(data => {
+          if(data[fingerPrint]) {
+            const chat: ChatmsgEntityModel = data[fingerPrint];
+            chat.isOutgoing = true;
+            this.cacheService.putChattingCache(this.currentChat, chat).then(() => {
+              this.cacheService.getChattingCache(this.currentChat).then(res => {
+                if(!!res) {
+                  this.chatMsgEntityList = Object.values(res);
+                }
+              });
+            });
+          }
+        });
+      }
+    };
   }
 
   scrollToBottom(behavior: "auto" | "smooth" = "smooth") {
