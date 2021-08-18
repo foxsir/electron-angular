@@ -34,6 +34,8 @@ import { CreateGroupComponent } from './create-group/create-group.component';
 import { UploadModule } from "../../factorys/upload/upload.module";
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { SearchFriendComponent } from './search-friend/search-friend.component';
+import { SearchWidgetComponent } from './search-widget/search-widget.component';
+import { ChattingAreaComponent } from './chatting-area/chatting-area.component';
 
 @NgModule({
   declarations: [
@@ -52,7 +54,9 @@ import { SearchFriendComponent } from './search-friend/search-friend.component';
     ChattingSettingComponent,
     GroupChattingSettingComponent,
     CreateGroupComponent,
-    SearchFriendComponent
+    SearchFriendComponent,
+    SearchWidgetComponent,
+    ChattingAreaComponent
   ],
   imports: [
     CommonModule,

@@ -12,6 +12,7 @@ import {BlackListComponent} from "./black-list/black-list.component";
 import {CreateGroupComponent} from "./create-group/create-group.component";
 import { FriendGroupComponent } from "./friend-group/friend-group.component";
 import {SearchFriendComponent} from "./search-friend/search-friend.component";
+import {ChattingAreaComponent} from "./chatting-area/chatting-area.component";
 
 const routes: Routes = [
   {
@@ -27,6 +28,11 @@ const routes: Routes = [
         path: 'message',
         component: MessageComponent,
         children: [
+          {
+            path: '',
+            component: ChattingAreaComponent,
+            pathMatch: 'full'
+          },
           {
             path: 'create-group',
             component: CreateGroupComponent,
