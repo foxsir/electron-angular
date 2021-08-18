@@ -28,6 +28,7 @@ import {QrCodeComponent} from "@modules/user-dialogs/qr-code/qr-code.component";
 import {PrivacySettingComponent} from "@modules/user-dialogs/privacy-setting/privacy-setting.component";
 import {MySignatureComponent} from "@modules/user-dialogs/my-signature/my-signature.component";
 import {UpdatePasswordComponent} from "@modules/user-dialogs/update-password/update-password.component";
+import {RestService} from "@services/rest/rest.service";
 // import icons end
 
 @Component({
@@ -93,6 +94,7 @@ export class AccountPanelComponent implements OnInit {
     private dialogService: DialogService,
     private router: Router,
     private windowService: WindowService,
+    private restService: RestService,
   ) {
   }
 
@@ -100,6 +102,12 @@ export class AccountPanelComponent implements OnInit {
     this.localUserInfo = this.localUserService.localUserInfo;
     this.avatarService.getAvatar(this.localUserInfo.userId.toString()).then(url => {
       this.myAvatar = this.dom.bypassSecurityTrustResourceUrl(url);
+    });
+
+    //todo 保存到缓存中并做到界面数据实时更新
+    this.restService.getUserBaseById(this.localUserInfo.userId.toString()).subscribe(res => {
+      console.log('MySignatureComponent result: ', res);
+      this.localUserInfo.whatsUp = res.data.whatSUp;
     });
   }
 
