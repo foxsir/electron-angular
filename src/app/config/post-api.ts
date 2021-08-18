@@ -91,6 +91,9 @@ export const getUserJoinGroup = _HTTP_SERVER_URL + "/api/groupBase/getUserJoinGr
 //分组列表
 export const getFriendGroupList = _HTTP_SERVER_URL + "/api/friendGroup/list";
 
+// 搜索好友
+export const getFriendSearch = _HTTP_SERVER_URL + "api/friend/search";
+
 
 //
 //  //封装请求函数
