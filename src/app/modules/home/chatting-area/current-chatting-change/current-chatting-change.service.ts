@@ -8,6 +8,8 @@ import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 })
 export class CurrentChattingChangeService {
 
+  public currentChatting: AlarmItemInterface;
+
   private currentChattingSource = new Subject<AlarmItemInterface>();
   // Observable string streams
   currentChatting$ = this.currentChattingSource.asObservable();
@@ -15,6 +17,7 @@ export class CurrentChattingChangeService {
   constructor() { }
 
   switchCurrentChatting(currentChatting: AlarmItemInterface) {
+    this.currentChatting = currentChatting;
     this.currentChattingSource.next(currentChatting);
   }
 }
