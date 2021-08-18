@@ -29,7 +29,7 @@ export class MySignatureComponent implements OnInit {
 
         const localUserInfo = this.localUserService.getObj();
         console.log('localUserInfo: ', localUserInfo);
-        this.restService.getUserBaseById(localUserInfo.userId).subscribe(res => {
+        this.restService.getUserBaseById(localUserInfo.userId.toString()).subscribe(res => {
             console.log('MySignatureComponent result: ', res);
             this.whatSUp = res.data.whatSUp;
         });
