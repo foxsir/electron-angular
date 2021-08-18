@@ -1,10 +1,10 @@
 <!--文本消息-->
 <ng-template [ngIf]="pureTextMessage">
-  {{chatMsg.text}}
+  <div class="chat-text">{{chatMsg.text}}</div>
 </ng-template>
 <!--非文本消息-->
 <ng-template [ngIf]="pureTextMessage === false">
-  <div fxLayout="column">
+  <div fxLayout="column" fxLayoutGap="10px">
     <div class="quote-message" fxLayout="row">
       <div fxFlex="38px" class="quote-thumbnail" *ngIf="replyContentText && newChatMsg.fileName">
         <img [src]="newChatMsg.fileName" alt="">
@@ -30,6 +30,6 @@
         </div>
       </div>
     </div>
-    <div>{{newChatMsg.msg}}</div>
+    <div class="chat-text">{{newChatMsg.msg}}</div>
   </div>
 </ng-template>
