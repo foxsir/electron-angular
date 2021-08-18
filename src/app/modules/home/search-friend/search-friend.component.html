@@ -1,1 +1,62 @@
-<p>search-friend works!</p>
+<div fxLayout="column" fxFlexFill class="create-group-container">
+  <div fxFlex="60px" class="create-group-header" fxFlexFill fxLayoutAlign="start center">
+    <div fxLayout="row" fxFlex="100">
+      <div fxFlex="60px" fxLayoutAlign="center">
+        <button (click)="goBack()" mat-icon-button>
+          <mat-icon class="hover-icon">
+            <img [src]="backspaceIcon" class="icon" alt="">
+            <img [src]="backspaceActiveIcon" class="icon-active" alt="">
+          </mat-icon>
+        </button>
+      </div>
+      <div fxFlex fxLayoutAlign="center center">
+        选择用户
+      </div>
+      <div fxFlex="100px" fxLayoutAlign="center">
+        <button (click)="search()" mat-button color="primary">
+          查找
+        </button>
+      </div>
+    </div>
+  </div>
+  <div fxFlex>
+    <mat-card class="mat-elevation-z0 transparent">
+      <mat-card-content>
+        <nz-input-group fxFlex="100" [nzSuffix]="suffixTemplateInfo">
+          <input nz-input placeholder="搜索"
+                 (keydown.enter)="search()" [(ngModel)]="searchFriend" />
+        </nz-input-group>
+        <ng-template #suffixTemplateInfo>
+          <mat-icon (click)="searchFriend = null;" class="hover-icon icon14">
+            <img [src]="closeIcon" class="icon" alt="">
+            <img [src]="closeActiveIcon" class="icon-active" alt="">
+          </mat-icon>
+        </ng-template>
+      </mat-card-content>
+      <mat-card-content>
+        <div fxLayout="column" fxLayoutGap="20px">
+          <div fxFlex="40px" *ngIf="searchFriendInfo">
+            <div fxLayout="row" fxLayoutGap="10px">
+              <div fxFlex="40px">
+                <mat-icon class="friend-avatar">
+                  <!--<img [src]="friend.base64Avatar || friend.userAvatarFileName" alt="">-->
+                  <img src="https://material.angular.io/assets/img/examples/shiba2.jpg" alt="">
+                </mat-icon>
+              </div>
+              <div fxFlex>
+                <div fxLayout="column" fxFlexFill>
+                  <div fxFlex fxLayoutAlign="start center">
+                    {{searchFriendInfo.nickname}}
+                  </div>
+                </div>
+              </div>
+              <div fxFlex fxLayoutAlign="end">
+                <div><button mat-flat-button color="primary" (click)="friendRequest()">添加</button></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
