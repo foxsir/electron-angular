@@ -18,6 +18,7 @@ import {NzInputModule} from "ng-zorro-antd/input";
 import {MatMenuModule} from "@angular/material/menu";
 import {MessageModule} from "../../factorys/message/message.module";
 import { BlackListComponent } from './black-list/black-list.component';
+import { FriendGroupComponent } from './friend-group/friend-group.component';
 import { GroupingComponent } from './grouping/grouping.component';
 import { NewFriendComponent } from './new-friend/new-friend.component';
 import {EmptyDataModule} from "../../factorys/empty-data/empty-data.module";
@@ -29,8 +30,9 @@ import {FormsModule} from "@angular/forms";
 import {UserDialogsModule} from "../user-dialogs/user-dialogs.module";
 import { ChattingSettingComponent } from './chatting-setting/chatting-setting.component';
 import { GroupChattingSettingComponent } from './group-chatting-setting/group-chatting-setting.component';
-import {UploadModule} from "../../factorys/upload/upload.module";
 import { CreateGroupComponent } from './create-group/create-group.component';
+import { UploadModule } from "../../factorys/upload/upload.module";
+import { NzModalModule } from 'ng-zorro-antd/modal';
 
 @NgModule({
   declarations: [
@@ -40,6 +42,7 @@ import { CreateGroupComponent } from './create-group/create-group.component';
     GroupComponent,
     CollectComponent,
     BlackListComponent,
+    FriendGroupComponent,
     GroupingComponent,
     NewFriendComponent,
     AccountPanelComponent,
@@ -68,6 +71,7 @@ import { CreateGroupComponent } from './create-group/create-group.component';
     FormsModule,
     UserDialogsModule,
     UploadModule,
+    NzModalModule,
   ]
 })
 export class HomeModule { }

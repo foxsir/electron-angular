@@ -10,6 +10,7 @@ import {NewFriendComponent} from "./new-friend/new-friend.component";
 import {GroupingComponent} from "./grouping/grouping.component";
 import {BlackListComponent} from "./black-list/black-list.component";
 import {CreateGroupComponent} from "./create-group/create-group.component";
+import { FriendGroupComponent } from "./friend-group/friend-group.component";
 
 const routes: Routes = [
   {
@@ -64,7 +65,12 @@ const routes: Routes = [
             path: 'black-list',
             component: BlackListComponent,
             pathMatch: 'full'
-          },
+            },
+            {
+                path: 'friend-group',
+                component: FriendGroupComponent,
+                pathMatch: 'full'
+            },
         ]
       },
     ]

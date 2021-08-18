@@ -3,13 +3,19 @@
         <mat-list>
             <div mat-subheader style="color:#333333;">黑名单</div>
             <mat-list-item *ngFor="let item of blacklist" style="padding-top:10px;">
-                <img src="{{item.avatar}}" mat-list-icon style="width:44px;height:44px;" />
+                <img src="{{item.userAvatarFileName}}" mat-list-icon style="width:44px;height:44px;" />
                 <div mat-line>{{item.nickname}}</div>
                 <mat-divider></mat-divider>
                 <mat-action-list>
-                    <button mat-list-item (click)="save()" style="color:#50b3ff;">移除</button>
+                    <button mat-list-item (click)="remove(item)" style="color:#50b3ff;">移除</button>
                 </mat-action-list>
             </mat-list-item>
         </mat-list>
     </mat-card-content>
 </mat-card>
+
+<nz-modal [(nzVisible)]="show_modal" nzTitle="操作提示" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
+    <ng-container *nzModalContent>
+        <p>确定删除该黑名单吗？</p>
+    </ng-container>
+</nz-modal>

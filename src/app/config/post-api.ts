@@ -67,14 +67,17 @@ export const getGroupCornet=  _HTTP_SERVER_URL +"/api/groupBase/getGroupCornet";
 
 
 //根据群短号id查询群信息
-// const getUserBaseById =  _HTTP_SERVER_URL +"/api/user/getUserBaseById";
+// const getUserBaseById =  _HTTP_YUEKU_SERVER_URL +"/api/user/getUserBaseById";
 
 
 //根据群id查询群管理员信息
 export const getGroupAdminInfo=  _HTTP_SERVER_URL +"/api/groupBase/getAdminList";
 
-//根据群id查询群管理员信息
-export const getMyBlackUser =  _HTTP_SERVER_URL +"/api/user/getMyBlackUser";
+//获取黑名单列表
+export const getMyBlackUser = _HTTP_SERVER_URL + "/api/user/getMyBlackUser";
+
+//拉黑/取消拉黑
+export const blackUser = _HTTP_SERVER_URL + "/api/user/blackUser";
 
 //隐私设置-隐私设置详情
 export const getPrivacyConfigById = _HTTP_SERVER_URL + "/api/privacyConfig/getPrivacyConfigById";
@@ -85,6 +88,8 @@ export const updatePrivacyConfig = _HTTP_SERVER_URL + "/api/privacyConfig/update
 //用户相关-用户群聊列表
 export const getUserJoinGroup = _HTTP_SERVER_URL + "/api/groupBase/getUserJoinGroup";
 
+//分组列表
+export const getFriendGroupList = _HTTP_SERVER_URL + "/api/friendGroup/list";
 
 
 //
