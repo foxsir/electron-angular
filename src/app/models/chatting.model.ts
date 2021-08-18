@@ -5,7 +5,7 @@ export default class ChattingModel {
   alarmMessageType: number;
   dataId: string;
   date: string;
-  istop: string;
+  istop: boolean;
   msgContent: string;
   title: string;
 }

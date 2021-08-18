@@ -17,7 +17,7 @@ export default class LocalUserinfoModel {
   user_phone: string;
   user_sex: string;
   // user_uid: string;
-  userId: string;
+  userId: number;
   web_liveStatus: number;
   whatsUp: string;
   token: string;
