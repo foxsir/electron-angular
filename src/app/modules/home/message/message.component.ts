@@ -121,6 +121,7 @@ export class MessageComponent implements OnInit {
     this.subscribeChattingMessage();
     this.subscribeMessagesBeReceived();
     this.subscribeQuote();
+    this.subscribeChattingListUpdate();
   }
 
   ngOnInit(): void {
@@ -149,6 +150,24 @@ export class MessageComponent implements OnInit {
       this.cacheService.SyncChattingList(res || {}).then(list => {
         list.forEach(item => this.insertItem(item));
       });
+    });
+
+  }
+
+  /**
+   * 订阅会话列表更新
+   * @private
+   */
+  private subscribeChattingListUpdate() {
+    this.cacheService.cacheUpdate$.subscribe(cache => {
+      console.dir("subscribe cache");
+      if (cache.alarmData) {
+        const alarmDataList: AlarmItemInterface[] = [];
+        Object.values(cache.alarmData).forEach((alarm: {alarmData: AlarmItemInterface}) => {
+          alarmDataList.push(alarm.alarmData);
+        });
+        this.alarmItemList = alarmDataList;
+      }
     });
   }
 
