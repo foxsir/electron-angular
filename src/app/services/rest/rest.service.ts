@@ -6,8 +6,18 @@ import {Observable} from "rxjs";
 import {LocalUserService} from "@services/local-user/local-user.service";
 import {ImService} from "@services/im/im.service";
 import {
-    getAppConfig, getMissuCollectById, getMyBlackUser, getUserBaseById, updateUserBaseById,
-    verifyCode, getPrivacyConfigById, updatePrivacyConfig, getUserJoinGroup, blackUser, getFriendGroupList
+  getAppConfig,
+  getMissuCollectById,
+  getMyBlackUser,
+  getUserBaseById,
+  updateUserBaseById,
+  verifyCode,
+  getPrivacyConfigById,
+  updatePrivacyConfig,
+  getUserJoinGroup,
+  blackUser,
+  getFriendGroupList,
+  getFriendSearch
 } from "@app/config/post-api";
 import {HttpHeaders} from "@angular/common/http";
 
@@ -812,6 +822,16 @@ export class RestService {
         const localUserInfo = this.localUserService.getObj();
         return this.http.get(getFriendGroupList, { userId: localUserInfo.userId });
     }
+
+  /**
+   * 搜索好友
+   * @param search [friendCornet 通讯号，friendAccount 账号]
+   */
+  getFriendSearch(search: {userId?: string; friendAccount: string}): Observable<any> {
+    const localUserInfo = this.localUserService.getObj();
+    search.userId = localUserInfo.userId.toString();
+    return this.http.post(getFriendSearch, search);
+  }
 
 }
 
