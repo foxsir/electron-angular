@@ -1,0 +1,22 @@
+<div fxLayout="row">
+  <div fxFlex="calc(100% - 60px)">
+    <div fxLayout="row" fxLayoutAlign="end center">
+      <div fxFlex="0 0 calc(294px - 40px)">
+        <input type="text" nz-input placeholder="Username" />
+      </div>
+    </div>
+  </div>
+  <div fxFlex="60px" fxLayoutAlign="center center">
+    <div>
+      <button mat-icon-button [matMenuTriggerFor]="friendActions">
+        <mat-icon>
+          <img [src]="editIcon" alt="">
+        </mat-icon>
+      </button>
+      <mat-menu #friendActions="matMenu">
+        <button mat-menu-item (click)="searchFriend()">添加好友</button>
+        <button mat-menu-item (click)="createGroup()">创建群聊</button>
+      </mat-menu>
+    </div>
+  </div>
+</div>
