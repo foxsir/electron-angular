@@ -12,7 +12,7 @@
     </div>
   </mat-drawer>
 
-  <div fxLayout="row" style="height: calc(100vh - 30px);">
+  <div fxLayout="row" id="message-root-container">
     <div fxFlex="334px" fxLayout="column" fxLayoutGap="14px" class="alarm-item-list">
       <div class="">
         <div fxLayout="row">
@@ -38,7 +38,7 @@
           </div>
         </div>
       </div>
-      <div id="chatting-list">
+      <div id="chatting-list" class="scrollbar">
         <mat-card
                   [ngClass]="{'mat-elevation-z0': true, 'active-chatting': alarm.alarmItem.dataId === currentChat?.alarmItem.dataId}"
                   style="background: transparent;"

@@ -12,6 +12,15 @@
 //  }
 //}
 
+#message-root-container {
+  height: calc(100vh - 30px);
+  overflow: hidden;
+
+  #chatting-list {
+    overflow-y: auto;
+  }
+}
+
 .alarm-item-list {
   background: rgb(241 241 241);
   border-right: solid #CCCCCC 1px;
