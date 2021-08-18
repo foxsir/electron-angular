@@ -6,22 +6,24 @@ import {MessageRoamService} from "@services/message-roam/message-roam.service";
 import NewHttpResponseInterface from "@app/interfaces/new-http-response.interface";
 import {RoamLastMsgModel} from "@app/models/roam-last-msg.model";
 import {ProtocalModel, ProtocalModelDataContent} from "@app/models/protocal.model";
-import ChattingModel from "@app/models/chatting.model";
 import {MessageEntityService} from "@services/message-entity/message-entity.service";
 import {RosterProviderService} from "@services/roster-provider/roster-provider.service";
-import RBChatUtils from "@app/libs/rbchat-utils";
 import FriendModel from "@app/models/friend.model";
-import LoginInfoModel from "@app/models/login-info.model";
 import {Subject} from "rxjs";
+
+interface CacheItem {
+  alarmData: unknown;
+  friendList: unknown;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class CacheService {
 
-  private friendListSource = new Subject();
-  friendList$ = this.friendListSource.asObservable();
-
+  // 缓存更新使用统一订阅，订阅着需要自己去获取相应的缓存
+  private cacheSource = new Subject<Partial<CacheItem>>();
+  public cacheUpdate$ = this.cacheSource.asObservable();
 
   constructor(
     private messageRoamService: MessageRoamService,
@@ -45,6 +47,8 @@ export class CacheService {
             alarmData: alarmData,
             message: cache,
           }
+        }).then((newCache) => {
+          this.cacheSource.next({friendList: newCache});
         });
       } else {
         // 有数据时更新
@@ -57,7 +61,9 @@ export class CacheService {
               alreadyMessageMap, cache
             ),
           }
-        }));
+        })).then((newCache) => {
+          this.cacheSource.next({alarmData: newCache});
+        });
       }
     });
   }
@@ -178,8 +184,8 @@ export class CacheService {
           friendList.forEach(f => {
             data[f.friendUserUid] = f;
           });
-          localforage.setItem("friendList", data).then(() => {
-            this.friendListSource.next(data);
+          localforage.setItem("friendList", data).then((newCache) => {
+            this.cacheSource.next({friendList: newCache});
           });
         }
       }
