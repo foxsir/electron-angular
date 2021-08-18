@@ -4,8 +4,8 @@ import {AvatarService} from "@services/avatar/avatar.service";
 import {DomSanitizer, SafeResourceUrl} from "@angular/platform-browser";
 
 interface UserContact {
-  uid: string;
-  nickName: string
+  uid: number;
+  nickName: string;
 }
 
 @Component({
@@ -26,7 +26,7 @@ export class MessageContactComponent implements OnInit {
   ngOnInit(): void {
     this.userContact = JSON.parse(this.chatMsg.text);
 
-    this.avatarService.getAvatar(this.userContact.uid).then(res => {
+    this.avatarService.getAvatar(this.userContact.uid.toString()).then(res => {
       this.userAvatar = this.dom.bypassSecurityTrustResourceUrl(res);
     });
   }
