@@ -25,7 +25,7 @@ export class AlarmsProviderService {
 
   /**
    * 刷新首页历史"消息"列表中的聊天消息历史item数据(异步方式从服务端加载历史数据).
-   *
+   * @deprecated
    * @param fn_callback_for_success(alarmsHistoryList) 回调函数，当本参数不为空时，数据加载成后后会通知此回函数，此回调函数里可以实现UI的刷新逻辑等
    */
   refreshHistoryChattingAlarmsAsync() {
@@ -102,7 +102,7 @@ export class AlarmsProviderService {
       msgContent: this.messageService.parseMessageForShow(messageContent, messageContentType),
       date: (time <= 0 ? RBChatUtils.getCurrentUTCTimestamp() : time),
       dataId: beyondUid,
-      istop: ""
+      istop: false
     };
   }
 
@@ -158,7 +158,7 @@ export class AlarmsProviderService {
       date: (time <= 0 ? RBChatUtils.getCurrentUTCTimestamp() : time),
 
       dataId: friendUid,
-      istop: ""
+      istop: false
     };
   }
 
@@ -240,7 +240,7 @@ export class AlarmsProviderService {
         + this.messageService.parseMessageForShow(messageContent, messageContentType),
       date: (time <= 0 ? RBChatUtils.getCurrentUTCTimestamp() : time),
       dataId: toGid,
-      istop: "false",
+      istop: false,
     };
 
     return amd;

@@ -4,6 +4,7 @@ import {ChatModeType, MsgType, UserProtocalsType} from "@app/config/rbchat-confi
 import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 import {createCommonData2} from "@app/libs/mobileimsdk-client-common";
 import {ImService} from "@services/im/im.service";
+import {CacheService} from "@services/cache/cache.service";
 
 interface SendMessageResponse {
   success: boolean;
@@ -17,7 +18,7 @@ interface SendMessageResponse {
 export class MessageService {
   constructor(
     private snackBarService: SnackBarService,
-    private imService: ImService
+    private imService: ImService,
   ) {
   }
 
@@ -198,7 +199,6 @@ export class MessageService {
       //   //
       // } else
 
-      let p;
       if (!friendUID) {
         //alert('消息接收者不能为空！');
         this.snackBarService.openSnackBar('消息接收者不能为空！');
@@ -225,7 +225,9 @@ export class MessageService {
           msgBody = this.constructFriendChatMsgBody(fromUid, friendUID, msgContent, msgType);
           // 构建建IM协议报文包（即Protocal对象，
           // 详见：http://docs.52im.net/extend/docs/api/mobileimsdk/server/net/openmob/mobileimsdk/server/protocal/Protocal.html）
-          p = createCommonData2(JSON.stringify(msgBody), fromUid, friendUID, UserProtocalsType.MT03_OF_CHATTING_MESSAGE);
+          console.dir(msgBody);
+          console.dir(friendUID);
+          const p: any = createCommonData2(JSON.stringify(msgBody), fromUid, friendUID, UserProtocalsType.MT03_OF_CHATTING_MESSAGE);
           // 将消息通过websocket发送出去
           // QoS = true 需要质量保证
           p.QoS = true;
@@ -243,164 +245,6 @@ export class MessageService {
     });
   }
 
-  // 111 新增音视频消息发送
-  /**
-  sendAvXuMessage(msgType, friendUID, msgContent, token, Mode, Conference, fn_callback) {
-    console.log(friendUID);
-    let msgBody = null;
-    let sucess = false;
-    let fromUid = this.imService.getLoginInfo().loginUserId;
-    const from_name = this.localUserService.getObj().nickname;
-    const from_avatar = this.localUserService.getObj().userAvatarFileName;
-    const to_name = $(".xu-chat-tit-name").text();
-    const to_avatar = $(".xu-chat-tit-img").attr("src");
-
-
-    try {
-      if (fromUid.split("web")[1]) {
-        fromUid = fromUid.split("web")[1];
-      } else if (fromUid.split("ios")[1]) {
-        fromUid = fromUid.split("ios")[1];
-      }
-    } catch (e) {
-
-    }
-
-
-    msgBody = {
-      Mode: Mode,
-      Conference: Conference,
-      ChanId: fromUid + "-" + friendUID,
-      toUserId: friendUID,
-      fromUserId: fromUid,
-      from_name: from_name,
-      from_avatar: from_avatar,
-      to_name: to_name,
-      to_avatar: to_avatar,
-      token: token
-    };
-
-
-    console.log(msgBody);
-
-    //缓存用于音视频页面的显示名称和头像
-    localStorage.setItem("openMsgid", msgBody.toUserId);
-    localStorage.setItem("openMsgName", msgBody.to_name);
-    //已开启窗口缓存
-    localStorage.setItem("isHasChat", String(1));
-
-    sucess = true;
-    //群聊
-    if (Conference === true) {
-      $("#frilist").show();
-
-
-      // 这是我作为发送者的事件
-      UIxuRtcMobule.msgBody = msgBody;
-      const uid = [];
-      const toUid = $(".xu-chat-tit-img").attr("uid");
-      this.restService.submitGetGroupMembersListFromServer(toUid,
-        function(returnValue) {
-
-          const arr = JSON.parse(returnValue);
-          let html = '';
-          for (let i = 0; i < arr.length; i++) {
-            if (arr[i].user_uid != fromUid) {
-
-
-              html += '<div class="frilist_con_b">';
-              html += '<img src2=' + arr[i].userAvatarFileName + ' src="' + window.RBChatConfig.HTTP_SERVER_ROOT_URL + '/UserAvatarDownloader?action=ad&user_uid=' + arr[i].userAvatarFileName + '&enforceDawnload=1&one_pixel_transparent_if_no=1&dontcache=1617428342299" class="frilist_con_b_a"/>';
-              html += '<div class="frilist_con_b_b">' + arr[i].nickname + '</div>';
-              html += '<input class="xu_check_list" type="checkbox" value="' + arr[i].user_uid + '">';
-              html += '</div>';
-            }
-          }
-
-          $("#filist").html(html);
-
-          // debugger
-          //
-          //     let fid = ""
-          //     for (let i = 0; i < JSON.parse(returnValue).length; i++) {
-          //         if (JSON.parse(returnValue)[i].user_uid != this.localUserService.getObj().userId) {
-          //             uid.push(JSON.parse(returnValue)[i])
-          //         }
-          //         if (i < JSON.parse(returnValue).length - 1) {
-          //             fid = fid + JSON.parse(returnValue)[i].user_uid + ","
-          //         } else {
-          //             fid = fid + JSON.parse(returnValue)[i].user_uid
-          //         }
-          //     }
-          //     msgBody.ChanId = $(".xu-chat-tit-name").attr("uid");
-          //     for (let i = 0; i < uid.length; i++) {
-          //         msgBody.toUserId = fid;
-          //         msgBody.to_name = uid[i].nickname;
-          //         msgBody.to_avatar = uid[i].userAvatarFileName;
-          //         console.log(msgBody)
-          //         var p = createCommonData2(JSON.stringify(msgBody), fromUid, uid[i].user_uid, msgType);
-          //         this.imService.sendData(p);
-          //     }
-          //     UIxuRtcMobule.win = window.open("./agora/video/index.html?Conference=" + Conference + "&AppID=" + UIxuRtcMobule.AppID + "&Token=" + token + "&Channel=" + msgBody.ChanId + "&isCall=1");
-          //
-        },
-        function(errorThrownStr) {
-
-        }
-      );
-
-
-    } else {
-      // 单聊
-      //只有17才是通
-      if (msgType == UserProtocalsType.MT17_OF_VIDEO$VOICE$REQUEST_REQUESTING$FROM$A) {
-
-
-        //自己发送信息后将值赋值到 UIxuRtcMobule.msgBody  用于自己取消通话
-        UIxuRtcMobule.msgBody = msgBody;
-        if (Mode == 0) {
-          UIxuRtcMobule.win = window.open("./agora/video/index.html?AppID=" + UIxuRtcMobule.AppID + "&Token=" + token + "&Channel=" + fromUid + "-" + friendUID + "&isCall=1");
-        } else {
-          UIxuRtcMobule.win = window.open("./agora/audio/index.html?AppID=" + UIxuRtcMobule.AppID + "&Token=" + token + "&Channel=" + fromUid + "-" + friendUID + "&isCall=1");
-        }
-        const p = createCommonData2(JSON.stringify(msgBody), fromUid, friendUID, msgType);
-        this.imService.sendData(p);
-
-
-      } else if (msgType == UserProtocalsType.MT18_OF_VIDEO$VOICE$REQUEST_ABRORT$FROM$A) {
-        console.log(UIxuRtcMobule.msgBody);
-        //18 是发送拒绝消息
-        const p = createCommonData2(JSON.stringify(UIxuRtcMobule.msgBody), fromUid, UIxuRtcMobule.msgBody.toUserId, UserProtocalsType.MT18_OF_VIDEO$VOICE$REQUEST_ABRORT$FROM$A);
-        console.log(p);
-        this.imService.sendData(p);
-        //关闭窗体
-        localStorage.removeItem("isHasChat");
-      } else if (msgType == UserProtocalsType.MT19_OF_VIDEO$VOICE$REQUEST_ACCEPT$TO$A) {
-        // debugger
-        //发送占线新消息
-        UIxuRtcMobule.isHasChat = localStorage.getItem("isHasChat");
-        if (UIxuRtcMobule.isHasChat) {
-          const p = createCommonData2(JSON.stringify(UIxuRtcMobule.msgBody), fromUid, UIxuRtcMobule.msgBody.toUserId, msgType);
-          this.imService.sendData(p);
-        }
-      } else if (msgType == UserProtocalsType.MT53_OF_GROUP$_del) {
-        // debugger
-        //发送踢人消息
-        UIxuRtcMobule.isHasChat = localStorage.getItem("isHasChat");
-        if (UIxuRtcMobule.isHasChat) {
-          const p = createCommonData2(msgContent, fromUid, msgBody.toUserId, msgType);
-          this.imService.sendData(p);
-        }
-      }
-
-
-      if (fn_callback) {
-        fn_callback(sucess, msgBody);
-      }
-    }
-  }
-  **/
-
-// --------------------------------------------------------------------------------------------------------------
 
   /**
    * 构造好友聊天消息协议体的 MsgBody4Friend DTO对象.
@@ -423,5 +267,7 @@ export class MessageService {
       ty: ty,
     };
   }
+
+  // friendUID
 
 }

@@ -6,7 +6,6 @@ import MBDataSender from "../../client/mb_data_sender";
 import {MBErrorCode, MBKickoutCode, MBSocketEvent} from "../../client/mb_constants";
 import MBCore from "../../client/mb_core";
 import LoginInfoModel from "../../models/login-info.model";
-import {CacheService} from "@services/cache/cache.service";
 import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 import {Router} from "@angular/router";
 import {SnackBarService} from "@services/snack-bar/snack-bar.service";
@@ -132,7 +131,6 @@ export class ImService {
 
 
   constructor(
-    private cacheService: CacheService,
     private router: Router,
     private snackBarService: SnackBarService,
   ) {
@@ -560,7 +558,6 @@ export class ImService {
 
       // 真正发出登陆请求网络指令
       const code = this.mbDataSender.sendLogin(varloginInfo);
-      console.dir(varloginInfo);
       if(code === 0) {
         this.callback_onIMLog('[SDK]  登陆/连接信息已发出（等待底层Socket反馈和服务端响应中...）！', true);
       } else {

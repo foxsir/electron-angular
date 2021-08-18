@@ -1,8 +1,10 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {_HTTP_SERVER_URL} from "@app/config/post-api";
 import {HttpService} from "@services/http/http.service";
 import {ImService} from "@services/im/im.service";
-import {CacheService} from "@services/cache/cache.service";
+import {LocalUserService} from "@services/local-user/local-user.service";
+import {RoamLastMsgModel} from "@app/models/roam-last-msg.model";
+import NewHttpResponseInterface from "@app/interfaces/new-http-response.interface";
 
 class GroupHistoryOptions {
   gid: number;
@@ -34,9 +36,11 @@ export class MessageRoamService {
   constructor(
     private http: HttpService,
     private imService: ImService,
-    private cacheService: CacheService,
+    private localUserService: LocalUserService,
   ) { }
 
+  // 全部会话的最近一条聊天记录
+  private allLastMessage: RoamLastMsgModel[];
 
   private SERVER_URL: string = _HTTP_SERVER_URL;
   private groupHistoryApi = [this.SERVER_URL, "v1/chat/group-his"].join("/");
@@ -65,11 +69,22 @@ export class MessageRoamService {
    * 获取全部会话的最近一条聊天记录
    * example: v1/chat/last-msg?myuid=400071
    */
-  getAllLastMessage() {
-    const options: AllLastMessageOptions = {
-      myuid: Number(this.imService.getLoginInfo().loginUserId),
-    };
-    return this.http.get(this.allLastMessageApi, options);
+  getAllLastMessage(): Promise<RoamLastMsgModel[]> {
+    return new Promise((resolve, reject) => {
+      if(this.allLastMessage) {
+        resolve(this.allLastMessage);
+      } else {
+        const options: AllLastMessageOptions = {
+          myuid: Number(this.localUserService.localUserInfo.userId)
+        };
+        this.http.get(this.allLastMessageApi, options).subscribe((res: NewHttpResponseInterface<any>) => {
+          if(res.status === 200) {
+            this.allLastMessage = res.data.result;
+            resolve(this.allLastMessage);
+          }
+        });
+      }
+    });
   }
 
 }

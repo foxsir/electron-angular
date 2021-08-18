@@ -29,21 +29,18 @@ export class RestService {
     if (typeof data === 'object') {
       data = JSON.stringify(data);
     }
-    if (data) {
-      data = encodeURIComponent(data);// encodeURIComponent也会自动对包括html的格式字符在内的相关字符进行转义处理
-    }
     const localUserUid = this.imService.getLoginInfo()?.loginUserId;
+    const url = RBChatConfig.HTTP_REST_POST_URL;
+    const postData = {
+      newData: data,
+      processorId: processorId.toString(),
+      jobDispatchId: jobDispatchId.toString(),
+      actionId: actionId.toString(),
+      uid: localUserUid.toString(),
+      token: this.localUserService.localUserInfo.token,
+    };
 
-    const url = RBChatConfig.HTTP_REST_URL + '?'
-    + 'processorId=' + processorId
-    + '&jobDispatchId=' + jobDispatchId
-    + '&actionId=' + actionId
-    + '&newData=' + data
-    + '&uid=' + localUserUid + '&token=99999999999999';
-    return this.http.post(
-      url,
-      {}
-    );
+    return this.http.post(url, JSON.stringify(postData));
   }
 
   /**
@@ -513,11 +510,18 @@ export class RestService {
     // 要提交给服务端的参数（详见服务端接口代码或http rest接口文档中的说明）
     const m = {
       // 创建者（群主）的uid
-      owner_uid: localUserUid,
+      owner_uid: localUserUid.toString(),
       // 群主昵称
       owner_nickname: localUserNickname,
       // 群成员
-      members: JSON.stringify(members)
+      members: members
+    };
+
+    const data = {
+      jobDispatchId: JobDispatchConst.LOGIC_GROUP_BASE_MGR,
+      newData: m,
+      processorId: MyProcessorConst.PROCESSOR_GROUP_CHAT,
+      token: this.localUserService.localUserInfo.token
     };
 
     return this.restServer(MyProcessorConst.PROCESSOR_GROUP_CHAT, JobDispatchConst.LOGIC_GROUP_BASE_MGR, SysActionConst.ACTION_APPEND1
@@ -747,7 +751,7 @@ export class RestService {
    */
   getUserBaseById(user_id: string): Observable<any> {
     return this.http.postForm(getUserBaseById, {userUid: user_id});
-    }
+  }
 
     /**
      * 编辑个人信息
@@ -778,7 +782,7 @@ export class RestService {
         console.dir(localUserInfo)
         data.userId = localUserInfo.userId;
 
-        return this.http.post(updatePrivacyConfig, data); 
+        return this.http.post(updatePrivacyConfig, data);
     }
 
     /**

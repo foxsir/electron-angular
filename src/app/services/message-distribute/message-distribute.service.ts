@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import ProtocalModel from "@app/models/protocal.model";
+import {ProtocalModel} from "@app/models/protocal.model";
 import {Subject} from "rxjs";
 import {UserProtocalsType} from "@app/config/rbchat-config";
 

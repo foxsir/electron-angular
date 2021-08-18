@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 import {MsgType} from "@app/config/rbchat-config";
-import ContextMenuModel from "@app/models/context-menu.model";
+import {ContextMenuModel, ContextMenuChattingModel} from "@app/models/context-menu.model";
 import {Clipboard} from "@angular/cdk/clipboard";
 import {QuoteMessageService} from "@services/quote-message/quote-message.service";
+import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 
 @Injectable({
   providedIn: 'root'
@@ -14,9 +15,21 @@ export class ContextMenuService {
 
   private contextMenu: ContextMenuModel[][] = [];
 
+  private contextMenuForChatting: ContextMenuChattingModel[] = [];
+
   private common = ['common'];
   private commonManage = ['common', 'manage'];
   private commonManageOwner = ['common', 'manage', 'owner'];
+
+  private actionChattingCollection = {
+    copyText: {
+      label: "复制",
+      limits: this.common,
+      action: (chatting: AlarmItemInterface, chattingList: AlarmItemInterface[]) => {
+        alert(chattingList.indexOf(chatting));
+      }
+    },
+  };
 
   private actionCollection = {
     copyText: {
@@ -83,6 +96,10 @@ export class ContextMenuService {
       this.actionCollection.quote,
       this.actionCollection.repeal,
     ];
+
+    this.contextMenuForChatting = [
+      this.actionChattingCollection.copyText
+    ];
   }
 
   copyTextToClipboard(messageContainer) {
@@ -123,9 +140,13 @@ export class ContextMenuService {
     return navigator.clipboard.write(data);
   }
 
-  getContextMenuForChat(chat: ChatmsgEntityModel, chatOwner: any = null) {
+  getContextMenuForMessage(chat: ChatmsgEntityModel, chatOwner: any = null) {
     // chat.msgType
     return this.contextMenu[chat.msgType] || [];
+  }
+
+  getContextMenuForChatting(chatting: AlarmItemInterface, chatOwner: any = null) {
+    return this.contextMenuForChatting;
   }
 
   getContextMenuForAvatar(chat: ChatmsgEntityModel, chatOwner) {
