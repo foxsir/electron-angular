@@ -65,14 +65,16 @@ export class CreateGroupComponent implements OnInit {
    */
   getFriendList(filter: string = null) {
     this.cacheService.getCacheFriends().then(fl => {
-      this.friendList = Object.values(fl).filter((item => {
-        return filter === null ? true : item.nickname.includes(filter);
-      }));
-      this.friendList.forEach(friend => {
-        this.avatarService.getAvatar(friend.friendUserUid.toString(), friend.userAvatarFileName).then(url => {
-          friend.base64Avatar = url;
+      if(fl) {
+        this.friendList = Object.values(fl).filter((item => {
+          return filter === null ? true : item.nickname.includes(filter);
+        }));
+        this.friendList.forEach(friend => {
+          this.avatarService.getAvatar(friend.friendUserUid.toString(), friend.userAvatarFileName).then(url => {
+            friend.base64Avatar = url;
+          });
         });
-      });
+      }
     });
   }
 
