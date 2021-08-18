@@ -1,46 +1,16 @@
 <mat-drawer-container autosize>
   <mat-drawer #chattingSetting mode="side" position="end">
-    <div fxFlex="280px">
-      <mat-card class="mat-elevation-z0" *ngIf="currentChat">
-        {{currentChat | json}}
-        <!--判断是单聊还是群聊-->
-        <!--单聊-->
-        <app-chatting-setting *ngIf="currentChat.metadata.chatType === 'friend'" [currentChat]="currentChat"></app-chatting-setting>
-        <!--群聊-->
-        <app-group-chatting-setting *ngIf="currentChat.metadata.chatType === 'group'" [currentChat]="currentChat"></app-group-chatting-setting>
-      </mat-card>
-    </div>
+    <!--empty-->
   </mat-drawer>
 
   <div fxLayout="row" id="message-root-container">
-    <div fxFlex="334px" fxLayout="column" fxLayoutGap="14px" class="alarm-item-list">
-      <div class="">
-        <div fxLayout="row">
-          <div fxFlex="calc(100% - 60px)">
-            <div fxLayout="row" fxLayoutAlign="end center">
-              <div fxFlex="0 0 calc(294px - 40px)">
-                <input type="text" nz-input placeholder="Username" />
-              </div>
-            </div>
-          </div>
-          <div fxFlex="60px" fxLayoutAlign="center center">
-            <div>
-              <button mat-icon-button [matMenuTriggerFor]="friendActions">
-                <mat-icon>
-                  <img [src]="editIcon" alt="">
-                </mat-icon>
-              </button>
-              <mat-menu #friendActions="matMenu">
-                <button mat-menu-item>添加好友</button>
-                <button mat-menu-item (click)="createGroup()">创建群聊</button>
-              </mat-menu>
-            </div>
-          </div>
-        </div>
+    <div fxFlex="334px" fxLayout="column" fxLayoutGap="14px" class="border1px right">
+      <div class="search-widget">
+        <app-search-widget></app-search-widget>
       </div>
       <div id="chatting-list" class="scrollbar">
-        <mat-card
-                  [ngClass]="{'mat-elevation-z0': true, 'active-chatting': alarm.alarmItem.dataId === currentChat?.alarmItem.dataId}"
+        <mat-card class="mat-elevation-z0"
+                  [ngClass]="{'active-chatting': alarm.alarmItem.dataId === currentChat?.alarmItem.dataId}"
                   style="background: transparent;"
                   *ngFor="let alarm of alarmItemList" (click)="switchChat(alarm); chattingSetting.close();"
                   (contextmenu)="contextMenuForChatting($event, createPlanMenuTrigger, span, alarm)">
@@ -89,130 +59,8 @@
         </mat-card>
       </div>
     </div>
-    <div fxFlex="calc(100% - 334px)" fxLayout="column" *ngIf="currentChat && showCreateGroup === false">
-      <div fxLayout="column" fxFlex="60px" class="chatting-header">
-        <div fxLayout="row" fxFlexFill>
-          <div fxFlex="60">
-            <div fxLayout="row" fxFlexFill>
-              <div fxFlex="60px" fxLayoutAlign="center center">
-                <img [src]="currentChatAvatar" mat-card-avatar alt="">
-              </div>
-              <div fxFlex="calc(100% - 60px)">
-                <div fxLayout="column" fxLayoutAlign="center start" fxFlexFill>
-                  <div fxFlex="40px" fxLayoutAlign="center center" style="width: 100%">
-                    <div fxLayout="column" style="width: 100%">
-                      <div fxFlex="22px" class="chatting-title">
-                        {{currentChat.alarmItem.title}}
-                      </div>
-                      <div fxFlex="18px" class="chatting-subtitle" *ngIf="currentChatSubtitle">
-                        {{currentChatSubtitle}}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div fxFlex="40" fxLayoutAlign="end center" style="padding-right: 20px;">
-            <div fxLayout="row" fxLayoutGap="1px">
-              <button mat-icon-button (click)="searching = !searching">
-                <mat-icon class="hover-icon">
-                  <img class="icon" [src]="searchIcon" alt="">
-                  <img class="icon-active" [src]="searchActiveIcon" alt="">
-                </mat-icon>
-              </button>
-              <button mat-icon-button>
-                <mat-icon class="hover-icon">
-                  <img class="icon" [src]="voiceIcon" alt="">
-                  <img class="icon-active" [src]="voiceActiveIcon" alt="">
-                </mat-icon>
-              </button>
-              <button mat-icon-button (click)="chattingSetting.toggle()">
-                <mat-icon class="hover-icon">
-                  <img class="icon" [src]="settingIcon" alt="">
-                  <img class="icon-active" [src]="settingActiveIcon" alt="">
-                </mat-icon>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div [fxHide]="searching === false" fxLayout="column" fxFlex="calc(100% - 60px)">
-        <app-search-chatting fxFlexFill [chatting]="currentChat"></app-search-chatting>
-      </div>
-      <div [fxHide]="searching === true" fxLayout="column" fxFlex="calc(100% - 60px)" class="chatting-body">
-        <div fxFlex id="chatting-panel" style="overflow-y: scroll">
-          <mat-card class="mat-elevation-z0" style="background: #F6F7F9;">
-            <mat-card-content *ngIf="chatMsgEntityList">
-              <div fxLayout="column" fxLayoutGap="20px" class="chatting-panel-container" #chattingContainer>
-                <div fxLayout="row" *ngFor="let chat of chatMsgEntityList"
-                     [fxLayoutAlign]="chat.uid.toString() === localUserInfo.userId.toString() ? 'end' : 'start'"
-                     [ngClass]="{'self-message': chat.uid.toString() === localUserInfo.userId.toString()}">
-                  <div fxFlex="65"
-                       [fxLayoutAlign]="chat.uid.toString() === localUserInfo.userId.toString() ? 'end' : 'start'">
-                    <div fxLayout="column" class="message-container" fxLayoutGap="5px"
-                         [fxLayoutAlign]="chat.uid.toString() === localUserInfo.userId.toString() ? 'end end' : 'start'">
-                      <div class="message-time">
-                        {{formatDate(chat.date, 'M-dd hh:m')}}
-                      </div>
-                      <!--[fxLayoutAlign]="chat.uid === localUserInfo.userId ? 'end' : 'start'"-->
-                      <div class="message-entity-item" (contextmenu)="contextMenuForMessage($event, createPlanMenuTrigger, span, chat)">
-                        <div class="message-entity" #messageContainer>
-                          <app-message-factory [chatMsg]="chat"></app-message-factory>
-                        </div>
-                        <span #createPlanMenuTrigger="matMenuTrigger" #span [matMenuTriggerFor]="contextmenu"></span>
-                        <mat-menu #contextmenu="matMenu">
-                          <button mat-menu-item *ngFor="let item of contextMenu"
-                                  (click)="item.action(chat, messageContainer)">
-                            {{item.label}}
-                          </button>
-                        </mat-menu>
-                        <div *ngIf="chat.isOutgoing === false">
-                          wait
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </mat-card-content>
-          </mat-card>
-        </div>
-        <div fxFlex="50px" fxLayout="row" class="quote-area" *ngIf="quoteMessage">
-          <div fxFlex="100" fxFlexFill>
-            <div fxLayout="row" fxFlexFill>
-              <div fxFlex="60px">
-                <div fxFlexFill fxLayoutAlign="center center">
-                  <button mat-icon-button (click)="clearSubscribeQuote()">
-                    <mat-icon class="hover-icon">
-                      <img [src]="closeCircleIcon" class="icon" alt="">
-                      <img [src]="closeCircleActiveIcon" class="icon-active" alt="">
-                    </mat-icon>
-                  </button>
-                </div>
-              </div>
-              <div fxFlex>
-                <div fxLayout="column" fxFlexFill class="quote-area-text">
-                  <div fxFlex="50" class="quote-title">{{quoteMessage.name || quoteMessage.uid}}</div>
-                  <div fxFlex="50" class="quote-message">{{quoteMessage.text}}</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div fxLayout="row">
-          <!--文字输入区域-->
-          <app-input-area fxFlex="100" (sendMessage)="pushMessageToPanel($event)" [currentChat]="currentChat"></app-input-area>
-        </div>
-      </div>
-    </div>
-    <div fxFlex="100" *ngIf="showCreateGroup">
+    <div fxFlex="calc(100% - 334px)">
       <router-outlet></router-outlet>
-    </div>
-    <div fxFlex="100" *ngIf="chatMsgEntityList === undefined && showCreateGroup === false">
-      <div fxLayout="column" fxFlexFill fxLayoutAlign="center center">
-        <empty-data [dataCount]="0"></empty-data>
-      </div>
     </div>
   </div>
 </mat-drawer-container>
