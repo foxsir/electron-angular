@@ -9,15 +9,19 @@ import HttpPresponseModel from "@app/interfaces/http-response.interface";
 })
 export class BlackListComponent implements OnInit {
 
-    blacklist: any[];
+  blacklist: any[];
 
-    constructor(private restService: RestService) {
-        this.restService.getMyBlackList().subscribe(res => {
-            this.blacklist = res.data;
-        });
-    }
+  constructor(private restService: RestService) {
+      this.restService.getMyBlackList().subscribe(res => {
+          this.blacklist = res.data;
+      });
+  }
 
-    ngOnInit(): void {
-    }
+  ngOnInit(): void {
+  }
+
+  save() {
+
+  }
 
 }

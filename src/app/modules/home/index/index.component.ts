@@ -14,7 +14,7 @@ import {RosterProviderService} from "@services/roster-provider/roster-provider.s
 import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 import {ImService} from "@services/im/im.service";
 
-import ProtocalModel from "@app/models/protocal.model";
+import {ProtocalModel} from "@app/models/protocal.model";
 import {MessageDistributeService} from "@services/message-distribute/message-distribute.service";
 import {ActivatedRoute, NavigationEnd, Router} from "@angular/router";
 import {DomSanitizer, SafeResourceUrl} from "@angular/platform-browser";
@@ -29,6 +29,9 @@ import groupChattingActive from "@app/assets/icons/group-chatting-active.svg";
 import collect from "@app/assets/icons/collect.svg";
 import collectActive from "@app/assets/icons/collect-active.svg";
 import {AvatarService} from "@services/avatar/avatar.service";
+import NewHttpResponseInterface from "@app/interfaces/new-http-response.interface";
+import RBChatUtils from "@app/libs/rbchat-utils";
+import {CacheService} from "@services/cache/cache.service";
 // import svg end
 
 @Component({
@@ -84,12 +87,12 @@ export class IndexComponent implements OnInit {
     private messageEntityService: MessageEntityService,
     private groupMessageService: GroupMessageService,
     private groupsProviderService: GroupsProviderService,
-    private rosterProviderService: RosterProviderService,
     private snackBarService: SnackBarService,
     private imService: ImService,
     private messageDistributeService: MessageDistributeService,
     private dom: DomSanitizer,
     private avatarService: AvatarService,
+    private cacheService: CacheService,
   ) {
     this.router.events.subscribe(e => {
       if (e instanceof NavigationEnd) {
@@ -97,7 +100,7 @@ export class IndexComponent implements OnInit {
       }
     });
 
-    this.avatarService.getAvatar(this.localUserService.localUserInfo.userId).then(url => {
+    this.avatarService.getAvatar(this.localUserService.localUserInfo.userId.toString()).then(url => {
       this.myAvatar = this.dom.bypassSecurityTrustResourceUrl(url);
     });
   }
@@ -113,12 +116,8 @@ export class IndexComponent implements OnInit {
       this.massageBadges.message = 1;
     });
 
-    this.cacheFriends();
-  }
-
-  private cacheFriends() {
-    // 获取好友列表
-    this.rosterProviderService.refreshRosterAsync();
+    // 获取并缓存好友列表
+    this.cacheService.cacheFriends();
   }
 
   //#################################################################### 【1】初始化方面代码 START

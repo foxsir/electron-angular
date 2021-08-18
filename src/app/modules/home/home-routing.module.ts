@@ -9,6 +9,7 @@ import {CollectComponent} from "./collect/collect.component";
 import {NewFriendComponent} from "./new-friend/new-friend.component";
 import {GroupingComponent} from "./grouping/grouping.component";
 import {BlackListComponent} from "./black-list/black-list.component";
+import {CreateGroupComponent} from "./create-group/create-group.component";
 
 const routes: Routes = [
   {
@@ -18,12 +19,18 @@ const routes: Routes = [
       {
         path: '',
         redirectTo: 'message',
-        pathMatch: 'full'
+        pathMatch: 'full',
       },
       {
         path: 'message',
         component: MessageComponent,
-        pathMatch: 'full'
+        children: [
+          {
+            path: 'create-group',
+            component: CreateGroupComponent,
+            pathMatch: 'full'
+          },
+        ]
       },
       {
         path: 'address-list',

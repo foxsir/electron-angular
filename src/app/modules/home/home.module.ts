@@ -30,6 +30,7 @@ import {UserDialogsModule} from "../user-dialogs/user-dialogs.module";
 import { ChattingSettingComponent } from './chatting-setting/chatting-setting.component';
 import { GroupChattingSettingComponent } from './group-chatting-setting/group-chatting-setting.component';
 import {UploadModule} from "../../factorys/upload/upload.module";
+import { CreateGroupComponent } from './create-group/create-group.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +46,8 @@ import {UploadModule} from "../../factorys/upload/upload.module";
     SearchChattingComponent,
     InputAreaComponent,
     ChattingSettingComponent,
-    GroupChattingSettingComponent
+    GroupChattingSettingComponent,
+    CreateGroupComponent
   ],
   imports: [
     CommonModule,

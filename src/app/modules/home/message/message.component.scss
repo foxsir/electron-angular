@@ -14,19 +14,17 @@
 
 .alarm-item-list {
   background: rgb(241 241 241);
+  border-right: solid #CCCCCC 1px;
   height: 100%;
 }
 
 .chatting-body {
-  border: solid #CCCCCC 1px;
   ::-webkit-scrollbar {
     display: none;
   }
 }
 .chatting-header {
-  border-left: solid #CCCCCC 1px;
-  border-right: solid #CCCCCC 1px;
-
+  border-bottom: solid #CCCCCC 1px;
   .chatting-title {
     font-size: 16px;
     color: #383838;
@@ -68,6 +66,10 @@
   .mat-card:hover {
     background: #DCF1FE !important;
   }
+
+  .mat-card.active-chatting {
+    background: #DCF1FE !important;
+  }
 }
 
 #chatting-panel {
@@ -98,5 +100,25 @@
 .message-container:hover {
   .message-time {
     visibility: visible;
+  }
+}
+
+.quote-area {
+  background: #f1eded;
+  font-weight: 400;
+
+  .quote-area-text {
+    margin: 10px 0;
+    padding-left: 10px;
+    border-left: 2px solid #0091FF;
+  }
+  .quote-title {
+    height: 20px;
+    font-size: 14px;
+    color: #0091FF;
+  }
+  .quote-message {
+    font-size: 12px;
+    color: #888888;
   }
 }

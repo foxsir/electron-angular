@@ -5,9 +5,9 @@
         {{currentChat | json}}
         <!--判断是单聊还是群聊-->
         <!--单聊-->
-        <app-chatting-setting *ngIf="currentChat.metadata.msgType !== 2" [currentChat]="currentChat"></app-chatting-setting>
+        <app-chatting-setting *ngIf="currentChat.metadata.chatType === 'friend'" [currentChat]="currentChat"></app-chatting-setting>
         <!--群聊-->
-        <app-group-chatting-setting *ngIf="currentChat.metadata.msgType === 2" [currentChat]="currentChat"></app-group-chatting-setting>
+        <app-group-chatting-setting *ngIf="currentChat.metadata.chatType === 'group'" [currentChat]="currentChat"></app-group-chatting-setting>
       </mat-card>
     </div>
   </mat-drawer>
@@ -25,16 +25,25 @@
           </div>
           <div fxFlex="60px" fxLayoutAlign="center center">
             <div>
-              <mat-icon>
-                <img [src]="editIcon" alt="">
-              </mat-icon>
+              <button mat-icon-button [matMenuTriggerFor]="friendActions">
+                <mat-icon>
+                  <img [src]="editIcon" alt="">
+                </mat-icon>
+              </button>
+              <mat-menu #friendActions="matMenu">
+                <button mat-menu-item>添加好友</button>
+                <button mat-menu-item (click)="createGroup()">创建群聊</button>
+              </mat-menu>
             </div>
           </div>
         </div>
       </div>
       <div id="chatting-list">
-        <mat-card class="mat-elevation-z0" style="background: #F1F1F1;"
-                  *ngFor="let alarm of alarmItemList" (click)="switchChat(alarm); chattingSetting.close();">
+        <mat-card
+                  [ngClass]="{'mat-elevation-z0': true, 'active-chatting': alarm.alarmItem.dataId === currentChat?.alarmItem.dataId}"
+                  style="background: transparent;"
+                  *ngFor="let alarm of alarmItemList" (click)="switchChat(alarm); chattingSetting.close();"
+                  (contextmenu)="contextMenuForChatting($event, createPlanMenuTrigger, span, alarm)">
           <div fxLayout="row" fxLayoutGap="10px">
             <div fxFlex="40px" [matBadge]="massageBadges[alarm.alarmItem.dataId]" matBadgeColor="warn"
                  matBadgePosition="above after" matBadgeSize="small"
@@ -70,10 +79,17 @@
               </div>
             </div>
           </div>
+          <span #createPlanMenuTrigger="matMenuTrigger" #span [matMenuTriggerFor]="contextmenu"></span>
+          <mat-menu #contextmenu="matMenu">
+            <button mat-menu-item *ngFor="let item of contextMenuChatting"
+                    (click)="item.action(alarm, alarmItemList)">
+              {{item.label}}
+            </button>
+          </mat-menu>
         </mat-card>
       </div>
     </div>
-    <div fxFlex="calc(100% - 334px)" fxLayout="column" *ngIf="currentChat">
+    <div fxFlex="calc(100% - 334px)" fxLayout="column" *ngIf="currentChat && showCreateGroup === false">
       <div fxLayout="column" fxFlex="60px" class="chatting-header">
         <div fxLayout="row" fxFlexFill>
           <div fxFlex="60">
@@ -140,7 +156,7 @@
                         {{formatDate(chat.date, 'M-dd hh:m')}}
                       </div>
                       <!--[fxLayoutAlign]="chat.uid === localUserInfo.userId ? 'end' : 'start'"-->
-                      <div class="message-entity-item" (contextmenu)="textMenuForMessage($event, createPlanMenuTrigger, span, chat)">
+                      <div class="message-entity-item" (contextmenu)="contextMenuForMessage($event, createPlanMenuTrigger, span, chat)">
                         <div class="message-entity" #messageContainer>
                           <app-message-factory [chatMsg]="chat"></app-message-factory>
                         </div>
@@ -162,7 +178,7 @@
             </mat-card-content>
           </mat-card>
         </div>
-        <div fxFlex="50px" fxLayout="row" style="background: #f1eded;" *ngIf="quoteMessage">
+        <div fxFlex="50px" fxLayout="row" class="quote-area" *ngIf="quoteMessage">
           <div fxFlex="100" fxFlexFill>
             <div fxLayout="row" fxFlexFill>
               <div fxFlex="60px">
@@ -176,8 +192,10 @@
                 </div>
               </div>
               <div fxFlex>
-                <div>{{quoteMessage.name || quoteMessage.uid}}</div>
-                <div>{{quoteMessage.text}}</div>
+                <div fxLayout="column" fxFlexFill class="quote-area-text">
+                  <div fxFlex="50" class="quote-title">{{quoteMessage.name || quoteMessage.uid}}</div>
+                  <div fxFlex="50" class="quote-message">{{quoteMessage.text}}</div>
+                </div>
               </div>
             </div>
           </div>
@@ -188,7 +206,10 @@
         </div>
       </div>
     </div>
-    <div fxFlex="100" *ngIf="chatMsgEntityList === undefined">
+    <div fxFlex="100" *ngIf="showCreateGroup">
+      <router-outlet></router-outlet>
+    </div>
+    <div fxFlex="100" *ngIf="chatMsgEntityList === undefined && showCreateGroup === false">
       <div fxLayout="column" fxFlexFill fxLayoutAlign="center center">
         <empty-data [dataCount]="0"></empty-data>
       </div>

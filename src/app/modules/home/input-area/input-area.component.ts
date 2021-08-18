@@ -7,7 +7,6 @@ import emojiActiveIcon from "@app/assets/icons/emoji-active.svg";
 import sendIcon from "@app/assets/icons/send.svg";
 import sendActiveIcon from "@app/assets/icons/send-active.svg";
 import {DomSanitizer} from "@angular/platform-browser";
-import ChattingModel from "@app/models/chatting.model";
 import {ImService} from "@services/im/im.service";
 import {MessageService} from "@services/message/message.service";
 import {MsgType} from "@app/config/rbchat-config";
@@ -16,7 +15,6 @@ import {RosterProviderService} from "@services/roster-provider/roster-provider.s
 import {AlarmsProviderService} from "@services/alarms-provider/alarms-provider.service";
 import {MessageEntityService} from "@services/message-entity/message-entity.service";
 import {Router} from "@angular/router";
-import {NzUploadFile} from "ng-zorro-antd/upload";
 import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 import CommonTools from "@app/common/common.tools";
 import {FileService} from "@services/file/file.service";
@@ -92,12 +90,11 @@ export class InputAreaComponent implements OnInit {
     if (!messageText || messageText.trim().length === 0) {
       return;
     }
-    if (!this.imService.checkLogined()) {
+    if (!this.imService.isLogined()) {
       return this.imService.checkLogined();
     }
 
     messageText = this.parseReplyMessage(messageText, messageType);
-
     this.messageService.sendMessage(messageType, this.currentChat.alarmItem.dataId, messageText).then(res => {
       if(res.success === true) {
         const friendUid = this.currentChat.alarmItem.dataId;
@@ -157,5 +154,6 @@ export class InputAreaComponent implements OnInit {
    */
   clearTextArea() {
     this.messageText = "";
+    this.quoteMessageService.setQuoteMessage(null);
   }
 }
