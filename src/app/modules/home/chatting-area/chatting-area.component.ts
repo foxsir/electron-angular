@@ -21,7 +21,7 @@ import {LocalUserService} from "@services/local-user/local-user.service";
 import {MatMenuTrigger} from "@angular/material/menu";
 import {ContextMenuModel} from "@app/models/context-menu.model";
 import {ContextMenuService} from "@services/context-menu/context-menu.service";
-import {ProtocalModel} from "@app/models/protocal.model";
+import {ProtocalModel, ProtocalModelDataContent} from "@app/models/protocal.model";
 import {MessageDistributeService} from "@services/message-distribute/message-distribute.service";
 import {MessageEntityService} from "@services/message-entity/message-entity.service";
 import {CacheService} from "@services/cache/cache.service";
@@ -126,11 +126,10 @@ export class ChattingAreaComponent implements OnInit {
     });
   }
 
-  pushMessageToPanel(chat: ChatmsgEntityModel, res: ProtocalModel) {
-    if(this.currentChat.alarmItem.dataId.toString() === res.to.toString()) {
+  pushMessageToPanel(data: {chat: ChatmsgEntityModel; dataContent: ProtocalModelDataContent}) {
+    if(this.currentChat && this.currentChat.alarmItem.dataId.toString() === data.dataContent.t.toString()) {
       if(this.chatMsgEntityList) {
-        console.dir(chat);
-        this.chatMsgEntityList.push(chat);
+        this.chatMsgEntityList.push(data.chat);
         this.scrollToBottom();
       }
     }
@@ -163,7 +162,7 @@ export class ChattingAreaComponent implements OnInit {
       // fromUid, nickName, msg, time, msgType, fp = null
       chatMsgEntity.isOutgoing = true;
       this.cacheService.putChattingCache(this.currentChat, chatMsgEntity).then(() => {
-        this.pushMessageToPanel(chatMsgEntity, res);
+        this.pushMessageToPanel({chat: chatMsgEntity, dataContent: dataContent});
       });
     });
   }
@@ -179,7 +178,7 @@ export class ChattingAreaComponent implements OnInit {
         res.from, dataContent.nickName, dataContent.m, (new Date()).getTime(), dataContent.ty, res.fp
       );
       // fromUid, nickName, msg, time, msgType, fp = null
-      this.pushMessageToPanel(chatMsgEntity, res);
+      // this.pushMessageToPanel({chat: chatMsgEntity, dataContent: dataContent});
     });
   }
 
@@ -195,7 +194,9 @@ export class ChattingAreaComponent implements OnInit {
       const chatMsgEntity = this.messageEntityService.prepareRecievedMessage(
         res.from, dataContent.nickName, dataContent.m, (new Date()).getTime(), dataContent.ty, res.fp
       );
-      this.pushMessageToPanel(chatMsgEntity, res);
+      this.cacheService.putChattingCache(this.currentChat, chatMsgEntity).then(() => {
+        this.pushMessageToPanel({chat: chatMsgEntity, dataContent: dataContent});
+      });
     });
   }
 

@@ -95,7 +95,7 @@
                             {{item.label}}
                           </button>
                         </mat-menu>
-                        <div *ngIf="chat.isOutgoing === false">
+                        <div *ngIf="chat.isOutgoing === false && chat.uid.toString() === localUserInfo.userId.toString()">
                           wait
                         </div>
                       </div>
