@@ -25,9 +25,11 @@
       </mat-icon>
     </button>
   </div>
-  <div fxFlex style="background: #f0f0f0">
+  <div fxFlex style="background: #f0f0f0" class="message-textarea-container">
     <div contenteditable="true" class="message-textarea" #textarea (keydown.enter)="false"
-         (keyup)="textareaChange()" (keyup.enter)="doSend();">
+         (keyup)="textareaChange()" (keyup.enter)="doSend();"></div>
+    <div class="message-text-placeholder" (selectstart)="false" (click)="textarea.focus()" [fxShow]="this.messageText.length < 1">
+      {{messageTextPlaceholder}}
     </div>
   </div>
   <div fxFlex="120px" fxLayoutAlign="center center" fxLayoutGap="10px" style="height:50px; background: #f0f0f0">

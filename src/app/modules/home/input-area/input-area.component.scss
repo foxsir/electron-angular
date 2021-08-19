@@ -1,29 +1,37 @@
-.message-textarea {
+.message-textarea-container {
   background: #f0f0f0;
-  min-height: 20px;
-  max-height: 150px;
-  overflow-y: scroll;
-  margin: 10px;
-  font-size: 14px;
-  outline: none;
-  ::ng-deep {
-    .mat-form-field-wrapper {
-      padding-bottom: 5px;
-      background: transparent;
-    }
-    .mat-form-field-underline {
-      display: none;
+  position: relative;
+
+  .message-textarea {
+    min-height: 20px;
+    max-height: 150px;
+    overflow-y: scroll;
+    margin: 10px;
+    font-size: 14px;
+    outline: none;
+    z-index: 10;
+    ::ng-deep {
+      img {
+        margin: 0 2px;
+        width: 18px;
+        height: 18px;
+        vertical-align: middle;
+      }
     }
   }
-  ::ng-deep {
-    img {
-      margin: 0 2px;
-      width: 18px;
-      height: 18px;
-      vertical-align: middle;
-    }
+
+  .message-text-placeholder {
+    height: 20px;
+    margin: 10px;
+    position: absolute;
+    font-size: 14px;
+    color: #CCCCCC;
+    left: 0;
+    top: 0;
+    z-index: 1;
   }
 }
+
 
 .mat-icon-button {
   margin-top: 8px;

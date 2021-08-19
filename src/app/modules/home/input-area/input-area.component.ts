@@ -57,7 +57,8 @@ export class InputAreaComponent implements OnInit {
   public sendIcon = this.dom.bypassSecurityTrustResourceUrl(sendIcon);
   public sendActiveIcon = this.dom.bypassSecurityTrustResourceUrl(sendActiveIcon);
 
-  public messageText: string = '搜索';
+  public messageText: string = '';
+  public messageTextPlaceholder: string = '请输入信息';
 
   private sendChatMap = {};
   // 引用回复消息
