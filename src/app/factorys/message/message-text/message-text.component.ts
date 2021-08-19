@@ -44,17 +44,17 @@ export class MessageTextComponent implements OnInit {
 
   showEmoji(content: string) {
     content = this.encode(content);
-
-    content.split("/").forEach(item => {
-      const emoji = ["/", item].join("");
-      if(EmojiMap.hasOwnProperty(emoji)) {
-        const img = document.createElement("img");
-
-        img.className = 'emoji-icon';
-        img.src = ['assets/emojis', EmojiMap[emoji]].join("/");
-        content = content.replace(emoji, img.outerHTML);
+    for (const emojiMapKey in EmojiMap) {
+      if(EmojiMap[emojiMapKey]) {
+        const tp = content.split(emojiMapKey);
+        if(tp.length > 1) {
+          const img = document.createElement("img");
+          img.className = 'emoji-icon';
+          img.src = ['assets/emojis', EmojiMap[emojiMapKey]].join("/");
+          content = tp.join(img.outerHTML);
+        }
       }
-    });
+    }
 
     return content;
   }
