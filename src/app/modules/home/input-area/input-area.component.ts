@@ -274,7 +274,8 @@ export class InputAreaComponent implements OnInit {
     this.textarea.nativeElement.focus();
     document.execCommand("insertImage", false, ['assets/emojis', emoji.value].join("/"));
     this.textarea.nativeElement.focus();
-
     this.openEmojiToggle._elementRef.nativeElement.click();
+
+    this.textareaChange();
   }
 }
