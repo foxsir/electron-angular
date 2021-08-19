@@ -19,7 +19,7 @@ import {QuoteMessageService} from "@services/quote-message/quote-message.service
 import LocalUserinfoModel from "@app/models/local-userinfo.model";
 import {LocalUserService} from "@services/local-user/local-user.service";
 import {MatMenuTrigger} from "@angular/material/menu";
-import {ContextMenuModel} from "@app/models/context-menu.model";
+import {ContextMenuAvatarModel, ContextMenuModel} from "@app/models/context-menu.model";
 import {ContextMenuService} from "@services/context-menu/context-menu.service";
 import {ProtocalModel, ProtocalModelDataContent} from "@app/models/protocal.model";
 import {MessageDistributeService} from "@services/message-distribute/message-distribute.service";
@@ -68,6 +68,7 @@ export class ChattingAreaComponent implements OnInit {
 
   // 右键菜单
   public contextMenu: ContextMenuModel[] = [];
+  public contextMenuAvatar: ContextMenuAvatarModel[] = [];
 
   constructor(
     private avatarService: AvatarService,
@@ -245,14 +246,24 @@ export class ChattingAreaComponent implements OnInit {
     setTimeout(() => {
       if(this.chattingContainer) {
         this.chattingContainer.nativeElement.lastElementChild?.scrollIntoView({
-          behavior: behavior, block: "start"
+          behavior: behavior, block: "end"
         });
       }
-    }, 500);
+    }, 1000);
   }
 
   contextMenuForMessage(e: MouseEvent, menu: MatMenuTrigger, span: HTMLSpanElement, chat: ChatmsgEntityModel) {
     this.contextMenu = this.contextMenuService.getContextMenuForMessage(chat);
+    menu.openMenu();
+    span.style.position = "fixed";
+    span.style.top = "0px";
+    span.style.left = "0px";
+    span.style.transform = `translate3d(${e.pageX}px, ${e.pageY}px, 0px)`;
+    return e.defaultPrevented;
+  }
+
+  contextMenuForAvatar(e: MouseEvent, menu: MatMenuTrigger, span: HTMLSpanElement, chat: ChatmsgEntityModel) {
+    this.contextMenuAvatar = this.contextMenuService.getContextMenuForAvatar(chat, "");
     menu.openMenu();
     span.style.position = "fixed";
     span.style.top = "0px";

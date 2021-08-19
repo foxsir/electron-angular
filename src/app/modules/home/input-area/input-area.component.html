@@ -50,8 +50,7 @@
         </mat-card>
       </mat-menu>
     </div>
-    <!--[disabled]="!messageText || messageText.length === 0"-->
-    <button mat-icon-button (click)="doSend()">
+    <button mat-icon-button [disabled]="!messageText || messageText.length === 0" (click)="doSend()">
       <mat-icon class="hover-icon" *ngIf="!!messageText && messageText.trim().length > 0">
         <img class="icon" [src]="sendIcon" alt="">
         <img class="icon-active" [src]="sendActiveIcon" alt="">

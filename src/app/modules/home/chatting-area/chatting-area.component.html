@@ -84,19 +84,38 @@
                         {{formatDate(chat.date, 'M-dd hh:m')}}
                       </div>
                       <!--[fxLayoutAlign]="chat.uid === localUserInfo.userId ? 'end' : 'start'"-->
-                      <div class="message-entity-item" (contextmenu)="contextMenuForMessage($event, createPlanMenuTrigger, span, chat)">
-                        <div class="message-entity" #messageContainer>
-                          <app-message-factory [chatMsg]="chat"></app-message-factory>
+                      <div [fxLayout]="chat.uid.toString() === localUserInfo.userId.toString() ? 'row-reverse' : 'row'" fxLayoutGap="10px">
+                        <div fxFlex="40px" *ngIf="currentChat.metadata.chatType === 'group'">
+                          <img (contextmenu)="contextMenuForAvatar($event, createPlanMenuTriggerAvatar, avatarSpan, chat)"
+                               src="https://material.angular.io/assets/img/examples/shiba2.jpg" mat-card-avatar alt="">
+                          <!--增加头像上的右键功能-->
+                          <span #createPlanMenuTriggerAvatar="matMenuTrigger" #avatarSpan [matMenuTriggerFor]="contextmenuForAvatar"></span>
+                          <mat-menu #contextmenuForAvatar="matMenu">
+                            <button mat-menu-item *ngFor="let item of contextMenuAvatar"
+                                    (click)="item.action()">
+                              {{item.label}}
+                            </button>
+                          </mat-menu>
                         </div>
-                        <span #createPlanMenuTrigger="matMenuTrigger" #span [matMenuTriggerFor]="contextmenu"></span>
-                        <mat-menu #contextmenu="matMenu">
-                          <button mat-menu-item *ngFor="let item of contextMenu"
-                                  (click)="item.action(chat, messageContainer)">
-                            {{item.label}}
-                          </button>
-                        </mat-menu>
-                        <div *ngIf="chat.isOutgoing === false && chat.uid.toString() === localUserInfo.userId.toString()">
-                          wait
+                        <div fxFlex>
+                          <div *ngIf="currentChat.metadata.chatType === 'group'">
+                            {{currentChat.alarmItem.dataId}}
+                          </div>
+                          <div class="message-entity-item" (contextmenu)="contextMenuForMessage($event, createPlanMenuTrigger, span, chat)">
+                            <div class="message-entity" #messageContainer>
+                              <app-message-factory [chatMsg]="chat"></app-message-factory>
+                            </div>
+                            <span #createPlanMenuTrigger="matMenuTrigger" #span [matMenuTriggerFor]="contextmenu"></span>
+                            <mat-menu #contextmenu="matMenu">
+                              <button mat-menu-item *ngFor="let item of contextMenu"
+                                      (click)="item.action(chat, messageContainer)">
+                                {{item.label}}
+                              </button>
+                            </mat-menu>
+                            <div *ngIf="chat.isOutgoing === false && chat.uid.toString() === localUserInfo.userId.toString()">
+                              wait
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
