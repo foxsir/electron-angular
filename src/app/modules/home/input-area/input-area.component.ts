@@ -21,6 +21,7 @@ import {FileService} from "@services/file/file.service";
 import {CacheService} from "@services/cache/cache.service";
 import {UploadedFile} from "@app/factorys/upload/upload-file/upload-file.component";
 import {QuoteMessageService} from "@services/quote-message/quote-message.service";
+import {ProtocalModel, ProtocalModelDataContent} from "@app/models/protocal.model";
 
 @Component({
   selector: 'app-input-area',
@@ -29,7 +30,7 @@ import {QuoteMessageService} from "@services/quote-message/quote-message.service
 })
 export class InputAreaComponent implements OnInit {
   @Input() currentChat: AlarmItemInterface;
-  @Output() sendMessage = new EventEmitter<ChatmsgEntityModel>();
+  @Output() sendMessage = new EventEmitter<{chat: ChatmsgEntityModel; dataContent: ProtocalModelDataContent}>();
 
   public attachmentIcon = this.dom.bypassSecurityTrustResourceUrl(attachmentIcon);
   public attachmentActiveIcon = this.dom.bypassSecurityTrustResourceUrl(attachmentActiveIcon);
@@ -128,11 +129,12 @@ export class InputAreaComponent implements OnInit {
           replaceEntity.fingerPrintOfProtocal = chatMsgEntity.fingerPrintOfProtocal;
         }
         chatMsgEntity.isOutgoing = false;
-        this.cacheService.putChattingCache(this.currentChat, chatMsgEntity);
-        if(emitToUI) {
-          this.sendMessage.emit(chatMsgEntity);
-        }
-        this.clearTextArea();
+        this.cacheService.putChattingCache(this.currentChat, chatMsgEntity).then(() => {
+          if(emitToUI) {
+            this.sendMessage.emit({chat: chatMsgEntity, dataContent: res.msgBody});
+          }
+          this.clearTextArea();
+        });
       }
     });
   }
@@ -143,7 +145,33 @@ export class InputAreaComponent implements OnInit {
     replaceEntity: ChatmsgEntityModel = null
   ) {
     this.messageService.sendGroupMessage(messageType, this.currentChat.alarmItem.dataId, messageText).then(res => {
-      console.dir(res);
+      if(res.success === true) {
+        const friendUid = this.currentChat.alarmItem.dataId;
+        const ree = this.rosterProviderService.getFriendInfoByUid(friendUid);
+
+        // 自已发出的消息，也要显示在相应的UI界面上
+        const message = res.msgBody.m;
+        const alarmMessageDTO = this.alarmsProviderService.createChatMsgAlarmForLocal(
+          res.msgBody.ty, message, "ree.nickname", friendUid
+        );
+
+        //111 新增指纹码 he 消息类型msgType
+        // debugger
+        console.dir(res);
+        const chatMsgEntity = this.messageEntityService.prepareSendedMessage(
+          message, 0, res.fingerPrint, messageType
+        );
+        if (replaceEntity) {
+          replaceEntity.fingerPrintOfProtocal = chatMsgEntity.fingerPrintOfProtocal;
+        }
+        chatMsgEntity.isOutgoing = false;
+        this.cacheService.putChattingCache(this.currentChat, chatMsgEntity).then(() => {
+          if(emitToUI) {
+            this.sendMessage.emit({chat: chatMsgEntity, dataContent: res.msgBody});
+          }
+          this.clearTextArea();
+        });
+      }
     });
   }
 
