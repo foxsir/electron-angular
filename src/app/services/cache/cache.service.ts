@@ -199,5 +199,12 @@ export class CacheService {
     return localforage.getItem("friendList");
   }
 
+  /**
+   * 清空缓存
+   */
+  clearAllCache() {
+    return localforage.clear();
+  }
+
 
 }
