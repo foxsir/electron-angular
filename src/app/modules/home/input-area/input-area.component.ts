@@ -1,4 +1,13 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild
+} from '@angular/core';
 
 import attachmentIcon from "@app/assets/icons/attachment.svg";
 import attachmentActiveIcon from "@app/assets/icons/attachment-active.svg";
@@ -22,15 +31,24 @@ import {CacheService} from "@services/cache/cache.service";
 import {UploadedFile} from "@app/factorys/upload/upload-file/upload-file.component";
 import {QuoteMessageService} from "@services/quote-message/quote-message.service";
 import {ProtocalModel, ProtocalModelDataContent} from "@app/models/protocal.model";
+import EmojiMap from "@app/factorys/message/message-text/EmojiMap";
+import {MatMenuTrigger} from "@angular/material/menu";
+import {MatButton} from "@angular/material/button";
 
 @Component({
   selector: 'app-input-area',
   templateUrl: './input-area.component.html',
-  styleUrls: ['./input-area.component.scss']
+  styleUrls: ['./input-area.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InputAreaComponent implements OnInit {
   @Input() currentChat: AlarmItemInterface;
   @Output() sendMessage = new EventEmitter<{chat: ChatmsgEntityModel; dataContent: ProtocalModelDataContent}>();
+  @ViewChild("textarea") textarea: ElementRef;
+  @ViewChild("openEmojiToggle") openEmojiToggle: MatButton;
+
+  private reversalEmojis = InputAreaComponent.reversalEmojiMap();
+  emojiItems = InputAreaComponent.getEmojiMap();
 
   public attachmentIcon = this.dom.bypassSecurityTrustResourceUrl(attachmentIcon);
   public attachmentActiveIcon = this.dom.bypassSecurityTrustResourceUrl(attachmentActiveIcon);
@@ -39,7 +57,7 @@ export class InputAreaComponent implements OnInit {
   public sendIcon = this.dom.bypassSecurityTrustResourceUrl(sendIcon);
   public sendActiveIcon = this.dom.bypassSecurityTrustResourceUrl(sendActiveIcon);
 
-  public messageText: string;
+  public messageText: string = '搜索';
 
   private sendChatMap = {};
   // 引用回复消息
@@ -102,6 +120,8 @@ export class InputAreaComponent implements OnInit {
     } else if (this.currentChat.metadata.chatType === 'group') {
       this.sendGroupMessage(messageType, messageText, emitToUI, replaceEntity);
     }
+
+    return false;
   }
 
   sendFriendMessage(
@@ -202,6 +222,58 @@ export class InputAreaComponent implements OnInit {
    */
   clearTextArea() {
     this.messageText = "";
+    this.textarea.nativeElement.innerHTML = "";
     this.quoteMessageService.setQuoteMessage(null);
+  }
+
+  private static getEmojiMap(): Set<{ key: string; value: string }> {
+    const set = new Set<{ key: string; value: string }>();
+    for (const emojiMapKey in EmojiMap) {
+      if (EmojiMap[emojiMapKey]) {
+        set.add({
+          key: emojiMapKey,
+          value: EmojiMap[emojiMapKey]
+        });
+      }
+    }
+
+    return set;
+  }
+
+  private static reversalEmojiMap() {
+    const array = [];
+    for (const emojiMapKey in EmojiMap) {
+      if (EmojiMap[emojiMapKey]) {
+        array.push([EmojiMap[emojiMapKey], emojiMapKey]);
+      }
+    }
+
+    return new Map(array);
+  }
+
+  getTextareaContent(): string {
+    const textArray = [];
+    this.textarea.nativeElement.childNodes.forEach(node => {
+      if(node.tagName === "IMG") {
+        textArray.push(" " +this.reversalEmojis.get(node.src.split('/').pop())+ " ");
+      } else {
+        textArray.push(node.nodeValue);
+      }
+    });
+
+    return textArray.join("").trim();
+  }
+
+  textareaChange() {
+    this.messageText = this.getTextareaContent();
+  }
+
+  insertEmoji(emoji: { key: string; value: string }) {
+
+    this.textarea.nativeElement.focus();
+    document.execCommand("insertImage", false, ['assets/emojis', emoji.value].join("/"));
+    this.textarea.nativeElement.focus();
+
+    this.openEmojiToggle._elementRef.nativeElement.click();
   }
 }

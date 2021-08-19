@@ -1,5 +1,5 @@
-<div fxLayout="row" fxFlex="100">
-  <div fxFlex="60px" fxLayoutAlign="center end" style="background: rgba(0,0,0,.04)">
+<div fxLayout="row" fxFlex="100" fxLayoutAlign="default end" style="background: #f0f0f0">
+  <div fxFlex="60px" fxLayoutAlign="center center" style="height:50px;">
 
     <mat-menu #attachmentMenu="matMenu">
       <button mat-menu-item>
@@ -25,21 +25,31 @@
       </mat-icon>
     </button>
   </div>
-  <div fxFlex>
-    <mat-form-field fxFlex="100" class="message-textarea" floatLabel="never">
-      <textarea matInput cdkTextareaAutosize [(ngModel)]="messageText"
-                (keyup.enter)="doSend()"
-                cdkAutosizeMaxRows="10" placeholder="发送消息"></textarea>
-    </mat-form-field>
+  <div fxFlex style="background: #f0f0f0">
+    <div contenteditable="true" class="message-textarea" #textarea (keydown.enter)="false"
+         (keyup)="textareaChange()" (keyup.enter)="doSend();">
+    </div>
   </div>
-  <div fxFlex="120px" fxLayoutAlign="center end" fxLayoutGap="10px" style="background: rgba(0,0,0,.04)">
-    <button mat-icon-button>
-      <mat-icon class="hover-icon">
-        <img class="icon" [src]="emojiIcon" alt="">
-        <img class="icon-active" [src]="emojiActiveIcon" alt="">
-      </mat-icon>
-    </button>
-    <button mat-icon-button [disabled]="!messageText || messageText.length === 0" (click)="doSend()">
+  <div fxFlex="120px" fxLayoutAlign="center center" fxLayoutGap="10px" style="height:50px; background: #f0f0f0">
+    <div class="emoji-panel">
+      <button mat-icon-button #openEmojiToggle [matMenuTriggerFor]="openEmoji">
+        <mat-icon class="hover-icon">
+          <img class="icon" [src]="emojiIcon" alt="">
+          <img class="icon-active" [src]="emojiActiveIcon" alt="">
+        </mat-icon>
+      </button>
+      <mat-menu #openEmoji="matMenu">
+        <mat-card class="mat-elevation-z0" style="height: 200px;">
+          <mat-card-content>
+            <button mat-icon-button style="border-radius: 0" (mouseup)="insertEmoji(emoji)" *ngFor="let emoji of emojiItems">
+              <img style="width: 60%;" [src]="['assets/emojis', emoji.value].join('/')" alt="">
+            </button>
+          </mat-card-content>
+        </mat-card>
+      </mat-menu>
+    </div>
+    <!--[disabled]="!messageText || messageText.length === 0"-->
+    <button mat-icon-button (click)="doSend()">
       <mat-icon class="hover-icon" *ngIf="!!messageText && messageText.trim().length > 0">
         <img class="icon" [src]="sendIcon" alt="">
         <img class="icon-active" [src]="sendActiveIcon" alt="">
