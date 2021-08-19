@@ -54,14 +54,14 @@ export class CacheService {
         // 有数据时更新
         const check = data[alarmData.alarmItem.dataId];
         const alreadyMessageMap = !check ? {} : check.message;
-        return localforage.setItem("alarmData", Object.assign(data, {
+        return localforage.setItem("alarmData", Object.assign({
           [alarmData.alarmItem.dataId]: {
             alarmData: alarmData,
             message: Object.assign(
               alreadyMessageMap, cache
             ),
           }
-        })).then((newCache) => {
+        }, data)).then((newCache) => {
           this.cacheSource.next({alarmData: newCache});
         });
       }
