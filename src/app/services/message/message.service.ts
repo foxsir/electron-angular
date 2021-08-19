@@ -288,7 +288,7 @@ export class MessageService {
       msgBody = this.constructGroupChatMsgBody(msgType, fromUid, fromNickname, toGid, msgContent);
       // 构建建IM协议报文包（即Protocal对象，详见：
       // http://docs.52im.net/extend/docs/api/mobileimsdk/server/net/openmob/mobileimsdk/server/protocal/Protocal.html）
-      const p = createCommonData2(
+      const p: any = createCommonData2(
         JSON.stringify(msgBody)  // 协议体内容
         , fromUid                // 消息发起者
         , '0'                    // 消息中转接收者（因群聊消息为扩散写逻辑，所以必须由服务端代为转发）
@@ -297,6 +297,7 @@ export class MessageService {
       // console.log(p)
       // debugger
       // 将消息通过websocket发送出去
+      p.QoS = true;
       this.imService.sendData(p);
       success = true;
 
