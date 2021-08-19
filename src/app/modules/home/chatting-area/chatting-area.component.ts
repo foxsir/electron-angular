@@ -127,10 +127,26 @@ export class ChattingAreaComponent implements OnInit {
   }
 
   pushMessageToPanel(data: {chat: ChatmsgEntityModel; dataContent: ProtocalModelDataContent}) {
-    if(this.currentChat && this.currentChat.alarmItem.dataId.toString() === data.dataContent.t.toString()) {
-      if(this.chatMsgEntityList) {
-        this.chatMsgEntityList.push(data.chat);
-        this.scrollToBottom();
+    if(data.dataContent.cy.toString() !== '0') { // 单聊
+      if(this.currentChat && this.currentChat.alarmItem.dataId.toString() === data.dataContent.f.toString()) {
+        if(this.chatMsgEntityList) {
+          this.chatMsgEntityList.push(data.chat);
+          this.scrollToBottom();
+        }
+      }
+    } else if(data.dataContent.cy.toString() === '1') { // 临时聊天/陌生人聊天
+      if(this.currentChat && this.currentChat.alarmItem.dataId.toString() === data.dataContent.f.toString()) {
+        if(this.chatMsgEntityList) {
+          this.chatMsgEntityList.push(data.chat);
+          this.scrollToBottom();
+        }
+      }
+    } else if(data.dataContent.cy.toString() === '2') { // 是群
+      if(this.currentChat && this.currentChat.alarmItem.dataId.toString() === data.dataContent.t.toString()) {
+        if(this.chatMsgEntityList) {
+          this.chatMsgEntityList.push(data.chat);
+          this.scrollToBottom();
+        }
       }
     }
     // chatMsg.fingerPrintOfProtocal
@@ -162,6 +178,7 @@ export class ChattingAreaComponent implements OnInit {
       // fromUid, nickName, msg, time, msgType, fp = null
       chatMsgEntity.isOutgoing = true;
       this.cacheService.putChattingCache(this.currentChat, chatMsgEntity).then(() => {
+        console.dir(res);
         this.pushMessageToPanel({chat: chatMsgEntity, dataContent: dataContent});
       });
     });
@@ -226,9 +243,11 @@ export class ChattingAreaComponent implements OnInit {
 
   scrollToBottom(behavior: "auto" | "smooth" = "smooth") {
     setTimeout(() => {
-      this.chattingContainer.nativeElement.lastElementChild?.scrollIntoView({
-        behavior: behavior, block: "start"
-      });
+      if(this.chattingContainer) {
+        this.chattingContainer.nativeElement.lastElementChild?.scrollIntoView({
+          behavior: behavior, block: "start"
+        });
+      }
     }, 500);
   }
 
