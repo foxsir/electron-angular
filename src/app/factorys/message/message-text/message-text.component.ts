@@ -51,7 +51,7 @@ export class MessageTextComponent implements OnInit {
         const img = document.createElement("img");
 
         img.className = 'emoji-icon';
-        img.src = ['/assets/emojis', EmojiMap[emoji]].join("/");
+        img.src = ['assets/emojis', EmojiMap[emoji]].join("/");
         content = content.replace(emoji, img.outerHTML);
       }
     });
