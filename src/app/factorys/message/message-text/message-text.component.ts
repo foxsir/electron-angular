@@ -43,6 +43,8 @@ export class MessageTextComponent implements OnInit {
   }
 
   showEmoji(content: string) {
+    content = this.encode(content);
+
     content.split("/").forEach(item => {
       const emoji = ["/", item].join("");
       if(EmojiMap.hasOwnProperty(emoji)) {
@@ -50,11 +52,23 @@ export class MessageTextComponent implements OnInit {
 
         img.className = 'emoji-icon';
         img.src = ['/assets/emojis', EmojiMap[emoji]].join("/");
-        this.chatMsg.text = this.chatMsg.text.replace(emoji, img.outerHTML);
+        content = content.replace(emoji, img.outerHTML);
       }
     });
 
     return content;
+  }
+
+  /**
+   * 将html标签转化为实体字符
+   * @param html
+   */
+  encode(html): string {
+    return String(html)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
   }
 
   typeof(data: any): string {
