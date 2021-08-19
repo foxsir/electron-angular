@@ -15,6 +15,7 @@ import {
   getPrivacyConfigById,
   updatePrivacyConfig,
   getUserJoinGroup,
+  getNewFriend,
   blackUser,
   getFriendGroupList,
   getFriendSearch
@@ -812,6 +813,15 @@ export class RestService {
     getUserJoinGroup(): Observable<any> {
         const localUserInfo = this.localUserService.getObj();
         return this.http.get(getUserJoinGroup, { userId: localUserInfo.userId });
+    }
+
+    /*
+     * 用户相关 - 新的朋友
+     * @param user_id
+     */
+    getNewFriend(): Observable<any> {
+        const localUserInfo = this.localUserService.getObj();
+        return this.http.get(getNewFriend + localUserInfo.userId, {});
     }
 
     /**

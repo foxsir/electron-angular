@@ -94,6 +94,9 @@ export const getFriendGroupList = _HTTP_SERVER_URL + "/api/friendGroup/list";
 // 搜索好友
 export const getFriendSearch = _HTTP_SERVER_URL + "/api/friend/search";
 
+// 新的朋友
+export const getNewFriend = _HTTP_SERVER_URL + "/api/friend/new-friend/";
+
 
 //
 //  //封装请求函数
