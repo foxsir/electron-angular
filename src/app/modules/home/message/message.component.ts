@@ -356,7 +356,10 @@ export class MessageComponent implements OnInit {
     this.resetUI();
     this.currentChat = alarm;
     this.currentChattingChangeService.switchCurrentChatting(this.currentChat);
-    return this.router.navigate(['/home/message']);
+    return this.router.navigate(['/home/message']).then(() => {
+      // 缓存群管理员列表
+      this.cacheService.cacheGroupAdmins(this.currentChat.alarmItem.dataId);
+    });
 
     // // 获取缓存
     // this.cacheService.getChattingCache(this.currentChat).then(data => {
