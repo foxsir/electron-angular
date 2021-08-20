@@ -2,12 +2,22 @@
     <mat-card-content>
         <mat-list>
             <div mat-subheader style="color:#333333;">收藏</div>
-            <mat-list-item *ngFor="let item of collectList" style="padding-top:10px;">                
+            <mat-list-item *ngFor="let item of collectList" style="padding-top:10px;"
+                           (contextmenu)="contextMenuForItem($event, createPlanMenuTriggerAvatar, avatarSpan, item)">
                 <div mat-line *ngIf="item.type == 0">{{item.content}}</div>
                 <div mat-line *ngIf="item.type == 16">[聊天记录]</div>
                 <div mat-line style="margin-top:15px;">{{item.createTime}} {{item.nickname}}</div>
                 <mat-divider></mat-divider>
-            </mat-list-item>            
+
+                <span #createPlanMenuTriggerAvatar="matMenuTrigger" #avatarSpan [matMenuTriggerFor]="contextMenuForItem"></span>
+                <mat-menu #contextMenuForItem="matMenu">
+                    <button mat-menu-item *ngFor="let menuitem of contextMenu"
+                            (click)="menuitem.action()">
+                        {{item.label}}
+                    </button>
+                </mat-menu>
+
+            </mat-list-item>
         </mat-list>
     </mat-card-content>
 </mat-card>
