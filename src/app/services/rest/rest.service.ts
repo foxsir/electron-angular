@@ -7,7 +7,8 @@ import {LocalUserService} from "@services/local-user/local-user.service";
 import {ImService} from "@services/im/im.service";
 import {
   getAppConfig,
-  getMissuCollectById,
+    getMissuCollectById,
+    deleteMissuCollectById,
   getMyBlackUser,
   getUserBaseById,
   updateUserBaseById,
@@ -743,7 +744,18 @@ export class RestService {
       userId: localUser.userId,
     };
     return this.http.get(getMissuCollectById, data);
-  }
+    }
+
+    /**
+     * s删除收藏
+     */
+    deleteMissuCollectById(id) {
+        const localUser = this.localUserService.getObj();
+        const data = {
+            userId: localUser.userId,
+        };
+        return this.http.postForm(deleteMissuCollectById + '?id=' + id, {});
+    }
 
   /**
    * 获取我的黑名单
