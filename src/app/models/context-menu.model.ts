@@ -1,5 +1,7 @@
 import ChatmsgEntityModel from "./chatmsg-entity.model";
 import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
+import ChattingModel from "@app/models/chatting.model";
+import FriendModel from "@app/models/friend.model";
 
 
 // 普通消息action
@@ -9,24 +11,30 @@ type ActionType = (chat: ChatmsgEntityModel, messageContainer: HTMLDivElement) =
 type ActionChattingType = (chatting: AlarmItemInterface, chattingList: AlarmItemInterface[]) => void;
 
 // 对话列表action
-type ActionAvatarType = () => void;
+type ActionAvatarType = (alarmItem: AlarmItemInterface, chat: ChatmsgEntityModel) => void;
 
 // 对话列表action
 type ActionCollectType = () => void;
 
-export class ContextMenuModel {
+export interface BaseContextMenuModel {
+  label: string;
+  limits: string[];
+  action: unknown;
+}
+
+export class ContextMenuModel implements BaseContextMenuModel{
   label: string;
   limits: string[];
   action: ActionType;
 }
 
-export class ContextMenuChattingModel {
+export class ContextMenuChattingModel implements BaseContextMenuModel{
   label: string;
   limits: string[];
   action: ActionChattingType;
 }
 
-export class ContextMenuAvatarModel {
+export class ContextMenuAvatarModel implements BaseContextMenuModel{
   label: string;
   limits: string[];
   action: ActionAvatarType;
