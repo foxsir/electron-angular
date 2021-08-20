@@ -92,14 +92,15 @@
                           <span #createPlanMenuTriggerAvatar="matMenuTrigger" #avatarSpan [matMenuTriggerFor]="contextmenuForAvatar"></span>
                           <mat-menu #contextmenuForAvatar="matMenu">
                             <button mat-menu-item *ngFor="let item of contextMenuAvatar"
-                                    (click)="item.action()">
+                                    (click)="item.action(currentChat, chat)">
                               {{item.label}}
                             </button>
                           </mat-menu>
                         </div>
                         <div fxFlex>
-                          <div *ngIf="currentChat.metadata.chatType === 'group'">
-                            {{currentChat.alarmItem.dataId}}
+                          <div *ngIf="currentChat.metadata.chatType === 'group'"
+                               [fxLayoutAlign]="chat.uid.toString() === localUserInfo.userId.toString() ? 'end end' : 'start'">
+                            {{chat.name}}
                           </div>
                           <div class="message-entity-item" (contextmenu)="contextMenuForMessage($event, createPlanMenuTrigger, span, chat)">
                             <div class="message-entity" #messageContainer>

@@ -5,10 +5,11 @@ import {
   ContextMenuModel,
   ContextMenuChattingModel,
   ContextMenuAvatarModel,
-  ContextMenuCollectModel,
+  ContextMenuCollectModel, BaseContextMenuModel,
 } from "@app/models/context-menu.model";
 import {QuoteMessageService} from "@services/quote-message/quote-message.service";
 import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
+import {CacheService} from "@services/cache/cache.service";
 
 @Injectable({
   providedIn: 'root'
@@ -29,14 +30,20 @@ export class ContextMenuService {
   // 收藏列表上的右键
   private contextMenuForCollect: ContextMenuCollectModel[] = [];
 
-  private common = ['common'];
-  private commonManage = ['common', 'manage'];
-  private commonManageOwner = ['common', 'manage', 'owner'];
+  // 权限是或的关系，只要满足其中一个条件即可
+  private limits = {
+    common: "common",
+    manage: "manage",
+    owner: "owner",
+    isFriend: "isFriend",
+    notFriend: "notFriend",
+    privacyClose: "privacyClose",
+  };
 
   private actionChattingCollection = {
     copyText: {
       label: "复制",
-      limits: this.common,
+      limits: [this.limits.common],
       action: (chatting: AlarmItemInterface, chattingList: AlarmItemInterface[]) => {
         alert(chattingList.indexOf(chatting));
       }
@@ -46,28 +53,28 @@ export class ContextMenuService {
   private actionCollection = {
     copyText: {
       label: "复制",
-      limits: this.common,
+      limits: [this.limits.common],
       action: (chat: ChatmsgEntityModel, messageContainer: HTMLDivElement) => {
-        this.copyTextToClipboard(messageContainer);
+        return this.copyTextToClipboard(messageContainer);
       }
     },
     copyImage: {
       label: "复制",
-      limits: this.common,
+      limits: [this.limits.common],
       action: (chat: ChatmsgEntityModel, messageContainer: HTMLDivElement) => {
         this.copyImageToClipboard(messageContainer);
       }
     },
     repeal: {
       label: "撤回",
-      limits: this.common,
+      limits: [this.limits.common],
       action: (chat: ChatmsgEntityModel, messageContainer: HTMLDivElement) => {
         chat.msgType = this.msgType.TYPE_BACK;
       }
     },
     quote: {
       label: "回复",
-      limits: this.common,
+      limits: [this.limits.common],
       action: (chat: ChatmsgEntityModel, messageContainer: HTMLDivElement) => {
         // chat.msgType = this.msgType.TYPE_BACK;
         this.quoteMessageService.setQuoteMessage(chat);
@@ -75,7 +82,7 @@ export class ContextMenuService {
     },
     download: {
       label: "下载",
-      limits: this.common,
+      limits: [this.limits.common],
       action: (chat: ChatmsgEntityModel, messageContainer: HTMLDivElement) => {
         alert("下载文件");
         // chat.msgType = this.msgType.TYPE_BACK;
@@ -86,6 +93,7 @@ export class ContextMenuService {
 
   constructor(
     private quoteMessageService: QuoteMessageService,
+    private cacheService: CacheService,
   ) {
     this.initMsgMenu();
     this.initChattingMenu();
@@ -97,12 +105,75 @@ export class ContextMenuService {
   private initAvatarMenu() {
     this.contextMenuForAvatar = [
       {
-        label: "demo",
-        limits: this.common,
-        action: () => {
-          alert("demo");
+        label: "发送消息",
+        limits: [this.limits.common],
+        action: (alarmItem, chat) => {
+          console.dir(chat.uid);
         }
-      }
+      },
+      {
+        label: "查看资料",
+        limits: [this.limits.common],
+        action: (alarmItem, chat) => {
+          console.dir(chat.uid);
+        }
+      },
+      {
+        label: "@TA",
+        limits: [this.limits.common],
+        action: (alarmItem, chat) => {
+          console.dir(chat.uid);
+        }
+      },
+      {
+        label: "删除管理员",
+        limits: [this.limits.owner],
+        action: (alarmItem, chat) => {
+          console.dir(chat.uid);
+        }
+      },
+      {
+        label: "设置备注",
+        limits: [this.limits.common],
+        action: (alarmItem, chat) => {
+          console.dir(chat.uid);
+        }
+      },
+      {
+        label: "从本群主中删除",
+        limits: [this.limits.owner, this.limits.manage],
+        action: (alarmItem, chat) => {
+          console.dir(chat.uid);
+        }
+      },
+      {
+        label: "添加好友",
+        limits: [this.limits.common],
+        action: (alarmItem, chat) => {
+          console.dir(chat.uid);
+        }
+      },
+      {
+        label: "设置管理员",
+        limits: [this.limits.owner],
+        action: (alarmItem, chat) => {
+          console.dir(chat.uid);
+        }
+      },
+      {
+        label: "禁言",
+        limits: [this.limits.owner, this.limits.manage],
+        action: (alarmItem, chat) => {
+          console.dir(chat.uid);
+        }
+      },
+      {
+        label: "移除禁言",
+        limits: [this.limits.owner, this.limits.manage],
+        action: (alarmItem, chat) => {
+          console.dir(chat.uid);
+        }
+      },
     ];
   }
 
@@ -139,7 +210,7 @@ export class ContextMenuService {
     this.contextMenuForCollect = [
       {
         label: "demo",
-        limits: this.common,
+        limits: [this.limits.common],
         action: () => {
           alert("demo");
         }
@@ -186,6 +257,64 @@ export class ContextMenuService {
   }
 
   /**
+   * 获取当前用户可用的群聊菜单权限
+   * @param alarmItem
+   * @param chat
+   * @private
+   */
+  private async generateLimitsForGroup(alarmItem: AlarmItemInterface, chat: ChatmsgEntityModel) {
+    // 检查权限
+    // common: "common",
+    // manage: "manage",
+    // owner: "owner",
+    // isFriend: "isFriend",
+    // notFriend: "notFriend",
+    // privacyClose: "privacyClose",
+    // 会话id
+    const chattingId = alarmItem.alarmItem.dataId;
+    // 会话类型 friend | group
+    const chattingType = alarmItem.metadata.chatType;
+    if(chattingType === 'group') {
+      // 获取群信息/成员列表
+      await this.cacheService.getCacheGroups().then(data => {
+
+      });
+      await this.cacheService.getCacheGroupAdmins().then(data => {
+        // console.dir(data);
+      });
+    }
+
+    // 获取群管理员/检查是否是管理员
+
+    // 获取群主/检查是否是群主
+
+    // 获取好友列表/检查是否是好友
+    // this.cacheService.getCacheFriends().then(res => {
+    //   console.dir(res);
+    // });
+
+    return ['common'];
+  }
+
+  /**
+   * 根据权限获取允许的菜单
+   * @param limits
+   * @param menus
+   * @private
+   */
+  private filterMenus(limits: string[], menus: BaseContextMenuModel[]): BaseContextMenuModel[] {
+    const newMenu = [];
+    this.contextMenuForAvatar.forEach(item => {
+      const allow = limits.some(v => item.limits.includes(v));
+      if(allow) {
+        newMenu.push(item);
+      }
+    });
+
+    return newMenu;
+  }
+
+  /**
    * 消息
    * @param chat
    * @param chatOwner
@@ -206,11 +335,12 @@ export class ContextMenuService {
 
   /**
    * 头像
+   * @param alarmItem
    * @param chat
-   * @param chatOwner
    */
-  getContextMenuForAvatar(chat: ChatmsgEntityModel, chatOwner) {
-    return this.contextMenuForAvatar;
+  async getContextMenuForAvatar(alarmItem: AlarmItemInterface, chat: ChatmsgEntityModel) {
+    const limits: string[] = await this.generateLimitsForGroup(alarmItem, chat);
+    return this.filterMenus(limits, this.contextMenuForAvatar) as ContextMenuAvatarModel[];
   }
 
   /**

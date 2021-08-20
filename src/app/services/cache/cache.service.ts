@@ -10,10 +10,16 @@ import {MessageEntityService} from "@services/message-entity/message-entity.serv
 import {RosterProviderService} from "@services/roster-provider/roster-provider.service";
 import FriendModel from "@app/models/friend.model";
 import {Subject} from "rxjs";
+import {RestService} from "@services/rest/rest.service";
+import {LocalUserService} from "@services/local-user/local-user.service";
+import {GroupModel} from "@app/models/group.model";
+import {GroupAdminModel} from "@app/models/group-admin.model";
 
 interface CacheItem {
   alarmData: unknown;
   friendList: unknown;
+  groupList: unknown;
+  groupAdminList: unknown;
 }
 
 @Injectable({
@@ -29,6 +35,8 @@ export class CacheService {
     private messageRoamService: MessageRoamService,
     private messageEntityService: MessageEntityService,
     private rosterProviderService: RosterProviderService,
+    private restService: RestService,
+    private localUserService: LocalUserService
   ) { }
 
   /**
@@ -193,10 +201,68 @@ export class CacheService {
   }
 
   /**
+   * 获取并缓存群列表
+   */
+  cacheGroups() {
+    this.restService.getUserJoinGroup().subscribe((res: NewHttpResponseInterface<GroupModel[]>) => {
+      if(res.status === 200) {
+        const groupMap = {};
+        res.data.forEach(g => {
+          groupMap[g.gid] = g;
+        });
+        localforage.setItem("groupList", groupMap).then((newCache) => {
+          this.cacheSource.next({groupList: newCache});
+        });
+      }
+    });
+  }
+
+  /**
+   * 获取并缓存群管理员列表
+   */
+  cacheGroupAdmins(gid: string) {
+    this.restService.getGroupAdminList(gid).subscribe((res: NewHttpResponseInterface<GroupAdminModel[]>) => {
+      if(res.status === 200) {
+        const groupAdminMap = {};
+        res.data.forEach(admin => {
+          groupAdminMap[admin.userUid] = admin;
+        });
+
+        let newData = {};
+        localforage.getItem("groupAdminList").then(data => {
+          if(data) {
+            data[gid] = groupAdminMap;
+            newData = data;
+          } else {
+            newData[gid] = groupAdminMap;
+          }
+          localforage.setItem("groupAdminList", newData).then((newCache) => {
+            this.cacheSource.next({groupAdminList: newCache});
+          });
+        });
+      }
+    });
+  }
+
+  /**
    * 获取好友列表
    */
-  getCacheFriends() {
+  getCacheGroupAdmins(): Promise<any> {
+    return localforage.getItem("groupAdminList");
+  }
+
+  /**
+   * 获取好友列表
+   */
+  getCacheFriends(): Promise<any> {
     return localforage.getItem("friendList");
+  }
+
+  /**
+   * 获取好友列表
+   */
+  getCacheGroups(): Promise<any> {
+    return localforage.getItem("groupsList");
   }
 
   /**

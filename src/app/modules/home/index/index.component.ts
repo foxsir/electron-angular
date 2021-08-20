@@ -118,6 +118,8 @@ export class IndexComponent implements OnInit {
 
     // 获取并缓存好友列表
     this.cacheService.cacheFriends();
+    // 获取并缓存群列表
+    this.cacheService.cacheGroups();
   }
 
   //#################################################################### 【1】初始化方面代码 START
