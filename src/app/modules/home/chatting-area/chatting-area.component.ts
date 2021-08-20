@@ -128,7 +128,7 @@ export class ChattingAreaComponent implements OnInit {
   }
 
   pushMessageToPanel(data: {chat: ChatmsgEntityModel; dataContent: ProtocalModelDataContent}) {
-    if(data.dataContent.cy.toString() !== '0') { // 单聊
+    if(data.dataContent.cy.toString() === '0') { // 单聊
       if(this.currentChat && this.currentChat.alarmItem.dataId.toString() === data.dataContent.f.toString()) {
         if(this.chatMsgEntityList) {
           this.chatMsgEntityList.push(data.chat);
@@ -210,7 +210,7 @@ export class ChattingAreaComponent implements OnInit {
       // alert("群组" + dataContent.t);
       // this.massageBadges[dataContent.t.trim()] = 99;
       const chatMsgEntity = this.messageEntityService.prepareRecievedMessage(
-        res.from, dataContent.nickName, dataContent.m, (new Date()).getTime(), dataContent.ty, res.fp
+        dataContent.f, dataContent.nickName, dataContent.m, res.recvTime, dataContent.ty, res.fp
       );
       this.cacheService.putChattingCache(this.currentChat, chatMsgEntity).then(() => {
         this.pushMessageToPanel({chat: chatMsgEntity, dataContent: dataContent});
@@ -262,8 +262,8 @@ export class ChattingAreaComponent implements OnInit {
     return e.defaultPrevented;
   }
 
-  contextMenuForAvatar(e: MouseEvent, menu: MatMenuTrigger, span: HTMLSpanElement, chat: ChatmsgEntityModel) {
-    this.contextMenuAvatar = this.contextMenuService.getContextMenuForAvatar(chat, "");
+  async contextMenuForAvatar(e: MouseEvent, menu: MatMenuTrigger, span: HTMLSpanElement, chat: ChatmsgEntityModel) {
+    this.contextMenuAvatar = await this.contextMenuService.getContextMenuForAvatar(this.currentChat, chat);
     menu.openMenu();
     span.style.position = "fixed";
     span.style.top = "0px";
