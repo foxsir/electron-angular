@@ -64,7 +64,7 @@ export class CreateGroupComponent implements OnInit {
    * @param filter
    */
   getFriendList(filter: string = null) {
-    this.cacheService.getCacheFriends().then(fl => {
+    this.cacheService.getCacheFriends().then((fl: FriendModel) => {
       if(fl) {
         this.friendList = Object.values(fl).filter((item => {
           return filter === null ? true : item.nickname.includes(filter);
