@@ -340,7 +340,7 @@ export class ContextMenuService {
    */
   async getContextMenuForAvatar(alarmItem: AlarmItemInterface, chat: ChatmsgEntityModel) {
     const limits: string[] = await this.generateLimitsForGroup(alarmItem, chat);
-    return this.filterMenus(limits, this.contextMenuForAvatar);
+    return this.filterMenus(limits, this.contextMenuForAvatar) as ContextMenuAvatarModel[];
   }
 
   /**
