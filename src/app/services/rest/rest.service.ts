@@ -18,7 +18,7 @@ import {
   getNewFriend,
   blackUser,
   getFriendGroupList,
-  getFriendSearch
+  getFriendSearch, getGroupAdminInfo
 } from "@app/config/post-api";
 import {HttpHeaders} from "@angular/common/http";
 
@@ -841,6 +841,14 @@ export class RestService {
     const localUserInfo = this.localUserService.getObj();
     search.userId = localUserInfo.userId.toString();
     return this.http.post(getFriendSearch, search);
+  }
+
+  /**
+   * 获取群管理员列表
+   * @param gid
+   */
+  getGroupAdminList(gid: string): Observable<any> {
+    return this.http.get(getGroupAdminInfo, { clusterId: gid });
   }
 
 }
