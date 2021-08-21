@@ -10,7 +10,7 @@ import {RouterModule} from "@angular/router";
 
 @NgModule({
   declarations: [PageNotFoundComponent, WebviewDirective],
-    imports: [CommonModule, TranslateModule, FormsModule, RouterModule],
+  imports: [CommonModule, TranslateModule, FormsModule, RouterModule],
   exports: [TranslateModule, WebviewDirective, FormsModule]
 })
 export class SharedModule {}
