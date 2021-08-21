@@ -18,30 +18,35 @@ type ActionCollectType = () => void;
 
 export interface BaseContextMenuModel {
   label: string;
-  limits: string[];
+  someLimits: string[];
+  everyLimits: string[];
   action: unknown;
 }
 
 export class ContextMenuModel implements BaseContextMenuModel{
   label: string;
-  limits: string[];
+  someLimits: string[];
+  everyLimits: string[];
   action: ActionType;
 }
 
 export class ContextMenuChattingModel implements BaseContextMenuModel{
   label: string;
-  limits: string[];
+  someLimits: string[];
+  everyLimits: string[];
   action: ActionChattingType;
 }
 
 export class ContextMenuAvatarModel implements BaseContextMenuModel{
   label: string;
-  limits: string[];
+  someLimits: string[];
+  everyLimits: string[];
   action: ActionAvatarType;
 }
 
 export class ContextMenuCollectModel {
   label: string;
-  limits: string[];
+  someLimits: string[];
+  everyLimits: string[];
   action: ActionCollectType;
 }
