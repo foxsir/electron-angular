@@ -1,5 +1,4 @@
-.group-component{
-    .img-icon{
-
-    }
+.my-group-container {
+  height: calc(100vh - 30px);
+  overflow-y: auto;
 }
