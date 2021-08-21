@@ -43,4 +43,12 @@ export class NewFriendComponent implements OnInit {
 
     }
 
+    refuse(item) {
+        console.log('newfriend, refuse: ', item);
+    }
+
+    agree(item) {
+        console.log('newfriend, agree: ', item);
+    }
+
 }
