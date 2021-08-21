@@ -56,7 +56,7 @@ export class CacheService {
             message: cache,
           }
         }).then((newCache) => {
-          this.cacheSource.next({friendList: newCache});
+          this.cacheSource.next({alarmData: newCache});
         });
       } else {
         // 有数据时更新
@@ -262,7 +262,7 @@ export class CacheService {
    * 获取好友列表
    */
   getCacheGroups(): Promise<any> {
-    return localforage.getItem("groupsList");
+    return localforage.getItem("groupList");
   }
 
   /**

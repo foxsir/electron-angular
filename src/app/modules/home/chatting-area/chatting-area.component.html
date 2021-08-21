@@ -2,7 +2,6 @@
   <mat-drawer #chattingSetting mode="side" position="end">
     <div fxFlex="280px">
       <mat-card class="mat-elevation-z0" *ngIf="currentChat">
-        {{currentChat | json}}
         <!--判断是单聊还是群聊-->
         <!--单聊-->
         <app-chatting-setting *ngIf="currentChat.metadata.chatType === 'friend'" [currentChat]="currentChat"></app-chatting-setting>
