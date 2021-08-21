@@ -1,0 +1,10 @@
+<div fxLayout="column" fxLayoutAlign="stretch space-between" fxFlexFill>
+  <div fxFlex>
+    <div mat-dialog-title>{{data.title || '确定执行这个操作吗？'}}</div>
+  </div>
+  <div fxFlex fxLayoutAlign="center">
+    <mat-dialog-actions fxFlex="100">
+      <button mat-button fxFlex="100" (click)="confirm()" cdkFocusInitial color="primary">{{data.confirm || '确定'}}</button>
+    </mat-dialog-actions>
+  </div>
+</div>
