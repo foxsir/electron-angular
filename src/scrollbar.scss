@@ -9,6 +9,9 @@
   background: transparent;
 }
 
+.scrollbar {
+  overflow-y: auto;
+}
 .scrollbar:hover {
   &::-webkit-scrollbar {
     width: 8px;
