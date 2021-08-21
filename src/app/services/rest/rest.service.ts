@@ -7,8 +7,8 @@ import {LocalUserService} from "@services/local-user/local-user.service";
 import {ImService} from "@services/im/im.service";
 import {
   getAppConfig,
-    getMissuCollectById,
-    deleteMissuCollectById,
+  getMissuCollectById,
+  deleteMissuCollectById,
   getMyBlackUser,
   getUserBaseById,
   updateUserBaseById,
@@ -19,7 +19,7 @@ import {
   getNewFriend,
   blackUser,
   getFriendGroupList,
-  getFriendSearch, getGroupAdminInfo
+  getFriendSearch, getGroupAdminInfo, updRemark
 } from "@app/config/post-api";
 import {HttpHeaders} from "@angular/common/http";
 
@@ -861,6 +861,14 @@ export class RestService {
    */
   getGroupAdminList(gid: string): Observable<any> {
     return this.http.get(getGroupAdminInfo, { clusterId: gid });
+  }
+
+  /**
+   * 更新好友备注
+   * @param data
+   */
+  updateFriendRemark(data: {id: string; toUserId: string; remark: string}): Observable<any> {
+    return this.http.get(getGroupAdminInfo, data);
   }
 
 }
