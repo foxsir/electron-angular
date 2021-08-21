@@ -36,6 +36,7 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 import { SearchFriendComponent } from './search-friend/search-friend.component';
 import { SearchWidgetComponent } from './search-widget/search-widget.component';
 import { ChattingAreaComponent } from './chatting-area/chatting-area.component';
+import {DialogsModule} from "@app/shared/dialogs/dialogs.module";
 
 @NgModule({
   declarations: [
@@ -78,6 +79,7 @@ import { ChattingAreaComponent } from './chatting-area/chatting-area.component';
     UserDialogsModule,
     UploadModule,
     NzModalModule,
+    DialogsModule,
   ]
 })
 export class HomeModule { }

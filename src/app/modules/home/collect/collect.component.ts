@@ -5,6 +5,7 @@ import {HttpResponse} from "@angular/common/http";
 import { HttpService } from "@services/http/http.service";
 import { MatMenuTrigger } from "@angular/material/menu";
 import { ContextMenuService } from "@services/context-menu/context-menu.service";
+import {DialogService} from "@services/dialog/dialog.service";
 
 @Component({
     selector: 'app-collect',
@@ -34,8 +35,16 @@ export class CollectComponent implements OnInit {
             //}
             action: (item) => {
                 console.log('删除：', item);
-                this.show_modal = true;
+              // this.show_modal = true;
                 this.current_model = item;
+              this.dialogService.confirm({
+                title: '删除收藏',
+                text: '确认将此内容从收藏中删除？'
+              }).then((res: boolean) => {
+                if(res) {
+                  this.handleOk();
+                }
+              });
             }
         }
     ];
@@ -45,8 +54,9 @@ export class CollectComponent implements OnInit {
         private localUserService: LocalUserService,
         private http: HttpService,
         private contextMenuService: ContextMenuService,
+        private dialogService: DialogService,
     ) {
-        this.restService.getMyCollectList().subscribe(res => {            
+        this.restService.getMyCollectList().subscribe(res => {
             this.collectList = res.data;
         });
     }
