@@ -16,6 +16,7 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzListModule } from 'ng-zorro-antd/list';
+import { UserInfoComponent } from './user-info/user-info.component';
 
 
 @NgModule({
@@ -23,7 +24,8 @@ import { NzListModule } from 'ng-zorro-antd/list';
         QrCodeComponent,
         PrivacySettingComponent,
         MySignatureComponent,
-        UpdatePasswordComponent
+        UpdatePasswordComponent,
+        UserInfoComponent
     ],
     exports: [
         PrivacySettingComponent
