@@ -19,7 +19,13 @@ import {
   getNewFriend,
   blackUser,
   getFriendGroupList,
-  getFriendSearch, getGroupAdminInfo, updRemark
+  getFriendSearch,
+  getGroupAdminInfo,
+  updRemark,
+  updateGroupAdmin,
+  addGroupSilence,
+  deleteGroupSilenceById,
+  getGroupSilenceById
 } from "@app/config/post-api";
 import {HttpHeaders} from "@angular/common/http";
 
@@ -869,6 +875,64 @@ export class RestService {
    */
   updateFriendRemark(data: {id: string; toUserId: string; remark: string}): Observable<any> {
     return this.http.get(getGroupAdminInfo, data);
+  }
+
+  /**
+   * 更新群管理员
+   * @param clusterId
+   * @param userIds string[]
+   * @param type 0移除群管理员  1设为群管理员
+   */
+  updateGroupAdmin(clusterId: string, userIds: string[], type: 0|1) {
+    const userIdString = userIds.join(",");
+    return this.http.postForm(updateGroupAdmin, {
+      clusterId: clusterId,
+      userIds: userIdString,
+      type: type
+    });
+  }
+
+  /**
+   * 退群/踢人
+   * @param gid
+   * @param del_opr_uid
+   * @param members
+   */
+  removeGroupMembers(gid: string, del_opr_uid: string, members: unknown[]) {
+    const post = {
+      // del_opr_nickname: '', // 操作人昵称
+      gid: gid, // 群id
+      doInput: true,
+      members: members,
+      del_opr_uid: del_opr_uid, // 操作人id
+    };
+    return this.restServer(
+      MyProcessorConst.PROCESSOR_GROUP_CHAT, JobDispatchConst.LOGIC_GROUP_BASE_MGR, SysActionConst.ACTION_APPEND5, JSON.stringify(post)
+    );
+  }
+
+  /**
+   * 对个人禁言
+   * @param data
+   */
+  addGroupSilence(data: {clusterId: string; userId: string; durationTime: number; adminId: string}) {
+    return this.http.post(addGroupSilence, data);
+  }
+
+  /**
+   * 解除禁烟
+   * @param data
+   */
+  deleteGroupSilenceById(data: {clusterId: string; userId: string; adminId: string}) {
+    return this.http.post(addGroupSilence, data);
+  }
+
+  /**
+   * 被禁言的人员列表
+   * @param data
+   */
+  getGroupSilenceById(data: {clusterId: string}) {
+    return this.http.post(addGroupSilence, data);
   }
 
 }
