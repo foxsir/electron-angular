@@ -36,7 +36,12 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 import { SearchFriendComponent } from './search-friend/search-friend.component';
 import { SearchWidgetComponent } from './search-widget/search-widget.component';
 import { ChattingAreaComponent } from './chatting-area/chatting-area.component';
-import {DialogsModule} from "@app/shared/dialogs/dialogs.module";
+import { DialogsModule } from "@app/shared/dialogs/dialogs.module";
+
+import { NzSwitchModule } from "ng-zorro-antd/switch";
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzListModule } from 'ng-zorro-antd/list';
 
 @NgModule({
   declarations: [
@@ -79,7 +84,11 @@ import {DialogsModule} from "@app/shared/dialogs/dialogs.module";
     UserDialogsModule,
     UploadModule,
     NzModalModule,
-    DialogsModule,
+      DialogsModule,
+      NzSwitchModule,
+      NzSelectModule,
+      NzButtonModule,
+      NzListModule
   ]
 })
 export class HomeModule { }

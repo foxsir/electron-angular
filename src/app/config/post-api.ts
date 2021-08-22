@@ -97,6 +97,12 @@ export const getFriendSearch = _HTTP_SERVER_URL + "/api/friend/search";
 // 新的朋友
 export const getNewFriend = _HTTP_SERVER_URL + "/api/friend/new-friend/";
 
+// 通过id查询群的基本信息
+export const getGroupBaseById = _HTTP_SERVER_URL + "/api/groupBase/getGroupBaseById";
+
+// 群组相关 - 更新群的基本信息
+export const updateGroupBaseById = _HTTP_SERVER_URL + "/api/groupBase/updateGroupBaseById";
+
 
 //
 //  //封装请求函数
