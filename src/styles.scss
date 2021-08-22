@@ -21,6 +21,11 @@ html, body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+img {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
 /* CAN (MUST) BE REMOVED ! Sample Global style */
 .container {
   height: 100%;
