@@ -1,0 +1,42 @@
+.user-info-headimg{
+    display:flex;
+    margin-top:15px;
+
+    .img-head{
+        width:48px;
+        height:48px;
+        border-radius:48px;
+        background-color:#e6e6e6;
+    }
+
+    .status-bar{
+        display:flex;
+        flex-direction:column;
+        justify-content:center;
+        margin-left:10px;
+    }
+}
+
+.privacy-item-text {
+  font-size: 13px;
+  font-weight: 400;
+  color: #383838;
+  line-height: 22px;
+}
+
+.group-pointer{
+    cursor:pointer;
+}
+
+.split-item{
+    background-color:rgb(241, 241, 241);
+    height:10px;
+    margin-left:-33px;
+    margin-right:-33px;
+}
+
+.info-box{
+    .info-item{
+        line-height:30px;
+    }
+}

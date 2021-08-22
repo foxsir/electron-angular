@@ -1,1 +1,63 @@
-<p>chatting-setting works!</p>
+<div fxLayout="column" style="background: #F1F1F1;">
+    <!--<div fxFlex>
+        <app-toolbar [visibilityActions]="false"></app-toolbar>
+    </div>-->
+    <div fxFlex="100px">
+        <mat-card class="mat-elevation-z0" fxLayoutAlign="stretch center" fxFlex="100" style="padding: 11px 16px;">
+            <mat-card-content fxFlex="100">
+                <div fxLayout="row">
+                    <div fxFlex="100px" fxLayoutAlign="space-between center">
+                        <mat-icon (click)="drawer.close()" class="hover-icon">
+                            <img [src]="backspaceIcon" alt="" class="icon">
+                            <img [src]="backspaceActiveIcon" alt="" class="icon-active">
+                        </mat-icon>
+                        <span>用户信息</span>
+                    </div>
+                    <div fxFlex fxLayoutAlign="end center">
+                        <mat-icon (click)="drawer.close()" class="hover-icon icon14">
+                            <img [src]="closeIcon" alt="" class="icon">
+                            <img [src]="closeActiveIcon" alt="" class="icon-active">
+                        </mat-icon>
+                    </div>
+                </div>
+                <div class="user-info-headimg">
+                    <img class="img-head"/>
+                    <div class="status-bar">
+                        <span>{{setting_data.nickname}}</span>
+                        <span>在线</span>
+                    </div>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+    <div class="split-item"></div>
+    <div fxFlex >
+        <mat-card class="mat-elevation-z0">
+            <mat-card-content>
+                <div fxLayout="column" fxLayoutGap="10px">
+                    <div class="info-box">
+                        <div class="info-item">备注</div>
+                        <div class="info-item"></div>
+                    </div>
+                    <div class="split-item"></div>
+                    <div class="info-box">
+                        <div class="info-item">最近登录IP</div>
+                        <div class="info-item">{{setting_data.latestLoginAddres}} {{setting_data.latestLoginIp}}</div>
+                    </div>
+                    <div class="split-item"></div>
+                    <div class="info-box">
+                        <div class="info-item">基本信息</div>
+                        <div class="info-item">个人账号：{{setting_data.userMail}}</div>
+                        <div class="info-item">注册时间：</div>
+                        <div class="info-item">最近登录：</div>
+                    </div>
+                    <div class="split-item"></div>
+                    <div class="info-box">
+                        <div class="info-item">个性签名</div>
+                        <div class="info-item">{{setting_data.whatSUp}}</div>
+                    </div>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>
