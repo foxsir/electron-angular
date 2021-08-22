@@ -73,6 +73,9 @@ export class MessageDistributeService {
   private MT19_OF_VIDEO$VOICE$REQUEST_ACCEPT$TO$ASource = new Subject<ProtocalModel>();
   public MT19_OF_VIDEO$VOICE$REQUEST_ACCEPT$TO$A$ = this.MT19_OF_VIDEO$VOICE$REQUEST_ACCEPT$TO$ASource.asObservable();
 
+  private UPDATE_GROUP_ADMINSource = new Subject<ProtocalModel>();
+  public UPDATE_GROUP_ADMIN$ = this.UPDATE_GROUP_ADMINSource.asObservable();
+
   private illegalMessageSource = new Subject<ProtocalModel>();
   public illegalMessage$ = this.MT19_OF_VIDEO$VOICE$REQUEST_ACCEPT$TO$ASource.asObservable();
 
@@ -142,6 +145,9 @@ export class MessageDistributeService {
         break;
       case UserProtocalsType.MT19_OF_VIDEO$VOICE$REQUEST_ACCEPT$TO$A:
         this.MT19_OF_VIDEO$VOICE$REQUEST_ACCEPT$TO$A(originData);
+        break;
+      case UserProtocalsType.UPDATE_GROUP_ADMIN:
+        this.UPDATE_GROUP_ADMIN(originData);
         break;
       default:
         this.illegalMessage(originData);
@@ -363,7 +369,10 @@ export class MessageDistributeService {
    */
   private MT19_OF_VIDEO$VOICE$REQUEST_ACCEPT$TO$A(originData: ProtocalModel) {
     this.MT19_OF_VIDEO$VOICE$REQUEST_ACCEPT$TO$ASource.next(originData);
+  }
 
+  private UPDATE_GROUP_ADMIN(originData: ProtocalModel) {
+    this.UPDATE_GROUP_ADMINSource.next(originData);
   }
 
   /**

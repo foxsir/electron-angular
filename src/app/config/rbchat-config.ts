@@ -254,6 +254,8 @@ const UserProtocalsType = {
   MT50_OF_GROUP$SYSCMD_SOMEONEB$REMOVED_FROM$SERVER: 50,
   /** 群聊系统指令：群名被修改的系统通知（由Server发出，所有除修改者外的群员接收） */
   MT51_OF_GROUP$SYSCMD_GROUP$NAME$CHANGED_FROM$SERVER: 51,
+  /** 更新群管理员 */
+  UPDATE_GROUP_ADMIN: 74,
 
 
   //    111 新增主动进群

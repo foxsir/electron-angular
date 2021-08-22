@@ -6,25 +6,29 @@ import {Observable} from "rxjs";
 import {LocalUserService} from "@services/local-user/local-user.service";
 import {ImService} from "@services/im/im.service";
 import {
-    getAppConfig,
-    getMissuCollectById,
-    deleteMissuCollectById,
-    getMyBlackUser,
-    getUserBaseById,
-    updateUserBaseById,
-    verifyCode,
-    getPrivacyConfigById,
-    updatePrivacyConfig,
-    getUserJoinGroup,
-    getGroupBaseById,
-    updateGroupBaseById,
-    getNewFriend,
-    blackUser,
-    getFriendGroupList,
-    getFriendSearch,
-    getGroupAdminInfo,
-    getRemark,
+  getAppConfig,
+  getMissuCollectById,
+  deleteMissuCollectById,
+  getMyBlackUser,
+  getUserBaseById,
+  updateUserBaseById,
+  verifyCode,
+  getPrivacyConfigById,
+  updatePrivacyConfig,
+  getUserJoinGroup,
+  getGroupBaseById,
+  updateGroupBaseById,
+  getNewFriend,
+  blackUser,
+  getFriendGroupList,
+  getFriendSearch,
+  getGroupAdminInfo,
     updRemark,
+    getRemark,
+  updateGroupAdmin,
+  addGroupSilence,
+  deleteGroupSilenceById,
+  getGroupSilenceById,
 } from "@app/config/post-api";
 import {HttpHeaders} from "@angular/common/http";
 
@@ -543,7 +547,26 @@ export class RestService {
 
     return this.restServer(MyProcessorConst.PROCESSOR_GROUP_CHAT, JobDispatchConst.LOGIC_GROUP_BASE_MGR, SysActionConst.ACTION_APPEND1
       , JSON.stringify(m));
-  }
+    }
+
+    /**
+ * 用户好友相关 - 查看好友备注
+ */
+    getRemark(data: any): Observable<any> {
+        const localUserInfo = this.localUserService.getObj();
+        data.id = localUserInfo.userId.toString();
+
+        return this.http.get(getRemark, data);
+    }
+
+    /**
+     * 用户好友相关 - 修改好友备注
+     */
+    updRemark(search: { userId?: string; friendAccount: string }): Observable<any> {
+        const localUserInfo = this.localUserService.getObj();
+        search.userId = localUserInfo.userId.toString();
+        return this.http.post(getFriendSearch, search);
+    }
 
   /**
    * 【接口1016-24-23】删除群成员或退群接口调用.
@@ -787,28 +810,9 @@ export class RestService {
    * 查询用户资料
    * @param user_id
    */
-    getUserBaseById(user_id: string): Observable<any> {
-        return this.http.postForm(getUserBaseById, { userUid: user_id });
-    }
-
-    /**
-     * 用户好友相关 - 查看好友备注
-     */
-    getRemark(data: any): Observable<any> {
-        const localUserInfo = this.localUserService.getObj();
-        data.id = localUserInfo.userId.toString();
-
-        return this.http.get(getRemark, data);
-    }
-
-    /**
-     * 用户好友相关 - 修改好友备注
-     */
-    updRemark(search: { userId?: string; friendAccount: string }): Observable<any> {
-        const localUserInfo = this.localUserService.getObj();
-        search.userId = localUserInfo.userId.toString();
-        return this.http.post(getFriendSearch, search);
-    }
+  getUserBaseById(user_id: string): Observable<any> {
+    return this.http.postForm(getUserBaseById, {userUid: user_id});
+  }
 
     /**
      * 编辑个人信息
@@ -908,6 +912,72 @@ export class RestService {
    */
   getGroupAdminList(gid: string): Observable<any> {
     return this.http.get(getGroupAdminInfo, { clusterId: gid });
+  }
+
+  /**
+   * 更新好友备注
+   * @param data
+   */
+  updateFriendRemark(data: {id: string; toUserId: string; remark: string}): Observable<any> {
+    return this.http.get(getGroupAdminInfo, data);
+  }
+
+  /**
+   * 更新群管理员
+   * @param clusterId
+   * @param userIds string[]
+   * @param type 0移除群管理员  1设为群管理员
+   */
+  updateGroupAdmin(clusterId: string, userIds: string[], type: 0|1) {
+    const userIdString = userIds.join(",");
+    return this.http.postForm(updateGroupAdmin, {
+      clusterId: clusterId,
+      userIds: userIdString,
+      type: type
+    });
+  }
+
+  /**
+   * 退群/踢人
+   * @param gid
+   * @param del_opr_uid
+   * @param members
+   */
+  removeGroupMembers(gid: string, del_opr_uid: string, members: unknown[]) {
+    const post = {
+      // del_opr_nickname: '', // 操作人昵称
+      gid: gid, // 群id
+      doInput: true,
+      members: members,
+      del_opr_uid: del_opr_uid, // 操作人id
+    };
+    return this.restServer(
+      MyProcessorConst.PROCESSOR_GROUP_CHAT, JobDispatchConst.LOGIC_GROUP_BASE_MGR, SysActionConst.ACTION_APPEND5, JSON.stringify(post)
+    );
+  }
+
+  /**
+   * 对个人禁言
+   * @param data
+   */
+  addGroupSilence(data: {clusterId: string; userId: string; durationTime: number; adminId: string}) {
+    return this.http.post(addGroupSilence, data);
+  }
+
+  /**
+   * 解除禁烟
+   * @param data
+   */
+  deleteGroupSilenceById(data: {clusterId: string; userId: string; adminId: string}) {
+    return this.http.post(addGroupSilence, data);
+  }
+
+  /**
+   * 被禁言的人员列表
+   * @param data
+   */
+  getGroupSilenceById(data: {clusterId: string}) {
+    return this.http.post(addGroupSilence, data);
   }
 
 }

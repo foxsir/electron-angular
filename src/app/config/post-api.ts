@@ -50,7 +50,10 @@ export const generate = _HTTP_SERVER_URL +"/api/token/generate";
 export const systemTime = _HTTP_SERVER_URL +"/api/token/systemTime";
 
 //修改备注
-export const updRemark = _HTTP_SERVER_URL +"/api/user/updRemark";
+export const updRemark = _HTTP_SERVER_URL + "/api/user/updRemark";
+
+// 用户好友相关 - 查看好友备注
+export const getRemark = _HTTP_SERVER_URL + "/api/user/getRemark";
 
 
 
@@ -103,8 +106,17 @@ export const getGroupBaseById = _HTTP_SERVER_URL + "/api/groupBase/getGroupBaseB
 // 群组相关 - 更新群的基本信息
 export const updateGroupBaseById = _HTTP_SERVER_URL + "/api/groupBase/updateGroupBaseById";
 
-// 用户好友相关 - 查看好友备注
-export const getRemark = _HTTP_SERVER_URL + "/api/user/getRemark";
+// 设置/删除群成员
+export const updateGroupAdmin = _HTTP_SERVER_URL + "/api/groupBase/updateAdmin/";
+
+// 对个人禁言
+export const addGroupSilence = _HTTP_SERVER_URL + "/api/groupSilence/addGroupSilence/";
+
+// 解除个人禁言
+export const deleteGroupSilenceById = _HTTP_SERVER_URL + "/api/groupSilence/deleteGroupSilenceById/";
+
+// 被禁言的人员列表
+export const getGroupSilenceById = _HTTP_SERVER_URL + "/api/groupSilence/getGroupSilenceById/";
 
 
 //

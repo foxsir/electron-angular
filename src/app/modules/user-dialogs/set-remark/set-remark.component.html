@@ -1,0 +1,12 @@
+<div fxLayout="column" fxLayoutGap="20px">
+  <div fxFlex><label>个性签名</label></div>
+  <div fxFlex>
+    <input type="text" nz-input [(ngModel)]="remark" class="txtcom" placeholder="请输入个性签名"/>
+  </div>
+  <div fxFlex>
+    <div fxLayout="row" fxLayoutAlign="end" fxLayoutGap="10">
+      <button nz-button nzType="link" class="btncancel" mat-dialog-close>取消</button>
+      <button nz-button nzType="link" class="btnsave" (click)="save()" mat-dialog-close>保存</button>
+    </div>
+  </div>
+</div>

@@ -246,10 +246,10 @@ export class ChattingAreaComponent implements OnInit {
     setTimeout(() => {
       if(this.chattingContainer) {
         this.chattingContainer.nativeElement.lastElementChild?.scrollIntoView({
-          behavior: behavior, block: "end"
+          behavior: behavior, block: "start"
         });
       }
-    }, 1000);
+    }, 500);
   }
 
   contextMenuForMessage(e: MouseEvent, menu: MatMenuTrigger, span: HTMLSpanElement, chat: ChatmsgEntityModel) {

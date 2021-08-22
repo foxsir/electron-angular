@@ -1,0 +1,20 @@
+<div class="user-info-container">
+  <ng-template [ngIf]="data">
+    <div *ngIf="user">
+      <mat-card-header>
+        <img [src]="userAvatar" mat-card-avatar alt="">
+        <mat-card-title>{{user.nickname}}</mat-card-title>
+        <mat-card-subtitle>{{user.whatSUp || '暂无介绍'}}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div>通讯号：{{user.userCornet}}</div>
+      </mat-card-content>
+    </div>
+    <div *ngIf="!user">
+      获取用户信息失败
+    </div>
+    <mat-dialog-actions fxLayoutAlign="end">
+      <button mat-button color="primary" mat-dialog-close="true">关闭</button>
+    </mat-dialog-actions>
+  </ng-template>
+</div>
