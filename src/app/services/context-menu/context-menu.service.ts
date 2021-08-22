@@ -5,7 +5,7 @@ import {
   ContextMenuModel,
   ContextMenuChattingModel,
   ContextMenuAvatarModel,
-  ContextMenuCollectModel, BaseContextMenuModel,
+  ContextMenuCollectModel, BaseContextMenuModel, MenuFilterData,
 } from "@app/models/context-menu.model";
 import {QuoteMessageService} from "@services/quote-message/quote-message.service";
 import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
@@ -13,6 +13,15 @@ import {CacheService} from "@services/cache/cache.service";
 import {GroupModel} from "@app/models/group.model";
 import {GroupAdminModel} from "@app/models/group-admin.model";
 import {LocalUserService} from "@services/local-user/local-user.service";
+import {DialogService} from "@services/dialog/dialog.service";
+import {UserInfoComponent} from "@modules/user-dialogs/user-info/user-info.component";
+import {SwitchChatService} from "@services/switch-chat/switch-chat.service";
+import {SnackBarService} from "@services/snack-bar/snack-bar.service";
+import {SetRemarkComponent} from "@modules/user-dialogs/set-remark/set-remark.component";
+import {RestService} from "@services/rest/rest.service";
+import NewHttpResponseInterface from "@app/interfaces/new-http-response.interface";
+import HttpResponseInterface from "@app/interfaces/http-response.interface";
+import {UserSilenceComponent} from "@modules/user-dialogs/user-silence/user-silence.component";
 
 @Injectable({
   providedIn: 'root'
@@ -34,20 +43,21 @@ export class ContextMenuService {
   private contextMenuForCollect: ContextMenuCollectModel[] = [];
 
   // 权限是或的关系，只要满足其中一个条件即可
-  private limits = {
-    common: "common",
-    manage: "manage",
-    owner: "owner",
-    isFriend: "isFriend",
-    notFriend: "notFriend",
-    privacyClose: "privacyClose",
-  };
+  // private limits = {
+  //   common: "common",
+  //   manage: "manage",
+  //   owner: "owner",
+  //   isFriend: "isFriend",
+  //   notFriend: "notFriend",
+  //   privacyClose: "privacyClose",
+  // };
 
   private actionChattingCollection = {
     copyText: {
       label: "复制",
-      someLimits: [this.limits.common],
-      everyLimits: [],
+      visibility: function(filterData: MenuFilterData): boolean {
+        return true;
+      },
       action: (chatting: AlarmItemInterface, chattingList: AlarmItemInterface[]) => {
         alert(chattingList.indexOf(chatting));
       }
@@ -57,32 +67,36 @@ export class ContextMenuService {
   private actionCollection = {
     copyText: {
       label: "复制",
-      someLimits: [this.limits.common],
-      everyLimits: [],
+      visibility: function(filterData: MenuFilterData): boolean {
+        return true;
+      },
       action: (chat: ChatmsgEntityModel, messageContainer: HTMLDivElement) => {
         return this.copyTextToClipboard(messageContainer);
       }
     },
     copyImage: {
       label: "复制",
-      someLimits: [this.limits.common],
-      everyLimits: [],
+      visibility: function(filterData: MenuFilterData): boolean {
+        return true;
+      },
       action: (chat: ChatmsgEntityModel, messageContainer: HTMLDivElement) => {
         this.copyImageToClipboard(messageContainer);
       }
     },
     repeal: {
       label: "撤回",
-      someLimits: [this.limits.common],
-      everyLimits: [],
+      visibility: function(filterData: MenuFilterData): boolean {
+        return true;
+      },
       action: (chat: ChatmsgEntityModel, messageContainer: HTMLDivElement) => {
         chat.msgType = this.msgType.TYPE_BACK;
       }
     },
     quote: {
       label: "回复",
-      someLimits: [this.limits.common],
-      everyLimits: [],
+      visibility: function(filterData: MenuFilterData): boolean {
+        return true;
+      },
       action: (chat: ChatmsgEntityModel, messageContainer: HTMLDivElement) => {
         // chat.msgType = this.msgType.TYPE_BACK;
         this.quoteMessageService.setQuoteMessage(chat);
@@ -90,8 +104,9 @@ export class ContextMenuService {
     },
     download: {
       label: "下载",
-      someLimits: [this.limits.common],
-      everyLimits: [],
+      visibility: function(filterData: MenuFilterData): boolean {
+        return true;
+      },
       action: (chat: ChatmsgEntityModel, messageContainer: HTMLDivElement) => {
         alert("下载文件");
         // chat.msgType = this.msgType.TYPE_BACK;
@@ -104,6 +119,10 @@ export class ContextMenuService {
     private quoteMessageService: QuoteMessageService,
     private cacheService: CacheService,
     private localUserService: LocalUserService,
+    private dialogService: DialogService,
+    private snackBarService: SnackBarService,
+    private switchChatService: SwitchChatService,
+    private restService: RestService,
   ) {
     this.initMsgMenu();
     this.initChattingMenu();
@@ -116,82 +135,168 @@ export class ContextMenuService {
     this.contextMenuForAvatar = [
       {
         label: "发送消息",
-        someLimits: [this.limits.common],
-        everyLimits: [],
+        visibility: function(filterData: MenuFilterData): boolean {
+          console.dir(filterData.friends);
+          return true;
+        },
         action: (alarmItem, chat) => {
           console.dir(chat.uid);
+          this.switchChatService.switch({
+            alarmItem: {
+              alarmMessageType: 0, // 0单聊 1临时聊天/陌生人聊天 2群聊
+              dataId: chat.uid,
+              date: null,
+              istop: true,
+              msgContent: null,
+              title: chat.name,
+            },
+            metadata: {chatType: 'friend'}
+          });
         }
       },
       {
         label: "查看资料",
-        someLimits: [this.limits.common],
-        everyLimits: [],
+        visibility: function(filterData: MenuFilterData): boolean {
+          return true;
+        },
         action: (alarmItem, chat) => {
           console.dir(chat.uid);
+          this.dialogService.openDialog(UserInfoComponent, {
+            data: {userId: chat.uid}
+          }).then();
         }
       },
       {
         label: "@TA",
-        someLimits: [this.limits.common],
-        everyLimits: [],
+        visibility: function(filterData: MenuFilterData): boolean {
+          return true;
+        },
         action: (alarmItem, chat) => {
-          console.dir(chat.uid);
+          alert('@AT');
         }
       },
       {
         label: "删除管理员",
-        someLimits: [this.limits.owner],
-        everyLimits: [this.limits.manage],
+        visibility: function(filterData: MenuFilterData): boolean {
+          return true;
+        },
         action: (alarmItem, chat) => {
-          console.dir(chat.uid);
+          this.dialogService.confirm({title: "删除管理员"}).then((ok) => {
+            if(ok) {
+              this.restService.updateGroupAdmin(
+                alarmItem.alarmItem.dataId,
+                [chat.uid],
+                0).subscribe((res: NewHttpResponseInterface<any>) => {
+                if(res.status === 200) {
+                  this.snackBarService.openMessage(res.msg);
+                } else {
+                  this.snackBarService.openMessage(res.msg);
+                }
+              });
+            }
+          });
         }
       },
       {
         label: "设置备注",
-        someLimits: [this.limits.common],
-        everyLimits: [],
+        visibility: function(filterData: MenuFilterData): boolean {
+          return true;
+        },
         action: (alarmItem, chat) => {
-          console.dir(chat.uid);
+          this.dialogService.openDialog(SetRemarkComponent, {
+            data: {userId: chat.uid}
+          }).then();
         }
       },
       {
         label: "从本群主中删除",
-        someLimits: [this.limits.owner, this.limits.manage],
-        everyLimits: [],
+        visibility: function(filterData: MenuFilterData): boolean {
+          return true;
+        },
         action: (alarmItem, chat) => {
-          console.dir(chat.uid);
+          this.dialogService.confirm({title: "从本群主中删除"}).then((ok) => {
+            if(ok) {
+              const userId = this.localUserService.localUserInfo.userId;
+              this.restService.removeGroupMembers(alarmItem.alarmItem.dataId, userId.toString(), [
+                [alarmItem.alarmItem.dataId, chat.uid, chat.name]
+              ]).subscribe((res: HttpResponseInterface) => {
+                if(res.success === true) {
+                  this.snackBarService.openMessage('删除成功');
+                } else {
+                  this.snackBarService.openMessage('删除失败');
+                }
+              });
+            }
+          });
         }
       },
       {
         label: "添加好友",
-        someLimits: [this.limits.notFriend],
-        everyLimits: [],
+        visibility: function(filterData: MenuFilterData): boolean {
+          return true;
+        },
         action: (alarmItem, chat) => {
-          console.dir(chat.uid);
+          this.dialogService.confirm({title: "添加好友"}).then(() => {
+            this.snackBarService.openMessage("test");
+          });
         }
       },
       {
         label: "设置管理员",
-        someLimits: [this.limits.owner],
-        everyLimits: [],
+        visibility: function(filterData: MenuFilterData): boolean {
+          return true;
+        },
         action: (alarmItem, chat) => {
-          console.dir(chat.uid);
+          this.dialogService.confirm({title: "设置管理员"}).then((ok) => {
+            if(ok) {
+              this.restService.updateGroupAdmin(
+                alarmItem.alarmItem.dataId,
+                [chat.uid],
+                1).subscribe((res: NewHttpResponseInterface<any>) => {
+                if(res.status === 200) {
+                  this.snackBarService.openMessage(res.msg);
+                } else {
+                  this.snackBarService.openMessage(res.msg);
+                }
+              });
+            }
+          });
         }
       },
       {
         label: "禁言",
-        someLimits: [this.limits.owner, this.limits.manage],
-        everyLimits: [],
+        visibility: function(filterData: MenuFilterData): boolean {
+          return true;
+        },
         action: (alarmItem, chat) => {
-          console.dir(chat.uid);
+          this.dialogService.openDialog(UserSilenceComponent, {
+            data: {alarmItem: alarmItem, chat: chat}
+          }).then();
         }
       },
       {
         label: "移除禁言",
-        someLimits: [this.limits.owner, this.limits.manage],
-        everyLimits: [],
+        visibility: function(filterData: MenuFilterData): boolean {
+          return true;
+        },
         action: (alarmItem, chat) => {
-          console.dir(chat.uid);
+          this.dialogService.confirm({title: "移除禁言"}).then((ok) => {
+            if(ok) {
+              const userId = this.localUserService.localUserInfo.userId;
+              const data = {
+                clusterId: alarmItem.alarmItem.dataId.toString(),
+                userId: chat.uid,
+                adminId: userId.toString()
+              };
+              this.restService.deleteGroupSilenceById(data).subscribe((res: NewHttpResponseInterface<any>) => {
+                if(res.status === 200) {
+                  this.snackBarService.openMessage(res.msg);
+                } else {
+                  this.snackBarService.openMessage(res.msg);
+                }
+              });
+            }
+          });
         }
       },
     ];
@@ -230,8 +335,9 @@ export class ContextMenuService {
     this.contextMenuForCollect = [
       {
         label: "demo",
-        someLimits: [this.limits.common],
-        everyLimits: [],
+        visibility: function(filterData: MenuFilterData): boolean {
+          return true;
+        },
         action: () => {
           alert("demo");
         }
@@ -277,92 +383,78 @@ export class ContextMenuService {
     return navigator.clipboard.write(data);
   }
 
+  // /**
+  //  * 获取当前用户可用的群聊菜单权限
+  //  * @param alarmItem
+  //  * @param chat
+  //  * @private
+  //  */
+  // private async generateLimitsForAvatar(alarmItem: AlarmItemInterface, chat: ChatmsgEntityModel) {
+  //   // 检查权限
+  //   const common = true;
+  //   let manage = false;
+  //   let owner = false;
+  //   let isFriend = false;
+  //   let notFriend = false;
+  //   let privacyClose = false;
+  //   // 会话id
+  //   const chattingId = alarmItem.alarmItem.dataId;
+  //   // 会话类型 friend | group
+  //   const chattingType = alarmItem.metadata.chatType;
+  //   if(chattingType === 'group') {
+  //     await this.cacheService.getCacheGroupAdmins().then(data => {
+  //       if(data[chattingId] && data[chattingId][this.localUserService.localUserInfo.userId]) {
+  //         manage = true; // 检查是否是管理员
+  //       }
+  //     });
+  //     await this.cacheService.getCacheFriends().then(data => {
+  //       if(data[chat.uid] || chat.uid.toString() === this.localUserService.localUserInfo.userId.toString()) {
+  //         isFriend = true; // 检查是否是好友
+  //       } else {
+  //         notFriend = true;
+  //       }
+  //     });
+  //     // 获取群信息/成员列表
+  //     await this.cacheService.getCacheGroups().then(data => {
+  //       const g: GroupModel = data[chattingId];
+  //       if(g) {
+  //         if(g.gownerUserUid.toString() === this.localUserService.localUserInfo.userId.toString()) {
+  //           owner = true; // 检查是否是群主
+  //         }
+  //         if(g.allowPrivateChat.toString() === '0') {
+  //           privacyClose = true; // 检查是否开启隐私
+  //         }
+  //         // 如果右键目标是自己
+  //         if(g.gownerUserUid.toString() === chat.uid.toString()) {
+  //           owner = false;
+  //           privacyClose = false;
+  //           manage = false;
+  //           isFriend = true;
+  //         }
+  //       }
+  //     });
+  //   }
+  //
+  //   return [
+  //     (common ? 'common' : false),
+  //     (manage ? 'manage' : false),
+  //     (owner ? 'owner' : false),
+  //     (isFriend ? 'isFriend' : false),
+  //     (notFriend ? 'notFriend' : false),
+  //     (privacyClose ? 'privacyClose' : false),
+  //   ].filter(v => v) as string[];
+  // }
+
   /**
-   * 获取当前用户可用的群聊菜单权限
+   * 过滤可见菜单
+   * @param menus
    * @param alarmItem
    * @param chat
    * @private
    */
-  private async generateLimitsForAvatar(alarmItem: AlarmItemInterface, chat: ChatmsgEntityModel) {
-    // 检查权限
-    const common = true;
-    let manage = false;
-    let owner = false;
-    let isFriend = false;
-    let notFriend = false;
-    let privacyClose = false;
-    // 会话id
-    const chattingId = alarmItem.alarmItem.dataId;
-    // 会话类型 friend | group
-    const chattingType = alarmItem.metadata.chatType;
-    if(chattingType === 'group') {
-      await this.cacheService.getCacheGroupAdmins().then(data => {
-        if(data[chattingId] && data[chattingId][this.localUserService.localUserInfo.userId]) {
-          manage = true; // 检查是否是管理员
-        }
-      });
-      await this.cacheService.getCacheFriends().then(data => {
-        if(data[chat.uid] || chat.uid.toString() === this.localUserService.localUserInfo.userId.toString()) {
-          isFriend = true; // 检查是否是好友
-        } else {
-          notFriend = true;
-        }
-      });
-      // 获取群信息/成员列表
-      await this.cacheService.getCacheGroups().then(data => {
-        const g: GroupModel = data[chattingId];
-        if(g) {
-          if(g.gownerUserUid.toString() === this.localUserService.localUserInfo.userId.toString()) {
-            owner = true; // 检查是否是群主
-          }
-          if(g.allowPrivateChat.toString() === '0') {
-            privacyClose = true; // 检查是否开启隐私
-          }
-          // 如果右键目标是自己
-          if(g.gownerUserUid.toString() === chat.uid.toString()) {
-            owner = false;
-            privacyClose = false;
-            manage = false;
-            isFriend = true;
-          }
-        }
-      });
-    }
-
-    return [
-      (common ? 'common' : false),
-      (manage ? 'manage' : false),
-      (owner ? 'owner' : false),
-      (isFriend ? 'isFriend' : false),
-      (notFriend ? 'notFriend' : false),
-      (privacyClose ? 'privacyClose' : false),
-    ].filter(v => v) as string[];
-  }
-
-  /**
-   * 根据权限获取允许的菜单
-   * @param limits
-   * @param menus
-   * @private
-   */
-  private filterMenus(limits: string[], menus: BaseContextMenuModel[]): BaseContextMenuModel[] {
-    const someMenu = [];
-    this.contextMenuForAvatar.forEach(item => {
-      const allow = limits.some(v => item.someLimits.includes(v));
-      if(allow) {
-        someMenu.push(item);
-      }
-    });
-    const everyMenu = [];
-    someMenu.forEach(item => {
-      const allow = limits.every(v => item.everyLimits.includes(v));
-      if(allow || item.everyLimits.length === 0) {
-        everyMenu.push(item);
-      }
-    });
-
-    return everyMenu;
-  }
+  // private filterMenus(menus: BaseContextMenuModel[], alarmItem: AlarmItemInterface, chat: ChatmsgEntityModel): BaseContextMenuModel[] {
+  //   return menus.filter(item => item.visibility(alarmItem, chat));
+  // }
 
   /**
    * 消息
@@ -389,8 +481,53 @@ export class ContextMenuService {
    * @param chat
    */
   async getContextMenuForAvatar(alarmItem: AlarmItemInterface, chat: ChatmsgEntityModel) {
-    const limits: string[] = await this.generateLimitsForAvatar(alarmItem, chat);
-    return this.filterMenus(limits, this.contextMenuForAvatar) as ContextMenuAvatarModel[];
+    let admins: unknown = null;
+    let friends: unknown = null;
+    let groups: unknown = null;
+    await this.cacheService.getCacheGroupAdmins().then(data => {
+      admins = data;
+      // if(data[chattingId] && data[chattingId][this.localUserService.localUserInfo.userId]) {
+      //   manage = true; // 检查是否是管理员
+      // }
+    });
+    await this.cacheService.getCacheFriends().then(data => {
+      friends = data;
+      // if(data[chat.uid] || chat.uid.toString() === this.localUserService.localUserInfo.userId.toString()) {
+      //   isFriend = true; // 检查是否是好友
+      // } else {
+      //   notFriend = true;
+      // }
+    });
+    // 获取群信息/成员列表
+    await this.cacheService.getCacheGroups().then(data => {
+      groups = data;
+      // const g: GroupModel = data[chattingId];
+      // if(g) {
+      //   if(g.gownerUserUid.toString() === this.localUserService.localUserInfo.userId.toString()) {
+      //     owner = true; // 检查是否是群主
+      //   }
+      //   if(g.allowPrivateChat.toString() === '0') {
+      //     privacyClose = true; // 检查是否开启隐私
+      //   }
+      //   // 如果右键目标是自己
+      //   if(g.gownerUserUid.toString() === chat.uid.toString()) {
+      //     owner = false;
+      //     privacyClose = false;
+      //     manage = false;
+      //     isFriend = true;
+      //   }
+      // }
+    });
+
+    const filterData = {
+      admins: admins,
+      friends: friends,
+      groups: groups,
+      alarmItem: alarmItem,
+      chat: chat
+    };
+
+    return this.contextMenuForAvatar.filter(item => item.visibility(filterData)) as ContextMenuAvatarModel[];
   }
 
   /**

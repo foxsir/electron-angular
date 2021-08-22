@@ -21,9 +21,9 @@ export class CollectComponent implements OnInit {
         {
             label: "发送给好友",
             limits: "",
-            action: (item: any, messageContainer: HTMLDivElement) => {
+            action: (item: any) => {
                 //this.copyTextToClipboard(messageContainer);
-                console.log('发送给好友：', messageContainer);
+                // console.log('发送给好友：', messageContainer);
             }
         },
         {
