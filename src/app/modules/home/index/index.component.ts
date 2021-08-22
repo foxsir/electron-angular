@@ -31,45 +31,54 @@ import collectActive from "@app/assets/icons/collect-active.svg";
 import {AvatarService} from "@services/avatar/avatar.service";
 import NewHttpResponseInterface from "@app/interfaces/new-http-response.interface";
 import RBChatUtils from "@app/libs/rbchat-utils";
-import {CacheService} from "@services/cache/cache.service";
+import { CacheService } from "@services/cache/cache.service";
+import netConnect from "@app/assets/icons/net-connect.svg";
+import netDisConnect from "@app/assets/icons/net-disconnect.svg";
+
 // import svg end
 
 @Component({
-  selector: 'app-index',
-  templateUrl: './index.component.html',
-  styleUrls: ['./index.component.scss']
+    selector: 'app-index',
+    templateUrl: './index.component.html',
+    styleUrls: ['./index.component.scss']
 })
 export class IndexComponent implements OnInit {
-  chatting = chatting.toString();
+    chatting = chatting.toString();
 
-  massageBadges = {
-    message: 0
-  };
+    massageBadges = {
+        message: 0
+    };
 
-  myAvatar: SafeResourceUrl = this.dom.bypassSecurityTrustResourceUrl(
-    this.avatarService.defaultLocalAvatar
-  );
+    myAvatar: SafeResourceUrl = this.dom.bypassSecurityTrustResourceUrl(
+        this.avatarService.defaultLocalAvatar
+    );
 
-  currentRouter: string = "";
+    currentRouter: string = "";
 
-  leftMenu = [
-    {
-      path: 'message',
-      label: "消息",
-      router: "/home/message",
-      icon: this.dom.bypassSecurityTrustResourceUrl(chatting),
-      iconUnActive: this.dom.bypassSecurityTrustResourceUrl(chatting),
-      iconActive: this.dom.bypassSecurityTrustResourceUrl(chattingActive),
-    },
-    {
-      path: 'address-list',
-      label: "通讯录",
-      router: "/home/address-list",
-      icon: this.dom.bypassSecurityTrustResourceUrl(addressList),
-      iconUnActive: this.dom.bypassSecurityTrustResourceUrl(addressList),
-      iconActive: this.dom.bypassSecurityTrustResourceUrl(addressListActive),
-    }
-  ];
+    leftMenu = [
+        {
+            path: 'message',
+            label: "消息",
+            router: "/home/message",
+            icon: this.dom.bypassSecurityTrustResourceUrl(chatting),
+            iconUnActive: this.dom.bypassSecurityTrustResourceUrl(chatting),
+            iconActive: this.dom.bypassSecurityTrustResourceUrl(chattingActive),
+        },
+        {
+            path: 'address-list',
+            label: "通讯录",
+            router: "/home/address-list",
+            icon: this.dom.bypassSecurityTrustResourceUrl(addressList),
+            iconUnActive: this.dom.bypassSecurityTrustResourceUrl(addressList),
+            iconActive: this.dom.bypassSecurityTrustResourceUrl(addressListActive),
+        }
+    ];
+
+    leftMenuNet = {
+        isOnline: true,
+        iconUnActive: this.dom.bypassSecurityTrustResourceUrl(netDisConnect),
+        iconActive: this.dom.bypassSecurityTrustResourceUrl(netConnect),
+    };
 
   /************************************ 全局其它变量 ************************************/
   mCurrentSelectedAlarmType = -1;  // 左侧列表中当前选中的数据类型
@@ -379,32 +388,34 @@ export class IndexComponent implements OnInit {
    * 【补充说明】：在当前的代码中，本函数将被MobileIMSDK-Web框架回调，请见this.imService.callback_disconnected 回调函数的设置。
    * 【建议用途】：开发者可在此回调中处理掉线时的界面状态更新等，比如设置将界面上的“在线”文字更新成“离线”。
    */
-  onIMDisconnected() {
-    this.log('[IM] Sorry，你掉线了 ...', true);
+    onIMDisconnected() {
+        this.leftMenuNet.isOnline = false;
+        this.log('[IM] Sorry，你掉线了 ...', true);
 
-    // 刷新本地用户的在线状态显示
-    // RBChatLocalUserUI.refreshOnlineStatus();
-    // // 刷新网络连接情况的ui显录
-    // RBChatLocalUserUI.refreshConnectionStatus();
-  }
+        // 刷新本地用户的在线状态显示
+        // RBChatLocalUserUI.refreshOnlineStatus();
+        // // 刷新网络连接情况的ui显录
+        // RBChatLocalUserUI.refreshConnectionStatus();
+    }
 
-  /**
-   * 掉线重连成功时要调用的函数。
-   *
-   * 【补充说明】：在当前的代码中，本函数将被MobileIMSDK-Web框架回调，请见this.imService.callback_reconnectSucess 回调函数的设置。
-   * 【建议用途】：开发者可在此回调中处理掉线重连成功后的界面状态更新等，比如设置将界面上的“离线”文字更新成“在线”。
-   */
-  onIMReconnectSucess() {
-    this.log('[IM] 掉线自动重连成功了！', true);
+    /**
+    * 掉线重连成功时要调用的函数。
+    *
+    * 【补充说明】：在当前的代码中，本函数将被MobileIMSDK-Web框架回调，请见this.imService.callback_reconnectSucess 回调函数的设置。
+    * 【建议用途】：开发者可在此回调中处理掉线重连成功后的界面状态更新等，比如设置将界面上的“离线”文字更新成“在线”。
+    */
+    onIMReconnectSucess() {
+        this.leftMenuNet.isOnline = true;
+        this.log('[IM] 掉线自动重连成功了！', true);
 
-    // 网络掉线重连成功后，即时重新载入相关数据（如离线消息等）
-    this.loadAllDatas();
+        // 网络掉线重连成功后，即时重新载入相关数据（如离线消息等）
+        this.loadAllDatas();
 
-    // 刷新本地用户的在线状态显示
-    // RBChatLocalUserUI.refreshOnlineStatus();
-    // // 刷新网络连接情况的ui显录
-    // RBChatLocalUserUI.refreshConnectionStatus();
-  }
+        // 刷新本地用户的在线状态显示
+        // RBChatLocalUserUI.refreshOnlineStatus();
+        // // 刷新网络连接情况的ui显录
+        // RBChatLocalUserUI.refreshConnectionStatus();
+    }
 
   /**
    * 本地发出心跳包后的回调通知（本回调并非MobileIMSDK-Web核心逻辑，开发者可以不需要实现！）。
