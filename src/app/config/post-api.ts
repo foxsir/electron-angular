@@ -50,7 +50,10 @@ export const generate = _HTTP_SERVER_URL +"/api/token/generate";
 export const systemTime = _HTTP_SERVER_URL +"/api/token/systemTime";
 
 //修改备注
-export const updRemark = _HTTP_SERVER_URL +"/api/user/updRemark";
+export const updRemark = _HTTP_SERVER_URL + "/api/user/updRemark";
+
+// 用户好友相关 - 查看好友备注
+export const getRemark = _HTTP_SERVER_URL + "/api/user/getRemark";
 
 
 

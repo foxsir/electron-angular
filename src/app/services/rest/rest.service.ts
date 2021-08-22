@@ -23,7 +23,8 @@ import {
   getFriendGroupList,
   getFriendSearch,
   getGroupAdminInfo,
-  updRemark,
+    updRemark,
+    getRemark,
   updateGroupAdmin,
   addGroupSilence,
   deleteGroupSilenceById,
@@ -546,7 +547,26 @@ export class RestService {
 
     return this.restServer(MyProcessorConst.PROCESSOR_GROUP_CHAT, JobDispatchConst.LOGIC_GROUP_BASE_MGR, SysActionConst.ACTION_APPEND1
       , JSON.stringify(m));
-  }
+    }
+
+    /**
+ * 用户好友相关 - 查看好友备注
+ */
+    getRemark(data: any): Observable<any> {
+        const localUserInfo = this.localUserService.getObj();
+        data.id = localUserInfo.userId.toString();
+
+        return this.http.get(getRemark, data);
+    }
+
+    /**
+     * 用户好友相关 - 修改好友备注
+     */
+    updRemark(search: { userId?: string; friendAccount: string }): Observable<any> {
+        const localUserInfo = this.localUserService.getObj();
+        search.userId = localUserInfo.userId.toString();
+        return this.http.post(getFriendSearch, search);
+    }
 
   /**
    * 【接口1016-24-23】删除群成员或退群接口调用.

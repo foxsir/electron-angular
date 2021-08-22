@@ -16,7 +16,7 @@ import { RestService } from "@services/rest/rest.service";
     styleUrls: ['./chatting-setting.component.scss']
 })
 export class ChattingSettingComponent implements OnInit {
-    @Input() currentChat: AlarmItemInterface; // 测试群ID：0000000642
+    @Input() currentChat: AlarmItemInterface;
     @Input() drawer: MatDrawer;
 
     public closeIcon = this.dom.bypassSecurityTrustResourceUrl(closeIcon);
@@ -31,12 +31,17 @@ export class ChattingSettingComponent implements OnInit {
         userMail: '',
         whatSUp: '',
         nickname: '',
+        remark: '请输入备注',
     };
 
     constructor(private dom: DomSanitizer, private restService: RestService) {
-        console.log('currentChat: ', this.currentChat);
+        
+    }
 
-        this.restService.getUserBaseById('400340').subscribe(res => {
+    ngOnInit(): void {
+        console.log('currentChat ngOnInit: ', this.currentChat);
+
+        this.restService.getUserBaseById(this.currentChat.alarmItem.dataId).subscribe(res => {
             console.log('getUserBaseById result: ', res);
             this.userData = res.data;
 
@@ -44,11 +49,11 @@ export class ChattingSettingComponent implements OnInit {
             this.setting_data.latestLoginAddres = this.userData.latestLoginAddres;
             this.setting_data.latestLoginIp = this.userData.latestLoginIp;
             this.setting_data.userMail = this.userData.userMail;
-            this.setting_data.whatSUp = this.userData.whatSUp == null || this.userData.whatSUp.length == 0 ? '此人很懒，什么都没留下' : this.userData.whatSUp;            
+            this.setting_data.whatSUp = this.userData.whatSUp == null || this.userData.whatSUp.length == 0 ? '此人很懒，什么都没留下' : this.userData.whatSUp;
         });
-    }
 
-    ngOnInit(): void {
-
+        this.restService.getRemark({ toUserId: this.currentChat.alarmItem.dataId }).subscribe(res => {
+            this.setting_data.remark = res.data == null || res.data.length == 0 ? '请输入备注' : res.data;
+        });
     }
 }
