@@ -30,6 +30,19 @@
               </div>
             </div>
           </div>
+            <div fxFlex="100">
+                <div style="cursor: pointer">
+                    <div fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="6px">
+                        <div>
+                            <mat-icon style="width: 30px">
+                                <img *ngIf="leftMenuNet.isOnline == true" class="left-icon" [src]="leftMenuNet.iconActive" alt="">
+                                <img *ngIf="leftMenuNet.isOnline == false" class="left-icon" [src]="leftMenuNet.iconUnActive"alt="">
+                            </mat-icon>
+                        </div>
+                        <div style="font-size:10px;">{{leftMenuNet.isOnline == true ? '网络通畅' : '网络断开'}}</div>
+                    </div>
+                </div>
+            </div>
         </div>
       </mat-card-content>
     </mat-card>

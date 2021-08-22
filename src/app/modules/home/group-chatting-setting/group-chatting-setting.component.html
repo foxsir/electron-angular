@@ -1,1 +1,111 @@
-<p>group-chatting-setting works!</p>
+<div fxLayout="column" style="background: #F1F1F1;">
+    <!--<div fxFlex>
+        <app-toolbar [visibilityActions]="false"></app-toolbar>
+    </div>-->
+    <div fxFlex="62px">
+        <mat-card class="mat-elevation-z0" fxLayoutAlign="stretch center" fxFlex="100" style="padding: 11px 16px;">
+            <mat-card-content fxFlex="100">
+                <div fxLayout="row">
+                    <div fxFlex="100px" fxLayoutAlign="space-between center">
+                        <mat-icon (click)="back()" class="hover-icon">
+                            <img [src]="backspaceIcon" alt="" class="icon">
+                            <img [src]="backspaceActiveIcon" alt="" class="icon-active">
+                        </mat-icon>
+                        <span>{{view_title_object[view_mode]}}</span>
+                    </div>
+                    <div fxFlex fxLayoutAlign="end center">
+                        <mat-icon (click)="drawer.close()" class="hover-icon icon14">
+                            <img [src]="closeIcon" alt="" class="icon">
+                            <img [src]="closeActiveIcon" alt="" class="icon-active">
+                        </mat-icon>
+                    </div>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+    <div class="split-item"></div>
+    <div fxFlex>
+        <mat-card class="mat-elevation-z0">
+            <mat-card-content>
+                <div *ngIf="view_mode == 'switch_default'" fxLayout="column" fxLayoutGap="10px">
+                    <div fxFlex fxLayoutAlign="space-between center">
+                        <span class="privacy-item-text">启用专属客服</span>
+                        <nz-switch [(ngModel)]="setting_data.customerServiceSwitch" (ngModelChange)="bySwitch('customerServiceSwitch')" nzSize="small"></nz-switch>
+                    </div>
+                    <div fxFlex fxLayoutAlign="space-between center" class="group-pointer">
+                        <span class="privacy-item-text">客服</span>
+                        <span>&gt;</span>
+                    </div>
+
+                    <div class="split-item"></div>
+
+                    <div fxFlex fxLayoutAlign="space-between center">
+                        <span class="privacy-item-text">启用群页签</span>
+                        <nz-switch [(ngModel)]="setting_data.tabSwitch" (ngModelChange)="bySwitch('tabSwitch')" nzSize="small"></nz-switch>
+                    </div>
+                    <div fxFlex fxLayoutAlign="space-between center" class="group-pointer">
+                        <span class="privacy-item-text">群页签设置</span>
+                        <span>&gt;</span>
+                    </div>
+
+                    <div class="split-item"></div>
+
+                    <div fxFlex fxLayoutAlign="space-between center">
+                        <span class="privacy-item-text">启用群上屏编辑</span>
+                        <nz-switch [(ngModel)]="setting_data.topContentSwitch" (ngModelChange)="bySwitch('topContentSwitch')" nzSize="small"></nz-switch>
+                    </div>
+                    <div fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="changeView('group_top')">
+                        <span class="privacy-item-text">群上屏编辑</span>
+                        <span>&gt;</span>
+                    </div>
+
+                    <div class="split-item"></div>
+
+                    <div fxFlex fxLayoutAlign="space-between center">
+                        <span class="privacy-item-text">允许普通成员接受禁言通知</span>
+                        <nz-switch [(ngModel)]="setting_data.silenceNotice" (ngModelChange)="bySwitch('silenceNotice')" nzSize="small"></nz-switch>
+                    </div>
+                    <div fxFlex fxLayoutAlign="space-between center">
+                        <span class="privacy-item-text">允许普通成员接受撤回通知</span>
+                        <nz-switch [(ngModel)]="setting_data.revocationNotice" (ngModelChange)="bySwitch('revocationNotice')" nzSize="small"></nz-switch>
+                    </div>
+                    <div fxFlex fxLayoutAlign="space-between center">
+                        <span class="privacy-item-text">允许普通成员接受退群通知</span>
+                        <nz-switch [(ngModel)]="setting_data.kickNotice" (ngModelChange)="bySwitch('kickNotice')" nzSize="small"></nz-switch>
+                    </div>
+
+                    <div class="split-item"></div>
+
+                    <div fxFlex fxLayoutAlign="space-between center">
+                        <span class="privacy-item-text">发言间隔</span>
+                        <nz-switch [(ngModel)]="setting_data.talkIntervalSwitch" (ngModelChange)="bySwitch('talkIntervalSwitch')" nzSize="small"></nz-switch>
+                    </div>
+                    <div fxFlex fxLayoutAlign="space-between center" class="group-pointer">
+                        <span class="privacy-item-text">普通成员发言间隔</span>
+                        <span>&gt;</span>
+                    </div>
+                </div>
+
+                <div *ngIf="view_mode == 'group_top'" fxLayout="column" fxLayoutGap="10px">
+                    <div *ngIf="group_top_view_mode == 'view'">
+                        <div>
+                            <p>{{setting_data.gtopContent}}</p>
+                        </div>
+                        <div style="text-align:right;">
+                            <button nz-button nzType="link" class="btnsave" (click)="editGroupTop()">编辑</button>
+                        </div>                        
+                    </div>
+                    <div *ngIf="group_top_view_mode == 'edit'" class="edit-group-top">
+                        <div class="martop1">
+                            <textarea type="text" nz-input [(ngModel)]="setting_data.gtopContentTemp" class="txtcom" placeholder="请输入群上屏信息"></textarea>
+                        </div>
+                        <div class="martop2">
+                            <button nz-button nzType="link" class="btncancel" (click)="cancelGroupTop()">取消</button>
+                            <button nz-button nzType="link" class="btnsave" (click)="saveGroupTop()">保存</button>
+                        </div>
+                    </div>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>

@@ -16,6 +16,8 @@ import {
   getPrivacyConfigById,
   updatePrivacyConfig,
   getUserJoinGroup,
+  getGroupBaseById,
+  updateGroupBaseById,
   getNewFriend,
   blackUser,
   getFriendGroupList,
@@ -25,7 +27,7 @@ import {
   updateGroupAdmin,
   addGroupSilence,
   deleteGroupSilenceById,
-  getGroupSilenceById
+  getGroupSilenceById,
 } from "@app/config/post-api";
 import {HttpHeaders} from "@angular/common/http";
 
@@ -831,6 +833,29 @@ export class RestService {
     getUserJoinGroup(): Observable<any> {
         const localUserInfo = this.localUserService.getObj();
         return this.http.get(getUserJoinGroup, { userId: localUserInfo.userId });
+    }
+
+    /**
+     * 通过id查询群的基本信息
+     */
+    getGroupBaseById(id) {
+        const localUser = this.localUserService.getObj();
+        const data = {
+            userId: localUser.userId,
+        };
+        return this.http.get(getGroupBaseById, { id: id });
+    }
+
+    /**
+     * 群组相关 - 更新群的基本信息
+     * @param user_id
+     */
+    updateGroupBaseById(data: any): Observable<any> {
+        //const localUserInfo = this.localUserService.getObj();
+        //console.dir(localUserInfo)
+        //data.userId = localUserInfo.userId;
+
+        return this.http.post(updateGroupBaseById, data);
     }
 
     /*

@@ -1,0 +1,46 @@
+.privacy-item-text {
+  font-size: 13px;
+  font-weight: 400;
+  color: #383838;
+  line-height: 22px;
+}
+
+.group-pointer{
+    cursor:pointer;
+}
+
+.split-item{
+    background-color:rgb(241, 241, 241);
+    height:10px;
+    margin-left:-33px;
+    margin-right:-33px;
+}
+
+.edit-group-top{
+    .martop1{
+        margin-top:20px;
+    }
+
+    .martop2{
+        margin-top:25px;
+        text-align:right;
+    }
+
+    .txtcom{
+        /*border:none;
+        outline:none;
+        border-bottom:1px solid #dddddd;*/
+        height:300px;
+    }
+
+    .btncancel{
+        padding-left:0px;
+        padding-right:0px;
+    }
+
+    .btnsave{
+        padding-left:0px;
+        padding-right:0px;
+        margin-left:20px;
+    }
+}
