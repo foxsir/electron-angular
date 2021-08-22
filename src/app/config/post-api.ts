@@ -100,6 +100,15 @@ export const getNewFriend = _HTTP_SERVER_URL + "/api/friend/new-friend/";
 // 设置/删除群成员
 export const updateGroupAdmin = _HTTP_SERVER_URL + "/api/groupBase/updateAdmin/";
 
+// 对个人禁言
+export const addGroupSilence = _HTTP_SERVER_URL + "/api/groupSilence/addGroupSilence/";
+
+// 解除个人禁言
+export const deleteGroupSilenceById = _HTTP_SERVER_URL + "/api/groupSilence/deleteGroupSilenceById/";
+
+// 被禁言的人员列表
+export const getGroupSilenceById = _HTTP_SERVER_URL + "/api/groupSilence/getGroupSilenceById/";
+
 
 //
 //  //封装请求函数
