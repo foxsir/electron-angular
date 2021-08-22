@@ -31,7 +31,7 @@ import {TempMessageService} from "@services/temp-message/temp-message.service";
 import {GroupMessageService} from "@services/group-message/group-message.service";
 import {RosterProviderService} from "@services/roster-provider/roster-provider.service";
 import {SnackBarService} from "@services/snack-bar/snack-bar.service";
-import {ProtocalModel} from "@app/models/protocal.model";
+import {ProtocalModel, ProtocalModelDataContent} from "@app/models/protocal.model";
 import {MessageDistributeService} from "@services/message-distribute/message-distribute.service";
 import HttpPresponseModel from "@app/interfaces/http-response.interface";
 import ChattingModel from "@app/models/chatting.model";
@@ -45,6 +45,7 @@ import {QuoteMessageService} from "@services/quote-message/quote-message.service
 import {MessageRoamService} from "@services/message-roam/message-roam.service";
 import {NavigationEnd, Router} from "@angular/router";
 import {CurrentChattingChangeService} from "@modules/home/chatting-area/current-chatting-change/current-chatting-change.service";
+import {SwitchChatService} from "@services/switch-chat/switch-chat.service";
 
 @Component({
   selector: 'app-message',
@@ -115,6 +116,7 @@ export class MessageComponent implements OnInit {
     private quoteMessageService: QuoteMessageService,
     private messageRoamService: MessageRoamService,
     private currentChattingChangeService: CurrentChattingChangeService,
+    private switchChatService: SwitchChatService,
   ) {
     this.localUserInfo = this.localUserService.localUserInfo;
 
@@ -124,6 +126,48 @@ export class MessageComponent implements OnInit {
     // this.subscribeMessagesBeReceived();
     // this.subscribeQuote();
     this.subscribeChattingListUpdate();
+
+    this.subscribeGroupAdminChange();
+    this.subscribeCommonSystemMessage();
+    this.subscribeGroupMemberWasRemoved();
+    this.subscribeGroupMemberQuit();
+  }
+
+  /**
+   * 群管理员变更
+   */
+  subscribeGroupAdminChange() {
+    this.messageDistributeService.UPDATE_GROUP_ADMIN$.subscribe((res: ProtocalModel) => {
+      this.snackBarService.openSnackBar('群管理员发生变更');
+    });
+  }
+
+  /**
+   * 有人退群
+   */
+  subscribeGroupMemberQuit() {
+    this.messageDistributeService.MT50_OF_GROUP$SYSCMD_SOMEONEB$REMOVED_FROM$SERVER$.subscribe((res: ProtocalModel) => {
+      this.snackBarService.openSnackBar('有人退群');
+    });
+  }
+
+  /**
+   * "你"被踢出群聊
+   */
+  subscribeGroupMemberWasRemoved() {
+    this.messageDistributeService.MT49_OF_GROUP$SYSCMD_YOU$BE$KICKOUT_FROM$SERVER$.subscribe((res: ProtocalModel) => {
+      this.snackBarService.openSnackBar('被踢');
+    });
+  }
+
+  /**
+   * 通用通知消息
+   */
+  subscribeCommonSystemMessage() {
+    this.messageDistributeService.MT47_OF_GROUP$SYSCMD_COMMON$INFO_FROM$SERVER$.subscribe((res: ProtocalModel) => {
+      const dataContent: ProtocalModelDataContent = JSON.parse(res.dataContent);
+      this.snackBarService.openSnackBar(dataContent.m);
+    });
   }
 
   ngOnInit(): void {
@@ -154,6 +198,9 @@ export class MessageComponent implements OnInit {
       });
     });
 
+    this.switchChatService.currentChat$.subscribe(alarm => {
+      return this.switchChat(alarm);
+    });
   }
 
   /**
