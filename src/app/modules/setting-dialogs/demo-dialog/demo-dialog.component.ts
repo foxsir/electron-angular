@@ -13,7 +13,7 @@ export class DemoDialogComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<DemoDialogComponent>, // 必需
-    @Inject(MAT_DIALOG_DATA) public data: object, // 必需
+    @Inject(MAT_DIALOG_DATA) public data: unknown, // 必需
     private dialogService: DialogService
   ) { }
 
@@ -32,7 +32,7 @@ export class DemoDialogComponent implements OnInit {
     const data = {
 
     };
-    this.dialogService.openDialog(DemoDialogComponent, {data: data}).then((res: object) => {
+    this.dialogService.openDialog(DemoDialogComponent, {data: data}).then((res: unknown) => {
       console.dir(res);
     });
   }
