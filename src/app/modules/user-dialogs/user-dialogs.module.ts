@@ -17,6 +17,9 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzListModule } from 'ng-zorro-antd/list';
 import { UserInfoComponent } from './user-info/user-info.component';
+import { SetRemarkComponent } from './set-remark/set-remark.component';
+import { UserSilenceComponent } from './user-silence/user-silence.component';
+import {MatRadioModule} from "@angular/material/radio";
 
 
 @NgModule({
@@ -25,25 +28,28 @@ import { UserInfoComponent } from './user-info/user-info.component';
         PrivacySettingComponent,
         MySignatureComponent,
         UpdatePasswordComponent,
-        UserInfoComponent
+        UserInfoComponent,
+        SetRemarkComponent,
+        UserSilenceComponent
     ],
     exports: [
         PrivacySettingComponent
     ],
-    imports: [
-        CommonModule,
-        MatDialogModule,
-        MatButtonModule,
-        MatCardModule,
-        FlexLayoutModule,
-        TitleBarModule,
-        MatIconModule,
-        FormsModule,
-        NzSwitchModule,
-        NzSelectModule,
-        NzInputModule,
-        NzButtonModule,
-        NzListModule
+  imports: [
+    CommonModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatCardModule,
+    FlexLayoutModule,
+    TitleBarModule,
+    MatIconModule,
+    FormsModule,
+    NzSwitchModule,
+    NzSelectModule,
+    NzInputModule,
+    NzButtonModule,
+    NzListModule,
+    MatRadioModule
   ]
 })
 export class UserDialogsModule { }
