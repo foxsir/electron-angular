@@ -97,6 +97,9 @@ export const getFriendSearch = _HTTP_SERVER_URL + "/api/friend/search";
 // 新的朋友
 export const getNewFriend = _HTTP_SERVER_URL + "/api/friend/new-friend/";
 
+// 设置/删除群成员
+export const updateGroupAdmin = _HTTP_SERVER_URL + "/api/groupBase/updateAdmin/";
+
 
 //
 //  //封装请求函数
