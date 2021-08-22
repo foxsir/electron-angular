@@ -16,7 +16,7 @@ import { RestService } from "@services/rest/rest.service";
     styleUrls: ['./group-chatting-setting.component.scss']
 })
 export class GroupChattingSettingComponent implements OnInit {
-    @Input() currentChat: AlarmItemInterface; // ²âÊÔÈºID£º0000000642
+    @Input() currentChat: AlarmItemInterface; // æµ‹è¯•ç¾¤IDï¼š0000000642
     @Input() drawer: MatDrawer;
 
     public closeIcon = this.dom.bypassSecurityTrustResourceUrl(closeIcon);
@@ -26,14 +26,29 @@ export class GroupChattingSettingComponent implements OnInit {
 
     public groupData;
     public setting_data = {
-        customerServiceSwitch: false, /*×¨Êô¿Í·þ¿ª¹Ø*/
-        tabSwitch: false, /*ÈºÒ³Ç©¿ª¹Ø*/
-        topContentSwitch: false, /*ÈºÉÏÆÁ¿ª¹Ø*/
-        silenceNotice: false, /*½ûÑÔÍ¨Öª¿ª¹Ø*/
-        revocationNotice: false, /*³·»ØÍ¨Öª¿ª¹Ø*/
-        kickNotice: false, /*ÍËÈºÍ¨Öª¿ª¹Ø*/
-        talkIntervalSwitch: false, /*·¢ÑÔ¼ä¸ô¿ª¹Ø*/
+        customerServiceSwitch: false, /*ä¸“å±žå®¢æœå¼€å…³*/
+        tabSwitch: false, /*ç¾¤é¡µç­¾å¼€å…³*/
+        topContentSwitch: false, /*ç¾¤ä¸Šå±å¼€å…³*/
+        silenceNotice: false, /*ç¦è¨€é€šçŸ¥å¼€å…³*/
+        revocationNotice: false, /*æ’¤å›žé€šçŸ¥å¼€å…³*/
+        kickNotice: false, /*é€€ç¾¤é€šçŸ¥å¼€å…³*/
+        talkIntervalSwitch: false, /*å‘è¨€é—´éš”å¼€å…³*/
+
+        gtopContent: '', /*ç¾¤ä¸Šå±ä¿¡æ¯*/
+        gtopContentTemp: '', /*ç¾¤ä¸Šå±ä¿¡æ¯ï¼Œç¼–è¾‘ï¼Œä¸´æ—¶å­˜æ”¾*/
     };
+
+    /*
+     * switch_default: é»˜è®¤
+     * group_top: ç¾¤ä¸Šå±ç¼–è¾‘
+     */
+    public view_mode = "switch_default";
+    public view_title_object = {
+        switch_default: 'ç¾¤é…ç½®',
+        group_top: 'ç¾¤ä¸Šå±ç¼–è¾‘'
+    };
+
+    public group_top_view_mode = "view"; /*view æˆ–è€… edit*/
 
     constructor(private dom: DomSanitizer, private restService: RestService) {
         console.log('currentChat: ', this.currentChat);
@@ -49,6 +64,8 @@ export class GroupChattingSettingComponent implements OnInit {
             this.setting_data.revocationNotice = this.groupData.revocationNotice == 1;
             this.setting_data.kickNotice = this.groupData.kickNotice == 1;
             this.setting_data.talkIntervalSwitch = this.groupData.talkIntervalSwitch == 1;
+
+            this.setting_data.gtopContent = this.groupData.gtopContent;
         }); 
     }
 
@@ -64,7 +81,48 @@ export class GroupChattingSettingComponent implements OnInit {
 
         this.restService.updateGroupBaseById(data).subscribe(res => {
 
-        }); 
+        });
+    }
+
+    back() {
+        switch (this.view_mode) {
+            case "switch_default":
+                this.drawer.close();
+                break;
+
+            default:
+                this.view_mode = "switch_default";
+                break;
+        }
+    }
+
+    changeView(view) {
+        this.view_mode = view;
+
+        if (view == 'group_top') {
+            this.group_top_view_mode = 'view';
+        }
+    }
+
+    editGroupTop() {
+        this.group_top_view_mode = 'edit';
+        this.setting_data.gtopContentTemp = this.setting_data.gtopContent;
+    }
+
+    cancelGroupTop() {
+        this.group_top_view_mode = 'view';
+    }
+
+    saveGroupTop() {
+        var data = {
+            gid: '0000000642',
+            gtopContent: this.setting_data.gtopContentTemp
+        };
+
+        this.restService.updateGroupBaseById(data).subscribe(res => {
+            this.group_top_view_mode = 'view';
+            this.setting_data.gtopContent = this.setting_data.gtopContentTemp;
+        });  
     }
 
 }
