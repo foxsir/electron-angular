@@ -103,6 +103,9 @@ export const getGroupBaseById = _HTTP_SERVER_URL + "/api/groupBase/getGroupBaseB
 // 群组相关 - 更新群的基本信息
 export const updateGroupBaseById = _HTTP_SERVER_URL + "/api/groupBase/updateGroupBaseById";
 
+// 用户好友相关 - 查看好友备注
+export const getRemark = _HTTP_SERVER_URL + "/api/user/getRemark";
+
 
 //
 //  //封装请求函数

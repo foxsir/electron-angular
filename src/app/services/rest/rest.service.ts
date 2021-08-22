@@ -21,7 +21,10 @@ import {
     getNewFriend,
     blackUser,
     getFriendGroupList,
-    getFriendSearch, getGroupAdminInfo
+    getFriendSearch,
+    getGroupAdminInfo,
+    getRemark,
+    updRemark,
 } from "@app/config/post-api";
 import {HttpHeaders} from "@angular/common/http";
 
@@ -784,9 +787,28 @@ export class RestService {
    * 查询用户资料
    * @param user_id
    */
-  getUserBaseById(user_id: string): Observable<any> {
-    return this.http.postForm(getUserBaseById, {userUid: user_id});
-  }
+    getUserBaseById(user_id: string): Observable<any> {
+        return this.http.postForm(getUserBaseById, { userUid: user_id });
+    }
+
+    /**
+     * 用户好友相关 - 查看好友备注
+     */
+    getRemark(data: any): Observable<any> {
+        const localUserInfo = this.localUserService.getObj();
+        data.id = localUserInfo.userId.toString();
+
+        return this.http.get(getRemark, data);
+    }
+
+    /**
+     * 用户好友相关 - 修改好友备注
+     */
+    updRemark(search: { userId?: string; friendAccount: string }): Observable<any> {
+        const localUserInfo = this.localUserService.getObj();
+        search.userId = localUserInfo.userId.toString();
+        return this.http.post(getFriendSearch, search);
+    }
 
     /**
      * 编辑个人信息
