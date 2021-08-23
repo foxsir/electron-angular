@@ -26,7 +26,7 @@ import {MessageDistributeService} from "@services/message-distribute/message-dis
 import {MessageEntityService} from "@services/message-entity/message-entity.service";
 import {CacheService} from "@services/cache/cache.service";
 import {ImService} from "@services/im/im.service";
-import {CurrentChattingChangeService} from "@modules/home/chatting-area/current-chatting-change/current-chatting-change.service";
+import {CurrentChattingChangeService} from "@services/current-chatting-change/current-chatting-change.service";
 import {RestService} from "@services/rest/rest.service";
 import {MatDrawer} from "@angular/material/sidenav";
 
@@ -92,6 +92,10 @@ export class ChattingAreaComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.currentChattingChangeService.currentChatting$.subscribe(alarm => {
+      this.searching = false;
+    });
+
     this.subscribeQuote();
 
     if(this.currentChattingChangeService.currentChatting) {
@@ -128,25 +132,32 @@ export class ChattingAreaComponent implements OnInit {
   }
 
   pushMessageToPanel(data: {chat: ChatmsgEntityModel; dataContent: ProtocalModelDataContent}) {
-    if(data.dataContent.cy.toString() === '0') { // 单聊
-      if(this.currentChat && this.currentChat.alarmItem.dataId.toString() === data.dataContent.f.toString()) {
-        if(this.chatMsgEntityList) {
-          this.chatMsgEntityList.push(data.chat);
-          this.scrollToBottom();
-        }
+    if(!data.dataContent) {
+      if(this.chatMsgEntityList) {
+        this.chatMsgEntityList.push(data.chat);
+        this.scrollToBottom();
       }
-    } else if(data.dataContent.cy.toString() === '1') { // 临时聊天/陌生人聊天
-      if(this.currentChat && this.currentChat.alarmItem.dataId.toString() === data.dataContent.f.toString()) {
-        if(this.chatMsgEntityList) {
-          this.chatMsgEntityList.push(data.chat);
-          this.scrollToBottom();
+    } else {
+      if(data.dataContent.cy.toString() === '0') { // 单聊
+        if(this.currentChat && this.currentChat.alarmItem.dataId.toString() === data.dataContent.f.toString()) {
+          if(this.chatMsgEntityList) {
+            this.chatMsgEntityList.push(data.chat);
+            this.scrollToBottom();
+          }
         }
-      }
-    } else if(data.dataContent.cy.toString() === '2') { // 是群
-      if(this.currentChat && this.currentChat.alarmItem.dataId.toString() === data.dataContent.t.toString()) {
-        if(this.chatMsgEntityList) {
-          this.chatMsgEntityList.push(data.chat);
-          this.scrollToBottom();
+      } else if(data.dataContent.cy.toString() === '1') { // 临时聊天/陌生人聊天
+        if(this.currentChat && this.currentChat.alarmItem.dataId.toString() === data.dataContent.f.toString()) {
+          if(this.chatMsgEntityList) {
+            this.chatMsgEntityList.push(data.chat);
+            this.scrollToBottom();
+          }
+        }
+      } else if(data.dataContent.cy.toString() === '2') { // 是群
+        if(this.currentChat && this.currentChat.alarmItem.dataId.toString() === data.dataContent.t.toString()) {
+          if(this.chatMsgEntityList) {
+            this.chatMsgEntityList.push(data.chat);
+            this.scrollToBottom();
+          }
         }
       }
     }
@@ -179,7 +190,6 @@ export class ChattingAreaComponent implements OnInit {
       // fromUid, nickName, msg, time, msgType, fp = null
       chatMsgEntity.isOutgoing = true;
       this.cacheService.putChattingCache(this.currentChat, chatMsgEntity).then(() => {
-        console.dir(res);
         this.pushMessageToPanel({chat: chatMsgEntity, dataContent: dataContent});
       });
     });

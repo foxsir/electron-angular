@@ -42,6 +42,7 @@ import { NzSwitchModule } from "ng-zorro-antd/switch";
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzListModule } from 'ng-zorro-antd/list';
+import {SettingDialogsModule} from "../setting-dialogs/setting-dialogs.module";
 
 @NgModule({
   declarations: [
@@ -84,11 +85,12 @@ import { NzListModule } from 'ng-zorro-antd/list';
     UserDialogsModule,
     UploadModule,
     NzModalModule,
-      DialogsModule,
-      NzSwitchModule,
-      NzSelectModule,
-      NzButtonModule,
-      NzListModule
+    DialogsModule,
+    NzSwitchModule,
+    NzSelectModule,
+    NzButtonModule,
+    NzListModule,
+    SettingDialogsModule,
   ]
 })
 export class HomeModule { }

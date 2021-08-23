@@ -44,8 +44,7 @@ import {CacheService} from "@services/cache/cache.service";
 import {QuoteMessageService} from "@services/quote-message/quote-message.service";
 import {MessageRoamService} from "@services/message-roam/message-roam.service";
 import {NavigationEnd, Router} from "@angular/router";
-import {CurrentChattingChangeService} from "@modules/home/chatting-area/current-chatting-change/current-chatting-change.service";
-import {SwitchChatService} from "@services/switch-chat/switch-chat.service";
+import {CurrentChattingChangeService} from "@services/current-chatting-change/current-chatting-change.service";
 
 @Component({
   selector: 'app-message',
@@ -85,6 +84,8 @@ export class MessageComponent implements OnInit {
   // 是否正在搜索
   public searching = false;
 
+  private currentUrl = '';
+
   // 引用回复消息
   // public quoteMessage: ChatmsgEntityModel = null;
 
@@ -116,7 +117,6 @@ export class MessageComponent implements OnInit {
     private quoteMessageService: QuoteMessageService,
     private messageRoamService: MessageRoamService,
     private currentChattingChangeService: CurrentChattingChangeService,
-    private switchChatService: SwitchChatService,
   ) {
     this.localUserInfo = this.localUserService.localUserInfo;
 
@@ -179,14 +179,7 @@ export class MessageComponent implements OnInit {
         }
       }
     });
-    // this.alarmsProviderService.refreshHistoryChattingAlarmsAsync().subscribe((res: HttpPresponseModel) => {
-    //   if (res.success) {
-    //     const list = JSON.parse(res.returnValue);
-    //     this.showChattingList(list);
-    //   } else {
-    //     this.snackBarService.openSnackBar("数据加载失败");
-    //   }
-    // });
+
     this.cacheService.getChattingList().then(res => {
       if(res) {
         Object.values(res).forEach(item => {
@@ -196,10 +189,6 @@ export class MessageComponent implements OnInit {
       this.cacheService.SyncChattingList(res || {}).then(list => {
         list.forEach(item => this.insertItem(item));
       });
-    });
-
-    this.switchChatService.currentChat$.subscribe(alarm => {
-      return this.switchChat(alarm);
     });
   }
 
@@ -405,7 +394,9 @@ export class MessageComponent implements OnInit {
     this.currentChattingChangeService.switchCurrentChatting(this.currentChat);
     return this.router.navigate(['/home/message']).then(() => {
       // 缓存群管理员列表
-      this.cacheService.cacheGroupAdmins(this.currentChat.alarmItem.dataId);
+      if (this.currentChat.metadata.chatType === 'group') {
+        this.cacheService.cacheGroupAdmins(this.currentChat.alarmItem.dataId);
+      }
     });
 
     // // 获取缓存
@@ -432,7 +423,6 @@ export class MessageComponent implements OnInit {
   }
 
   resetUI() {
-    this.searching = false;
     // this.showCreateGroup = false;
     // this.showSearchFriend = false;
   }

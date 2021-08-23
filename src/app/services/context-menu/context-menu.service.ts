@@ -15,13 +15,13 @@ import {GroupAdminModel} from "@app/models/group-admin.model";
 import {LocalUserService} from "@services/local-user/local-user.service";
 import {DialogService} from "@services/dialog/dialog.service";
 import {UserInfoComponent} from "@modules/user-dialogs/user-info/user-info.component";
-import {SwitchChatService} from "@services/switch-chat/switch-chat.service";
 import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 import {SetRemarkComponent} from "@modules/user-dialogs/set-remark/set-remark.component";
 import {RestService} from "@services/rest/rest.service";
 import NewHttpResponseInterface from "@app/interfaces/new-http-response.interface";
 import HttpResponseInterface from "@app/interfaces/http-response.interface";
 import {UserSilenceComponent} from "@modules/user-dialogs/user-silence/user-silence.component";
+import {CurrentChattingChangeService} from "@services/current-chatting-change/current-chatting-change.service";
 
 @Injectable({
   providedIn: 'root'
@@ -113,6 +113,50 @@ export class ContextMenuService {
         // this.quoteMessageService.setQuoteMessage(chat);
       }
     },
+    transmit: {
+      label: "转发消息",
+      visibility: function(filterData: MenuFilterData): boolean {
+        return true;
+      },
+      action: (chat: ChatmsgEntityModel, messageContainer: HTMLDivElement) => {
+        alert("转发消息");
+        // chat.msgType = this.msgType.TYPE_BACK;
+        // this.quoteMessageService.setQuoteMessage(chat);
+      }
+    },
+    delete: {
+      label: "删除消息",
+      visibility: function(filterData: MenuFilterData): boolean {
+        return true;
+      },
+      action: (chat: ChatmsgEntityModel, messageContainer: HTMLDivElement) => {
+        alert("删除消息");
+        // chat.msgType = this.msgType.TYPE_BACK;
+        // this.quoteMessageService.setQuoteMessage(chat);
+      }
+    },
+    select: {
+      label: "选择消息",
+      visibility: function(filterData: MenuFilterData): boolean {
+        return true;
+      },
+      action: (chat: ChatmsgEntityModel, messageContainer: HTMLDivElement) => {
+        alert("选择消息");
+        // chat.msgType = this.msgType.TYPE_BACK;
+        // this.quoteMessageService.setQuoteMessage(chat);
+      }
+    },
+    collect: {
+      label: "收藏",
+      visibility: function(filterData: MenuFilterData): boolean {
+        return true;
+      },
+      action: (chat: ChatmsgEntityModel, messageContainer: HTMLDivElement) => {
+        alert("收藏");
+        // chat.msgType = this.msgType.TYPE_BACK;
+        // this.quoteMessageService.setQuoteMessage(chat);
+      }
+    },
   };
 
   constructor(
@@ -121,7 +165,7 @@ export class ContextMenuService {
     private localUserService: LocalUserService,
     private dialogService: DialogService,
     private snackBarService: SnackBarService,
-    private switchChatService: SwitchChatService,
+    private currentChattingChangeService: CurrentChattingChangeService,
     private restService: RestService,
   ) {
     this.initMsgMenu();
@@ -141,7 +185,7 @@ export class ContextMenuService {
         },
         action: (alarmItem, chat) => {
           console.dir(chat.uid);
-          this.switchChatService.switch({
+          this.currentChattingChangeService.switchCurrentChatting({
             alarmItem: {
               alarmMessageType: 0, // 0单聊 1临时聊天/陌生人聊天 2群聊
               dataId: chat.uid,
@@ -311,22 +355,34 @@ export class ContextMenuService {
 
   // 初始化消息右键
   private initMsgMenu() {
+    const com = [
+      this.actionCollection.delete,
+      this.actionCollection.transmit,
+      this.actionCollection.select,
+      this.actionCollection.collect,
+    ];
+
     this.contextMenuForMessage[this.msgType.TYPE_TEXT] = [
       this.actionCollection.copyText,
       this.actionCollection.quote,
       this.actionCollection.repeal,
+      ...com,
     ];
 
     this.contextMenuForMessage[this.msgType.TYPE_FILE] = [
       this.actionCollection.download,
       this.actionCollection.quote,
       this.actionCollection.repeal,
+      this.actionCollection.download,
+      ...com,
     ];
 
     this.contextMenuForMessage[this.msgType.TYPE_IMAGE] = [
       this.actionCollection.copyImage,
       this.actionCollection.quote,
       this.actionCollection.repeal,
+      this.actionCollection.download,
+      ...com,
     ];
   }
 

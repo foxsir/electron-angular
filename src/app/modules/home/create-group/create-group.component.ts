@@ -17,7 +17,7 @@ import {ImService} from "@services/im/im.service";
 import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 import ChattingModel from "@app/models/chatting.model";
 import HttpResponseInterface from "@app/interfaces/http-response.interface";
-import {SwitchChatService} from "@services/switch-chat/switch-chat.service";
+import {CurrentChattingChangeService} from "@services/current-chatting-change/current-chatting-change.service";
 
 interface GroupMember {
   groupUserId: string;
@@ -54,7 +54,7 @@ export class CreateGroupComponent implements OnInit {
     private avatarService: AvatarService,
     private restService: RestService,
     private localUserService: LocalUserService,
-    private switchChatService: SwitchChatService,
+    private currentChattingChangeService: CurrentChattingChangeService,
   ) { }
 
   ngOnInit(): void {
@@ -159,7 +159,7 @@ export class CreateGroupComponent implements OnInit {
       };
       if(res.success) {
         this.cacheService.putChattingCache(alarmData).then(() => {
-          this.switchChatService.switch(alarmData);
+          this.currentChattingChangeService.switchCurrentChatting(alarmData);
           return this.goBack(true);
         });
       }

@@ -39,4 +39,8 @@ export class UserInfoComponent implements OnInit {
     });
   }
 
+  close() {
+    this.dialogRef.close();
+  }
+
 }
