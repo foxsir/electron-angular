@@ -37,11 +37,20 @@ export class DemoDialogComponent implements OnInit {
         });
     }
 
-    saveFriendRemark(had_confirm) {
+    saveFriendRemark(ok) {
         console.log('saveFriendRemark');
         const result = {
-            had_confirm: had_confirm,
+            ok: ok,
             remark: (<any>this.data).remark,
+        };
+        this.dialogRef.close(result);
+    }
+
+    savetalkInterval(ok) {
+        console.log('savetalkInterval');
+        const result = {
+            ok: ok,
+            talkInterval: (<any>this.data).talkInterval,
         };
         this.dialogRef.close(result);
     }

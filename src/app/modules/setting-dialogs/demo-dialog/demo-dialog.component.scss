@@ -1,0 +1,21 @@
+.radio-item{
+    display:flex;
+    line-height:30px;
+
+    .flex-1{
+        flex:1;
+    }
+}
+
+[nz-radio] {
+    display: block;
+    height: 32px;
+    line-height: 32px;
+    text-align:right;
+    position:relative;    
+}
+
+.title-time{
+    position:absolute;
+    left:0;
+}

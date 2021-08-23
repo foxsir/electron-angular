@@ -562,10 +562,11 @@ export class RestService {
     /**
      * 用户好友相关 - 修改好友备注
      */
-    updRemark(search: { userId?: string; friendAccount: string }): Observable<any> {
+    updRemark(data: any): Observable<any> {
         const localUserInfo = this.localUserService.getObj();
-        search.userId = localUserInfo.userId.toString();
-        return this.http.post(getFriendSearch, search);
+        data.id = localUserInfo.userId.toString();
+
+        return this.http.postForm(updRemark, data);
     }
 
   /**

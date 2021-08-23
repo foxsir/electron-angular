@@ -9,6 +9,8 @@ import closeActiveIcon from "@app/assets/icons/close-active.svg";
 import backspaceIcon from "@app/assets/icons/backspace.svg";
 import backspaceActiveIcon from "@app/assets/icons/backspace-active.svg";
 import { RestService } from "@services/rest/rest.service";
+import { DemoDialogComponent } from "@modules/setting-dialogs/demo-dialog/demo-dialog.component";
+import { DialogService } from "@services/dialog/dialog.service";
 
 @Component({
     selector: 'app-group-chatting-setting',
@@ -34,6 +36,8 @@ export class GroupChattingSettingComponent implements OnInit {
         kickNotice: false, /*退群通知开关*/
         talkIntervalSwitch: false, /*发言间隔开关*/
 
+        talkInterval: 3, /*发言时间间隔*/
+
         gtopContent: '', /*群上屏信息*/
         gtopContentTemp: '', /*群上屏信息，编辑，临时存放*/
     };
@@ -50,10 +54,14 @@ export class GroupChattingSettingComponent implements OnInit {
 
     public group_top_view_mode = "view"; /*view 或者 edit*/
 
-    constructor(private dom: DomSanitizer, private restService: RestService) {
+    constructor(private dom: DomSanitizer, private restService: RestService, private dialogService: DialogService) {
+        
+    }
+
+    ngOnInit(): void {
         console.log('currentChat: ', this.currentChat);
 
-        this.restService.getGroupBaseById('0000000642').subscribe(res => {
+        this.restService.getGroupBaseById(this.currentChat.alarmItem.dataId).subscribe(res => {
             console.log('getGroupBaseById result: ', res);
             this.groupData = res.data;
 
@@ -65,17 +73,15 @@ export class GroupChattingSettingComponent implements OnInit {
             this.setting_data.kickNotice = this.groupData.kickNotice == 1;
             this.setting_data.talkIntervalSwitch = this.groupData.talkIntervalSwitch == 1;
 
+            this.setting_data.talkInterval = this.groupData.talkInterval.toString();
+
             this.setting_data.gtopContent = this.groupData.gtopContent;
-        }); 
-    }
-
-    ngOnInit(): void {
-
+        });
     }
 
     bySwitch(key) {
         var data = {
-            gid: '0000000642'
+            gid: this.currentChat.alarmItem.dataId
         };
         data[key] = this.setting_data[key] == true ? 1 : 0,
 
@@ -115,7 +121,7 @@ export class GroupChattingSettingComponent implements OnInit {
 
     saveGroupTop() {
         var data = {
-            gid: '0000000642',
+            gid: this.currentChat.alarmItem.dataId,
             gtopContent: this.setting_data.gtopContentTemp
         };
 
@@ -123,6 +129,30 @@ export class GroupChattingSettingComponent implements OnInit {
             this.group_top_view_mode = 'view';
             this.setting_data.gtopContent = this.setting_data.gtopContentTemp;
         });  
+    }
+
+    /*修改发言间隔*/
+    changetalkInterval() {
+        var data = {
+            two: 'xxx',
+            talkInterval: this.setting_data.talkInterval
+        };
+
+        this.dialogService.openDialog(DemoDialogComponent, { data: data }).then((res: any) => {
+            console.log('dialog result: ', res);
+
+            if (res.ok == true) {
+
+                var post_data = {
+                    gid: this.currentChat.alarmItem.dataId,
+                    talkInterval: res.talkInterval
+                };
+
+                this.restService.updateGroupBaseById(post_data).subscribe(res => {
+                    this.setting_data.talkInterval = post_data.talkInterval;
+                });
+            }
+        });
     }
 
 }
