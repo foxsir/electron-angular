@@ -1,5 +1,8 @@
 import ChatmsgEntityModel from "./chatmsg-entity.model";
 import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
+import FriendModel from "@app/models/friend.model";
+import {GroupAdminModel} from "@app/models/group-admin.model";
+import {GroupModel} from "@app/models/group.model";
 
 // 普通消息action
 type ActionType = (chat: ChatmsgEntityModel, messageContainer: HTMLDivElement) => void;
@@ -16,9 +19,9 @@ type ActionVisibilityForGroupAvatar = (filterData: MenuFilterData) => boolean;
 type ActionCollectType = () => void;
 
 export interface MenuFilterData {
-  admins: unknown;
-  friends: unknown;
-  groups: unknown;
+  admins: GroupAdminModel[] | any;
+  friends: FriendModel[] | any;
+  groups: GroupModel[] | any;
   alarmItem: AlarmItemInterface;
   chat: ChatmsgEntityModel;
 }

@@ -22,6 +22,8 @@ import NewHttpResponseInterface from "@app/interfaces/new-http-response.interfac
 import HttpResponseInterface from "@app/interfaces/http-response.interface";
 import {UserSilenceComponent} from "@modules/user-dialogs/user-silence/user-silence.component";
 import {CurrentChattingChangeService} from "@services/current-chatting-change/current-chatting-change.service";
+import RBChatUtils from "@app/libs/rbchat-utils";
+import LocalUserinfoModel from "@app/models/local-userinfo.model";
 
 @Injectable({
   providedIn: 'root'
@@ -86,7 +88,8 @@ export class ContextMenuService {
     repeal: {
       label: "撤回",
       visibility: function(filterData: MenuFilterData): boolean {
-        return true;
+        const localUserInfo: LocalUserinfoModel = RBChatUtils.getAuthedLocalUserInfoFromCookie();
+        return filterData.chat.uid.toString() === localUserInfo.userId.toString();
       },
       action: (chat: ChatmsgEntityModel, messageContainer: HTMLDivElement) => {
         chat.msgType = this.msgType.TYPE_BACK;
@@ -180,8 +183,8 @@ export class ContextMenuService {
       {
         label: "发送消息",
         visibility: function(filterData: MenuFilterData): boolean {
-          console.dir(filterData.friends);
-          return true;
+          const localUserInfo: LocalUserinfoModel = RBChatUtils.getAuthedLocalUserInfoFromCookie();
+          return filterData.chat.uid.toString() !== localUserInfo.userId.toString();
         },
         action: (alarmItem, chat) => {
           console.dir(chat.uid);
@@ -201,10 +204,10 @@ export class ContextMenuService {
       {
         label: "查看资料",
         visibility: function(filterData: MenuFilterData): boolean {
-          return true;
+          const localUserInfo: LocalUserinfoModel = RBChatUtils.getAuthedLocalUserInfoFromCookie();
+          return filterData.chat.uid.toString() !== localUserInfo.userId.toString();
         },
         action: (alarmItem, chat) => {
-          console.dir(chat.uid);
           this.dialogService.openDialog(UserInfoComponent, {
             data: {userId: chat.uid}
           }).then();
@@ -213,7 +216,8 @@ export class ContextMenuService {
       {
         label: "@TA",
         visibility: function(filterData: MenuFilterData): boolean {
-          return true;
+          const localUserInfo: LocalUserinfoModel = RBChatUtils.getAuthedLocalUserInfoFromCookie();
+          return filterData.chat.uid.toString() !== localUserInfo.userId.toString();
         },
         action: (alarmItem, chat) => {
           alert('@AT');
@@ -222,7 +226,10 @@ export class ContextMenuService {
       {
         label: "删除管理员",
         visibility: function(filterData: MenuFilterData): boolean {
-          return true;
+          const localUserInfo: LocalUserinfoModel = RBChatUtils.getAuthedLocalUserInfoFromCookie();
+          const group = filterData.groups[filterData.alarmItem.alarmItem.dataId];
+          // 检查是否是群主
+          return group && group.gownerUserUid.toString() === localUserInfo.userId;
         },
         action: (alarmItem, chat) => {
           this.dialogService.confirm({title: "删除管理员"}).then((ok) => {
@@ -244,7 +251,11 @@ export class ContextMenuService {
       {
         label: "设置备注",
         visibility: function(filterData: MenuFilterData): boolean {
-          return true;
+          const localUserInfo: LocalUserinfoModel = RBChatUtils.getAuthedLocalUserInfoFromCookie();
+          const noSelf = filterData.chat.uid.toString() !== localUserInfo.userId.toString();
+          const isFriend = filterData.friends[filterData.chat.uid];
+          // 不能设置自己 and 必需是好友
+          return noSelf && isFriend;
         },
         action: (alarmItem, chat) => {
           this.dialogService.openDialog(SetRemarkComponent, {
@@ -255,7 +266,13 @@ export class ContextMenuService {
       {
         label: "从本群主中删除",
         visibility: function(filterData: MenuFilterData): boolean {
-          return true;
+          const localUserInfo: LocalUserinfoModel = RBChatUtils.getAuthedLocalUserInfoFromCookie();
+          const caches = filterData.admins[filterData.alarmItem.alarmItem.dataId];
+          const chatUid = filterData.chat.uid.toString();
+          const group = filterData.groups[filterData.alarmItem.alarmItem.dataId];
+          const owner = group && group.gownerUserUid.toString() === localUserInfo.userId;
+          const manager = caches && caches[filterData.chat.uid] === chatUid;
+          return owner || manager; // 是管理员或者群主
         },
         action: (alarmItem, chat) => {
           this.dialogService.confirm({title: "从本群主中删除"}).then((ok) => {
@@ -277,7 +294,11 @@ export class ContextMenuService {
       {
         label: "添加好友",
         visibility: function(filterData: MenuFilterData): boolean {
-          return true;
+          const localUserInfo: LocalUserinfoModel = RBChatUtils.getAuthedLocalUserInfoFromCookie();
+          const noSelf = filterData.chat.uid.toString() !== localUserInfo.userId.toString();
+          const isFriend = filterData.friends[filterData.chat.uid];
+          // 不能是自己 and 必需不是好友
+          return noSelf && !isFriend;
         },
         action: (alarmItem, chat) => {
           this.dialogService.confirm({title: "添加好友"}).then(() => {
@@ -288,7 +309,10 @@ export class ContextMenuService {
       {
         label: "设置管理员",
         visibility: function(filterData: MenuFilterData): boolean {
-          return true;
+          const localUserInfo: LocalUserinfoModel = RBChatUtils.getAuthedLocalUserInfoFromCookie();
+          const group = filterData.groups[filterData.alarmItem.alarmItem.dataId];
+          // 是群主
+          return group && group.gownerUserUid.toString() === localUserInfo.userId;
         },
         action: (alarmItem, chat) => {
           this.dialogService.confirm({title: "设置管理员"}).then((ok) => {
@@ -310,7 +334,13 @@ export class ContextMenuService {
       {
         label: "禁言",
         visibility: function(filterData: MenuFilterData): boolean {
-          return true;
+          const localUserInfo: LocalUserinfoModel = RBChatUtils.getAuthedLocalUserInfoFromCookie();
+          const caches = filterData.admins[filterData.alarmItem.alarmItem.dataId];
+          const chatUid = filterData.chat.uid.toString();
+          const group = filterData.groups[filterData.alarmItem.alarmItem.dataId];
+          const owner = group && group.gownerUserUid.toString() === localUserInfo.userId;
+          const manager = caches && caches[filterData.chat.uid] === chatUid;
+          return owner || manager; // 是管理员或者群主
         },
         action: (alarmItem, chat) => {
           this.dialogService.openDialog(UserSilenceComponent, {
@@ -321,7 +351,13 @@ export class ContextMenuService {
       {
         label: "移除禁言",
         visibility: function(filterData: MenuFilterData): boolean {
-          return true;
+          const localUserInfo: LocalUserinfoModel = RBChatUtils.getAuthedLocalUserInfoFromCookie();
+          const caches = filterData.admins[filterData.alarmItem.alarmItem.dataId];
+          const chatUid = filterData.chat.uid.toString();
+          const group = filterData.groups[filterData.alarmItem.alarmItem.dataId];
+          const owner = group && group.gownerUserUid.toString() === localUserInfo.userId;
+          const manager = caches && caches[filterData.chat.uid] === chatUid;
+          return owner || manager; // 是管理员或者群主
         },
         action: (alarmItem, chat) => {
           this.dialogService.confirm({title: "移除禁言"}).then((ok) => {
@@ -519,7 +555,14 @@ export class ContextMenuService {
    */
   getContextMenuForMessage(chat: ChatmsgEntityModel, chatOwner: any = null) {
     // chat.msgType
-    return this.contextMenuForMessage[chat.msgType] || [];
+    const filterData = {
+      admins: null,
+      friends: null,
+      groups: null,
+      alarmItem: null,
+      chat: chat
+    };
+    return this.contextMenuForMessage[chat.msgType].filter(item => item.visibility(filterData)) || [];
   }
 
   /**
