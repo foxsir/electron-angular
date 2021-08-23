@@ -73,7 +73,7 @@ export class GroupChattingSettingComponent implements OnInit {
             this.setting_data.kickNotice = this.groupData.kickNotice == 1;
             this.setting_data.talkIntervalSwitch = this.groupData.talkIntervalSwitch == 1;
 
-            this.setting_data.talkInterval = this.groupData.talkInterval;
+            this.setting_data.talkInterval = this.groupData.talkInterval.toString();
 
             this.setting_data.gtopContent = this.groupData.gtopContent;
         });
@@ -143,13 +143,13 @@ export class GroupChattingSettingComponent implements OnInit {
 
             if (res.ok == true) {
 
-                var data = {
+                var post_data = {
                     gid: this.currentChat.alarmItem.dataId,
                     talkInterval: res.talkInterval
                 };
 
-                this.restService.updateGroupBaseById(data).subscribe(res => {
-                    this.setting_data.talkInterval = res.talkInterval;
+                this.restService.updateGroupBaseById(post_data).subscribe(res => {
+                    this.setting_data.talkInterval = post_data.talkInterval;
                 });
             }
         });
