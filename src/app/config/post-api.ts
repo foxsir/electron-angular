@@ -119,6 +119,18 @@ export const deleteGroupSilenceById = _HTTP_SERVER_URL + "/api/groupSilence/dele
 // 被禁言的人员列表
 export const getGroupSilenceById = _HTTP_SERVER_URL + "/api/groupSilence/getGroupSilenceById/";
 
+// 群页签列表
+export const getUserGroupTab = _HTTP_SERVER_URL + "/api/groupBase/getUserGroupTab";
+
+// 更新群页签
+export const UpUserGroupTab = _HTTP_SERVER_URL + "/api/groupBase/UpUserGroupTab";
+
+// 群客服列表
+export const getGroupCustomerService = _HTTP_SERVER_URL + "/api/groupBase/getGroupCustomerService";
+
+// 更新群客服
+export const UpGroupCustomerService = _HTTP_SERVER_URL + "/api/groupBase/UpGroupCustomerService";
+
 
 //
 //  //封装请求函数

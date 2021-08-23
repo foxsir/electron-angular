@@ -42,6 +42,9 @@ export class GroupChattingSettingComponent implements OnInit {
         gtopContentTemp: '', /*群上屏信息，编辑，临时存放*/
     };
 
+    public customerServiceList: any[];
+    public groupTabList: any[];
+
     /*
      * switch_default: 默认
      * group_top: 群上屏编辑
@@ -49,7 +52,9 @@ export class GroupChattingSettingComponent implements OnInit {
     public view_mode = "switch_default";
     public view_title_object = {
         switch_default: '群配置',
-        group_top: '群上屏编辑'
+        group_top: '群上屏编辑',
+        customer_service: '专属客服配置',
+        group_tab: '群页签配置'
     };
 
     public group_top_view_mode = "view"; /*view 或者 edit*/
@@ -61,6 +66,7 @@ export class GroupChattingSettingComponent implements OnInit {
     ngOnInit(): void {
         console.log('currentChat: ', this.currentChat);
 
+        /*获取群基本信息*/
         this.restService.getGroupBaseById(this.currentChat.alarmItem.dataId).subscribe(res => {
             console.log('getGroupBaseById result: ', res);
             this.groupData = res.data;
@@ -76,6 +82,17 @@ export class GroupChattingSettingComponent implements OnInit {
             this.setting_data.talkInterval = this.groupData.talkInterval.toString();
 
             this.setting_data.gtopContent = this.groupData.gtopContent;
+        });
+
+        /*获取群页签列表*/
+        this.restService.getGroupCustomerService(this.currentChat.alarmItem.dataId).subscribe(res => {
+            this.customerServiceList = res.data;
+            console.log('客服数据：', this.customerServiceList);
+        });
+
+        /*获取群客服列表*/
+        this.restService.getUserGroupTab(this.currentChat.alarmItem.dataId).subscribe(res => {
+            this.groupTabList = res.data;
         });
     }
 
