@@ -24,7 +24,7 @@ export class ChattingSettingComponent implements OnInit {
     public closeIcon = this.dom.bypassSecurityTrustResourceUrl(closeIcon);
     public closeActiveIcon = this.dom.bypassSecurityTrustResourceUrl(closeActiveIcon);
     public backspaceIcon = this.dom.bypassSecurityTrustResourceUrl(backspaceIcon);
-    public backspaceActiveIcon = this.dom.bypassSecurityTrustResourceUrl(backspaceActiveIcon);    
+    public backspaceActiveIcon = this.dom.bypassSecurityTrustResourceUrl(backspaceActiveIcon);
 
     public userData;
     public setting_data = {
@@ -41,7 +41,7 @@ export class ChattingSettingComponent implements OnInit {
     };
 
     constructor(private dom: DomSanitizer, private restService: RestService, private dialogService: DialogService,) {
-        
+
     }
 
     ngOnInit(): void {
