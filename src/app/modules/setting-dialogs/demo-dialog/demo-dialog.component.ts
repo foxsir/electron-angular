@@ -5,37 +5,46 @@ import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 import {DialogService} from "@services/dialog/dialog.service"; // 必需
 
 @Component({
-  selector: 'app-demo-dialog',
-  templateUrl: './demo-dialog.component.html',
-  styleUrls: ['./demo-dialog.component.scss']
+    selector: 'app-demo-dialog',
+    templateUrl: './demo-dialog.component.html',
+    styleUrls: ['./demo-dialog.component.scss']
 })
 export class DemoDialogComponent implements OnInit {
 
-  constructor(
-    public dialogRef: MatDialogRef<DemoDialogComponent>, // 必需
-    @Inject(MAT_DIALOG_DATA) public data: unknown, // 必需
-    private dialogService: DialogService
-  ) { }
+    constructor(
+        public dialogRef: MatDialogRef<DemoDialogComponent>, // 必需
+        @Inject(MAT_DIALOG_DATA) public data: unknown, // 必需
+        private dialogService: DialogService
+    ) { }
 
-  ngOnInit(): void {
-  }
+    ngOnInit(): void {
+    }
 
-  close() {
-    const result = {};
-    this.dialogRef.close(result);
-    // this.dialogRef.close(true);
-    // this.dialogRef.close(100);
-  }
+    close() {
+        const result = {};
+        this.dialogRef.close(result);
+        // this.dialogRef.close(true);
+        // this.dialogRef.close(100);
+    }
 
-  // 示例
-  demo() {
-    const data = {
+    // 示例
+    demo() {
+        const data = {
 
-    };
-    this.dialogService.openDialog(DemoDialogComponent, {data: data}).then((res: unknown) => {
-      console.dir(res);
-    });
-  }
+        };
+        this.dialogService.openDialog(DemoDialogComponent, { data: data }).then((res: unknown) => {
+            console.dir(res);
+        });
+    }
+
+    saveFriendRemark(had_confirm) {
+        console.log('saveFriendRemark');
+        const result = {
+            had_confirm: had_confirm,
+            remark: (<any>this.data).remark,
+        };
+        this.dialogRef.close(result);
+    }
 
 
 }

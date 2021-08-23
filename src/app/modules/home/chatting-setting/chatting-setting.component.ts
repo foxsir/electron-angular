@@ -9,6 +9,8 @@ import closeActiveIcon from "@app/assets/icons/close-active.svg";
 import backspaceIcon from "@app/assets/icons/backspace.svg";
 import backspaceActiveIcon from "@app/assets/icons/backspace-active.svg";
 import { RestService } from "@services/rest/rest.service";
+import { DemoDialogComponent } from "@modules/setting-dialogs/demo-dialog/demo-dialog.component";
+import { DialogService } from "@services/dialog/dialog.service";
 
 @Component({
     selector: 'app-chatting-setting',
@@ -31,10 +33,14 @@ export class ChattingSettingComponent implements OnInit {
         userMail: '',
         whatSUp: '',
         nickname: '',
-        remark: '请输入备注',
+        remark: '',
     };
 
-    constructor(private dom: DomSanitizer, private restService: RestService) {
+    private dialogConfig = {
+        width: '314px'
+    };
+
+    constructor(private dom: DomSanitizer, private restService: RestService, private dialogService: DialogService,) {
         
     }
 
@@ -53,7 +59,24 @@ export class ChattingSettingComponent implements OnInit {
         });
 
         this.restService.getRemark({ toUserId: this.currentChat.alarmItem.dataId }).subscribe(res => {
-            this.setting_data.remark = res.data == null || res.data.length == 0 ? '请输入备注' : res.data;
+            this.setting_data.remark = res.data == null || res.data.length == 0 ? '' : res.data;
+        });
+    }
+
+    changeRemark() {
+        //this.dialogService.openDialog(DemoDialogComponent, {
+        //    data: {
+        //        two: 'xxx'
+        //    }
+        //});
+
+        var data = {
+            one: 'xxx',
+            remark: this.setting_data.remark
+        };
+
+        this.dialogService.openDialog(DemoDialogComponent, { data: data }).then((res: any) => {
+            console.dir('dialog result: ', res);
         });
     }
 }

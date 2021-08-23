@@ -1,4 +1,4 @@
-<ng-template [ngIf]="data.hasOwnProperty('one')">
+<!--<ng-template [ngIf]="data.hasOwnProperty('one')">
   <form action="">
 
   </form>
@@ -14,4 +14,23 @@
   <form action="">
 
   </form>
-</ng-template>
+</ng-template>-->
+
+<div *ngIf="data.hasOwnProperty('one')">
+    <div fxLayout="column" fxLayoutGap="20px">
+        <div fxFlex><label>编辑联系人备注</label></div>
+        <div fxFlex>
+            <input type="text" nz-input [(ngModel)]="data.remark" class="txtcom" placeholder="请输入备注" />
+        </div>
+        <div fxFlex>
+            <div fxLayout="row" fxLayoutAlign="end" fxLayoutGap="10">
+                <button nz-button nzType="link" class="btncancel" (click)="saveFriendRemark(false)" >取消</button>
+                <button nz-button nzType="link" class="btnsave" (click)="saveFriendRemark(true)" >保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="data.hasOwnProperty('two')">
+    <span>two</span>
+</div>

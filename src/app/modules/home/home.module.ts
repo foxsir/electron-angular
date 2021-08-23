@@ -27,7 +27,8 @@ import { SearchChattingComponent } from './search-chatting/search-chatting.compo
 import {TitleBarModule} from "../../factorys/title-bar/title-bar.module";
 import { InputAreaComponent } from './input-area/input-area.component';
 import {FormsModule} from "@angular/forms";
-import {UserDialogsModule} from "../user-dialogs/user-dialogs.module";
+import { UserDialogsModule } from "../user-dialogs/user-dialogs.module";
+import { SettingDialogsModule } from "../setting-dialogs/setting-dialogs.module";
 import { ChattingSettingComponent } from './chatting-setting/chatting-setting.component';
 import { GroupChattingSettingComponent } from './group-chatting-setting/group-chatting-setting.component';
 import { CreateGroupComponent } from './create-group/create-group.component';
@@ -81,7 +82,8 @@ import { NzListModule } from 'ng-zorro-antd/list';
     EmptyDataModule,
     TitleBarModule,
     FormsModule,
-    UserDialogsModule,
+      UserDialogsModule,
+      SettingDialogsModule,
     UploadModule,
     NzModalModule,
       DialogsModule,
