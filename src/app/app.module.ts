@@ -5,7 +5,8 @@ import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { CoreModule } from './core/core.module';
 import { SharedModule } from './shared/shared.module';
 import {ReactiveFormsModule} from '@angular/forms';
-import {NgformlyModule} from '@app/shared/formly/ngformly.module';
+import { NgformlyModule } from '@app/shared/formly/ngformly.module';
+import { NgxQRCodeModule } from 'ngx-qrcode2';
 
 import { AppRoutingModule } from './app-routing.module';
 
@@ -35,7 +36,8 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>  new Transl
     AppRoutingModule,
     ReactiveFormsModule,
     MatDialogModule,
-    NgformlyModule,
+      NgformlyModule,
+      NgxQRCodeModule,
     NzMessageModule,
     TranslateModule.forRoot({
       loader: {

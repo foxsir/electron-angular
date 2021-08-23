@@ -19,7 +19,8 @@ import { NzListModule } from 'ng-zorro-antd/list';
 import { UserInfoComponent } from './user-info/user-info.component';
 import { SetRemarkComponent } from './set-remark/set-remark.component';
 import { UserSilenceComponent } from './user-silence/user-silence.component';
-import {MatRadioModule} from "@angular/material/radio";
+import { MatRadioModule } from "@angular/material/radio";
+import { NgxQRCodeModule } from 'ngx-qrcode2';
 
 
 @NgModule({
@@ -49,7 +50,8 @@ import {MatRadioModule} from "@angular/material/radio";
     NzInputModule,
     NzButtonModule,
     NzListModule,
-    MatRadioModule
+      MatRadioModule,
+      NgxQRCodeModule
   ]
 })
 export class UserDialogsModule { }

@@ -37,9 +37,9 @@
                 <div fxLayout="column" fxLayoutGap="10px">
                     <div class="info-box">
                         <div class="info-item">备注</div>
-                        <div class="info-item">
+                        <div class="info-item" (click)="changeRemark()">
                             <div fxFlex fxLayoutAlign="space-between center" class="group-pointer">
-                                <span class="privacy-item-text">{{setting_data.remark}}</span>
+                                <span class="privacy-item-text">{{setting_data.remark == '' ? '请输入备注' : setting_data.remark}}</span>
                                 <span>&gt;</span>
                             </div>
                         </div>
