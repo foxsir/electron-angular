@@ -76,7 +76,17 @@ export class ChattingSettingComponent implements OnInit {
         };
 
         this.dialogService.openDialog(DemoDialogComponent, { data: data }).then((res: any) => {
-            console.dir('dialog result: ', res);
+            console.log('dialog result: ', res);
+            if (res.ok == true) {
+                var post_data = {
+                    toUserId: this.currentChat.alarmItem.dataId,
+                    remark: res.remark,
+                };
+
+                this.restService.updRemark(post_data).subscribe(res => {
+                    this.setting_data.remark = post_data.remark;
+                });
+            }
         });
     }
 }
