@@ -1,4 +1,4 @@
-'use strict';
+import {APP_CONFIG} from "@environments/environment";
 
 /**
  * Created by Jack Jiang.
@@ -11,8 +11,8 @@ const _PRODUCT_VER_NAME = '2.0_b200327_pro';
 const _PRODUCT_NAME = 'IM即时通讯产品';
 
 //本地测试
-const _HTTP_SERVER_ROOT_URL = "http://120.79.188.200:8808"; // TODO: 【1】开发者请修改为您自已的 http 服务根接口地址
-const _IM_SERVER_URL = "ws://120.79.188.200:9904/websocket"; // TODO: 【2】开发者请修改为您自已的 web im 服务端地址（即nodejs服务地址）
+const _HTTP_SERVER_ROOT_URL =  ["http://", APP_CONFIG.api, ":8808"].join(""); // TODO: 【1】开发者请修改为您自已的 http 服务根接口地址
+const _IM_SERVER_URL = ["ws://", APP_CONFIG.api, ":9904/websocket"].join(""); // TODO: 【2】开发者请修改为您自已的 web im 服务端地址（即nodejs服务地址）
 
 // const _HTTP_SERVER_ROOT_URL = "http://192.168.0.108:8808"; // TODO: 【1】开发者请修改为您自已的 http 服务根接口地址
 // const _IM_SERVER_URL = "ws://192.168.0.108:9904/websocket"; // TODO: 【2】开发者请修改为您自已的 web im 服务端地址（即nodejs服务地址）

@@ -1,7 +1,7 @@
 export const APP_CONFIG = {
   production: true,
   environment: 'PROD',
-  api: "http://120.79.90.66:8808",
+  api: "120.79.90.66",
   smsSpaceSeconds: 60,
-  uploadFileAPI: "https://data.programschool.com/upload",
+  uploadFileAPI: "",
 };

@@ -1,6 +1,7 @@
+import {APP_CONFIG} from "@environments/environment";
 
 //接口地址
-export const  _HTTP_SERVER_URL = "http://120.79.188.200:8808";
+export const  _HTTP_SERVER_URL = ["http://", APP_CONFIG.api, ":8808"].join("");
 // export const  _HTTP_SERVER_URL = "http://192.168.0.108:8808";
 // export const  _HTTP_SERVER_URL = "http://120.79.90.66:8808";
 // export const  _HTTP_SERVER_URL = "http://192.168.31.128:8808";

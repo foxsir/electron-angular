@@ -20,25 +20,16 @@ export class HttpService {
   ) {
   }
 
-  private handleError(error: HttpErrorResponse) {
-    if (error.error instanceof ErrorEvent) {
+  private handleError(res: HttpErrorResponse) {
+    if (res.error instanceof ErrorEvent) {
       // A client-side or network error occurred. Handle it accordingly.
-      console.error('An error occurred:', error.error.message);
+      console.error('An error occurred:', res.error.message);
     } else {
-      if (error.status === 0) {
+      if (res.status === 0) {
         this.snackBar.openSnackBar("数据请求错误", 'mat-warn');
       }
-      // 表单错误
-      if (error.error.failedFields) {
-        for (const field in error.error.failedFields) {
-          if (error.error.failedFields.hasOwnProperty(field)) {
-            this.snackBar.openSnackBar(error.error.failedFields[field], 'mat-warn');
-            return throwError(error.error.failedFields[field]);
-          }
-        }
-      }
-      if (error.error.errors && error.error.errors.length) {
-        for (const field of error.error.errors) {
+      if (res.error.errors && res.error.errors.length) {
+        for (const field of res.error.errors) {
           if (field) {
             this.snackBar.openSnackBar(field.defaultMessage, 'mat-warn');
             return throwError(field.defaultMessage);
@@ -46,18 +37,18 @@ export class HttpService {
         }
       }
       // 表单错误
-      if (error.error.data && error.error.data.fieldErrors) {
-        for (const field in error.error.data.fieldErrors) {
-          if (error.error.data.fieldErrors.hasOwnProperty(field)) {
-            this.snackBar.openSnackBar(error.error.data.fieldErrors[field], 'mat-warn');
-            return throwError(error.error.data.fieldErrors[field]);
+      if (res.error.data && res.error.data.fieldErrors) {
+        for (const field in res.error.data.fieldErrors) {
+          if (res.error.data.fieldErrors.hasOwnProperty(field)) {
+            this.snackBar.openSnackBar(res.error.data.fieldErrors[field], 'mat-warn');
+            return throwError(res.error.data.fieldErrors[field]);
           }
         }
       }
       // 普通错误
-      if (error.error.message) {
-        this.snackBar.openSnackBar(error.error.message, 'mat-warn');
-        return throwError(error.error.message);
+      if (res.error.message) {
+        this.snackBar.openSnackBar(res.error.message, 'mat-warn');
+        return throwError(res.error.message);
       }
     }
     // Return an observable with a user-facing error message.
