@@ -46,5 +46,14 @@ export class DemoDialogComponent implements OnInit {
         this.dialogRef.close(result);
     }
 
+    savetalkInterval(ok) {
+        console.log('savetalkInterval');
+        const result = {
+            ok: ok,
+            talkInterval: (<any>this.data).talkInterval,
+        };
+        this.dialogRef.close(result);
+    }
+
 
 }

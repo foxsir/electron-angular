@@ -6,6 +6,7 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzListModule } from 'ng-zorro-antd/list';
+import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { MatDialogModule } from "@angular/material/dialog";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
@@ -26,6 +27,7 @@ import { FormsModule } from "@angular/forms";
       NzInputModule,
       NzButtonModule,
       NzListModule,
+      NzRadioModule,
       MatDialogModule,
       MatButtonModule,
       MatCardModule,

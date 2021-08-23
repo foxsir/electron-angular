@@ -80,7 +80,7 @@
                         <span class="privacy-item-text">发言间隔</span>
                         <nz-switch [(ngModel)]="setting_data.talkIntervalSwitch" (ngModelChange)="bySwitch('talkIntervalSwitch')" nzSize="small"></nz-switch>
                     </div>
-                    <div fxFlex fxLayoutAlign="space-between center" class="group-pointer">
+                    <div fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="changetalkInterval()">
                         <span class="privacy-item-text">普通成员发言间隔</span>
                         <span>&gt;</span>
                     </div>
