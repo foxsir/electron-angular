@@ -76,6 +76,26 @@ export class CacheService {
     });
   }
 
+  deleteChattingCache(alarmData: AlarmItemInterface, message: ChatmsgEntityModel = null): Promise<any> {
+    return localforage.getItem("alarmData").then(data => {
+      const check = data[alarmData.alarmItem.dataId];
+      const alreadyMessageMap = !check ? {} : check.message;
+      if(check) {
+        delete alreadyMessageMap[message.fingerPrintOfProtocal];
+        return localforage.setItem("alarmData", Object.assign({
+          [alarmData.alarmItem.dataId]: {
+            alarmData: alarmData,
+            message: alreadyMessageMap,
+          }
+        }, data)).then((newCache) => {
+          this.cacheSource.next({alarmData: newCache});
+        });
+      }
+    });
+  }
+
+
+
   /**
    * 检查本地缓存是否是最新
    * @param alarmData
