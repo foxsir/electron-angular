@@ -131,6 +131,33 @@ export class MessageComponent implements OnInit {
     this.subscribeCommonSystemMessage();
     this.subscribeGroupMemberWasRemoved();
     this.subscribeGroupMemberQuit();
+    this.subscribeSENSITIVEWordUpdate(); // 敏感词
+  }
+
+  ngOnInit(): void {
+    // 监听url变换，满足条件时重置UI
+    this.router.events.subscribe(e => {
+      if (e instanceof NavigationEnd) {
+        if(e.url === "/home/message") {
+          this.resetUI();
+        }
+      }
+    });
+
+    this.cacheService.getChattingList().then(res => {
+      if(res) {
+        Object.values(res).forEach(item => {
+          this.insertItem(item.alarmData);
+        });
+      }
+      this.cacheService.SyncChattingList(res || {}).then(list => {
+        list.forEach(item => this.insertItem(item));
+      });
+    });
+
+    this.currentChattingChangeService.currentChatting$.subscribe((alarm: AlarmItemInterface) => {
+      this.currentChat = alarm;
+    });
   }
 
   /**
@@ -167,28 +194,6 @@ export class MessageComponent implements OnInit {
     this.messageDistributeService.MT47_OF_GROUP$SYSCMD_COMMON$INFO_FROM$SERVER$.subscribe((res: ProtocalModel) => {
       const dataContent: ProtocalModelDataContent = JSON.parse(res.dataContent);
       this.snackBarService.openSnackBar(dataContent.m);
-    });
-  }
-
-  ngOnInit(): void {
-    // 监听url变换，满足条件时重置UI
-    this.router.events.subscribe(e => {
-      if (e instanceof NavigationEnd) {
-        if(e.url === "/home/message") {
-          this.resetUI();
-        }
-      }
-    });
-
-    this.cacheService.getChattingList().then(res => {
-      if(res) {
-        Object.values(res).forEach(item => {
-          this.insertItem(item.alarmData);
-        });
-      }
-      this.cacheService.SyncChattingList(res || {}).then(list => {
-        list.forEach(item => this.insertItem(item));
-      });
     });
   }
 
@@ -278,6 +283,16 @@ export class MessageComponent implements OnInit {
       const dataContent: any = JSON.parse(res.dataContent);
       // alert("群组" + dataContent.t);
       this.massageBadges[dataContent.t.trim()] = 99;
+    });
+  }
+
+  /**
+   * 敏感词更新
+   * @private
+   */
+  private subscribeSENSITIVEWordUpdate() {
+    this.messageDistributeService.SENSITIVE_WORD_UPDATE$.subscribe((res: ProtocalModel) => {
+      // 需要获取敏感词并缓存
     });
   }
 
