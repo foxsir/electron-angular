@@ -1,10 +1,15 @@
 <h2 mat-dialog-title>我的二维码</h2>
 <mat-dialog-content class="mat-typography">
+    <div style="text-align:center;">
+        <span>{{whatsup}}</span>
+    </div>
     <div>
-        <ngx-qrcode [value]="value" cssClass="qrcode-box" qrc-errorCorrectionLevel="L" width="250"></ngx-qrcode>        
+        <ngx-qrcode [value]="value" cssClass="qrcode-box" qrc-errorCorrectionLevel="L" width="270"></ngx-qrcode>
     </div>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-    <button mat-button mat-dialog-close tabindex="-1">关闭</button>
+    <button mat-button mat-dialog-close tabindex="-1" style="color:#0091ff;">关闭</button>
+    <button mat-button mat-dialog-close tabindex="-1" style="color:#0091ff;">另存为</button>
+    <button mat-button mat-dialog-close tabindex="-1" style="color:#0091ff;">复制</button>
 </mat-dialog-actions>
 
