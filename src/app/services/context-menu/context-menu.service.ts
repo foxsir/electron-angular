@@ -133,9 +133,13 @@ export class ContextMenuService {
         return true;
       },
       action: (chat: ChatmsgEntityModel, messageContainer: HTMLDivElement) => {
-        alert("删除消息");
-        // chat.msgType = this.msgType.TYPE_BACK;
-        // this.quoteMessageService.setQuoteMessage(chat);
+        this.dialogService.confirm({title: '删除消息', text: '是否删除该条消息？'}).then((ok) => {
+          if(ok) {
+            return this.cacheService.deleteChattingCache(this.currentChattingChangeService.currentChatting, chat).then(res => {
+              this.currentChattingChangeService.switchCurrentChatting(this.currentChattingChangeService.currentChatting);
+            });
+          }
+        });
       }
     },
     select: {
