@@ -48,7 +48,7 @@
                   <img class="icon-active" [src]="searchActiveIcon" alt="">
                 </mat-icon>
               </button>
-              <button mat-icon-button>
+              <button mat-icon-button *ngIf="currentChat.metadata.chatType === 'friend'">
                 <mat-icon class="hover-icon">
                   <img class="icon" [src]="voiceIcon" alt="">
                   <img class="icon-active" [src]="voiceActiveIcon" alt="">

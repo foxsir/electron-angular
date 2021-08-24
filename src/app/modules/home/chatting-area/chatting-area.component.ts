@@ -110,24 +110,33 @@ export class ChattingAreaComponent implements OnInit {
 
     // 获取缓存
     this.currentChattingChangeService.currentChatting$.subscribe(currentChat => {
-      this.currentChat = currentChat;
-      this.chattingSetting.close();
-      this.avatarService.getAvatar(this.currentChat.alarmItem.dataId).then(url => {
-        this.currentChatAvatar = this.dom.bypassSecurityTrustResourceUrl(url);
-      });
-      this.cacheService.getChattingCache(this.currentChat).then(data => {
-        if(!!data) {
-          this.chatMsgEntityList = Object.values(data);
-          this.scrollToBottom('auto');
-        }
-      });
-      this.restService.getUserBaseById(this.currentChat.alarmItem.dataId).subscribe(res => {
-        if (res.data !== null) {
-          this.currentChatSubtitle = [res.data.latestLoginAddres, res.data.registerIp].join(": ");
-        } else {
-          this.currentChatSubtitle = null;
-        }
-      });
+      // === 为刷新聊天列表，只更新数据
+      if (this.currentChat === currentChat) {
+        this.cacheService.getChattingCache(this.currentChat).then(data => {
+          if(!!data) {
+            this.chatMsgEntityList = Object.values(data);
+          }
+        });
+      } else {
+        this.currentChat = currentChat;
+        this.chattingSetting.close();
+        this.avatarService.getAvatar(this.currentChat.alarmItem.dataId).then(url => {
+          this.currentChatAvatar = this.dom.bypassSecurityTrustResourceUrl(url);
+        });
+        this.cacheService.getChattingCache(this.currentChat).then(data => {
+          if(!!data) {
+            this.chatMsgEntityList = Object.values(data);
+            this.scrollToBottom('auto');
+          }
+        });
+        this.restService.getUserBaseById(this.currentChat.alarmItem.dataId).subscribe(res => {
+          if (res.data !== null) {
+            this.currentChatSubtitle = [res.data.latestLoginAddres, res.data.registerIp].join(": ");
+          } else {
+            this.currentChatSubtitle = null;
+          }
+        });
+      }
     });
   }
 
