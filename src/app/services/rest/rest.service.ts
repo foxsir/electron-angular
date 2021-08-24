@@ -885,7 +885,7 @@ export class RestService {
     * 群组相关 - 更新群客服
     */
     UpGroupCustomerService(data: any): Observable<any> {
-        return this.http.get(UpGroupCustomerService, data);
+        return this.http.post(UpGroupCustomerService, data);
     }
 
     /**

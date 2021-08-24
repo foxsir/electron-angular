@@ -84,15 +84,22 @@ export class GroupChattingSettingComponent implements OnInit {
             this.setting_data.gtopContent = this.groupData.gtopContent;
         });
 
-        /*获取群页签列表*/
+        /*获取群客服列表*/
         this.restService.getGroupCustomerService(this.currentChat.alarmItem.dataId).subscribe(res => {
+            for (var i = 0; i < res.data.length; i++) {
+                res.data[i].status_switch = res.data[i].status == 0 ? false : true;
+            }
             this.customerServiceList = res.data;
-            console.log('客服数据：', this.customerServiceList);
+            console.log('群客服数据：', this.customerServiceList);
         });
 
-        /*获取群客服列表*/
+        /*获取群页签列表*/
         this.restService.getUserGroupTab(this.currentChat.alarmItem.dataId).subscribe(res => {
+            for (var i = 0; i < res.data.length; i++) {
+                res.data[i].status_switch = res.data[i].status == 0 ? false : true;
+            }
             this.groupTabList = res.data;
+            console.log('群页签数据：', this.groupTabList);
         });
     }
 
@@ -104,6 +111,42 @@ export class GroupChattingSettingComponent implements OnInit {
 
         this.restService.updateGroupBaseById(data).subscribe(res => {
 
+        });
+    }
+
+    /**
+     * 群客服设置
+     * @param item
+     */
+    bySwitchCustomer(item) {
+        console.log('bySwitchCustomer: ', item);
+
+        var data = {
+            clusterId: this.currentChat.alarmItem.dataId,
+            customerServiceId: item.customerServiceId,
+            status: item.status_switch == true ? 1 : 0,
+        };
+
+        this.restService.UpGroupCustomerService(data).subscribe(res => {
+            item.status = data.status;
+        });
+    }
+
+    /**
+     * 群页签配置
+     * @param item
+     */
+    bySwitchGroupTab(item) {
+        console.log('bySwitchGroupTab: ', item);
+
+        var data = {
+            clusterId: this.currentChat.alarmItem.dataId,
+            groupTabId: item.groupTabId,
+            status: item.status_switch == true ? 1 : 0,
+        };
+
+        this.restService.UpUserGroupTab(data).subscribe(res => {
+            item.status = data.status;
         });
     }
 
