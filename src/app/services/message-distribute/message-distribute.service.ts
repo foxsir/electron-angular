@@ -79,6 +79,9 @@ export class MessageDistributeService {
   private illegalMessageSource = new Subject<ProtocalModel>();
   public illegalMessage$ = this.MT19_OF_VIDEO$VOICE$REQUEST_ACCEPT$TO$ASource.asObservable();
 
+  private SENSITIVE_WORD_UPDATESource = new Subject<ProtocalModel>();
+  public SENSITIVE_WORD_UPDATE$ = this.SENSITIVE_WORD_UPDATESource.asObservable();
+
 
   constructor() { }
 
@@ -148,6 +151,9 @@ export class MessageDistributeService {
         break;
       case UserProtocalsType.UPDATE_GROUP_ADMIN:
         this.UPDATE_GROUP_ADMIN(originData);
+        break;
+      case UserProtocalsType.SENSITIVE_WORD_UPDATE:
+        this.SENSITIVE_WORD_UPDATE(originData);
         break;
       default:
         this.illegalMessage(originData);
@@ -373,6 +379,10 @@ export class MessageDistributeService {
 
   private UPDATE_GROUP_ADMIN(originData: ProtocalModel) {
     this.UPDATE_GROUP_ADMINSource.next(originData);
+  }
+
+  private SENSITIVE_WORD_UPDATE(originData: ProtocalModel) {
+    this.SENSITIVE_WORD_UPDATESource.next(originData);
   }
 
   /**
