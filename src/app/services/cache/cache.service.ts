@@ -14,6 +14,7 @@ import {RestService} from "@services/rest/rest.service";
 import {LocalUserService} from "@services/local-user/local-user.service";
 import {GroupModel} from "@app/models/group.model";
 import {GroupAdminModel} from "@app/models/group-admin.model";
+import {FileService} from "@services/file/file.service";
 
 interface CacheItem {
   alarmData: unknown;
@@ -26,7 +27,6 @@ interface CacheItem {
   providedIn: 'root'
 })
 export class CacheService {
-
   // 缓存更新使用统一订阅，订阅着需要自己去获取相应的缓存
   private cacheSource = new Subject<Partial<CacheItem>>();
   public cacheUpdate$ = this.cacheSource.asObservable();
@@ -36,7 +36,6 @@ export class CacheService {
     private messageEntityService: MessageEntityService,
     private rosterProviderService: RosterProviderService,
     private restService: RestService,
-    private localUserService: LocalUserService
   ) { }
 
   /**
@@ -76,12 +75,19 @@ export class CacheService {
     });
   }
 
-  deleteChattingCache(alarmData: AlarmItemInterface, message: ChatmsgEntityModel = null): Promise<any> {
+  /**
+   * 删除本地消息缓存
+   * @param alarmData
+   * @param messages
+   */
+  deleteChattingCache(alarmData: AlarmItemInterface, messages: ChatmsgEntityModel[] = null): Promise<any> {
     return localforage.getItem("alarmData").then(data => {
       const check = data[alarmData.alarmItem.dataId];
       const alreadyMessageMap = !check ? {} : check.message;
       if(check) {
-        delete alreadyMessageMap[message.fingerPrintOfProtocal];
+        messages.forEach(m => {
+          delete alreadyMessageMap[m.fingerPrintOfProtocal];
+        })
         return localforage.setItem("alarmData", Object.assign({
           [alarmData.alarmItem.dataId]: {
             alarmData: alarmData,
@@ -169,7 +175,8 @@ export class CacheService {
                 date: protocalModel.recvTime.toString(),
                 istop: true,
                 msgContent: dataContent.m,
-                title: data.remark,
+                title: null,
+                avatar: null,
               },
               // 聊天元数据
               metadata: {
@@ -178,6 +185,28 @@ export class CacheService {
             };
             newList.push(alarmItem);
           }
+        });
+        this.getCacheGroups().then(gs => {
+          newList.forEach(item => {
+            if(item.metadata.chatType === 'group') {
+              const g = gs[item.alarmItem.dataId];
+              if(g) {
+                item.alarmItem.avatar =  g.avatar;
+                item.alarmItem.title =  g.gname;
+              }
+            }
+          });
+        });
+        this.getCacheFriends().then(fs => {
+          newList.forEach(item => {
+            if(item.metadata.chatType === 'friend') {
+              const f = fs[item.alarmItem.dataId];
+              if(f) {
+                item.alarmItem.avatar =  f.userAvatarFileName;
+                item.alarmItem.title =  f.nickname;
+              }
+            }
+          });
         });
         resolve(newList);
       });
