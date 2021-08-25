@@ -102,7 +102,8 @@ export class AlarmsProviderService {
       msgContent: this.messageService.parseMessageForShow(messageContent, messageContentType),
       date: (time <= 0 ? RBChatUtils.getCurrentUTCTimestamp() : time),
       dataId: beyondUid,
-      istop: false
+      istop: false,
+      avatar: null,
     };
   }
 
@@ -158,7 +159,8 @@ export class AlarmsProviderService {
       date: (time <= 0 ? RBChatUtils.getCurrentUTCTimestamp() : time),
 
       dataId: friendUid,
-      istop: false
+      istop: false,
+      avatar: null
     };
   }
 
@@ -241,6 +243,7 @@ export class AlarmsProviderService {
       date: (time <= 0 ? RBChatUtils.getCurrentUTCTimestamp() : time),
       dataId: toGid,
       istop: false,
+      avatar: null,
     };
 
     return amd;
