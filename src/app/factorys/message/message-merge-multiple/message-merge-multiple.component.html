@@ -1,0 +1,19 @@
+<div fxLayout="column" fxLayoutGap="20px">
+  <div fxFlex>
+    <div fxLayout="column" fxLayoutGap="20px">
+      <div fxFlex *ngFor="let message of data">
+        <div fxLayout="column" fxLayoutGap="10px">
+          <div fxFlex class="mat-dialog-title">{{message.sendNicName}}</div>
+          <div class="content" fxFlex *ngIf="message.type === 0">{{message.text}}</div>
+          <div class="content" fxFlex *ngIf="message.type === 1"><img [src]="message.text" alt="" style="width: 200px"></div>
+          <div fxFlex>
+            <mat-divider></mat-divider>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div fxFlex fxLayoutAlign="end">
+    <button mat-flat-button color="primary" (click)="close()">关闭</button>
+  </div>
+</div>
