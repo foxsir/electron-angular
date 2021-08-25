@@ -18,7 +18,7 @@ import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 
 export class NewFriendComponent implements OnInit {
     private localUserInfo: LocalUserinfoModel = this.localUserService.localUserInfo;
-    public model_list: FriendRequestModel[];
+    public model_list: FriendRequestModel[] = [];
 
     constructor(
       private restService: RestService,
