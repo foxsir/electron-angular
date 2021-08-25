@@ -8,6 +8,7 @@ import {CacheService} from "@services/cache/cache.service";
 import * as uuid from "uuid";
 import {GroupsProviderService} from "@services/groups-provider/groups-provider.service";
 import {LocalUserService} from "@services/local-user/local-user.service";
+import {FriendRequestModel} from "@app/models/friend-request.model";
 
 interface SendMessageResponse {
   success: boolean;
@@ -376,6 +377,44 @@ export class MessageService {
       , ""
       , toGid
       , msg);
+  }
+
+  /**
+   * 同意或者拒绝好友添加请求
+   * @param type
+   * @param req
+   */
+  friendRequest(type: 'ok' | 'cancel', req: FriendRequestModel): Promise<SendMessageResponse> {
+    return new Promise((resolve, reject) => {
+      const localUserInfo = this.localUserService.localUserInfo;
+      let success = false;
+      const msgBody = {
+        localUserNickName: req.reqUserNickname,
+        localUserUid: localUserInfo.userId,
+        srcUserUid: req.reqUserId
+      };
+
+      const typeU = {
+        ok: UserProtocalsType.MT08_OF_PROCESS_ADD$FRIEND$REQ_B$TO$SERVER_AGREE,
+        cancel: UserProtocalsType.MT09_OF_PROCESS_ADD$FRIEND$REQ_B$TO$SERVER_REJECT
+      };
+
+      const p: any = createCommonData2(JSON.stringify(msgBody), localUserInfo.userId, 0, typeU[type]);
+      p.bridge = false;
+      p.QoS = true;
+      this.imService.sendData(p);
+      success = true;
+
+      resolve({
+        success: success,
+        msgBody:msgBody,
+        fingerPrint: p.fp,
+      });
+    });
+  }
+
+  addFriend() {
+
   }
 
 }
