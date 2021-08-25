@@ -6,20 +6,21 @@
     </mat-form-field>
   </div>
   <div fxFlex="400px" class="scrollbar">
-    <mat-list class="friend-list">
-      <mat-list-item class="friend-list-item" *ngFor="let friend of friendList">
+    <mat-selection-list class="friend-list" #friendSelect disableRipple color="primary">
+      <mat-list-option class="friend-list-item" *ngFor="let friend of friendList" [value]="friend">
         <mat-icon mat-list-icon class="friend-avatar">
           <img [src]="friend.base64Avatar || friend.userAvatarFileName" alt="">
         </mat-icon>
         <div mat-line>{{friend.nickname}}</div>
         <div mat-line *ngIf="!!friend.isOnline === true" style="color: #0091FF;">[在线]</div>
         <div mat-line *ngIf="!!friend.isOnline === false" style="color: #CCCCCC;">[离线]</div>
-      </mat-list-item>
-    </mat-list>
+      </mat-list-option>
+    </mat-selection-list>
   </div>
   <div fxFlex>
     <div fxLayout="row" fxLayoutAlign="end" fxLayoutGap="10">
       <button nz-button nzType="link" (click)="cancel()">取消</button>
+      <button nz-button nzType="link" (click)="nextStep(friendSelect)">发送</button>
     </div>
   </div>
 </div>
