@@ -19,7 +19,7 @@
                  matBadgePosition="above after" matBadgeSize="small"
                  [matBadgeHidden]="massageBadges[alarm.alarmItem.dataId] === 0"
                  matBadgeOverlap="true">
-              <img src="https://material.angular.io/assets/img/examples/shiba1.jpg" mat-card-avatar alt="">
+              <img [src]="alarm.alarmItem.avatar" mat-card-avatar alt="">
             </div>
             <div fxFlex="calc(100% - 110px)">
               <div fxLayout="column">
