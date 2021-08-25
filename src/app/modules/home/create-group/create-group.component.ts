@@ -18,6 +18,7 @@ import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 import ChattingModel from "@app/models/chatting.model";
 import HttpResponseInterface from "@app/interfaces/http-response.interface";
 import {CurrentChattingChangeService} from "@services/current-chatting-change/current-chatting-change.service";
+import {GroupModel} from "@app/models/group.model";
 
 interface GroupMember {
   groupUserId: string;
@@ -152,6 +153,7 @@ export class CreateGroupComponent implements OnInit {
           istop: true,
           msgContent: "",
           title: returnValue.g_name,
+          avatar: returnValue.avatar,
         },
         metadata: {
           chatType: 'group'
