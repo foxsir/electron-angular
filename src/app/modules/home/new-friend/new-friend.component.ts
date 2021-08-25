@@ -4,6 +4,11 @@ import LocalUserinfoModel from "@app/models/local-userinfo.model";
 import {LocalUserService} from "@services/local-user/local-user.service";
 import HttpPresponseModel from "@app/interfaces/http-response.interface";
 import ChattingGroupModel from "@app/models/chatting-group.model";
+import {MessageService} from "@services/message/message.service";
+import {MsgType} from "@app/config/rbchat-config";
+import NewHttpResponseInterface from "@app/interfaces/new-http-response.interface";
+import {FriendRequestModel} from "@app/models/friend-request.model";
+import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 
 @Component({
     selector: 'app-new-friend',
@@ -13,29 +18,16 @@ import ChattingGroupModel from "@app/models/chatting-group.model";
 
 export class NewFriendComponent implements OnInit {
     private localUserInfo: LocalUserinfoModel = this.localUserService.localUserInfo;
-    public model_list: any[];
+    public model_list: FriendRequestModel[];
 
-    constructor(private restService: RestService, private localUserService: LocalUserService) {
-        this.restService.getNewFriend().subscribe(res => {
+    constructor(
+      private restService: RestService,
+      private localUserService: LocalUserService,
+      private messageService: MessageService,
+      private snackBarService: SnackBarService,
+    ) {
+        this.restService.getNewFriend().subscribe((res: NewHttpResponseInterface<FriendRequestModel[]>) => {
             this.model_list = res.data;
-
-            //this.model_list.push({
-            //    reqUserId: 1000400,
-            //    reqUserAvatar: 'https://strawberry-im.oss-cn-shenzhen.aliyuncs.com/default_portrait/avatar_man_1.png',
-            //    reqDesc: 'I am your classmate',
-            //    reqTime: '',
-            //    userId: 0,
-            //    reqUserNickname: 'cloudsky'
-            //});
-
-            //this.model_list.push({
-            //    reqUserId: 1000400,
-            //    reqUserAvatar: 'https://strawberry-im.oss-cn-shenzhen.aliyuncs.com/default_portrait/avatar_man_1.png',
-            //    reqDesc: 'I am your classmate',
-            //    reqTime: '',
-            //    userId: 0,
-            //    reqUserNickname: 'cloudsky'
-            //});
         });
     }
 
@@ -44,11 +36,23 @@ export class NewFriendComponent implements OnInit {
     }
 
     refuse(item) {
-        console.log('newfriend, refuse: ', item);
+      this.messageService.friendRequest("cancel", item).then(res => {
+        if(res.success) {
+          this.snackBarService.openMessage("已经同意");
+        } else {
+          this.snackBarService.openMessage("请稍后重试");
+        }
+      });
     }
 
     agree(item) {
-        console.log('newfriend, agree: ', item);
+      this.messageService.friendRequest("ok", item).then(res => {
+        if(res.success) {
+          this.snackBarService.openMessage("已经同意");
+        } else {
+          this.snackBarService.openMessage("请稍后重试");
+        }
+      });
     }
 
 }
