@@ -1,0 +1,15 @@
+.friend-list {
+  .friend-list-item:hover {
+    background: #efefef;
+  }
+  .friend-list-item {
+    cursor: pointer;
+    ::ng-deep {
+      .friend-avatar, .friend-avatar>img {
+        width: 40px !important;
+        height: 40px !important;
+        border-radius: 50%;
+      }
+    }
+  }
+}

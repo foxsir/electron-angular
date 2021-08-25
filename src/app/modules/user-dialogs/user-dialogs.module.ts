@@ -21,6 +21,9 @@ import { SetRemarkComponent } from './set-remark/set-remark.component';
 import { UserSilenceComponent } from './user-silence/user-silence.component';
 import { MatRadioModule } from "@angular/material/radio";
 import { NgxQRCodeModule } from 'ngx-qrcode2';
+import { TransmitMessageComponent } from './transmit-message/transmit-message.component';
+import {MatInputModule} from "@angular/material/input";
+import {MatListModule} from "@angular/material/list";
 
 
 @NgModule({
@@ -31,7 +34,8 @@ import { NgxQRCodeModule } from 'ngx-qrcode2';
         UpdatePasswordComponent,
         UserInfoComponent,
         SetRemarkComponent,
-        UserSilenceComponent
+        UserSilenceComponent,
+        TransmitMessageComponent
     ],
     exports: [
         PrivacySettingComponent
@@ -50,8 +54,10 @@ import { NgxQRCodeModule } from 'ngx-qrcode2';
     NzInputModule,
     NzButtonModule,
     NzListModule,
-      MatRadioModule,
-      NgxQRCodeModule
+    MatRadioModule,
+    NgxQRCodeModule,
+    MatInputModule,
+    MatListModule
   ]
 })
 export class UserDialogsModule { }

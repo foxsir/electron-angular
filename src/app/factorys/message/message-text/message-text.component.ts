@@ -5,6 +5,8 @@ import {DomSanitizer} from "@angular/platform-browser";
 import {ReplyMessageType} from "@app/interfaces/reply-message.interface";
 import {ReplyContentType} from "@app/interfaces/reply-content.interface";
 import {QuoteMessageService} from "@services/quote-message/quote-message.service";
+import {DialogService} from "@services/dialog/dialog.service";
+import {MessageMergeMultipleComponent} from "@app/factorys/message/message-merge-multiple/message-merge-multiple.component";
 
 @Component({
   selector: 'app-message-text',
@@ -19,9 +21,26 @@ export class MessageTextComponent implements OnInit {
   public replyContentText: string = null;
   public replyContentData: ReplyContentType = null;
 
+  public messageType = {
+    [0]: '普通文字',
+    [1]: '图片',
+    [2]: '语音留言',
+    [5]: '文件',
+    [6]: '短视频',
+    [7]: '名片',
+    [8]: '位置',
+    [10]: '红包',
+    [11]: '撤回',
+    [12]: '禁言',
+    [19]: '回复',
+    [21]: '语音聊天',
+    [90]: '系统或提示',
+  };
+
   constructor(
     private dom: DomSanitizer,
     private quoteMessageService: QuoteMessageService,
+    private dialogService: DialogService,
   ){
   }
 
@@ -32,11 +51,14 @@ export class MessageTextComponent implements OnInit {
     } else {
       // 回复消息类型
       this.newChatMsg = chat as ReplyMessageType;
+      console.dir(this.newChatMsg.msg);
       const reply = this.quoteMessageService.checkReplyContent(this.newChatMsg.reply);
       if(typeof reply === 'string') {
         this.replyContentText = reply;
-      } else {
+      } else if (typeof reply === 'object') {
         this.replyContentData = reply;
+      } else if(this.newChatMsg.messages) {
+        // console.dir(this.newChatMsg.messages);
       }
       this.pureTextMessage = false;
     }
@@ -73,6 +95,17 @@ export class MessageTextComponent implements OnInit {
 
   typeof(data: any): string {
     return typeof data;
+  }
+
+  showMultipleMessage() {
+    this.dialogService.openDialog(MessageMergeMultipleComponent, {
+      data: this.newChatMsg.messages,
+      width: '430px'
+    }).then();
+  }
+
+  parseNewMsg(msg: string): {msgType: number; msgContent: string} {
+    return JSON.parse(msg);
   }
 
 }
