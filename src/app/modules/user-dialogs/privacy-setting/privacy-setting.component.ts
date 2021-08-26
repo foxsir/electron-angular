@@ -39,23 +39,25 @@ export class PrivacySettingComponent implements OnInit {
         { value: 3, label: 'xx' },
     ];
 
-    constructor(private dom: DomSanitizer, private restService: RestService) {
-        this.restService.getPrivacyConfigById().subscribe(res => {
-            console.log('getPrivacyConfigById result: ', res);
-            this.privacySetting = res.data;
-
-            this.setting_data.isSearchPhone = this.privacySetting.privacyConfig.isSearchPhone == 1;
-            this.setting_data.isSearchUid = this.privacySetting.privacyConfig.isSearchUid == 1;
-            this.setting_data.isQr = this.privacySetting.privacyConfig.isQr == 1;
-            this.setting_data.isGroup = this.privacySetting.privacyConfig.isGroup == 1;
-            this.setting_data.isCard = this.privacySetting.privacyConfig.isCard == 1;
-            this.setting_data.isTemporary = this.privacySetting.privacyConfig.isTemporary == 1;
-            this.setting_data.isPublishLimit = '' + this.privacySetting.privacyConfig.isPublishLimit + '';
-        });
+    constructor(
+      private dom: DomSanitizer,
+      private restService: RestService
+    ) {
     }
 
     ngOnInit(): void {
+      this.restService.getPrivacyConfigById().subscribe(res => {
+        console.log('getPrivacyConfigById result: ', res);
+        this.privacySetting = res.data;
 
+        this.setting_data.isSearchPhone = this.privacySetting.privacyConfig.isSearchPhone == 1;
+        this.setting_data.isSearchUid = this.privacySetting.privacyConfig.isSearchUid == 1;
+        this.setting_data.isQr = this.privacySetting.privacyConfig.isQr == 1;
+        this.setting_data.isGroup = this.privacySetting.privacyConfig.isGroup == 1;
+        this.setting_data.isCard = this.privacySetting.privacyConfig.isCard == 1;
+        this.setting_data.isTemporary = this.privacySetting.privacyConfig.isTemporary == 1;
+        this.setting_data.isPublishLimit = '' + this.privacySetting.privacyConfig.isPublishLimit + '';
+      });
     }
 
     bySwitch(key) {
@@ -78,7 +80,7 @@ export class PrivacySettingComponent implements OnInit {
         data['isPublishLimit'] = this.setting_data.isPublishLimit,
 
         this.restService.updatePrivacyConfig(data).subscribe(res => {
-             
+
         });
     }
 
