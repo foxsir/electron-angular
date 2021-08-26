@@ -24,6 +24,10 @@ import {UserSilenceComponent} from "@modules/user-dialogs/user-silence/user-sile
 import {CurrentChattingChangeService} from "@services/current-chatting-change/current-chatting-change.service";
 import RBChatUtils from "@app/libs/rbchat-utils";
 import LocalUserinfoModel from "@app/models/local-userinfo.model";
+import {ElementService} from "@services/element/element.service";
+import {TransmitMessageComponent} from "@modules/user-dialogs/transmit-message/transmit-message.component";
+import {FriendAddWay} from "@app/config/friend-add-way";
+import {MessageService} from "@services/message/message.service";
 
 @Injectable({
   providedIn: 'root'
@@ -122,9 +126,7 @@ export class ContextMenuService {
         return true;
       },
       action: (chat: ChatmsgEntityModel, messageContainer: HTMLDivElement) => {
-        alert("转发消息");
-        // chat.msgType = this.msgType.TYPE_BACK;
-        // this.quoteMessageService.setQuoteMessage(chat);
+        this.dialogService.openDialog(TransmitMessageComponent, {data: [chat], width: '314px'}).then();
       }
     },
     delete: {
@@ -135,7 +137,9 @@ export class ContextMenuService {
       action: (chat: ChatmsgEntityModel, messageContainer: HTMLDivElement) => {
         this.dialogService.confirm({title: '删除消息', text: '是否删除该条消息？'}).then((ok) => {
           if(ok) {
-            return this.cacheService.deleteChattingCache(this.currentChattingChangeService.currentChatting, chat).then(res => {
+            // 删除消息
+            return this.cacheService.deleteChattingCache(this.currentChattingChangeService.currentChatting, [chat]).then(res => {
+              // 刷新聊天数据
               this.currentChattingChangeService.switchCurrentChatting(this.currentChattingChangeService.currentChatting);
             });
           }
@@ -148,9 +152,7 @@ export class ContextMenuService {
         return true;
       },
       action: (chat: ChatmsgEntityModel, messageContainer: HTMLDivElement) => {
-        alert("选择消息");
-        // chat.msgType = this.msgType.TYPE_BACK;
-        // this.quoteMessageService.setQuoteMessage(chat);
+        this.elementService.selectMessage(true);
       }
     },
     collect: {
@@ -159,9 +161,9 @@ export class ContextMenuService {
         return true;
       },
       action: (chat: ChatmsgEntityModel, messageContainer: HTMLDivElement) => {
-        alert("收藏");
-        // chat.msgType = this.msgType.TYPE_BACK;
-        // this.quoteMessageService.setQuoteMessage(chat);
+        this.restService.addMissuCollect(chat).subscribe((res: NewHttpResponseInterface<any>) => {
+          this.snackBarService.openMessage(res.msg);
+        });
       }
     },
   };
@@ -174,6 +176,8 @@ export class ContextMenuService {
     private snackBarService: SnackBarService,
     private currentChattingChangeService: CurrentChattingChangeService,
     private restService: RestService,
+    private elementService: ElementService,
+    private messageService: MessageService,
   ) {
     this.initMsgMenu();
     this.initChattingMenu();
@@ -191,17 +195,19 @@ export class ContextMenuService {
           return filterData.chat.uid.toString() !== localUserInfo.userId.toString();
         },
         action: (alarmItem, chat) => {
-          console.dir(chat.uid);
-          this.currentChattingChangeService.switchCurrentChatting({
-            alarmItem: {
-              alarmMessageType: 0, // 0单聊 1临时聊天/陌生人聊天 2群聊
-              dataId: chat.uid,
-              date: null,
-              istop: true,
-              msgContent: null,
-              title: chat.name,
-            },
-            metadata: {chatType: 'friend'}
+          this.cacheService.getCacheFriends().then(list => {
+            this.currentChattingChangeService.switchCurrentChatting({
+              alarmItem: {
+                alarmMessageType: 0, // 0单聊 1临时聊天/陌生人聊天 2群聊
+                dataId: chat.uid,
+                date: null,
+                istop: true,
+                msgContent: null,
+                title: chat.name,
+                avatar: list[chat.uid]?.userAvatarFileName,
+              },
+              metadata: {chatType: 'friend'}
+            });
           });
         }
       },
@@ -306,7 +312,22 @@ export class ContextMenuService {
         },
         action: (alarmItem, chat) => {
           this.dialogService.confirm({title: "添加好友"}).then(() => {
-            this.snackBarService.openMessage("test");
+            this.cacheService.getCacheFriends().then(data => {
+              if(data[chat.uid]) {
+                this.snackBarService.openMessage("已经是好友");
+              } else {
+                this.messageService.addFriend(FriendAddWay.group, {
+                  friendUserUid: Number(chat.uid),
+                  desc: "来自群"
+                }).then(res => {
+                  if(res.success) {
+                    this.snackBarService.openMessage("已经发送请求");
+                  } else {
+                    this.snackBarService.openMessage("请稍后重试");
+                  }
+                });
+              }
+            });
           });
         }
       },
