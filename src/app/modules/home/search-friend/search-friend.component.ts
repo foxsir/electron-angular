@@ -13,6 +13,8 @@ import closeActiveIcon from "@app/assets/icons/close-active.svg";
 import FriendModel from "@app/models/friend.model";
 import NewHttpResponseInterface from "@app/interfaces/new-http-response.interface";
 import {SnackBarService} from "@services/snack-bar/snack-bar.service";
+import {MessageService} from "@services/message/message.service";
+import {FriendAddWay} from "@app/config/friend-add-way";
 
 interface SearchFriend {
   friendId: number;
@@ -46,7 +48,7 @@ export class SearchFriendComponent implements OnInit {
     private avatarService: AvatarService,
     private restService: RestService,
     private snackBarService: SnackBarService,
-    private localUserService: LocalUserService,
+    private messageService: MessageService,
   ) { }
 
   ngOnInit(): void {
@@ -71,7 +73,24 @@ export class SearchFriendComponent implements OnInit {
   }
 
   friendRequest() {
-    this.snackBarService.openMessage("未完成");
+    this.cacheService.getCacheFriends().then(data => {
+      if(data[this.searchFriendInfo.friendId]) {
+        this.snackBarService.openMessage("已经是好友");
+      } else {
+        this.messageService.addFriend(FriendAddWay.search, {
+          friendUserUid: this.searchFriendInfo.friendId,
+          desc: this.searchFriendInfo.whatsUp
+        }).then(res => {
+          if(res.success) {
+            this.snackBarService.openMessage("已经发送请求");
+          } else {
+            this.snackBarService.openMessage("请稍后重试");
+          }
+          this.searchFriend = '';
+          this.searchFriendInfo = null;
+        });
+      }
+    });
   }
 
 }
