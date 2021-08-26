@@ -120,6 +120,9 @@ export const formatDate = function(date, fmt) { //author: meizz
   if (["string", "number"].includes(typeof date)) {
     date = new Date(Number(date) * 1000);
   }
+  if(date === null) {
+    date = new Date();
+  }
   const o = {
     "M+": date.getMonth() + 1, //月份
     "d+": date.getDate(), //日
