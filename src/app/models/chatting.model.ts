@@ -8,4 +8,5 @@ export default class ChattingModel {
   istop: boolean;
   msgContent: string;
   title: string;
+  avatar: string;
 }

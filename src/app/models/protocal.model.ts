@@ -13,7 +13,7 @@ export class ProtocalModelDataContent {
 
 export class ProtocalModel {
   QoS: boolean; // `ture = 需要服务器发送回执
-  bridge: true;
+  bridge: boolean;
   dataContent: string; // use JSON.parse convert ProtocalModelDataContent
   fp: string;
   from: string; // 消息发送方
