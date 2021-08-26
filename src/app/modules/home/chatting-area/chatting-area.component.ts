@@ -29,6 +29,10 @@ import {ImService} from "@services/im/im.service";
 import {CurrentChattingChangeService} from "@services/current-chatting-change/current-chatting-change.service";
 import {RestService} from "@services/rest/rest.service";
 import {MatDrawer} from "@angular/material/sidenav";
+import {ElementService} from "@services/element/element.service";
+import {MatCheckbox} from "@angular/material/checkbox";
+import {DialogService} from "@services/dialog/dialog.service";
+import {TransmitMessageComponent} from "@modules/user-dialogs/transmit-message/transmit-message.component";
 
 @Component({
   selector: 'app-chatting-area',
@@ -54,7 +58,6 @@ export class ChattingAreaComponent implements OnInit {
   public voiceActiveIcon = this.dom.bypassSecurityTrustResourceUrl(voiceActiveIcon);
   // end icon
 
-  public currentChatAvatar: SafeResourceUrl;
   public currentChatSubtitle: string = null;
   public chatMsgEntityList: ChatmsgEntityModel[];
 
@@ -70,6 +73,10 @@ export class ChattingAreaComponent implements OnInit {
   public contextMenu: ContextMenuModel[] = [];
   public contextMenuAvatar: ContextMenuAvatarModel[] = [];
 
+  // 选择消息
+  public selectMessage: boolean = false;
+  public selectMessageList: ChatmsgEntityModel[] = [];
+
   constructor(
     private avatarService: AvatarService,
     private dom: DomSanitizer,
@@ -82,6 +89,8 @@ export class ChattingAreaComponent implements OnInit {
     private imService: ImService,
     private restService: RestService,
     private currentChattingChangeService: CurrentChattingChangeService,
+    private elementService: ElementService,
+    private dialogService: DialogService,
   ) {
     this.localUserInfo = this.localUserService.localUserInfo;
 
@@ -89,6 +98,11 @@ export class ChattingAreaComponent implements OnInit {
     this.subscribeOfGroupChatMsgToServer();
     this.subscribeOfGroupChatMsgServerToB();
     this.subscribeChattingMessage();
+
+    // 选择消息
+    this.elementService.selectMessage$.subscribe((directive) => {
+      this.selectMessage = directive;
+    });
   }
 
   ngOnInit(): void {
@@ -120,9 +134,6 @@ export class ChattingAreaComponent implements OnInit {
       } else {
         this.currentChat = currentChat;
         this.chattingSetting.close();
-        this.avatarService.getAvatar(this.currentChat.alarmItem.dataId).then(url => {
-          this.currentChatAvatar = this.dom.bypassSecurityTrustResourceUrl(url);
-        });
         this.cacheService.getChattingCache(this.currentChat).then(data => {
           if(!!data) {
             this.chatMsgEntityList = Object.values(data);
@@ -261,6 +272,10 @@ export class ChattingAreaComponent implements OnInit {
     };
   }
 
+  /**
+   * 消息列表滚动底部
+   * @param behavior
+   */
   scrollToBottom(behavior: "auto" | "smooth" = "smooth") {
     setTimeout(() => {
       if(this.chattingContainer) {
@@ -268,27 +283,102 @@ export class ChattingAreaComponent implements OnInit {
           behavior: behavior, block: "start"
         });
       }
-    }, 500);
+    });
   }
 
+  /**
+   * 消息右键
+   * @param e
+   * @param menu
+   * @param span
+   * @param chat
+   */
   contextMenuForMessage(e: MouseEvent, menu: MatMenuTrigger, span: HTMLSpanElement, chat: ChatmsgEntityModel) {
     this.contextMenu = this.contextMenuService.getContextMenuForMessage(chat);
-    menu.openMenu();
-    span.style.position = "fixed";
-    span.style.top = "0px";
-    span.style.left = "0px";
-    span.style.transform = `translate3d(${e.pageX}px, ${e.pageY}px, 0px)`;
-    return e.defaultPrevented;
+    if(this.contextMenu.length > 0) {
+      menu.openMenu();
+      span.style.position = "fixed";
+      span.style.top = "0px";
+      span.style.left = "0px";
+      span.style.transform = `translate3d(${e.pageX}px, ${e.pageY}px, 0px)`;
+      return e.defaultPrevented;
+    }
   }
 
+  /**
+   * 头像右键
+   * @param e
+   * @param menu
+   * @param span
+   * @param chat
+   */
   async contextMenuForAvatar(e: MouseEvent, menu: MatMenuTrigger, span: HTMLSpanElement, chat: ChatmsgEntityModel) {
     this.contextMenuAvatar = await this.contextMenuService.getContextMenuForAvatar(this.currentChat, chat);
-    menu.openMenu();
-    span.style.position = "fixed";
-    span.style.top = "0px";
-    span.style.left = "0px";
-    span.style.transform = `translate3d(${e.pageX}px, ${e.pageY}px, 0px)`;
-    return e.defaultPrevented;
+    if(this.contextMenuAvatar.length > 0) {
+      menu.openMenu();
+      span.style.position = "fixed";
+      span.style.top = "0px";
+      span.style.left = "0px";
+      span.style.transform = `translate3d(${e.pageX}px, ${e.pageY}px, 0px)`;
+      return e.defaultPrevented;
+    }
+  }
+
+  /**
+   * 收集选择的消息
+   * @param chat
+   * @param msgCheckbox
+   */
+  collectMessage(chat: ChatmsgEntityModel, msgCheckbox: MatCheckbox) {
+    msgCheckbox.checked = !msgCheckbox.checked;
+
+    if(msgCheckbox.checked) {
+      this.selectMessageList.push(chat);
+    } else {
+      const index = this.selectMessageList.indexOf(chat);
+      delete this.selectMessageList[index];
+      this.selectMessageList = this.selectMessageList.filter(v => v);
+    }
+
+    return false;
+  }
+
+  /**
+   * 取消所选
+   */
+  cancelSelectMessage() {
+    this.selectMessage = false;
+    this.selectMessageList = [];
+  }
+
+  /**
+   * 转发所选
+   */
+  transmitSelectMessage() {
+    if(this.selectMessageList.length > 0) {
+      this.dialogService.openDialog(TransmitMessageComponent, {data: this.selectMessageList, width: '314px'}).then((ok) => {
+        if(ok) {
+          this.cancelSelectMessage();
+        }
+      });
+    }
+  }
+
+  /**
+   * 删除所选
+   */
+  deleteSelectMessage() {
+    this.dialogService.confirm({
+      title: ["删除", this.selectMessageList.length, "条消息"].join("")
+    }).then(ok => {
+      if(ok) {
+        this.cacheService.deleteChattingCache(this.currentChattingChangeService.currentChatting, this.selectMessageList).then(res => {
+          // 刷新聊天数据
+          this.cancelSelectMessage();
+          this.currentChattingChangeService.switchCurrentChatting(this.currentChattingChangeService.currentChatting);
+        });
+      }
+    });
   }
 
 }

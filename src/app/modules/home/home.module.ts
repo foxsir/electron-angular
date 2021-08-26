@@ -43,6 +43,7 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzListModule } from 'ng-zorro-antd/list';
 import {SettingDialogsModule} from "../setting-dialogs/setting-dialogs.module";
+import {MatCheckboxModule} from "@angular/material/checkbox";
 
 @NgModule({
   declarations: [
@@ -91,6 +92,7 @@ import {SettingDialogsModule} from "../setting-dialogs/setting-dialogs.module";
     NzButtonModule,
     NzListModule,
     SettingDialogsModule,
+    MatCheckboxModule,
   ]
 })
 export class HomeModule { }

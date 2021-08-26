@@ -29,6 +29,7 @@ import {PrivacySettingComponent} from "@modules/user-dialogs/privacy-setting/pri
 import {MySignatureComponent} from "@modules/user-dialogs/my-signature/my-signature.component";
 import {UpdatePasswordComponent} from "@modules/user-dialogs/update-password/update-password.component";
 import {RestService} from "@services/rest/rest.service";
+import {CacheService} from "@services/cache/cache.service";
 // import icons end
 
 @Component({
@@ -80,6 +81,12 @@ export class AccountPanelComponent implements OnInit {
       action: this.updatePassword.bind(this)
     },
     {
+      label: "清空缓存",
+      icon: this.dom.bypassSecurityTrustResourceUrl(lockIcon),
+      iconActive: this.dom.bypassSecurityTrustResourceUrl(lockActiveIcon),
+      action: this.cacheService.clearAllCache
+    },
+    {
       label: "退出登录",
       icon: this.dom.bypassSecurityTrustResourceUrl(logoutIcon),
       iconActive: this.dom.bypassSecurityTrustResourceUrl(logoutActiveIcon),
@@ -95,6 +102,7 @@ export class AccountPanelComponent implements OnInit {
     private router: Router,
     private windowService: WindowService,
     private restService: RestService,
+    private cacheService: CacheService,
   ) {
   }
 
