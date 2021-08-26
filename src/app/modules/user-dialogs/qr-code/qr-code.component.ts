@@ -1,30 +1,46 @@
-import { Component, OnInit } from '@angular/core';
-import { LocalUserService } from "@services/local-user/local-user.service";
-import { RestService } from "@services/rest/rest.service";
+import {Component, OnInit} from '@angular/core';
+import {CacheService} from "@services/cache/cache.service";
+import {UserModel} from "@app/models/user.model";
+import {FileService} from "@services/file/file.service";
+import DirectoryType from "@services/file/config/DirectoryType";
+import {MatDialogRef} from "@angular/material/dialog";
+import {QrcodeComponent} from "ngx-qrcode2";
+import {ElementService} from "@services/element/element.service";
+import {SnackBarService} from "@services/snack-bar/snack-bar.service";
+import CommonTools from "@app/common/common.tools";
 
 @Component({
-    selector: 'app-qr-code',
-    templateUrl: './qr-code.component.html',
-    styleUrls: ['./qr-code.component.scss']
+  selector: 'app-qr-code',
+  templateUrl: './qr-code.component.html',
+  styleUrls: ['./qr-code.component.scss']
 })
 export class QrCodeComponent implements OnInit {
+  public myInfo: UserModel;
+  public avatar: string;
 
-    public value = "none";
-    public qrcodesize = 260;
-    public whatsup = "";
+  constructor(
+    public dialogRef: MatDialogRef<QrCodeComponent>,
+    private cacheService: CacheService,
+    private fileService: FileService,
+    private elementService: ElementService,
+    private snackBarService: SnackBarService
+  ) {
+  }
 
-    constructor(private localUserService: LocalUserService, private restService: RestService) { }
+  ngOnInit(): void {
+    this.cacheService.getMyInfo().then((data) => {
+      this.myInfo = data;
+      this.avatar = this.fileService.getFileUrl([DirectoryType.OSS_PORTRAIT, data.userAvatarFileName].join("/"));
+    });
+  }
 
-    ngOnInit(): void {
-        const localUserInfo = this.localUserService.getObj();
-        this.value = localUserInfo.userId.toString();
+  copy(qrcode: QrcodeComponent) {
+    this.elementService.copyImageToClipboard(qrcode.qrcElement.nativeElement.firstChild);
+    this.snackBarService.openMessage('已经复制到剪切板');
+  }
 
-        console.log('二维码页面，用户信息：', localUserInfo);
-
-        this.restService.getUserBaseById(localUserInfo.userId.toString()).subscribe(res => {
-            console.log('QrCodeComponent result: ', res);
-            this.whatsup = res.data.whatSUp;
-        });
-    }
+  download(qrcode: QrcodeComponent) {
+    CommonTools.downloadLink(qrcode.qrcElement.nativeElement.firstChild.src, "qrcode.png");
+  }
 
 }
