@@ -108,18 +108,17 @@ export class IndexComponent implements OnInit {
         this.currentRouter = this.router.url;
       }
     });
-
-    this.avatarService.getAvatar(this.localUserService.localUserInfo.userId.toString()).then(url => {
-      this.myAvatar = this.dom.bypassSecurityTrustResourceUrl(url);
-    });
-
-    // 缓存个人信息
-    this.cacheService.cacheMyInfo().then();
   }
 
   ngOnInit(): void {
     this.initAll();
     this.doLoginIMServer();
+
+    this.avatarService.getAvatar(this.localUserService.localUserInfo.userId.toString()).then(url => {
+      this.myAvatar = this.dom.bypassSecurityTrustResourceUrl(url);
+    });
+    // 缓存个人信息
+    this.cacheService.cacheMyInfo().then();
 
     this.messageDistributeService.MT03_OF_CHATTING_MESSAGE$.subscribe(data => {
       this.massageBadges.message = 1;
