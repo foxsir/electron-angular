@@ -23,14 +23,15 @@ import {
   getFriendGroupList,
   getFriendSearch,
   getGroupAdminInfo,
-    updRemark,
-    getRemark,
+  updRemark,
+  getRemark,
   updateGroupAdmin,
   addGroupSilence,
   deleteGroupSilenceById,
-  getGroupSilenceById,
+  getGroupSilenceById, addMissuCollect,
 } from "@app/config/post-api";
 import {HttpHeaders} from "@angular/common/http";
+import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 
 @Injectable({
   providedIn: 'root'
@@ -979,6 +980,21 @@ export class RestService {
    */
   getGroupSilenceById(data: {clusterId: string}) {
     return this.http.post(addGroupSilence, data);
+  }
+
+  /**
+   * 收藏消息
+   * @param chat
+   */
+  addMissuCollect(chat: ChatmsgEntityModel) {
+    const localUserInfo = this.localUserService.localUserInfo;
+    const data = {
+      content: chat.text,
+      fromUserId: chat.uid,
+      type: chat.msgType,
+      userId: localUserInfo.userId,
+    };
+    return this.http.post(addMissuCollect, data);
   }
 
 }
