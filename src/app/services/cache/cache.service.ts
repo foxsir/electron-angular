@@ -15,6 +15,7 @@ import {LocalUserService} from "@services/local-user/local-user.service";
 import {GroupModel} from "@app/models/group.model";
 import {GroupAdminModel} from "@app/models/group-admin.model";
 import {FileService} from "@services/file/file.service";
+import {UserModel} from "@app/models/user.model";
 
 interface CacheItem {
   alarmData: unknown;
@@ -36,6 +37,7 @@ export class CacheService {
     private messageEntityService: MessageEntityService,
     private rosterProviderService: RosterProviderService,
     private restService: RestService,
+    private localUserService: LocalUserService,
   ) { }
 
   /**
@@ -321,5 +323,37 @@ export class CacheService {
     return localforage.clear();
   }
 
+  /**
+   * 缓存个人信息
+   */
+  cacheMyInfo(): Promise<UserModel> {
+    return new Promise((resolve, reject) => {
+      const localUserInfo = this.localUserService.localUserInfo;
+      this.restService.getUserBaseById(localUserInfo.userId.toString()).subscribe((res: NewHttpResponseInterface<UserModel>) => {
+        if(res.status === 200) {
+          localforage.setItem('myInfo', res.data).then(data => {
+            resolve(data);
+          });
+        }
+      });
+    });
+  }
+
+  /**
+   * 获取个人信息
+   */
+  getMyInfo(): Promise<UserModel> {
+    return new Promise((resolve, reject) => {
+      localforage.getItem('myInfo').then((data: UserModel) => {
+        if(data) {
+          resolve(data);
+        } else {
+          this.cacheMyInfo().then(cache => {
+            resolve(cache);
+          });
+        }
+      });
+    });
+  }
 
 }
