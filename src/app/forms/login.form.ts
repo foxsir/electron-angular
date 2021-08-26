@@ -16,7 +16,7 @@ export class LoginForm {
     {
       key: 'account',
       type: 'input',
-      defaultValue: 'guanliyuan',
+      // defaultValue: 'guanliyuan',
       templateOptions: {
         label: '请输入登录账号',
         type: 'text',
@@ -33,8 +33,10 @@ export class LoginForm {
           if (RegexpMap.username.test(field.formControl.value) === false) {
             const regexp = /[a-z0-9]/g;
             const array = [...field.formControl.value.matchAll(regexp)];
-            const newValue = array.map(v => v[0]);
-            field.formControl.setValue(newValue.join(""));
+            const newValue = array.map(v => v[0]).join("");
+            if(newValue.length !== field.formControl.value.length) {
+              field.formControl.setValue(newValue);
+            }
           }
         }
       },

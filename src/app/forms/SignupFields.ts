@@ -25,8 +25,10 @@ class SignupFields {
             if (RegexpMap.username.test(field.formControl.value) === false) {
               const regexp = /[a-z0-9]/g;
               const array = [...field.formControl.value.matchAll(regexp)];
-              const newValue = array.map(v => v[0]);
-              field.formControl.setValue(newValue.join(""));
+              const newValue = array.map(v => v[0]).join("");
+              if(newValue.length !== field.formControl.value.length) {
+                field.formControl.setValue(newValue);
+              }
             }
           }
         },
