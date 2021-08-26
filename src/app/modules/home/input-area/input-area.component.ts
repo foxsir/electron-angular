@@ -32,8 +32,12 @@ import {UploadedFile} from "@app/factorys/upload/upload-file/upload-file.compone
 import {QuoteMessageService} from "@services/quote-message/quote-message.service";
 import {ProtocalModel, ProtocalModelDataContent} from "@app/models/protocal.model";
 import EmojiMap from "@app/factorys/message/message-text/EmojiMap";
-import {MatMenuTrigger} from "@angular/material/menu";
+import {MatMenu, MatMenuTrigger} from "@angular/material/menu";
 import {MatButton} from "@angular/material/button";
+import {Base64} from "js-base64";
+import {RestService} from "@services/rest/rest.service";
+import HttpResponseInterface from "@app/interfaces/http-response.interface";
+import {GroupMemberModel} from "@app/models/group-member.model";
 
 @Component({
   selector: 'app-input-area',
@@ -46,6 +50,9 @@ export class InputAreaComponent implements OnInit {
   @Output() sendMessage = new EventEmitter<{chat: ChatmsgEntityModel; dataContent: ProtocalModelDataContent}>();
   @ViewChild("textarea") textarea: ElementRef;
   @ViewChild("openEmojiToggle") openEmojiToggle: MatButton;
+  @ViewChild("createPlanMenuTrigger") menuTrigger: MatMenuTrigger;
+  @ViewChild("matMenuTriggerSpan") matMenuTriggerSpan: ElementRef;
+  @ViewChild("atMenu") atMenu: MatMenu;
 
   private reversalEmojis = InputAreaComponent.reversalEmojiMap();
   emojiItems = InputAreaComponent.getEmojiMap();
@@ -59,10 +66,13 @@ export class InputAreaComponent implements OnInit {
 
   public messageText: string = '';
   public messageTextPlaceholder: string = '请输入信息';
+  public showPlaceholder: boolean = true;
 
   private sendChatMap = {};
   // 引用回复消息
   public quoteMessage: ChatmsgEntityModel = null;
+
+  public memberList: GroupMemberModel[] = [];
 
   constructor(
     private router: Router,
@@ -75,12 +85,19 @@ export class InputAreaComponent implements OnInit {
     private fileService: FileService,
     private cacheService: CacheService,
     private quoteMessageService: QuoteMessageService,
+    private restService: RestService,
   ) { }
 
   ngOnInit(): void {
     // 订阅回复消息
     this.quoteMessageService.message$.subscribe((meg) => {
       this.quoteMessage = meg;
+    });
+
+    this.restService.submitGetGroupMembersListFromServer(this.currentChat.alarmItem.dataId).subscribe((res: HttpResponseInterface) => {
+      if(res.success) {
+        this.memberList = JSON.parse(res.returnValue);
+      }
     });
   }
 
@@ -265,8 +282,36 @@ export class InputAreaComponent implements OnInit {
     return textArray.join("").trim();
   }
 
+  /**
+   * 触发@
+   * @private
+   */
+  private toggleAt() {
+    this.textarea.nativeElement.blur();
+    this.textarea.nativeElement.style.width = 'fit-content';
+    this.matMenuTriggerSpan.nativeElement.style.marginLeft = this.textarea.nativeElement.clientWidth + "px";
+    this.textarea.nativeElement.style.width = 'auto';
+    this.menuTrigger.openMenu();
+  }
+
+  public appendAtMark(member: GroupMemberModel) {
+    document.execCommand("insertText", false, member.nickname + " ");
+    this.showPlaceholder = false;
+    this.textarea.nativeElement.blur();
+    this.menuTrigger.closeMenu();
+    setTimeout(() => this.textarea.nativeElement.focus(), 100);
+  }
+
+  textareaKeydown(event: KeyboardEvent) {
+    if(event.key === '@') {
+      setTimeout(() => this.textareaChange());
+      setTimeout(() => this.toggleAt());
+    }
+  }
+
   textareaChange() {
     this.messageText = this.getTextareaContent();
+    this.showPlaceholder = this.messageText.length === 0;
   }
 
   insertEmoji(emoji: { key: string; value: string }) {

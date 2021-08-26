@@ -26,9 +26,20 @@
     </button>
   </div>
   <div fxFlex style="background: #f0f0f0" class="message-textarea-container">
+    <span #createPlanMenuTrigger="matMenuTrigger" #matMenuTriggerSpan [matMenuTriggerFor]="atMenu"></span>
+    <mat-menu #atMenu="matMenu">
+      <mat-card class="mat-elevation-z0" style="height: 100px; width: 200px;">
+        <mat-card-content>
+          <p mat-menu-item
+             *ngFor="let member of memberList"
+             (click)="appendAtMark(member)" (keydown.enter)="appendAtMark(member)">
+            @{{member.nickname}}</p>
+        </mat-card-content>
+      </mat-card>
+    </mat-menu>
     <div contenteditable="true" class="message-textarea" #textarea (keydown.enter)="false"
-         (keyup)="textareaChange()" (keyup.enter)="doSend();"></div>
-    <div class="message-text-placeholder" (selectstart)="false" (click)="textarea.focus()" [fxShow]="this.messageText.length < 1">
+         (keyup)="textareaChange()" (keydown)="textareaKeydown($event)" (keyup.enter)="doSend();"></div>
+    <div class="message-text-placeholder" (selectstart)="false" (click)="textarea.focus()" [fxShow]="showPlaceholder">
       {{messageTextPlaceholder}}
     </div>
   </div>
