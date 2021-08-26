@@ -22,19 +22,6 @@
     </mat-card-content>
 </mat-card>
 
-<nz-modal [(nzVisible)]="show_modal" nzTitle="删除收藏" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
-    <ng-container *nzModalContent>
-        <p>确认将此内容从收藏中删除？</p>
-    </ng-container>
-</nz-modal>
-
-<!--<nz-list>
-    <nz-list-item *ngFor="let item of collectList">
-        <nz-skeleton *ngIf="!item" [nzAvatar]="true" [nzParagraph]="{ rows: 1 }"></nz-skeleton>
-        <nz-list-item-meta [nzDescription]="item.content">
-            <nz-list-item-meta-title>
-                <a href="#">{{ item.createTime }}</a>
-            </nz-list-item-meta-title>
-        </nz-list-item-meta>
-    </nz-list-item>
-</nz-list>-->
+<div fxFlexFill [fxShow]="collectList.length === 0" fxLayoutAlign="center center">
+  <empty-data [dataCount]="collectList.length" text="暂时没有任何收藏"></empty-data>
+</div>

@@ -13,7 +13,7 @@ import {DialogService} from "@services/dialog/dialog.service";
     styleUrls: ['./collect.component.scss']
 })
 export class CollectComponent implements OnInit {
-    collectList: any[];
+    collectList: any[] = [];
     public show_modal = false;
     public current_model: any;
 
@@ -58,6 +58,7 @@ export class CollectComponent implements OnInit {
     ) {
         this.restService.getMyCollectList().subscribe(res => {
             this.collectList = res.data;
+            console.dir(res.data);
         });
     }
 
