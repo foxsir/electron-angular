@@ -9,6 +9,8 @@ import * as uuid from "uuid";
 import {GroupsProviderService} from "@services/groups-provider/groups-provider.service";
 import {LocalUserService} from "@services/local-user/local-user.service";
 import {FriendRequestModel} from "@app/models/friend-request.model";
+import {FriendAddWay} from "@app/config/friend-add-way";
+import FriendModel from "@app/models/friend.model";
 
 interface SendMessageResponse {
   success: boolean;
@@ -16,6 +18,14 @@ interface SendMessageResponse {
   fingerPrint: string;
   currentChattingGe?: any;
 }
+
+const addWayItems = [
+  FriendAddWay.search,
+  FriendAddWay.card,
+  FriendAddWay.group,
+  FriendAddWay.qrcode,
+] as const;
+type addWayType = typeof addWayItems[number];
 
 @Injectable({
   providedIn: 'root'
@@ -413,8 +423,36 @@ export class MessageService {
     });
   }
 
-  addFriend() {
+  /**
+   * 发送添加好友指令
+   * @param addWay
+   * @param friend
+   */
+  addFriend(addWay: addWayType, friend: {friendUserUid: number; desc: string}): Promise<SendMessageResponse> {
+    return new Promise((resolve, reject) => {
+      const localUserInfo = this.localUserService.localUserInfo;
+      let success = false;
+      const msgBody = {
+        desc: friend.desc,
+        friendUserUid: friend.friendUserUid,
+        localUserUid: localUserInfo.userId,
+        addWay: addWay // 1搜索添加  3名片 4群组  5二维码
+      };
 
+      const p: any = createCommonData2(
+        JSON.stringify(msgBody), localUserInfo.userId, 0, UserProtocalsType.MT05_OF_ADD_FRIEND_REQUEST_A$TO$SERVER
+      );
+      p.bridge = false;
+      p.QoS = true;
+      this.imService.sendData(p);
+      success = true;
+
+      resolve({
+        success: success,
+        msgBody:msgBody,
+        fingerPrint: p.fp,
+      });
+    });
   }
 
 }
