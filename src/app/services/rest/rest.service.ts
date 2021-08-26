@@ -17,6 +17,10 @@ import {
   updatePrivacyConfig,
   getUserJoinGroup,
   getGroupBaseById,
+  getUserGroupTab,
+  UpUserGroupTab,
+  getGroupCustomerService,
+  UpGroupCustomerService,
   updateGroupBaseById,
   getNewFriend,
   blackUser,
@@ -855,6 +859,34 @@ export class RestService {
     getUserJoinGroup(): Observable<any> {
         const localUserInfo = this.localUserService.getObj();
         return this.http.get(getUserJoinGroup, { userId: localUserInfo.userId });
+    }
+
+    /**
+    * 群组相关 - 群页签列表
+    */
+    getUserGroupTab(clusterId): Observable<any> {
+        return this.http.get(getUserGroupTab, { clusterId: clusterId });
+    }
+
+    /**
+    * 群组相关 - 更新群页签
+    */
+    UpUserGroupTab(data: any): Observable<any> {
+        return this.http.post(UpUserGroupTab, data);
+    }
+
+   /**
+    * 群组相关 - 群客服列表
+    */
+    getGroupCustomerService(clusterId): Observable<any> {
+        return this.http.get(getGroupCustomerService, { clusterId: clusterId });
+    }
+
+   /**
+    * 群组相关 - 更新群客服
+    */
+    UpGroupCustomerService(data: any): Observable<any> {
+        return this.http.post(UpGroupCustomerService, data);
     }
 
     /**
