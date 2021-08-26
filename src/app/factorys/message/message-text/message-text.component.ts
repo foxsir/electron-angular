@@ -51,7 +51,6 @@ export class MessageTextComponent implements OnInit {
     } else {
       // 回复消息类型
       this.newChatMsg = chat as ReplyMessageType;
-      console.dir(this.newChatMsg.msg);
       const reply = this.quoteMessageService.checkReplyContent(this.newChatMsg.reply);
       if(typeof reply === 'string') {
         this.replyContentText = reply;
