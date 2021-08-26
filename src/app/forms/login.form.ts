@@ -16,7 +16,7 @@ export class LoginForm {
     {
       key: 'account',
       type: 'input',
-      // defaultValue: 'guanliyuan',
+      defaultValue: 'guanliyuan',
       templateOptions: {
         label: '请输入登录账号',
         type: 'text',

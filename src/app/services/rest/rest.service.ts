@@ -846,7 +846,6 @@ export class RestService {
      */
     updatePrivacyConfig(data: any): Observable<any> {
         const localUserInfo = this.localUserService.getObj();
-        console.dir(localUserInfo)
         data.userId = localUserInfo.userId;
 
         return this.http.post(updatePrivacyConfig, data);
