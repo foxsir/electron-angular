@@ -45,7 +45,7 @@ export class FileService {
    * @param pathname
    */
   getFileUrl(pathname: string): string {
-    return [OssConfig.bucketDomain, pathname].join("");
+    return [OssConfig.bucketDomain, '/', pathname].join("").replace('//', '/');
   }
 
 }
