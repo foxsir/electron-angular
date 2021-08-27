@@ -38,6 +38,8 @@ import {Base64} from "js-base64";
 import {RestService} from "@services/rest/rest.service";
 import HttpResponseInterface from "@app/interfaces/http-response.interface";
 import {GroupMemberModel} from "@app/models/group-member.model";
+import {SnackBarService} from "@services/snack-bar/snack-bar.service";
+import {CurrentChattingChangeService} from "@services/current-chatting-change/current-chatting-change.service";
 
 @Component({
   selector: 'app-input-area',
@@ -74,6 +76,8 @@ export class InputAreaComponent implements OnInit {
 
   public memberList: GroupMemberModel[] = [];
 
+  private atTargetMember: string[] = [];
+
   constructor(
     private router: Router,
     private dom: DomSanitizer,
@@ -86,6 +90,8 @@ export class InputAreaComponent implements OnInit {
     private cacheService: CacheService,
     private quoteMessageService: QuoteMessageService,
     private restService: RestService,
+    private snackBarService: SnackBarService,
+    private currentChattingChangeService: CurrentChattingChangeService,
   ) { }
 
   ngOnInit(): void {
@@ -94,11 +100,30 @@ export class InputAreaComponent implements OnInit {
       this.quoteMessage = meg;
     });
 
-    this.restService.submitGetGroupMembersListFromServer(this.currentChat.alarmItem.dataId).subscribe((res: HttpResponseInterface) => {
-      if(res.success) {
-        this.memberList = JSON.parse(res.returnValue);
-      }
+    this.chattingChange();
+  }
+
+  /**
+   * 获取群成员暂存
+   */
+  chattingChange() {
+    this.getGroupMembers(this.currentChat);
+    this.currentChattingChangeService.currentChatting$.subscribe((currentChat) => {
+      this.getGroupMembers(currentChat);
     });
+  }
+
+  getGroupMembers(currentChat: AlarmItemInterface) {
+    if(currentChat.metadata.chatType === "group") {
+      const gid = currentChat.alarmItem.dataId;
+      this.restService.submitGetGroupMembersListFromServer(gid).subscribe((res: HttpResponseInterface) => {
+        if(res.success) {
+          this.memberList = JSON.parse(res.returnValue);
+        } else {
+          this.snackBarService.openSnackBar("获取群成员失败");
+        }
+      });
+    }
   }
 
   getImageInfo(file: any) {
@@ -112,18 +137,31 @@ export class InputAreaComponent implements OnInit {
     });
   }
 
+  /**
+   * 上传图片
+   * @param uploadedFile
+   */
   imageUploaded(uploadedFile: UploadedFile) {
     const msg = this.sendChatMap[uploadedFile.file.uid];
     const messageText = msg.text = uploadedFile.url.href;
     return this.doSend(messageText, MsgType.TYPE_IMAGE,false, msg);
   }
 
+  /**
+   * 发送消息
+   * @param messageText
+   * @param messageType
+   * @param emitToUI
+   * @param replaceEntity
+   */
   doSend(
     messageText: string = this.messageText,
     messageType: number = MsgType.TYPE_TEXT,
     emitToUI: boolean = true,
     replaceEntity: ChatmsgEntityModel = null
   ) {
+    console.dir(this.atTargetMember);
+
     if (!messageText || messageText.trim().length === 0) {
       return;
     }
@@ -142,7 +180,14 @@ export class InputAreaComponent implements OnInit {
     return false;
   }
 
-  sendFriendMessage(
+  /**
+   * 发送单聊消息
+   * @param messageType
+   * @param messageText
+   * @param emitToUI
+   * @param replaceEntity
+   */
+  private sendFriendMessage(
     messageType: number, messageText: string,
     emitToUI: boolean = true,
     replaceEntity: ChatmsgEntityModel = null
@@ -177,7 +222,14 @@ export class InputAreaComponent implements OnInit {
     });
   }
 
-  sendGroupMessage(
+  /**
+   * 发送群消息
+   * @param messageType
+   * @param messageText
+   * @param emitToUI
+   * @param replaceEntity
+   */
+  private sendGroupMessage(
     messageType: number, messageText: string,
     emitToUI: boolean = true,
     replaceEntity: ChatmsgEntityModel = null
@@ -258,6 +310,10 @@ export class InputAreaComponent implements OnInit {
     return set;
   }
 
+  /**
+   * EmojiMap key value 互换
+   * @private
+   */
   private static reversalEmojiMap() {
     const array = [];
     for (const emojiMapKey in EmojiMap) {
@@ -269,11 +325,20 @@ export class InputAreaComponent implements OnInit {
     return new Map(array);
   }
 
+  /**
+   * 解析输入内容
+   */
   getTextareaContent(): string {
     const textArray = [];
+    this.atTargetMember = [];
     this.textarea.nativeElement.childNodes.forEach(node => {
       if(node.tagName === "IMG") {
-        textArray.push(" " +this.reversalEmojis.get(node.src.split('/').pop())+ " ");
+        if(node.className === 'at-mark-for-input') {
+          textArray.push("@" + node.getAttribute("user-nickname"));
+          this.atTargetMember.push(node.getAttribute("user-id"));
+        } else {
+          textArray.push(" " +this.reversalEmojis.get(node.src.split('/').pop())+ " ");
+        }
       } else {
         textArray.push(node.nodeValue);
       }
@@ -288,32 +353,87 @@ export class InputAreaComponent implements OnInit {
    */
   private toggleAt() {
     this.textarea.nativeElement.blur();
-    this.textarea.nativeElement.style.width = 'fit-content';
-    this.matMenuTriggerSpan.nativeElement.style.marginLeft = this.textarea.nativeElement.clientWidth + "px";
-    this.textarea.nativeElement.style.width = 'auto';
+    this.matMenuTriggerSpan.nativeElement.style.marginLeft = this.calcMenuPosition();
     this.menuTrigger.openMenu();
   }
 
+  /**
+   * 计算menu偏移位置
+   */
+  calcMenuPosition(): string {
+    const selection = window.getSelection();
+    const iterator = this.textarea.nativeElement.childNodes.entries();
+    let check = true;
+    const tempDiv = document.createElement("div");
+    tempDiv.style.width = 'fit-content';
+    tempDiv.style.visibility = 'hidden';
+    while (check) {
+      const pre: HTMLElement | undefined = iterator.next().value[1];
+      if(!pre) {
+        check = false;
+      }
+      if(pre === selection.anchorNode) {
+        const nodeValue = pre.nodeValue;
+        const sp = document.createElement("span");
+        sp.innerHTML = nodeValue.substring(0, selection.anchorOffset);
+        tempDiv.append(sp);
+        check = false;
+      } else {
+        if(pre) {
+          const sp = document.createElement("span");
+          sp.innerHTML = pre.nodeValue || pre.outerHTML
+          tempDiv.append(sp);
+        }
+      }
+    }
+    document.body.append(tempDiv);
+    let position = tempDiv.clientWidth;
+    // 多行文本处理
+    if(this.textarea.nativeElement.clientWidth < tempDiv.clientWidth) {
+      position = this.textarea.nativeElement.clientWidth % tempDiv.clientWidth;
+    }
+    tempDiv.remove();
+    console.dir(position);
+    return position + "px";
+  }
+
+  /**
+   * 插入@标签
+   * @param member
+   */
   public appendAtMark(member: GroupMemberModel) {
-    document.execCommand("insertText", false, member.nickname + " ");
+    document.execCommand("delete");
+    document.execCommand("insertHTML", false, this.getATMark(member).outerHTML + " ");
     this.showPlaceholder = false;
     this.textarea.nativeElement.blur();
     this.menuTrigger.closeMenu();
-    setTimeout(() => this.textarea.nativeElement.focus(), 100);
   }
 
+  /**
+   * 监听keydown
+   * @param event
+   */
   textareaKeydown(event: KeyboardEvent) {
-    if(event.key === '@') {
-      setTimeout(() => this.textareaChange());
-      setTimeout(() => this.toggleAt());
+    if(this.currentChat.metadata.chatType === 'group') {
+      if(event.key === '@') {
+        setTimeout(() => this.textareaChange());
+        setTimeout(() => this.toggleAt());
+      }
     }
   }
 
+  /**
+   * 监听输入框内容变化
+   */
   textareaChange() {
     this.messageText = this.getTextareaContent();
     this.showPlaceholder = this.messageText.length === 0;
   }
 
+  /**
+   * 插入表情
+   * @param emoji
+   */
   insertEmoji(emoji: { key: string; value: string }) {
 
     this.textarea.nativeElement.focus();
@@ -323,4 +443,38 @@ export class InputAreaComponent implements OnInit {
 
     this.textareaChange();
   }
+
+  /**
+   * 生成@name图片标签
+   * @param member
+   */
+  private getATMark(member: GroupMemberModel): HTMLImageElement {
+    const sp = document.createElement('span');
+    const text = `@${member.nickname}`;
+    sp.innerText = text;
+    sp.style.visibility = 'hidden';
+    sp.style.fontSize = '14px';
+    document.body.append(sp);
+    const width = sp.offsetWidth;
+    sp.remove();
+
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg"><text font-size="14px" transform="translate(0 12)">${text}</text></svg>`;
+    const src = ['data:image/svg+xml;base64,', Base64.encode(svg)].join("");
+    const img = document.createElement("img");
+    img.src = src;
+    img.id = CommonTools.fingerPrint();
+    img.setAttribute("user-id", member.user_uid);
+    img.setAttribute("user-nickname", member.nickname);
+    img.className = "at-mark-for-input";
+    img.style.width = width + "px";
+    return img;
+  }
+
+  /**
+   * 输入框延迟获取焦点
+   */
+  asyncTextareaFocus() {
+    setTimeout(() => this.textarea.nativeElement.focus(), 300);
+  }
+
 }

@@ -3,9 +3,12 @@
   position: relative;
 
   .message-textarea {
+    word-break: break-all;
+    white-space: break-spaces;
     min-height: 20px;
     max-height: 150px;
     overflow-y: scroll;
+    overflow-x: hidden;
     margin: 10px;
     font-size: 14px;
     outline: none;
