@@ -246,6 +246,7 @@ export class InputAreaComponent implements OnInit {
     emitToUI: boolean = true,
     replaceEntity: ChatmsgEntityModel = null
   ) {
+    this.messageService.atGroupMember(this.currentChat, messageText, this.atTargetMember).then();
     this.messageService.sendGroupMessage(messageType, this.currentChat.alarmItem.dataId, messageText).then(res => {
       if(res.success === true) {
         const friendUid = this.currentChat.alarmItem.dataId;
@@ -405,14 +406,13 @@ export class InputAreaComponent implements OnInit {
       position = this.textarea.nativeElement.clientWidth % tempDiv.clientWidth;
     }
     tempDiv.remove();
-    console.dir(position);
     return position + "px";
   }
 
   /**
    * 插入@标签
    * @param member
-   * @param right
+   * @param rightKey
    */
   public appendAtMark(member: GroupMemberModel, rightKey: boolean = false) {
     this.textarea.nativeElement.focus();
@@ -451,11 +451,10 @@ export class InputAreaComponent implements OnInit {
    * @param emoji
    */
   insertEmoji(emoji: { key: string; value: string }) {
-
     this.textarea.nativeElement.focus();
     document.execCommand("insertImage", false, ['assets/emojis', emoji.value].join("/"));
-    this.textarea.nativeElement.focus();
     this.openEmojiToggle._elementRef.nativeElement.click();
+    this.textarea.nativeElement.focus();
 
     this.textareaChange();
   }
@@ -474,7 +473,9 @@ export class InputAreaComponent implements OnInit {
     const width = sp.offsetWidth;
     sp.remove();
 
-    const svg = `<svg xmlns="http://www.w3.org/2000/svg"><text font-size="14px" transform="translate(0 12)">${text}</text></svg>`;
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg">
+      <text font-size="14px" fill="#0091ff" transform="translate(0 12)">${text}</text>
+    </svg>`;
     const src = ['data:image/svg+xml;base64,', Base64.encode(svg)].join("");
     const img = document.createElement("img");
     img.src = src;
