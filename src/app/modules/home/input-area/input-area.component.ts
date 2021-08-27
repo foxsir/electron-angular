@@ -40,6 +40,7 @@ import HttpResponseInterface from "@app/interfaces/http-response.interface";
 import {GroupMemberModel} from "@app/models/group-member.model";
 import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 import {CurrentChattingChangeService} from "@services/current-chatting-change/current-chatting-change.service";
+import {ElementService} from "@services/element/element.service";
 
 @Component({
   selector: 'app-input-area',
@@ -92,6 +93,7 @@ export class InputAreaComponent implements OnInit {
     private restService: RestService,
     private snackBarService: SnackBarService,
     private currentChattingChangeService: CurrentChattingChangeService,
+    private elementService: ElementService,
   ) { }
 
   ngOnInit(): void {
@@ -101,12 +103,24 @@ export class InputAreaComponent implements OnInit {
     });
 
     this.chattingChange();
+    this.subscribeAtMember();
+  }
+
+  private subscribeAtMember() {
+    this.elementService.atMember$.subscribe((friendId) => {
+      const member = this.memberList.filter(m => m.user_uid.toString() === friendId.toString());
+      if(member.length === 1) {
+        this.appendAtMark(member.pop(), true);
+      } else {
+        this.snackBarService.openMessage("用户可能已经不是群成员");
+      }
+    });
   }
 
   /**
    * 获取群成员暂存
    */
-  chattingChange() {
+  private chattingChange() {
     this.getGroupMembers(this.currentChat);
     this.currentChattingChangeService.currentChatting$.subscribe((currentChat) => {
       this.getGroupMembers(currentChat);
@@ -160,8 +174,6 @@ export class InputAreaComponent implements OnInit {
     emitToUI: boolean = true,
     replaceEntity: ChatmsgEntityModel = null
   ) {
-    console.dir(this.atTargetMember);
-
     if (!messageText || messageText.trim().length === 0) {
       return;
     }
@@ -400,9 +412,13 @@ export class InputAreaComponent implements OnInit {
   /**
    * 插入@标签
    * @param member
+   * @param right
    */
-  public appendAtMark(member: GroupMemberModel) {
-    document.execCommand("delete");
+  public appendAtMark(member: GroupMemberModel, rightKey: boolean = false) {
+    this.textarea.nativeElement.focus();
+    if(rightKey === false) {
+      document.execCommand("delete");
+    }
     document.execCommand("insertHTML", false, this.getATMark(member).outerHTML + " ");
     this.showPlaceholder = false;
     this.textarea.nativeElement.blur();
