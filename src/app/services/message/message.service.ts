@@ -11,6 +11,7 @@ import {LocalUserService} from "@services/local-user/local-user.service";
 import {FriendRequestModel} from "@app/models/friend-request.model";
 import {FriendAddWay} from "@app/config/friend-add-way";
 import FriendModel from "@app/models/friend.model";
+import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 
 interface SendMessageResponse {
   success: boolean;
@@ -441,6 +442,48 @@ export class MessageService {
 
       const p: any = createCommonData2(
         JSON.stringify(msgBody), localUserInfo.userId, 0, UserProtocalsType.MT05_OF_ADD_FRIEND_REQUEST_A$TO$SERVER
+      );
+      p.bridge = false;
+      p.QoS = true;
+      this.imService.sendData(p);
+      success = true;
+
+      resolve({
+        success: success,
+        msgBody:msgBody,
+        fingerPrint: p.fp,
+      });
+    });
+  }
+
+  /**
+   * 发送@指令
+   * @param currentChat
+   * @param messageText
+   * @param userIds
+   */
+  atGroupMember(currentChat: AlarmItemInterface, messageText: string, userIds: string[]): Promise<SendMessageResponse> {
+    const atTargetMember = userIds.filter(
+      (item, index) => userIds.indexOf(item) === index
+    );
+    return new Promise((resolve, reject) => {
+      const localUserInfo = this.localUserService.localUserInfo;
+      let success = false;
+      const msgBody = {
+        cy: ChatModeType.CHAT_TYPE_GROUP$CHAT,
+        f: localUserInfo.userId,
+        m: JSON.stringify({
+          content: messageText,
+          userIds: atTargetMember,
+        }),
+        m3: "PC",
+        nickName: localUserInfo.nickname,
+        t: currentChat.alarmItem.dataId,
+        ty: MsgType.TYPE_AITE,
+      };
+
+      const p: any = createCommonData2(
+        JSON.stringify(msgBody), localUserInfo.userId, 0, UserProtocalsType.MT44_OF_GROUP$CHAT$MSG_A$TO$SERVER
       );
       p.bridge = false;
       p.QoS = true;
