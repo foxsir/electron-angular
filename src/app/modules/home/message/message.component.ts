@@ -282,6 +282,7 @@ export class MessageComponent implements OnInit {
     this.messageDistributeService.MT45_OF_GROUP$CHAT$MSG_SERVER$TO$B$.subscribe((res: ProtocalModel) => {
       const dataContent: any = JSON.parse(res.dataContent);
       // alert("群组" + dataContent.t);
+      console.dir(dataContent.ty === 15);
       this.massageBadges[dataContent.t.trim()] = 99;
     });
   }
