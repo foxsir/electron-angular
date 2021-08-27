@@ -265,7 +265,7 @@ const UserProtocalsType = {
   MT53_OF_GROUP$_del: 57,
 
   // 敏感词更新
-  SENSITIVE_WORD_UPDATE: 57,
+  SENSITIVE_WORD_UPDATE: 76,
 };
 
 // 聊天模式类型常量对象定义，请勿修改各常量值！
