@@ -11,10 +11,23 @@ export class ElementService {
   private selectMessageSource = new Subject<boolean>();
   selectMessage$ = this.selectMessageSource.asObservable();
 
+  // 选择消息
+  private atMemberSource = new Subject<string>();
+  atMember$ = this.atMemberSource.asObservable();
+
   constructor() { }
 
+  /**
+   * select message 订阅事件
+   * @param directive
+   */
   selectMessage(directive: boolean) {
     this.selectMessageSource.next(directive);
+  }
+
+
+  atMember(friendId: string) {
+    this.atMemberSource.next(friendId);
   }
 
   copyTextToClipboard(container: HTMLDivElement) {
