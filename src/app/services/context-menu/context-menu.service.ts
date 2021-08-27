@@ -230,7 +230,7 @@ export class ContextMenuService {
           return filterData.chat.uid.toString() !== localUserInfo.userId.toString();
         },
         action: (alarmItem, chat) => {
-          alert('@AT');
+          this.elementService.atMember(chat.uid);
         }
       },
       {
