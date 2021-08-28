@@ -43,12 +43,7 @@ export class MessageEntityService {
       case MsgType.TYPE_FILE: {
         // 文件消息的内容体是FileMeta对象的JSON形式
         var fm = JSON.parse(msg);
-        return this.createChatMsgEntity_COME_FILE(fromUid, nickName
-          , fm != null ? fm.fileName : ""
-          , fm != null ? fm.fileMd5 : ""
-          , fm != null ? fm.fileLength : 0
-          , time
-          , fp);
+        return this.createChatMsgEntity_COME_FILE(fm, fromUid, nickName, time, fp);
       }
       case MsgType.TYPE_GIFT$SEND:
         return this.createChatMsgEntity_COME_GIFT$FOR$SEND(fromUid, nickName, msg, time, fp);
@@ -246,8 +241,13 @@ export class MessageEntityService {
   }
 
   createChatMsgEntity_TO_FILE(fileName, fileMd5, fileLength, time, fingerPrint, xu_isRead_type = null) {
-    const chatMsgEntityObj = this.createChatMsgEntity_COME_FILE(
-      this.imService.getLoginInfo().loginUserId, "我", fileName, fileMd5, fileLength, time, fingerPrint
+    const msg = {
+      fileName: fileName,
+      fileMd5:fileMd5,
+      fileLength:fileLength,
+    };
+    const chatMsgEntityObj = this.createChatMsgEntity_COME_FILE(msg,
+      this.imService.getLoginInfo().loginUserId, "我", time, fingerPrint
     );
     chatMsgEntityObj.isOutgoing = true;
     chatMsgEntityObj.xu_isRead_type = xu_isRead_type;  //111 新增已读类型
@@ -354,16 +354,9 @@ export class MessageEntityService {
     return chatMsgEntityObj;
   }
 
-  createChatMsgEntity_COME_FILE(fromUid, nickName, fileName, fileMd5, fileLength, time, fingerPrint, xu_isRead_type = null) {
+  createChatMsgEntity_COME_FILE(msg, fromUid, nickName, time, fingerPrint, xu_isRead_type = null) {
 
-    const fileMeta = {
-      /** 文件名 */
-      fileName: fileName,
-      /** 文件md5码 */
-      fileMd5: fileMd5,
-      /** 文件长度（单位：字节） */
-      fileLength: fileLength
-    };
+    const fileMeta = msg;
 
     const chatMsgEntityObj = new ChatmsgEntityModel();
     chatMsgEntityObj.uid = fromUid;
