@@ -1,20 +1,20 @@
 import * as md5 from "blueimp-md5";
 import * as uuid from "uuid";
 import * as OSS from "ali-oss";
+import {MimetypesList} from "@app/common/TypeList";
+import filesize from "@app/common/filesize";
 
 export default class CommonTools {
   public static md5(str: string): string {
     return md5(str);
   }
 
-  public static getFileExt(type: string) {
-    switch (type) {
-      case "image/png":
-        return "png";
-      case "image/jpg":
-        return "jpg";
-      case "image/jpeg":
-        return "jpeg";
+  public static getFileExt(filename: string, type: string): string {
+    const ext = MimetypesList[type];
+    if(typeof ext === 'string') {
+      return ext;
+    } else {
+      return filename.split(".").pop();
     }
   }
 
@@ -61,5 +61,9 @@ export default class CommonTools {
     setTimeout(function() {
       return window.URL.revokeObjectURL(alink.href);
     }, 1000);
+  }
+
+  public static formatFileSize(length: number): string {
+    return filesize(length);
   }
 }
