@@ -1,0 +1,36 @@
+export default class GroupInfoModel {
+  allowPrivateChat: number;
+  avatar: string;
+  avatarIncludeCnt: number;
+  createTime: string;
+  createUserUid: number;
+  customerServiceSwitch: number;
+  delTime: any;
+  delUserUid: any;
+  firbidCause: any;
+  forbidTime: any;
+  forbidUserUid: any;
+  gNoticeUpdatetime: any;
+  gid: string;
+  gmemberCount: number;
+  gmute: number;
+  gname: string;
+  gnotice: any;
+  gnoticeUpdatetime: any;
+  gnoticeUpdateuid: any;
+  gownerUserUid: number;
+  groupCornet: string;
+  gstatus: number;
+  gtopContent: any;
+  invite: number;
+  kickNotice: any;
+  leaveNotice: any;
+  maxMemberCount: number;
+  revocationNotice: any;
+  showMemberNickname: number;
+  silenceNotice: any;
+  tabSwitch: number;
+  talkInterval: number;
+  talkIntervalSwitch: number;
+  topContentSwitch: number;
+}
