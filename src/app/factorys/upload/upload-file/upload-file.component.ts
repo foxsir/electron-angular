@@ -10,6 +10,7 @@ import uploadOptions from "../uploadOptions";
 import {FileService} from "@services/file/file.service";
 import DirectoryType from "@services/file/config/DirectoryType";
 import CommonTools from "@app/common/common.tools";
+import {formatDate} from "@app/libs/mobileimsdk-client-common";
 
 export type UploadedFile = {
   file: NzUploadFile;
@@ -23,6 +24,8 @@ export type UploadedFile = {
 })
 export class UploadFileComponent implements OnInit {
   @Input() showText: string;
+  @Input() fileTypes: string[];
+  @Input() directoryType: string;
   loading = false;
   fileUrl?: string;
 
@@ -54,15 +57,21 @@ export class UploadFileComponent implements OnInit {
     new Observable((observer: Observer<boolean>) => {
       this.getFileInfo.emit(file);
 
-      const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+      const isJpgOrPng = this.fileTypes.includes(file.type) || this.fileTypes.includes('*');
       if (!isJpgOrPng) {
-        this.msg.error('You can only upload JPG file!');
+        this.msg.error(['不允许的文件类型: ', file.type].join(""));
         observer.complete();
         return;
       }
-      const isLt2M = file.size! / 1024 / 1024 < 2;
+      const isLt2M = file.size! / 1024 / 1024 < 100;
       if (!isLt2M) {
-        this.msg.error('Image must smaller than 2MB!');
+        this.msg.error('文件大小不允许超过 100MB!');
+        observer.complete();
+        return;
+      }
+
+      if(Object.values(DirectoryType).includes(this.directoryType) === false) {
+        this.msg.error('请使用正确的目录名称，参考：DirectoryType');
         observer.complete();
         return;
       }
@@ -70,8 +79,8 @@ export class UploadFileComponent implements OnInit {
       this.loading = true;
       this.getBuffer(file).then(buffer => {
         let filename = CommonTools.md5([file.name, file.lastModified].join("-"));
-        filename = [filename, CommonTools.getFileExt(file.type)].join(".");
-
+        filename = [filename, CommonTools.getFileExt(file.name, file.type)].join(".");
+        filename = [formatDate(new Date().getTime(), 'yyyy-M-d'), filename].join("-");
         this.fileService.upload(buffer, filename, DirectoryType.OSS_FILE).then(res => {
           this.fileUploaded.emit({
             file: file,
@@ -81,14 +90,6 @@ export class UploadFileComponent implements OnInit {
           this.fileUrl = res.url;
         });
       });
-      // alert(file.type);
-      // alert(file.size);
-      // alert(file.name);
-      // alert(file.path);
-      // observer.next(isJpgOrPng && isLt2M);
-      //
-      // console.dir(observer.complete());
-
     });
 
   private getBase64(img: File, callback: (img: string) => void): void {

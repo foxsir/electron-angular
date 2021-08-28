@@ -33,8 +33,6 @@ import {RosterProviderService} from "@services/roster-provider/roster-provider.s
 import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 import {ProtocalModel, ProtocalModelDataContent} from "@app/models/protocal.model";
 import {MessageDistributeService} from "@services/message-distribute/message-distribute.service";
-import HttpPresponseModel from "@app/interfaces/http-response.interface";
-import ChattingModel from "@app/models/chatting.model";
 import {DomSanitizer, SafeResourceUrl} from "@angular/platform-browser";
 import {ContextMenuService} from "@services/context-menu/context-menu.service";
 import {ContextMenuModel, ContextMenuChattingModel} from "@app/models/context-menu.model";
@@ -43,7 +41,7 @@ import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 import {CacheService} from "@services/cache/cache.service";
 import {QuoteMessageService} from "@services/quote-message/quote-message.service";
 import {MessageRoamService} from "@services/message-roam/message-roam.service";
-import {NavigationEnd, Router} from "@angular/router";
+import {Router} from "@angular/router";
 import {CurrentChattingChangeService} from "@services/current-chatting-change/current-chatting-change.service";
 
 @Component({
@@ -120,8 +118,11 @@ export class MessageComponent implements OnInit {
   ) {
     this.localUserInfo = this.localUserService.localUserInfo;
 
+    // 由服务端转发的消息
     this.subscribeOfGroupChatMsgServerToB();
+    // 群聊/世界频道聊天消息：由发送人A发给服务端
     this.subscribeOfGroupChatMsgToServer();
+    // 普通一对一聊天消息
     this.subscribeChattingMessage();
     // this.subscribeMessagesBeReceived();
     // this.subscribeQuote();
@@ -135,15 +136,6 @@ export class MessageComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // 监听url变换，满足条件时重置UI
-    this.router.events.subscribe(e => {
-      if (e instanceof NavigationEnd) {
-        if(e.url === "/home/message") {
-          this.resetUI();
-        }
-      }
-    });
-
     this.cacheService.getChattingList().then(res => {
       if(res) {
         Object.values(res).forEach(item => {
@@ -275,15 +267,20 @@ export class MessageComponent implements OnInit {
   }
 
   /**
-   * 由服务端转发
+   * 由服务端转发的消息
    * @private
    */
   private subscribeOfGroupChatMsgServerToB() {
     this.messageDistributeService.MT45_OF_GROUP$CHAT$MSG_SERVER$TO$B$.subscribe((res: ProtocalModel) => {
-      const dataContent: any = JSON.parse(res.dataContent);
+      const dataContent: ProtocalModelDataContent = JSON.parse(res.dataContent);
       // alert("群组" + dataContent.t);
-      console.dir(dataContent.ty === 15);
       this.massageBadges[dataContent.t.trim()] = 99;
+      const ty = Number(dataContent.ty);
+      switch (ty) {
+        case MsgType.TYPE_AITE: // 处理@
+          console.dir(dataContent);
+          break;
+      }
     });
   }
 
@@ -294,90 +291,13 @@ export class MessageComponent implements OnInit {
   private subscribeSENSITIVEWordUpdate() {
     this.messageDistributeService.SENSITIVE_WORD_UPDATE$.subscribe((res: ProtocalModel) => {
       // 需要获取敏感词并缓存
+      alert("敏感词更新");
     });
   }
-
-  // private subscribeQuote() {
-  //   this.quoteMessageService.message$.subscribe((meg) => {
-  //     this.quoteMessage = meg;
-  //     this.scrollToBottom();
-  //   });
-  // }
 
   clearSubscribeQuote() {
     this.quoteMessageService.setQuoteMessage(null);
   }
-
-  // showChattingList(list: []) {
-  //   list.forEach(row => {
-  //     const chatUserUid = row[0];
-  //     const chatUserNickname = row[1];
-  //
-  //     // 聊天消息类型，见MsgBodyRoot类中的定义
-  //     // 详见：http://docs.52im.net/extend/docs/api/rainbowchatserver4_pro/constant-values.html#com.x52im.rainbowchat.im.dto.MsgBodyRoot.CHAT_TYPE_GROUP$CHAT
-  //     const msgType = row[2];
-  //     const msgContent = row[3];
-  //     const msgTimestamp = row[5]; // 消息时间（java时间戳）
-  //
-  //     const isFriend = Number(row[7]); // 此聊天对象是否是“我”的好友，本字段值为：0或1
-  //
-  //     const chatType = Number(row[8]); // 2表示群聊，否则是单聊（See ChatModeType）
-  //     const gid = row[9]; // 群id（群聊消息时有意义）
-  //     const gname = row[10]; // 群名称（群聊消息时有意义）
-  //
-  //     const istop = row[12];//111 置顶
-  //
-  //     // const isonLine = row[12];//111 置顶
-  //
-  //
-  //     let alarmData: ChattingModel = null;
-  //
-  //     // 群聊消息
-  //     if (chatType === ChatModeType.CHAT_TYPE_GROUP$CHAT) {
-  //       // 群聊消息的发出者uid
-  //       const srcUid = row[6];
-  //       // true表示是我自已发出的群聊消息
-  //       const isMe = (srcUid === this.localUserService.getUid());
-  //
-  //       // 我自已发出的消息，在首页“消息”里显示时，不需要显示昵称了（就像微信一样）;
-  //       //111 新增了 57
-  //       if (Number(msgType) !== 57) {
-  //         alarmData = this.alarmsProviderService.createAGroupChatMsgAlarm(msgType, msgContent, gname, gid,
-  //           isMe ? null : chatUserNickname, RBChatUtils.isStringEmpty(msgTimestamp) ?
-  //             RBChatUtils.getCurrentUTCTimestamp() : msgTimestamp,);
-  //         //111 插入置顶
-  //         alarmData.istop = istop;
-  //
-  //         const alarmItem: AlarmItemInterface = {
-  //           alarmItem: alarmData,
-  //           metadata: {msgType: chatType}
-  //         };
-  //         this.insertItem(alarmItem);
-  //       }
-  //     } else { // 单聊消息
-  //       // 是“我”的好友
-  //       if (isFriend === 1) {
-  //         alarmData = this.alarmsProviderService.createChatMessageAlarm(
-  //           msgType, msgContent, chatUserNickname, chatUserUid, RBChatUtils
-  //             .isStringEmpty(msgTimestamp) ? RBChatUtils.getCurrentUTCTimestamp() :
-  //             msgTimestamp);
-  //       } else {
-  //         // 陌生人
-  //         alarmData = this.alarmsProviderService.createATempChatMsgAlarm(
-  //           msgType, msgContent, chatUserNickname, chatUserUid, RBChatUtils
-  //             .isStringEmpty(msgTimestamp) ? RBChatUtils.getCurrentUTCTimestamp() :
-  //             msgTimestamp);
-  //       }
-  //       //111 插入置顶
-  //       alarmData.istop = istop;
-  //       const alarmItem: AlarmItemInterface = {
-  //         alarmItem: alarmData,
-  //         metadata: {msgType: chatType}
-  //       };
-  //       this.insertItem(alarmItem);
-  //     }
-  //   });
-  // }
 
   insertItem(alarmData: AlarmItemInterface) {
     Object.assign(this.massageBadges, {[alarmData.alarmItem.dataId.trim()]: 0});
@@ -389,14 +309,6 @@ export class MessageComponent implements OnInit {
     }
   }
 
-  // pushMessageToPanel(chat: ChatmsgEntityModel) {
-  //   if(this.chatMsgEntityList) {
-  //     this.chatMsgEntityList.push(chat);
-  //     this.scrollToBottom();
-  //   }
-  //   // chatMsg.fingerPrintOfProtocal
-  // }
-
   /**
    * 切换聊天对象
    * @param alarm
@@ -405,7 +317,6 @@ export class MessageComponent implements OnInit {
     // 检查本地缓存是否是最新，如果不是需要更新漫游消息，放在之后做
     // this.cacheService.checkCacheIsNewest(alarm);
 
-    this.resetUI();
     this.currentChat = alarm;
     this.currentChattingChangeService.switchCurrentChatting(this.currentChat);
     return this.router.navigate(['/home/message']).then(() => {
@@ -414,170 +325,7 @@ export class MessageComponent implements OnInit {
         this.cacheService.cacheGroupAdmins(this.currentChat.alarmItem.dataId);
       }
     });
-
-    // // 获取缓存
-    // this.cacheService.getChattingCache(this.currentChat).then(data => {
-    //   if(!!data) {
-    //     this.chatMsgEntityList = Object.values(data);
-    //   }
-    // });
-
-    // this.avatarService.getAvatar(alarm.alarmItem.dataId).then(url => {
-    //   this.currentChatAvatar = this.dom.bypassSecurityTrustResourceUrl(url);
-    // });
-    //
-    // this.restService.getUserBaseById(alarm.alarmItem.dataId).subscribe(res => {
-    //   if (res.data !== null) {
-    //     this.currentChatSubtitle = [res.data.latestLoginAddres, res.data.registerIp].join(": ");
-    //   } else {
-    //     this.currentChatSubtitle = null;
-    //   }
-    // });
-    // this.chatMsgEntityList = [];
-    // this.loadChattingHistoryFromServer(this.currentChat);
-    // this.scrollToBottom('auto');
   }
-
-  resetUI() {
-    // this.showCreateGroup = false;
-    // this.showSearchFriend = false;
-  }
-
-  // loadChattingHistoryFromServer(currentChat) {
-  //   const isGroupChatting = currentChat.currentChat === AlarmMessageType.groupChatMessage;
-  //   const beyongDataId = currentChat.dataId;
-  //
-  //   // 要加载的聊天记录的开始时间
-  //   let startTime = null;
-  //   // 要加载的聊天记录的结束时间
-  //   let endTime = null;
-  //   const QUERY_DATE_PATTERN = 'yyyy-MM-dd hh:mm:ss';
-  //
-  //   // 【计算聊天记录的开始时间查询条件】：当前默认定义为加载15天内的聊天
-  //   // 记录（见RBChatConfig.CHATTING_HISTORY_LOAD_TIME_INTERVAL常量定义）
-  //   const dtForStart = new Date();
-  //   dtForStart.setDate(dtForStart.getDate() - RBChatConfig.CHATTING_HISTORY_LOAD_TIME_INTERVAL);
-  //   startTime = formatDate(dtForStart, QUERY_DATE_PATTERN);
-  //
-  //   // 【计算聊天记录的结束时间查询条件】：如果当前缓存中已存在聊天消息数据，则取此时间作为加载的结束时间，
-  //   // 这么做的原因，是防止当本地用户登陆后，已载离线聊天数据之后，首次点进聊天界面时，会重复加载历史，
-  //   // 聊天记录的问题（因为之前加载的离线消息，早已进入了服务端的聊天记录中，本次如果不加这个查询截止
-  //   // 时间，则数据当然就会被重复加载罗！）
-  //   const firstChatMsgEntity = (isGroupChatting ? this.groupChattingCacheService.getChatCacheFirst(beyongDataId) :
-  //     this.singleChattingCacheService.getChatCacheFirst(beyongDataId)); // 取出当天聊天缓存数据中的第一条消息对象
-  //   if (firstChatMsgEntity) {
-  //     const firstMsgTimestamp = firstChatMsgEntity.date; // 取出该条缓存消息的时间戳
-  //     if (firstMsgTimestamp) {
-  //       const dtForEnd = new Date();
-  //       // 之所以将此时间主动减去1000毫秒，是因为服务端的SQL查询"BETWEEN AND"的右边界问题会导
-  //       // 致该第一条消息还是会重，主动减1秒则下方formatDate(..)转时分秒格式后，就能保证不存在
-  //       // 边界导致的查询重复（因为直接少了1秒啊）
-  //       dtForEnd.setTime(firstMsgTimestamp - 1000);
-  //       endTime = formatDate(dtForEnd, QUERY_DATE_PATTERN); // 将时间戳转了字符串日期格式（便于提前服务端接口使用）
-  //     }
-  //   }
-  //
-  //   this.restService.queryChattingHistoryFromServer(
-  //     //111 新增
-  //     isGroupChatting, beyongDataId, this.localUserService.getObj().userId, beyongDataId, "1",
-  //     startTime, endTime
-  //   ).subscribe(res => {
-  //
-  //     const dataList: [] = JSON.parse(res.returnValue);
-  //
-  //     dataList.forEach(row => {
-  //       const srcUid = row[0];
-  //       const destUid = row[1];
-  //       const chat_type = row[2];
-  //       const msg_type = row[3];
-  //       const msgContent = row[4];
-  //       const msgTime2Timestamp = row[5];
-  //       const fingerPrint = row[6];
-  //
-  //       // true表示此行数据是群聊息，否则是单聊的
-  //       const returnIsGroupChatting = (chat_type === ChatModeType.CHAT_TYPE_GROUP$CHAT);
-  //       // true表示是“我”发出的消息，否则是“我”收到的消息（即对方发给“我”的）
-  //       // var isOutgoing = (srcUid == IMSDK.getLoginInfo().loginUserId);
-  //       //111 这是在加上登录web 标识后取值错误，换内存取
-  //       const isOutgoing = (Number(srcUid) === Number(this.localUserService.getObj().userId));
-  //
-  //       // 消息发送者的uid
-  //       const beyongUid = returnIsGroupChatting ? srcUid : (isOutgoing ? destUid :
-  //         srcUid);
-  //       // 群组id（只在群聊消息时才有意义）
-  //       const gid = returnIsGroupChatting ? destUid : null;
-  //
-  //       //console.error('>>>>>> srcUid='+srcUid+', IMSDK.getLoginInfo().loginUserId='+IMSDK.getLoginInfo().loginUserId
-  //       //    +", isOutgoing?"+isOutgoing+", beyongUid="+beyongUid);
-  //
-  //       //## Bug FIX: 检查该fingerPrint的消息是否已存在于缓存中，如存在则不需要添加，否则就重
-  //       //##            复了，此为解决209170914日开会指出的存在聊天消息首次从历史加载时会重复的问题
-  //       if (fingerPrint) {
-  //         if (returnIsGroupChatting) {
-  //           if (this.groupChattingCacheService.containsFingerPrintInChatCache(gid,
-  //             fingerPrint)) {
-  //             // RBChatUtils.logToConsole('[前端-GET-【接口1008-26-8】' + TAG +
-  //             //   '群聊天记录获取接口返回值解析后] - 来自dataId=' + beyongDataId + '的fp=' +
-  //             //   fingerPrint +
-  //             //   '的消息已存在于缓存中，不需要重复添加，继续循环的下一轮【!!】！');
-  //           }
-  //         } else {
-  //           if (this.singleChattingCacheService.containsFingerPrintInChatCache(beyongUid,
-  //             fingerPrint)) {
-  //             // RBChatUtils.logToConsole('[前端-GET-【接口1008-26-8】' + TAG +
-  //             //   '单聊天记录获取接口返回值解析后] - 来自dataId=' + beyongDataId + '的fp=' +
-  //             //   fingerPrint +
-  //             //   '的消息已存在于缓存中，不需要重复添加，继续循环的下一轮【!!】！');
-  //           }
-  //         }
-  //       }
-  //       //## Bug FIX END
-  //
-  //       let chatMsgEntity: ChatmsgEntityModel;
-  //       if (isOutgoing) {
-  //         chatMsgEntity = this.messageEntityService.prepareSendedMessage(msgContent,
-  //           msgTime2Timestamp ? msgTime2Timestamp : 0, fingerPrint, msg_type);
-  //       } else {
-  //         chatMsgEntity = this.messageEntityService.prepareRecievedMessage(beyongUid,
-  //           beyongUid // TODO: 显示昵称？（从好友列表？从首页“消息”的item上取？
-  //           , msgContent, msgTime2Timestamp ? msgTime2Timestamp : 0, msg_type);
-  //       }
-  //
-  //       //111 这个是新增 为了存对方发消息的消息的指纹 下面是对方的昵称  增加了已读类型
-  //       chatMsgEntity.fingerPrintOfProtocal = fingerPrint;
-  //       chatMsgEntity.name = row[7];
-  //       chatMsgEntity.xu_isRead_type = row[3];  //增加了已读类型
-  //       // 放入数组
-  //       if (chatMsgEntity.xu_isRead_type !== "57") {
-  //         // chatHistoryDatas.push(chatMsgEntity);
-  //         // console.dir(chatMsgEntity.uid);
-  //         this.chatMsgEntityList.unshift(chatMsgEntity);
-  //         // console.dir(chatMsgEntity);
-  //       }
-  //     });
-  //
-  //     // 消息容器滚动到底部
-  //     this.scrollToBottom("auto");
-  //   });
-  // }
-
-  // scrollToBottom(behavior: "auto" | "smooth" = "smooth") {
-  //   setTimeout(() => {
-  //     this.chattingContainer.nativeElement.lastElementChild?.scrollIntoView({
-  //       behavior: behavior, block: "start"
-  //     });
-  //   }, 500);
-  // }
-
-  // contextMenuForMessage(e: MouseEvent, menu: MatMenuTrigger, span: HTMLSpanElement, chat: ChatmsgEntityModel) {
-  //   this.contextMenu = this.contextMenuService.getContextMenuForMessage(chat);
-  //   menu.openMenu();
-  //   span.style.position = "fixed";
-  //   span.style.top = "0px";
-  //   span.style.left = "0px";
-  //   span.style.transform = `translate3d(${e.pageX}px, ${e.pageY}px, 0px)`;
-  //   return e.defaultPrevented;
-  // }
 
   contextMenuForChatting(
     e: MouseEvent, menu: MatMenuTrigger, span: HTMLSpanElement, alarmItem: AlarmItemInterface
@@ -590,15 +338,5 @@ export class MessageComponent implements OnInit {
     span.style.transform = `translate3d(${e.pageX}px, ${e.pageY}px, 0px)`;
     return e.defaultPrevented;
   }
-
-  // createGroup() {
-  //   this.showCreateGroup = true;
-  //   return this.router.navigate(['/home/message/create-group']);
-  // }
-  //
-  // searchFriend() {
-  //   this.showSearchFriend = true;
-  //   return this.router.navigate(['/home/message/search-friend']);
-  // }
 
 }

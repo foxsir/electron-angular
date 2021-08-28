@@ -41,6 +41,7 @@ import {GroupMemberModel} from "@app/models/group-member.model";
 import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 import {CurrentChattingChangeService} from "@services/current-chatting-change/current-chatting-change.service";
 import {ElementService} from "@services/element/element.service";
+import FileMetaInterface from "@app/interfaces/file-meta.interface";
 
 @Component({
   selector: 'app-input-area',
@@ -147,7 +148,24 @@ export class InputAreaComponent implements OnInit {
       );
       // 尚未发出
       this.sendChatMap[file.uid].isOutgoing = false;
-      this.sendMessage.emit(this.sendChatMap[file.uid]);
+      this.sendMessage.emit({
+        chat: this.sendChatMap[file.uid],
+        dataContent: null
+      });
+    });
+  }
+
+  getFileInfo(file: any) {
+    CommonTools.getBlobUrlFromFile(file).then(blob => {
+      this.sendChatMap[file.uid] = this.messageEntityService.createChatMsgEntity_TO_FILE('',
+        blob, 0, CommonTools.fingerPrint(), 0
+      );
+      // 尚未发出
+      this.sendChatMap[file.uid].isOutgoing = false;
+      this.sendMessage.emit({
+        chat: this.sendChatMap[file.uid],
+        dataContent: null
+      });
     });
   }
 
@@ -159,6 +177,23 @@ export class InputAreaComponent implements OnInit {
     const msg = this.sendChatMap[uploadedFile.file.uid];
     const messageText = msg.text = uploadedFile.url.href;
     return this.doSend(messageText, MsgType.TYPE_IMAGE,false, msg);
+  }
+
+  /**
+   * 上传文件
+   * @param uploadedFile
+   */
+  fileUploaded(uploadedFile: UploadedFile) {
+    const msg = this.sendChatMap[uploadedFile.file.uid];
+    const messageText = msg.text = uploadedFile.url.href;
+
+    const message = {
+      fileName: uploadedFile.file.name,
+      ossFilePath: uploadedFile.url.href,
+      fileMd5 : CommonTools.md5([uploadedFile.file.name, uploadedFile.file.lastModified].join("-")),
+      fileLength: uploadedFile.file.size
+    };
+    return this.doSend(JSON.stringify(message), MsgType.TYPE_FILE, false, msg);
   }
 
   /**
@@ -180,7 +215,6 @@ export class InputAreaComponent implements OnInit {
     if (!this.imService.isLogined()) {
       return this.imService.checkLogined();
     }
-
     messageText = this.parseReplyMessage(messageText, messageType);
 
     if(this.currentChat.metadata.chatType === 'friend') {
@@ -211,9 +245,10 @@ export class InputAreaComponent implements OnInit {
 
         // 自已发出的消息，也要显示在相应的UI界面上
         const message = res.msgBody.m;
-        const alarmMessageDTO = this.alarmsProviderService.createChatMsgAlarmForLocal(
-          res.msgBody.ty, message, "ree.nickname", friendUid
-        );
+        // const alarmMessageDTO = this.alarmsProviderService.createChatMsgAlarmForLocal(
+        //   res.msgBody.ty, message, "ree.nickname", friendUid
+        // );
+        // alert(JSON.stringify(alarmMessageDTO));
 
         //111 新增指纹码 he 消息类型msgType
         // debugger

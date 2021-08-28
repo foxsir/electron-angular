@@ -3,12 +3,16 @@
 
     <mat-menu #attachmentMenu="matMenu">
       <button mat-menu-item>
-        <app-upload-file showText="发送图片"
+        <app-upload-file showText="发送图片" [fileTypes]="['image/png', 'image/jpg']"
                          (getFileInfo)="getImageInfo($event)"
+                         directoryType="message_image"
                          (fileUploaded)="imageUploaded($event)"></app-upload-file>
       </button>
       <button mat-menu-item>
-        <app-upload-file showText="文件发送"></app-upload-file>
+        <app-upload-file showText="文件发送" [fileTypes]="['*']"
+                         (getFileInfo)="getFileInfo($event)"
+                         directoryType="message_file"
+                         (fileUploaded)="fileUploaded($event)"></app-upload-file>
       </button>
       <button mat-menu-item>
         名片发送
