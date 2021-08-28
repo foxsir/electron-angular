@@ -30,3 +30,11 @@
     line-height: 17px;
   }
 }
+
+.hover-item {
+  cursor: pointer;
+
+  &:hover {
+    background: #D9EFFF;
+  }
+}

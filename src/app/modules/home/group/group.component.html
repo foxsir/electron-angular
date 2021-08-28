@@ -2,7 +2,7 @@
   <mat-card-content>
     <mat-list>
       <div mat-subheader style="color:#333333;">我的群组</div>
-      <mat-list-item *ngFor="let item of chattingGroup" style="padding-top:10px;">
+      <mat-list-item class="hover-item" (click)="switchChatting(item)" *ngFor="let item of chattingGroup" style="padding-top:10px;">
         <img src="{{item.avatar}}" mat-list-icon style="width:44px;height:44px;"/>
         <div mat-line>{{item.gname}}...</div>
         <div mat-line style="margin-top:15px;">
@@ -15,4 +15,4 @@
   </mat-card-content>
 </mat-card>
 
-<empty-data [dataCount]="chattingGroup.length" text="暂时没有群组"></empty-data>
+<empty-data *ngIf="chattingGroup.length === 0" text="暂时没有群组"></empty-data>

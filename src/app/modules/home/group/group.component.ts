@@ -1,44 +1,67 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {RestService} from "@services/rest/rest.service";
-import LocalUserinfoModel from "@app/models/local-userinfo.model";
-import {LocalUserService} from "@services/local-user/local-user.service";
-import HttpPresponseModel from "@app/interfaces/http-response.interface";
-import ChattingGroupModel from "@app/models/chatting-group.model";
 import GroupInfoModel from "@app/models/group-info.model";
 import {CacheService} from "@services/cache/cache.service";
-import {Subscribable, Subscription} from "rxjs";
+import {Subscription} from "rxjs";
+import {CurrentChattingChangeService} from "@services/current-chatting-change/current-chatting-change.service";
+import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
+import {Router} from "@angular/router";
+import ChattingModel from "@app/models/chatting.model";
 
 @Component({
-    selector: 'app-group',
-    templateUrl: './group.component.html',
-    styleUrls: ['./group.component.scss']
+  selector: 'app-group',
+  templateUrl: './group.component.html',
+  styleUrls: ['./group.component.scss']
 })
 export class GroupComponent implements OnInit, OnDestroy {
-    private localUserInfo: LocalUserinfoModel = this.localUserService.localUserInfo;
-    public chattingGroup: GroupInfoModel[] = [];
-    private subscribe: Subscription;
+  public chattingGroup: GroupInfoModel[] = [];
+  private subscribe: Subscription;
 
-    constructor(
-      private restService: RestService,
-      private localUserService: LocalUserService,
-      private cacheService: CacheService
-    ) {
-      this.cacheService.getCacheGroups().then(data => {
-        this.chattingGroup = Object.values(data);
+  constructor(
+    private router: Router,
+    private restService: RestService,
+    private cacheService: CacheService,
+    private currentChattingChangeService: CurrentChattingChangeService,
+  ) {
+    this.cacheService.getCacheGroups().then(data => {
+      this.chattingGroup = Object.values(data);
+    });
+
+    this.subscribe = this.cacheService.cacheUpdate$.subscribe(cache => {
+      if (cache.groupList) {
+        this.chattingGroup = Object.values(cache.groupList);
+      }
+    });
+  }
+
+  ngOnInit(): void {
+  }
+
+  switchChatting(item: GroupInfoModel) {
+    const alarm: AlarmItemInterface = {
+      alarmItem: {
+        alarmMessageType: 2, // 0单聊 1临时聊天/陌生人聊天 2群聊
+        dataId: item.gid,
+        date: "",
+        istop: true,
+        msgContent: "0",
+        title: item.gname,
+        avatar: item.avatar,
+      },
+      // 聊天元数据
+      metadata: {
+        chatType: "group", // "friend" | "group"
+      },
+    };
+    this.router.navigate(['/home/message']).then(() => {
+      this.cacheService.putChattingCache(alarm).then(() => {
+        this.currentChattingChangeService.switchCurrentChatting(alarm);
       });
+    });
+  }
 
-      this.subscribe = this.cacheService.cacheUpdate$.subscribe(cache => {
-        if(cache.groupList) {
-          this.chattingGroup = Object.values(cache.groupList);
-        }
-      });
-    }
-
-    ngOnInit(): void {
-    }
-
-    ngOnDestroy() {
-      this.subscribe.unsubscribe();
-    }
+  ngOnDestroy() {
+    this.subscribe.unsubscribe();
+  }
 
 }
