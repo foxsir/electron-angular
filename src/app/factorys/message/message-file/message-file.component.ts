@@ -1,12 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
-
-interface FileInfo {
-  fileName: string;
-  fileMd5: string;
-  fileLength: number;
-  src: string;
-}
+import CommonTools from "@app/common/common.tools";
+import FileMetaInterface from "@app/interfaces/file-meta.interface";
 
 @Component({
   selector: 'app-message-file',
@@ -15,12 +10,18 @@ interface FileInfo {
 })
 export class MessageFileComponent implements OnInit {
   @Input() chatMsg: ChatmsgEntityModel;
-  public fileInfo: FileInfo;
+  public fileInfo: FileMetaInterface;
+  public commonTools = CommonTools;
 
-  constructor() { }
+  constructor(
+  ) { }
 
   ngOnInit(): void {
     this.fileInfo = JSON.parse(this.chatMsg.text);
+  }
+
+  downloadFile() {
+    CommonTools.downloadLink(this.fileInfo.ossFilePath, this.fileInfo.fileName);
   }
 
 }

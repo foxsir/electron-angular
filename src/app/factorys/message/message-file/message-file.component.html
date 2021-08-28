@@ -12,7 +12,7 @@
         <mat-divider inset></mat-divider>
       </div>
       <div fxFlex>
-        <button mat-button>下载文件</button>
+        <button mat-button (click)="downloadFile()">下载文件 {{commonTools.formatFileSize(fileInfo.fileLength)}}</button>
       </div>
     </div>
   </div>
