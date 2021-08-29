@@ -32,7 +32,7 @@ import {
   updateGroupAdmin,
   addGroupSilence,
   deleteGroupSilenceById,
-  getGroupSilenceById, addMissuCollect,
+  getGroupSilenceById, addMissuCollect, UpdatePassword,
 } from "@app/config/post-api";
 import {HttpHeaders} from "@angular/common/http";
 import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
@@ -1026,6 +1026,19 @@ export class RestService {
       userId: localUserInfo.userId,
     };
     return this.http.post(addMissuCollect, data);
+  }
+
+  /**
+   * 更新密码
+   * @param password
+   */
+  updatePassword(password: {oldPwd: string; newPwd: string}) {
+    const localUserInfo = this.localUserService.localUserInfo;
+    const data = {
+      userId: localUserInfo.userId,
+      ...password
+    };
+    return this.http.post(UpdatePassword, data);
   }
 
 }
