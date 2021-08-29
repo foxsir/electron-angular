@@ -68,7 +68,7 @@ export class TransmitMessageComponent implements OnInit {
         type: msg.msgType,
       };
       this.selectedFriends.forEach(friend => {
-        this.messageService.sendMessage(MsgType.TYPE_TEXT, friend.friendUserUid, newMsg.text).then((res) => {
+        this.messageService.sendMessage(msg.msgType, friend.friendUserUid, newMsg.text).then((res) => {
           if(res.success === true) {
             const alarmData: AlarmItemInterface = {
               alarmItem: {
@@ -86,7 +86,7 @@ export class TransmitMessageComponent implements OnInit {
             };
             const message = res.msgBody.m;
             const chatMsgEntity = this.messageEntityService.prepareSendedMessage(
-              message, 0, res.fingerPrint, MsgType.TYPE_TEXT
+              message, 0, res.fingerPrint, msg.msgType
             );
             chatMsgEntity.isOutgoing = false;
             this.cacheService.getCacheFriends().then(list => {
@@ -94,6 +94,7 @@ export class TransmitMessageComponent implements OnInit {
               alarmData.alarmItem.avatar = fm.userAvatarFileName;
               this.cacheService.putChattingCache(alarmData, chatMsgEntity).then(() => {
                 this.currentChattingChangeService.switchCurrentChatting(alarmData);
+                this.dialogRef.close();
               });
             });
           }
