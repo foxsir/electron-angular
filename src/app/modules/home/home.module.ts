@@ -30,6 +30,7 @@ import {FormsModule} from "@angular/forms";
 import { UserDialogsModule } from "../user-dialogs/user-dialogs.module";
 import { ChattingSettingComponent } from './chatting-setting/chatting-setting.component';
 import { GroupChattingSettingComponent } from './group-chatting-setting/group-chatting-setting.component';
+import { ChattingVoiceComponent } from './chatting-voice/chatting-voice.component';
 import { CreateGroupComponent } from './create-group/create-group.component';
 import { UploadModule } from "../../factorys/upload/upload.module";
 import { NzModalModule } from 'ng-zorro-antd/modal';
@@ -60,7 +61,8 @@ import {MatCheckboxModule} from "@angular/material/checkbox";
     SearchChattingComponent,
     InputAreaComponent,
     ChattingSettingComponent,
-    GroupChattingSettingComponent,
+        GroupChattingSettingComponent,
+        ChattingVoiceComponent,
     CreateGroupComponent,
     SearchFriendComponent,
     SearchWidgetComponent,

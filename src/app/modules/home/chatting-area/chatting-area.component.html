@@ -10,6 +10,16 @@
       </mat-card>
     </div>
   </mat-drawer>
+
+    <!--语音聊天-->
+    <mat-drawer #chattingVoice mode="side" position="end">
+        <div fxFlex="280px">
+            <mat-card class="mat-elevation-z0" *ngIf="currentChat">
+                <app-chatting-voice #appChatingVoice [currentChat]="currentChat"></app-chatting-voice>
+            </mat-card>
+        </div>
+    </mat-drawer>
+
   <mat-drawer-content>
     <ng-template [ngIf]="!currentChat">
       <div fxFlexFill fxLayoutAlign="center center">
@@ -65,7 +75,9 @@
                   <img class="icon-active" [src]="searchActiveIcon" alt="">
                 </mat-icon>
               </button>
-              <button mat-icon-button *ngIf="currentChat.metadata.chatType === 'friend'">
+
+              <!--点击按钮：语音聊天-->
+              <button mat-icon-button  (click)="startVoice(chattingVoice);">
                 <mat-icon class="hover-icon">
                   <img class="icon" [src]="voiceIcon" alt="">
                   <img class="icon-active" [src]="voiceActiveIcon" alt="">
