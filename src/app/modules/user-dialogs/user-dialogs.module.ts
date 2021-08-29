@@ -10,7 +10,7 @@ import {MatCardModule} from "@angular/material/card";
 import {FlexLayoutModule} from "@angular/flex-layout";
 import {TitleBarModule} from "../../factorys/title-bar/title-bar.module";
 import {MatIconModule} from "@angular/material/icon";
-import {FormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import { NzSwitchModule } from "ng-zorro-antd/switch";
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzInputModule } from 'ng-zorro-antd/input';
@@ -26,6 +26,7 @@ import {MatInputModule} from "@angular/material/input";
 import {MatListModule} from "@angular/material/list";
 import { UserContactCardComponent } from './user-contact-card/user-contact-card.component';
 import { SelectFriendContactComponent } from './select-friend-contact/select-friend-contact.component';
+import {NgformlyModule} from "../../shared/formly/ngformly.module";
 
 
 @NgModule({
@@ -61,7 +62,9 @@ import { SelectFriendContactComponent } from './select-friend-contact/select-fri
     MatRadioModule,
     NgxQRCodeModule,
     MatInputModule,
-    MatListModule
+    MatListModule,
+    ReactiveFormsModule,
+    NgformlyModule
   ]
 })
 export class UserDialogsModule { }
