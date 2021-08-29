@@ -1,11 +1,12 @@
 <div fxLayout="row" fxFlexFill>
   <div fxFlex="74px" style="background: #F6F7F9">
-    <mat-card class="mat-elevation-z0" id="left-toolbar">
+    <mat-card class="mat-elevation-z0" id="left-toolbar" style="padding: 16px 0px">
       <mat-card-content class="user-avatar"
-                        matBadge="0" matBadgeOverlap="true"
-                        matBadgePosition="below after" matBadgeSize="small" matBadgeColor="warn">
-        <img mat-card-avatar (click)="drawer.toggle()"
-             [src]="myAvatar" alt="">
+                        fxLayoutAlign="center center">
+        <span matBadge="0" matBadgeOverlap="true"
+          matBadgePosition="below after" matBadgeSize="small" matBadgeColor="warn">
+          <img mat-card-avatar (click)="drawer.toggle()" [src]="myAvatar" alt="">
+        </span>
       </mat-card-content>
       <mat-card-content>
         <div fxLayout="column" fxLayoutGap="32px">

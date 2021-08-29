@@ -20,7 +20,12 @@
             </div>
           </mat-card-content>
           <mat-card-content>
-            <img [src]="myAvatar" class="user-avatar" alt="">
+            <div class="user-avatar">
+              <app-upload-file *ngIf="myAvatar"
+                directoryType="user_portrait"
+                [fileTypes]="['image/png', 'image/jpg', 'image/jpeg']"
+                (fileUploaded)="setAvatar($event)" [options]="{icon: myAvatar, showProgress: true, size: {width: '60px'}}"></app-upload-file>
+            </div>
           </mat-card-content>
           <mat-card-content>
             <mat-card-title class="small-title">{{localUserInfo.whatsUp || '暂无介绍'}}</mat-card-title>

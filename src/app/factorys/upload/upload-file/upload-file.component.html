@@ -7,8 +7,12 @@
     <div>
       <div class="ant-upload-text">
         <img [src]="defaultOptions.icon" alt="" [ngStyle]="defaultOptions.size">
+        <div class="spinner">
+          <mat-spinner [diameter]="20"
+                       *ngIf="loading && this.defaultOptions.showProgress"
+                       [strokeWidth]="3" mode="indeterminate"></mat-spinner>
+        </div>
       </div>
-      <mat-progress-bar *ngIf="loading && this.defaultOptions.showProgress" mode="indeterminate"></mat-progress-bar>
     </div>
     <img *ngIf="fileUrl" [src]="fileUrl" style="width: 100%"  alt=""/>
   </ng-container>

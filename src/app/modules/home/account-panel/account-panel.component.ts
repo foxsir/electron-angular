@@ -30,6 +30,8 @@ import {MySignatureComponent} from "@modules/user-dialogs/my-signature/my-signat
 import {UpdatePasswordComponent} from "@modules/user-dialogs/update-password/update-password.component";
 import {RestService} from "@services/rest/rest.service";
 import {CacheService} from "@services/cache/cache.service";
+import {UploadedFile} from "@app/factorys/upload/upload-file/upload-file.component";
+import {UserModel} from "@app/models/user.model";
 // import icons end
 
 @Component({
@@ -49,9 +51,7 @@ export class AccountPanelComponent implements OnInit {
   public closeIcon = this.dom.bypassSecurityTrustResourceUrl(closeIcon);
   public closeActiveIcon = this.dom.bypassSecurityTrustResourceUrl(closeActiveIcon);
 
-  myAvatar: SafeResourceUrl = this.dom.bypassSecurityTrustResourceUrl(
-    this.avatarService.defaultLocalAvatar
-  );
+  myAvatar: SafeResourceUrl = null;
 
   public localUserInfo: LocalUserinfoModel;
 
@@ -108,8 +108,16 @@ export class AccountPanelComponent implements OnInit {
 
   ngOnInit(): void {
     this.localUserInfo = this.localUserService.localUserInfo;
-    this.avatarService.getAvatar(this.localUserInfo.userId.toString()).then(url => {
-      this.myAvatar = this.dom.bypassSecurityTrustResourceUrl(url);
+
+    // this.avatarService.getAvatar(this.localUserInfo.userId.toString()).then(url => {
+    //
+    // });
+    this.cacheService.getMyInfo().then((data: UserModel) => {
+      if(data.userAvatarFileName.length > 0) {
+        this.myAvatar = this.dom.bypassSecurityTrustResourceUrl(data.userAvatarFileName);
+      } else {
+        this.myAvatar = this.dom.bypassSecurityTrustResourceUrl(this.avatarService.defaultLocalAvatar);
+      }
     });
 
     //todo 保存到缓存中并做到界面数据实时更新
@@ -139,6 +147,18 @@ export class AccountPanelComponent implements OnInit {
     this.router.navigate(['/']).then(() => {
       localStorage.removeItem(RBChatUtils.COOKIE_KEY_AUTHED_LOCAL_USER_INFO_ID);
       this.windowService.loginWindow();
+    });
+  }
+
+  public setAvatar(upload: UploadedFile) {
+    this.restService.updateUserBaseById({
+      userAvatarFileName: upload.url.href,
+    }).subscribe(res => {
+      this.myAvatar = null;
+      setTimeout(() => {
+        this.myAvatar = this.dom.bypassSecurityTrustResourceUrl(upload.url.href);
+      }, 100);
+      this.cacheService.cacheMyInfo().then();
     });
   }
 

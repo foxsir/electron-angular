@@ -11,6 +11,7 @@ import {FileService} from "@services/file/file.service";
 import DirectoryType from "@services/file/config/DirectoryType";
 import CommonTools from "@app/common/common.tools";
 import {formatDate} from "@app/libs/mobileimsdk-client-common";
+import {LocalUserService} from "@services/local-user/local-user.service";
 
 export type UploadedFile = {
   file: NzUploadFile;
@@ -43,6 +44,7 @@ export class UploadFileComponent implements OnInit {
     private msg: NzMessageService,
     private dom: DomSanitizer,
     private fileService: FileService,
+    private localUserService: LocalUserService,
   ) {
   }
 
@@ -56,6 +58,12 @@ export class UploadFileComponent implements OnInit {
   beforeUpload = (file: NzUploadFile, _fileList: NzUploadFile[]) =>
     new Observable((observer: Observer<boolean>) => {
       this.getFileInfo.emit(file);
+
+      if(this.fileTypes === undefined) {
+        this.msg.error("请定义 fileTypes");
+        observer.complete();
+        return;
+      }
 
       const isJpgOrPng = this.fileTypes.includes(file.type) || this.fileTypes.includes('*');
       if (!isJpgOrPng) {
@@ -79,9 +87,15 @@ export class UploadFileComponent implements OnInit {
       this.loading = true;
       this.getBuffer(file).then(buffer => {
         let filename = CommonTools.md5([file.name, file.lastModified].join("-"));
-        filename = [filename, CommonTools.getFileExt(file.name, file.type)].join(".");
-        filename = [formatDate(new Date().getTime(), 'yyyy-M-d'), filename].join("-");
-        this.fileService.upload(buffer, filename, DirectoryType.OSS_FILE).then(res => {
+        // 判断是否是头像
+        if(this.directoryType === 'user_portrait') {
+          filename = this.localUserService.localUserInfo.userId.toString();
+          filename = [filename, CommonTools.getFileExt(file.name, file.type)].join(".");
+        } else {
+          filename = [filename, CommonTools.getFileExt(file.name, file.type)].join(".");
+          filename = [formatDate(new Date().getTime(), 'yyyy-M-d'), filename].join("-");
+        }
+        this.fileService.upload(buffer, filename, this.directoryType).then(res => {
           this.fileUploaded.emit({
             file: file,
             url: new URL(res.url)
