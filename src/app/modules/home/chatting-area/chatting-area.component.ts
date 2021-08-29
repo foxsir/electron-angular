@@ -30,9 +30,10 @@ import {CurrentChattingChangeService} from "@services/current-chatting-change/cu
 import {RestService} from "@services/rest/rest.service";
 import {MatDrawer} from "@angular/material/sidenav";
 import {ElementService} from "@services/element/element.service";
-import {MatCheckbox} from "@angular/material/checkbox";
+import { MatCheckbox } from "@angular/material/checkbox";
 import {DialogService} from "@services/dialog/dialog.service";
-import {TransmitMessageComponent} from "@modules/user-dialogs/transmit-message/transmit-message.component";
+import { TransmitMessageComponent } from "@modules/user-dialogs/transmit-message/transmit-message.component";
+import { ChattingVoiceComponent } from '../chatting-voice/chatting-voice.component';
 
 @Component({
   selector: 'app-chatting-area',
@@ -41,7 +42,10 @@ import {TransmitMessageComponent} from "@modules/user-dialogs/transmit-message/t
 })
 export class ChattingAreaComponent implements OnInit {
   @ViewChild("chattingContainer") chattingContainer: ElementRef;
-  @ViewChild("chattingSetting") chattingSetting: MatDrawer;
+    @ViewChild("chattingSetting") chattingSetting: MatDrawer;
+
+    @ViewChild('chattingVoice') chattingVoice: MatDrawer;
+    @ViewChild('appChatingVoice') appChatingVoice: ChattingVoiceComponent;
 
   public currentChat: AlarmItemInterface;
 
@@ -202,7 +206,8 @@ export class ChattingAreaComponent implements OnInit {
   private subscribeChattingMessage() {
     this.messageDistributeService.MT03_OF_CHATTING_MESSAGE$.subscribe((res: ProtocalModel) => {
       const dataContent: any = JSON.parse(res.dataContent);
-      // alert("单聊" + data.from);
+        // alert("单聊" + data.from);
+        console.log('订阅单聊消息：', dataContent);
 
       const chatMsgEntity = this.messageEntityService.prepareRecievedMessage(
         res.from, dataContent.nickName, dataContent.m, (new Date()).getTime(), dataContent.ty, res.fp
@@ -221,7 +226,10 @@ export class ChattingAreaComponent implements OnInit {
    */
   private subscribeOfGroupChatMsgToServer() {
     this.messageDistributeService.MT44_OF_GROUP$CHAT$MSG_A$TO$SERVER$.subscribe((res: ProtocalModel) => {
-      const dataContent: any = JSON.parse(res.dataContent);
+        const dataContent: any = JSON.parse(res.dataContent);
+
+        console.log('订阅群聊消息 ToServer：', dataContent);
+
       const chatMsgEntity = this.messageEntityService.prepareRecievedMessage(
         res.from, dataContent.nickName, dataContent.m, (new Date()).getTime(), dataContent.ty, res.fp
       );
@@ -236,7 +244,19 @@ export class ChattingAreaComponent implements OnInit {
    */
   private subscribeOfGroupChatMsgServerToB() {
     this.messageDistributeService.MT45_OF_GROUP$CHAT$MSG_SERVER$TO$B$.subscribe((res: ProtocalModel) => {
-      const dataContent: any = JSON.parse(res.dataContent);
+        const dataContent: any = JSON.parse(res.dataContent);
+
+        console.log('订阅群聊消息 ServerToB：', dataContent);
+        if (dataContent.ty == 120) {
+            if (dataContent.m == "start_voice") {
+                this.chattingVoice.open();
+                this.appChatingVoice.openPanel();
+            }
+            else if (dataContent.m == "receive_voice") {
+                this.appChatingVoice.hadReceiveVoice();
+            }
+        }
+
       // alert("群组" + dataContent.t);
       // this.massageBadges[dataContent.t.trim()] = 99;
       const chatMsgEntity = this.messageEntityService.prepareRecievedMessage(
@@ -379,6 +399,11 @@ export class ChattingAreaComponent implements OnInit {
         });
       }
     });
-  }
+    }
+
+    startVoice(matDrawer: MatDrawer) {
+        console.log('开始语音聊天...');
+        matDrawer.toggle();
+    }
 
 }

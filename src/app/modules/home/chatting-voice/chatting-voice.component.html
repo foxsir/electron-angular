@@ -1,0 +1,49 @@
+<div fxLayout="column" style="background: #F1F1F1;">
+    <div fxFlex="100px">
+        <mat-card class="mat-elevation-z0" fxLayoutAlign="stretch center" fxFlex="100" style="padding: 11px 16px;">
+            <mat-card-content fxFlex="100">
+                <div fxLayout="row">
+                    <div fxFlex="100px" fxLayoutAlign="space-between center">
+                        <mat-icon (click)="drawer.close()" class="hover-icon">
+                            <img [src]="backspaceIcon" alt="" class="icon">
+                            <img [src]="backspaceActiveIcon" alt="" class="icon-active">
+                        </mat-icon>
+                        <span>语音聊天</span> 
+                    </div>
+                    <div fxFlex fxLayoutAlign="end center">
+                        <mat-icon (click)="drawer.close()" class="hover-icon icon14">
+                            <img [src]="closeIcon" alt="" class="icon">
+                            <img [src]="closeActiveIcon" alt="" class="icon-active">
+                        </mat-icon>
+                    </div>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+    <div class="split-item"></div>
+    <div fxFlex >
+        <mat-card class="mat-elevation-z0">
+            <mat-card-content>
+                <!--发起者-->
+                <div fxLayout="column" fxLayoutGap="10px" *ngIf="view_mode == 'default'">
+                    <button nz-button nzType="link" class="btnsave" (click)="startVoice()">发起</button>
+                </div>
+
+                <div fxLayout="column" fxLayoutGap="10px" *ngIf="view_mode == 'wait_answer_1'">
+                    <button nz-button nzType="link" class="btnsave" (click)="startVoice()">挂断</button>
+                </div>
+
+
+                <!--接收者-->
+                <div fxLayout="column" fxLayoutGap="10px" *ngIf="view_mode == 'wait_answer_2'">
+                    <button nz-button nzType="link" class="btnsave" (click)="startVoice()">挂断</button>
+                    <button nz-button nzType="link" class="btnsave" (click)="receiveVoice()">接收</button>
+                </div>
+
+                <div fxLayout="column" fxLayoutGap="10px" *ngIf="view_mode == 'had_receive_voice'">
+                    <button nz-button nzType="link" class="btnsave" (click)="startVoice()">挂断</button>                    
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>
