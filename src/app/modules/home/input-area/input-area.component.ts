@@ -42,6 +42,8 @@ import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 import {CurrentChattingChangeService} from "@services/current-chatting-change/current-chatting-change.service";
 import {ElementService} from "@services/element/element.service";
 import FileMetaInterface from "@app/interfaces/file-meta.interface";
+import {DialogService} from "@services/dialog/dialog.service";
+import {SelectFriendContactComponent} from "@modules/user-dialogs/select-friend-contact/select-friend-contact.component";
 
 @Component({
   selector: 'app-input-area',
@@ -95,6 +97,7 @@ export class InputAreaComponent implements OnInit {
     private snackBarService: SnackBarService,
     private currentChattingChangeService: CurrentChattingChangeService,
     private elementService: ElementService,
+    private dialogService: DialogService,
   ) { }
 
   ngOnInit(): void {
@@ -125,6 +128,7 @@ export class InputAreaComponent implements OnInit {
     this.getGroupMembers(this.currentChat);
     this.currentChattingChangeService.currentChatting$.subscribe((currentChat) => {
       this.getGroupMembers(currentChat);
+      this.messageText = "";
     });
   }
 
@@ -527,6 +531,25 @@ export class InputAreaComponent implements OnInit {
    */
   asyncTextareaFocus() {
     setTimeout(() => this.textarea.nativeElement.focus(), 300);
+  }
+
+  selectFriend() {
+    this.dialogService.openDialog(SelectFriendContactComponent, {
+      width: '314px',
+      maxHeight: '600px',
+    }).then((friend) => {
+      if(friend) {
+        this.dialogService.confirm({title: "消息提示", text: "确认分享联系信息到当前聊天吗？"}).then((ok) => {
+          if(ok) {
+            const messageText = JSON.stringify({
+              nickName: friend.nickname,
+              uid: friend.friendUserUid,
+            });
+            this.doSend(messageText, MsgType.TYPE_CONTACT,true);
+          }
+        });
+      }
+    });
   }
 
 }

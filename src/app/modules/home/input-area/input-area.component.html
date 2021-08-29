@@ -14,7 +14,7 @@
                          directoryType="message_file"
                          (fileUploaded)="fileUploaded($event)"></app-upload-file>
       </button>
-      <button mat-menu-item>
+      <button mat-menu-item (click)="selectFriend()">
         名片发送
       </button>
       <button mat-menu-item>
@@ -32,7 +32,7 @@
   <div fxFlex style="background: #f0f0f0" class="message-textarea-container">
     <span #createPlanMenuTrigger="matMenuTrigger" #matMenuTriggerSpan [matMenuTriggerFor]="atMenu"></span>
     <mat-menu #atMenu="matMenu" (closed)="asyncTextareaFocus()">
-      <mat-card class="mat-elevation-z0 scrollbar" style="height: 150px; width: 200px;">
+      <mat-card class="mat-elevation-z0 scrollbar" style="max-height: 150px; width: 200px;">
         <mat-card-content>
           <p mat-menu-item
              *ngFor="let member of memberList"
