@@ -1,0 +1,10 @@
+.user-card-container {
+  min-width: 294px;
+
+  .user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+  }
+}

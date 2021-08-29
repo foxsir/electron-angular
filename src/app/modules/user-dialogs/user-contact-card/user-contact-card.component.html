@@ -1,0 +1,27 @@
+<div fxLayout="column" fxLayoutGap="10px" class="user-card-container">
+  <div fxFlex>
+    <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start center">
+      <div fxFlex="40px">
+        <img [src]="userAvatar" class="user-avatar" alt="">
+      </div>
+      <div fxFlex>
+        {{userContact.nickName}}
+      </div>
+    </div>
+  </div>
+  <div fxFlex>
+    <div fxLayout="column" fxLayoutGap="10px">
+      <div fxFlex>
+        <mat-divider></mat-divider>
+      </div>
+      <div fxFlex>
+        <div fxLayout="row" fxLayoutAlign="end" fxLayoutGap="10px">
+          <button mat-button mat-dialog-close="true">关闭</button>
+          <button mat-button color="primary">添加好友</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--{{chatMsg | json}}-->
