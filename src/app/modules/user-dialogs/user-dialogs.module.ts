@@ -24,6 +24,8 @@ import { NgxQRCodeModule } from 'ngx-qrcode2';
 import { TransmitMessageComponent } from './transmit-message/transmit-message.component';
 import {MatInputModule} from "@angular/material/input";
 import {MatListModule} from "@angular/material/list";
+import { UserContactCardComponent } from './user-contact-card/user-contact-card.component';
+import { SelectFriendContactComponent } from './select-friend-contact/select-friend-contact.component';
 
 
 @NgModule({
@@ -35,7 +37,9 @@ import {MatListModule} from "@angular/material/list";
         UserInfoComponent,
         SetRemarkComponent,
         UserSilenceComponent,
-        TransmitMessageComponent
+        TransmitMessageComponent,
+        UserContactCardComponent,
+        SelectFriendContactComponent
     ],
     exports: [
         PrivacySettingComponent
