@@ -131,6 +131,9 @@ export const getGroupCustomerService = _HTTP_SERVER_URL + "/api/groupBase/getGro
 // 更新群客服
 export const UpGroupCustomerService = _HTTP_SERVER_URL + "/api/groupBase/UpGroupCustomerService";
 
+// 修改密码
+export const UpdatePassword = _HTTP_SERVER_URL + "/api/user/updPwd";
+
 
 //
 //  //封装请求函数
