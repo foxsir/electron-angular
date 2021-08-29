@@ -101,7 +101,13 @@ export class UploadFileComponent implements OnInit {
             url: new URL(res.url)
           });
           this.loading = false;
-          this.fileUrl = res.url;
+          if([ // 上传为图片时
+            DirectoryType.OSS_PORTRAIT,
+            DirectoryType.OSS_IMAGE,
+            DirectoryType.OSS_PHOTOALBUM
+          ].includes(this.directoryType)) {
+            this.fileUrl = res.url;
+          }
         });
       });
     });

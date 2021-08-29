@@ -20,7 +20,10 @@
           <div fxFlex="100">
             <div fxLayout="row" style="height: 80px" fxLayoutAlign="center center">
               <div style="width: 60px; height: 60px; border-radius: 100%; overflow: hidden">
-                <app-upload-file (fileUploaded)="setAvatar($event)" [options]="uploadOptions"></app-upload-file>
+                <app-upload-file
+                                 directoryType="user_portrait"
+                                 [fileTypes]="['image/png', 'image/jpg', 'image/jpeg']"
+                                 (fileUploaded)="setAvatar($event)" [options]="uploadOptions"></app-upload-file>
               </div>
             </div>
           </div>

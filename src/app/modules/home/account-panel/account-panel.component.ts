@@ -154,10 +154,6 @@ export class AccountPanelComponent implements OnInit {
     this.restService.updateUserBaseById({
       userAvatarFileName: upload.url.href,
     }).subscribe(res => {
-      this.myAvatar = null;
-      setTimeout(() => {
-        this.myAvatar = this.dom.bypassSecurityTrustResourceUrl(upload.url.href);
-      }, 100);
       this.cacheService.cacheMyInfo().then();
     });
   }

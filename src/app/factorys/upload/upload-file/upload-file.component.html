@@ -6,7 +6,7 @@
   <ng-container *ngIf="!showText">
     <div>
       <div class="ant-upload-text">
-        <img [src]="defaultOptions.icon" alt="" [ngStyle]="defaultOptions.size">
+        <img [src]="this.fileUrl || defaultOptions.icon" alt="" [ngStyle]="defaultOptions.size">
         <div class="spinner">
           <mat-spinner [diameter]="20"
                        *ngIf="loading && this.defaultOptions.showProgress"
@@ -14,7 +14,6 @@
         </div>
       </div>
     </div>
-    <img *ngIf="fileUrl" [src]="fileUrl" style="width: 100%"  alt=""/>
   </ng-container>
   <ng-container *ngIf="showText">
     <span>{{showText}}</span>

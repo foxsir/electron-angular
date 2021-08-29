@@ -33,11 +33,11 @@ export class RegisterComponent implements OnInit {
   womanActiveIcon = this.dom.bypassSecurityTrustResourceUrl(womanActiveIcon);
 
   userSex: number = 1;
-  avatarUrl: URL;
+  avatarUrl: URL = null;
 
   uploadOptions: Partial<uploadOptions> = {
     size: {width: '60px'},
-    icon: avatarIcon,
+    icon: this.avatarUrl ? this.avatarUrl.href : avatarIcon,
   };
 
   nicknameControl = new FormControl(null, Validators.required);
@@ -138,7 +138,10 @@ export class RegisterComponent implements OnInit {
   }
 
   public setAvatar(upload: UploadedFile) {
-    this.avatarUrl = upload.url;
+    this.avatarUrl = null;
+    setTimeout(() => {
+      this.avatarUrl = upload.url;
+    }, 100);
   }
 
   public onSubmit() {
