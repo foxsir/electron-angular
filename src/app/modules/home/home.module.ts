@@ -45,6 +45,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzListModule } from 'ng-zorro-antd/list';
 import {SettingDialogsModule} from "../setting-dialogs/setting-dialogs.module";
 import {MatCheckboxModule} from "@angular/material/checkbox";
+import { MyFriendsComponent } from './my-friends/my-friends.component';
 
 @NgModule({
   declarations: [
@@ -66,7 +67,8 @@ import {MatCheckboxModule} from "@angular/material/checkbox";
     CreateGroupComponent,
     SearchFriendComponent,
     SearchWidgetComponent,
-    ChattingAreaComponent
+    ChattingAreaComponent,
+    MyFriendsComponent
   ],
   imports: [
     CommonModule,

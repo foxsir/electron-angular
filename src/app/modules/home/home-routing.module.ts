@@ -13,6 +13,7 @@ import {CreateGroupComponent} from "./create-group/create-group.component";
 import { FriendGroupComponent } from "./friend-group/friend-group.component";
 import {SearchFriendComponent} from "./search-friend/search-friend.component";
 import {ChattingAreaComponent} from "./chatting-area/chatting-area.component";
+import {MyFriendsComponent} from "./my-friends/my-friends.component";
 
 const routes: Routes = [
   {
@@ -51,7 +52,12 @@ const routes: Routes = [
         children: [
           {
             path: '',
-            redirectTo: 'new-friend',
+            redirectTo: 'my-friends',
+          },
+          {
+            path: 'my-friends',
+            component: MyFriendsComponent,
+            pathMatch: 'full'
           },
           {
             path: 'new-friend',
