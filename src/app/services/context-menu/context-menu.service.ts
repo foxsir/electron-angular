@@ -445,6 +445,14 @@ export class ContextMenuService {
       this.actionCollection.download,
       ...com,
     ];
+
+    this.contextMenuForMessage[this.msgType.TYPE_CONTACT] = [
+      this.actionCollection.quote,
+      this.actionCollection.select,
+      this.actionCollection.delete,
+      this.actionCollection.collect,
+      ...com,
+    ];
   }
 
   // 初始化收藏右键
