@@ -56,6 +56,9 @@ export const updRemark = _HTTP_SERVER_URL + "/api/user/updRemark";
 // 用户好友相关 - 查看好友备注
 export const getRemark = _HTTP_SERVER_URL + "/api/user/getRemark";
 
+// 用户好友相关 - 获取好友列表
+export const getfriendList = _HTTP_SERVER_URL + "/api/user/friendList";
+
 
 
 //置顶

@@ -28,7 +28,8 @@ import {
   getFriendSearch,
   getGroupAdminInfo,
   updRemark,
-  getRemark,
+    getRemark,
+    getfriendList,
   updateGroupAdmin,
   addGroupSilence,
   deleteGroupSilenceById,
@@ -562,6 +563,16 @@ export class RestService {
         data.id = localUserInfo.userId.toString();
 
         return this.http.get(getRemark, data);
+    }
+
+    /**
+      * 用户好友相关 - 获取好友列表
+      */
+    getfriendList(data: any): Observable<any> {
+        const localUserInfo = this.localUserService.getObj();
+        data.userId = localUserInfo.userId.toString();
+
+        return this.http.get(getfriendList, data);
     }
 
     /**
