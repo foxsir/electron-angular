@@ -19,7 +19,7 @@ export class ResetPasswordForm {
 
   fields: FormlyFieldConfig[] = [
     {
-      key: 'oldPwd',
+      key: 'old_psw',
       type: 'password',
       templateOptions: {
         label: '请设置最低6位密码备份',
