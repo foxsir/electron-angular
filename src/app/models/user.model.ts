@@ -1,8 +1,8 @@
 export class UserModel {
   userUid: number; //用户id
   userMail: string; //账号
-  nickname: string; //昵称
-  userAvatarFileName: null; //头像
+    nickname: string; //昵称
+    userAvatarFileName: string; //头像
   userType: number; //用户类型 0普通用户， 1普通管理员，2超级管理员  3客服
   userPhone: null; //手机号
   balance: number; //余额
