@@ -1,0 +1,44 @@
+<app-collect-at *ngIf="collect.type === msgType.TYPE_AITE"></app-collect-at>
+
+<app-collect-contact *ngIf="collect.type === msgType.TYPE_CONTACT"></app-collect-contact>
+
+<app-collect-file *ngIf="collect.type === msgType.TYPE_FILE"></app-collect-file>
+
+<app-collect-image *ngIf="collect.type === msgType.TYPE_IMAGE"></app-collect-image>
+
+<app-collect-location *ngIf="collect.type === msgType.TYPE_LOCATION"></app-collect-location>
+
+<app-collect-no-talk *ngIf="collect.type === msgType.TYPE_NOTALK"></app-collect-no-talk>
+
+<!--回复消息-->
+<app-collect-quote *ngIf="collect.type === 19"></app-collect-quote>
+
+<app-collect-red-envelope *ngIf="collect.type === msgType.TYPE_REDBAG"></app-collect-red-envelope>
+
+<app-collect-repeal *ngIf="collect.type === msgType.TYPE_BACK"></app-collect-repeal>
+
+<app-collect-system *ngIf="collect.type === msgType.TYPE_SYSTEAM$INFO"></app-collect-system>
+
+<app-collect-text *ngIf="collect.type === msgType.TYPE_TEXT"></app-collect-text>
+
+<app-collect-video *ngIf="collect.type === msgType.TYPE_SHORTVIDEO"></app-collect-video>
+
+<app-collect-voice *ngIf="collect.type === msgType.TYPE_VOICE"></app-collect-voice>
+
+<app-collect-voice-call *ngIf="collect.type === msgType.TYPE_VOICE_CALL"></app-collect-voice-call>
+
+
+<!--0  普通文字消息-->
+<!--1  图片消息-->
+<!--2  语音留言消息-->
+<!--5  文件消息-->
+<!--6  短视频消息-->
+<!--7  名片消息-->
+<!--8  位置消息-->
+<!--10  红包消息-->
+<!--11  撤回消息-->
+<!--12  禁言消息-->
+<!--15  艾特消息-->
+<!--19  回复消息-->
+<!--21  语音聊天消息-->
+<!--90  系统消息或提示消息-->
