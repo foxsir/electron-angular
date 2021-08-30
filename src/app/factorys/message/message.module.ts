@@ -21,6 +21,7 @@ import {FlexLayoutModule} from "@angular/flex-layout";
 import {MatDividerModule} from "@angular/material/divider";
 import {MatButtonModule} from "@angular/material/button";
 import { MessageMergeMultipleComponent } from './message-merge-multiple/message-merge-multiple.component';
+import { MessageVoiceCallComponent } from './message-voice-call/message-voice-call.component';
 
 @NgModule({
   declarations: [
@@ -41,7 +42,8 @@ import { MessageMergeMultipleComponent } from './message-merge-multiple/message-
     MessageFactoryComponent,
     MessageNoTalkComponent,
     MessageBackComponent,
-    MessageMergeMultipleComponent
+    MessageMergeMultipleComponent,
+    MessageVoiceCallComponent
   ],
   exports: [
     MessageFactoryComponent
