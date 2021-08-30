@@ -23,29 +23,29 @@ import {MatButtonModule} from "@angular/material/button";
 import { MessageMergeMultipleComponent } from './message-merge-multiple/message-merge-multiple.component';
 
 @NgModule({
-    declarations: [
-        MessageTextComponent,
-        MessageImageComponent,
-        MessageVoiceComponent,
-        MessageFileComponent,
-        MessageVideoComponent,
-        MessageContactComponent,
-        MessageLocationComponent,
-        MessageRedEnvelopeComponent,
-        MessageRepealComponent,
-        MessageGetRedEnvelopeComponent,
-        MessageTransferComponent,
-        MessageAtComponent,
-        MessageDismissComponent,
-        MessageSystemComponent,
-        MessageFactoryComponent,
-        MessageNoTalkComponent,
-        MessageBackComponent,
-        MessageMergeMultipleComponent
-    ],
-    exports: [
-      MessageFactoryComponent
-    ],
+  declarations: [
+    MessageTextComponent,
+    MessageImageComponent,
+    MessageVoiceComponent,
+    MessageFileComponent,
+    MessageVideoComponent,
+    MessageContactComponent,
+    MessageLocationComponent,
+    MessageRedEnvelopeComponent,
+    MessageRepealComponent,
+    MessageGetRedEnvelopeComponent,
+    MessageTransferComponent,
+    MessageAtComponent,
+    MessageDismissComponent,
+    MessageSystemComponent,
+    MessageFactoryComponent,
+    MessageNoTalkComponent,
+    MessageBackComponent,
+    MessageMergeMultipleComponent
+  ],
+  exports: [
+    MessageFactoryComponent
+  ],
   imports: [
     CommonModule,
     FlexLayoutModule,
