@@ -5,4 +5,5 @@ export default class FriendModel {
   userAvatarFileName: string;
   base64Avatar: string;
   userUid: string;
+  onlineStatus: boolean;
 }
