@@ -1,0 +1,69 @@
+<!--<ng-template [ngIf]="replyMsg.msgType === msgType.TYPE_TEXT">-->
+<!--  &lt;!&ndash;原始消息是文本&ndash;&gt;-->
+<!--  <p>{{replyMsg.reply}}</p>-->
+<!--  <p>{{replyMsg.msg}}</p>-->
+<!--  <p>{{replyMsg.msgType}}</p>-->
+<!--</ng-template>-->
+
+<!--<ng-template [ngIf]="replyMsg.msgType !== 0">-->
+<!--  &lt;!&ndash;原始消息是文件&ndash;&gt;-->
+<!--  <p>{{messageType[replyMsg.msgType]}}</p>-->
+<!--  <p>{{originContent.text}}</p>-->
+<!--  <p>{{replyMsg.msg}}</p>-->
+<!--  <p>{{replyMsg.msgType}}</p>-->
+<!--</ng-template>-->
+
+<div fxLayout="column" fxLayoutGap="8px">
+  <div class="quote-message" fxLayout="row">
+    <div fxFlex="38px" class="quote-thumbnail" *ngIf="replyMsg.msgType === msgType.TYPE_IMAGE">
+      <img [src]="parseFileMeta(originContent.text).fileName" alt="">
+    </div>
+    <div fxFlex="38px" class="quote-thumbnail" *ngIf="replyMsg.msgType === msgType.TYPE_FILE">
+      <div fxLayoutAlign="center center" fxFlexFill class="filetype">
+      <span>
+        .{{parseFileMeta(originContent.text).fileName.split('.').pop()}}
+      </span>
+      </div>
+    </div>
+    <div fxFlex *ngIf="replyMsg.msgType === msgType.TYPE_FILE" class="quote-content">
+      <div class="quote-title">
+        {{replyMsg.userName}}
+      </div>
+      <div class="quote-reply">
+        {{parseFileMeta(originContent.text).fileName}}
+      </div>
+    </div>
+
+    <div fxFlex *ngIf="replyMsg.msgType === msgType.TYPE_TEXT" class="quote-content">
+      <div class="quote-title">
+        {{replyMsg.userName}}
+      </div>
+      <div class="quote-reply">
+        {{replyMsg.reply}}
+      </div>
+    </div>
+  </div>
+  <div fxLayout="row">
+    <div fxFlex *ngIf="replyMsg.msgType === msgType.TYPE_FILE" class="quote-content">
+      <div class="quote-reply">
+        <ng-template [ngIf]="msgParse === null">
+          {{replyMsg.msg}}
+        </ng-template>
+        <ng-template [ngIf]="msgParse">
+          {{msgParse.msgContent}}
+        </ng-template>
+      </div>
+    </div>
+
+    <div fxFlex *ngIf="replyMsg.msgType === msgType.TYPE_TEXT" class="quote-content">
+      <div class="quote-reply">
+        <ng-template [ngIf]="msgParse === null">
+          {{replyMsg.msg}}
+        </ng-template>
+        <ng-template [ngIf]="msgParse">
+          {{msgParse.msgContent}}
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</div>
