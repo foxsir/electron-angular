@@ -91,7 +91,14 @@ export class MessageEntityService {
         const txt = JSON.parse(msg).content;
         return this.createChatMsgEntity_COME_TEXT(fromUid, nickName, txt, time, fp);
       }
-      default:
+      case MsgType.TYPE_QUOTE: {
+        // 回复类型
+        return this.createChatMsgEntity_COME_QOUTE(fromUid, nickName, msg, time, fp);
+      }
+      case MsgType.TYPE_TRANSFER: {
+        // 合并转发
+        return this.createChatMsgEntity_COME_TRANSFER(fromUid, nickName, msg, time, fp);
+      } default:
         return this.createChatMsgEntity_COME_TEXT(fromUid, nickName, msg, time, fp);
     }
   }
@@ -289,6 +296,38 @@ export class MessageEntityService {
     chatMsgEntityObj.msgType = MsgType.TYPE_TEXT;
     chatMsgEntityObj.isOutgoing = false;
     chatMsgEntityObj.xu_isRead_type = xu_isRead_type;  //111 新增已读类型
+
+    return chatMsgEntityObj;
+  }
+
+  // 构造回复消息
+  createChatMsgEntity_COME_QOUTE(fromUid, nickName, message, time, fingerPrint, xu_isRead_type = null) {
+    // debugger
+    const chatMsgEntityObj = new ChatmsgEntityModel();
+    chatMsgEntityObj.uid = fromUid;
+    chatMsgEntityObj.name = nickName;
+    chatMsgEntityObj.date = time <= 0 ? RBChatUtils.getCurrentUTCTimestamp() : time;
+    chatMsgEntityObj.text = message;
+    chatMsgEntityObj.fingerPrintOfProtocal = fingerPrint;
+    chatMsgEntityObj.msgType = MsgType.TYPE_QUOTE;
+    chatMsgEntityObj.isOutgoing = false;
+    chatMsgEntityObj.xu_isRead_type = xu_isRead_type;  // 111 新增已读类型
+
+    return chatMsgEntityObj;
+  }
+
+  // 构造合并转发
+  createChatMsgEntity_COME_TRANSFER(fromUid, nickName, message, time, fingerPrint, xu_isRead_type = null) {
+    // debugger
+    const chatMsgEntityObj = new ChatmsgEntityModel();
+    chatMsgEntityObj.uid = fromUid;
+    chatMsgEntityObj.name = nickName;
+    chatMsgEntityObj.date = time <= 0 ? RBChatUtils.getCurrentUTCTimestamp() : time;
+    chatMsgEntityObj.text = message;
+    chatMsgEntityObj.fingerPrintOfProtocal = fingerPrint;
+    chatMsgEntityObj.msgType = MsgType.TYPE_TRANSFER;
+    chatMsgEntityObj.isOutgoing = false;
+    chatMsgEntityObj.xu_isRead_type = xu_isRead_type;  // 111 新增已读类型
 
     return chatMsgEntityObj;
   }
