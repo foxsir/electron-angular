@@ -3,6 +3,9 @@ import { CacheService } from "@services/cache/cache.service";
 import { RestService } from "@services/rest/rest.service";
 import FriendModel from "@app/models/friend.model";
 const iconv = window.require('iconv-lite');
+import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
+import {CurrentChattingChangeService} from "@services/current-chatting-change/current-chatting-change.service";
+import {Router} from "@angular/router";
 
 class FriendData {
     public char: string;
@@ -25,6 +28,8 @@ export class MyFriendsComponent implements OnInit {
     constructor(
         private cacheService: CacheService,
         private restService: RestService,
+        private currentChattingChangeService: CurrentChattingChangeService,
+        private router: Router
     ) { }
 
     ngOnInit(): void {
@@ -94,6 +99,29 @@ export class MyFriendsComponent implements OnInit {
         }
 
         return str;
+    }
+
+    switchChatting(item: FriendModel) {
+        const alarm: AlarmItemInterface = {
+            alarmItem: {
+                alarmMessageType: 0, // 0单聊 1临时聊天/陌生人聊天 2群聊
+                dataId: item.friendUserUid.toString(),
+                date: "",
+                istop: true,
+                msgContent: "0",
+                title: item.nickname,
+                avatar: item.userAvatarFileName,
+            },
+            // 聊天元数据
+            metadata: {
+                chatType: "friend", // "friend" | "group"
+            },
+        };
+        this.router.navigate(['/home/message']).then(() => {
+            this.cacheService.putChattingCache(alarm).then(() => {
+                this.currentChattingChangeService.switchCurrentChatting(alarm);
+            });
+        });
     }
 
 }
