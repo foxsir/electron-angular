@@ -18,6 +18,7 @@ export class MessageFileComponent implements OnInit {
 
   ngOnInit(): void {
     this.fileInfo = JSON.parse(this.chatMsg.text);
+    this.fileInfo.fileLength = Number(this.fileInfo.fileLength);
   }
 
   downloadFile() {

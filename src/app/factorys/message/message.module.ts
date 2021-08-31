@@ -8,7 +8,6 @@ import { MessageVideoComponent } from './message-video/message-video.component';
 import { MessageContactComponent } from './message-contact/message-contact.component';
 import { MessageLocationComponent } from './message-location/message-location.component';
 import { MessageRedEnvelopeComponent } from './message-red-envelope/message-red-envelope.component';
-import { MessageRepealComponent } from './message-repeal/message-repeal.component';
 import { MessageGetRedEnvelopeComponent } from './message-get-red-envelope/message-get-red-envelope.component';
 import { MessageTransferComponent } from './message-transfer/message-transfer.component';
 import { MessageAtComponent } from './message-at/message-at.component';
@@ -22,6 +21,8 @@ import {MatDividerModule} from "@angular/material/divider";
 import {MatButtonModule} from "@angular/material/button";
 import { MessageMergeMultipleComponent } from './message-merge-multiple/message-merge-multiple.component';
 import { MessageVoiceCallComponent } from './message-voice-call/message-voice-call.component';
+import { MessageAiteComponent } from './message-aite/message-aite.component';
+import { MessageQuoteComponent } from './message-quote/message-quote.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,6 @@ import { MessageVoiceCallComponent } from './message-voice-call/message-voice-ca
     MessageContactComponent,
     MessageLocationComponent,
     MessageRedEnvelopeComponent,
-    MessageRepealComponent,
     MessageGetRedEnvelopeComponent,
     MessageTransferComponent,
     MessageAtComponent,
@@ -43,7 +43,9 @@ import { MessageVoiceCallComponent } from './message-voice-call/message-voice-ca
     MessageNoTalkComponent,
     MessageBackComponent,
     MessageMergeMultipleComponent,
-    MessageVoiceCallComponent
+    MessageVoiceCallComponent,
+    MessageAiteComponent,
+    MessageQuoteComponent
   ],
   exports: [
     MessageFactoryComponent

@@ -45,22 +45,22 @@ export class MessageTextComponent implements OnInit {
   }
 
   ngOnInit() {
-    const chat = this.quoteMessageService.checkMessageIsPureText(this.chatMsg.text);
-    if (chat === true) {
-      this.chatMsg.text = this.showEmoji(this.chatMsg.text);
-    } else {
-      // 回复消息类型
-      this.newChatMsg = chat as ReplyMessageType;
-      const reply = this.quoteMessageService.checkReplyContent(this.newChatMsg.reply);
-      if(typeof reply === 'string') {
-        this.replyContentText = reply;
-      } else if (typeof reply === 'object') {
-        this.replyContentData = reply;
-      } else if(this.newChatMsg.messages) {
-        // console.dir(this.newChatMsg.messages);
-      }
-      this.pureTextMessage = false;
-    }
+    // const chat = this.quoteMessageService.checkMessageIsPureText(this.chatMsg.text as string);
+    // if (chat === true) {
+    //   this.chatMsg.text = this.showEmoji(this.chatMsg.text as string);
+    // } else {
+    //   // 回复消息类型
+    //   this.newChatMsg = chat as ReplyMessageType;
+    //   const reply = this.quoteMessageService.checkReplyContent(this.newChatMsg.reply);
+    //   if(typeof reply === 'string') {
+    //     this.replyContentText = reply;
+    //   } else if (typeof reply === 'object') {
+    //     this.replyContentData = reply;
+    //   } else if(this.newChatMsg.messages) {
+    //     // console.dir(this.newChatMsg.messages);
+    //   }
+    //   this.pureTextMessage = false;
+    // }
   }
 
   showEmoji(content: string) {
@@ -92,19 +92,19 @@ export class MessageTextComponent implements OnInit {
       .replace(/"/g, '&quot;');
   }
 
-  typeof(data: any): string {
-    return typeof data;
-  }
-
-  showMultipleMessage() {
-    this.dialogService.openDialog(MessageMergeMultipleComponent, {
-      data: this.newChatMsg.messages,
-      width: '430px'
-    }).then();
-  }
-
-  parseNewMsg(msg: string): {msgType: number; msgContent: string} {
-    return JSON.parse(msg);
-  }
+  // typeof(data: any): string {
+  //   return typeof data;
+  // }
+  //
+  // showMultipleMessage() {
+  //   this.dialogService.openDialog(MessageMergeMultipleComponent, {
+  //     data: this.newChatMsg.messages,
+  //     width: '430px'
+  //   }).then();
+  // }
+  //
+  // parseNewMsg(msg: string): string {
+  //   return msg;
+  // }
 
 }

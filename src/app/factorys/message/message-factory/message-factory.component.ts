@@ -2,23 +2,6 @@ import {Component, Injector, Input, OnInit} from '@angular/core';
 import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 import {MsgType} from "@app/config/rbchat-config";
 
-import {MessageAtComponent} from '../message-at/message-at.component';
-import {MessageContactComponent} from '../message-contact/message-contact.component';
-import {MessageDismissComponent} from '../message-dismiss/message-dismiss.component';
-import {MessageFileComponent} from '../message-file/message-file.component';
-import {MessageGetRedEnvelopeComponent} from '../message-get-red-envelope/message-get-red-envelope.component';
-import {MessageImageComponent} from '../message-image/message-image.component';
-import {MessageLocationComponent} from '../message-location/message-location.component';
-import {MessageRedEnvelopeComponent} from '../message-red-envelope/message-red-envelope.component';
-import {MessageSystemComponent} from '../message-system/message-system.component';
-import {MessageTextComponent} from '../message-text/message-text.component';
-import {MessageTransferComponent} from '../message-transfer/message-transfer.component';
-import {MessageVideoComponent} from '../message-video/message-video.component';
-import {MessageVoiceComponent} from '../message-voice/message-voice.component';
-import {MessageNoTalkComponent} from "../message-no-talk/message-no-talk.component";
-import {MessageRepealComponent} from "../message-repeal/message-repeal.component";
-
-
 @Component({
   selector: 'app-message-factory',
   templateUrl: './message-factory.component.html',
