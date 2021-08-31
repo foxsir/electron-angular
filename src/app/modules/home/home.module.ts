@@ -46,6 +46,7 @@ import { NzListModule } from 'ng-zorro-antd/list';
 import {SettingDialogsModule} from "../setting-dialogs/setting-dialogs.module";
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import { MyFriendsComponent } from './my-friends/my-friends.component';
+import {CollectContentModule} from "../../factorys/collect-content/collect-content.module";
 
 @NgModule({
   declarations: [
@@ -97,6 +98,7 @@ import { MyFriendsComponent } from './my-friends/my-friends.component';
     NzListModule,
     SettingDialogsModule,
     MatCheckboxModule,
+    CollectContentModule,
   ]
 })
 export class HomeModule { }

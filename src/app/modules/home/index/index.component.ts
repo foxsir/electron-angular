@@ -34,6 +34,8 @@ import RBChatUtils from "@app/libs/rbchat-utils";
 import { CacheService } from "@services/cache/cache.service";
 import netConnect from "@app/assets/icons/net-connect.svg";
 import netDisConnect from "@app/assets/icons/net-disconnect.svg";
+import {UserModel} from "@app/models/user.model";
+import {SoundService} from "@services/sound/sound.service";
 
 // import svg end
 
@@ -114,11 +116,15 @@ export class IndexComponent implements OnInit {
     this.initAll();
     this.doLoginIMServer();
 
-    this.avatarService.getAvatar(this.localUserService.localUserInfo.userId.toString()).then(url => {
-      this.myAvatar = this.dom.bypassSecurityTrustResourceUrl(url);
-    });
     // 缓存个人信息
     this.cacheService.cacheMyInfo().then();
+
+    // 使用缓存中的头像
+    this.cacheService.getMyInfo().then((data: UserModel) => {
+      if(data.userAvatarFileName.length > 0) {
+        this.myAvatar = this.dom.bypassSecurityTrustResourceUrl(data.userAvatarFileName);
+      }
+    });
 
     this.messageDistributeService.MT03_OF_CHATTING_MESSAGE$.subscribe(data => {
       this.massageBadges.message = 1;
