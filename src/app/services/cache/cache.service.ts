@@ -22,6 +22,7 @@ interface CacheItem {
   friendList: unknown;
   groupList: unknown;
   groupAdminList: unknown;
+  myInfo: unknown;
 }
 
 @Injectable({
@@ -332,6 +333,7 @@ export class CacheService {
       this.restService.getUserBaseById(localUserInfo.userId.toString()).subscribe((res: NewHttpResponseInterface<UserModel>) => {
         if(res.status === 200) {
           localforage.setItem('myInfo', res.data).then(data => {
+            this.cacheSource.next({myInfo: data});
             resolve(data);
           });
         }
