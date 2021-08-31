@@ -431,10 +431,9 @@ export class ContextMenuService {
     ];
 
     this.contextMenuForMessage[this.msgType.TYPE_FILE] = [
-      this.actionCollection.download,
       this.actionCollection.quote,
       this.actionCollection.repeal,
-      this.actionCollection.download,
+      // this.actionCollection.download,
       ...com,
     ];
 
@@ -442,7 +441,7 @@ export class ContextMenuService {
       this.actionCollection.copyImage,
       this.actionCollection.quote,
       this.actionCollection.repeal,
-      this.actionCollection.download,
+      // this.actionCollection.download,
       ...com,
     ];
 
