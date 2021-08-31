@@ -320,9 +320,14 @@ const MsgType = {
   /**  ji 新增聊天消息类型之：踢人 */
   TYPE_TIREN: 57,
 
-
   /** 聊天消息类型之：系统消息或提示信息（此类消息通常由服务器即f="0"的用户发出）. */
-  TYPE_SYSTEAM$INFO: 90
+  TYPE_SYSTEAM$INFO: 90,
+
+  /** 语音通话 */
+  TYPE_VOICE_CALL: 21,
+
+  /** 回复类型 */
+  TYPE_QUOTE: 19,
 };
 
 
