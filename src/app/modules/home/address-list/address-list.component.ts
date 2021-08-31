@@ -9,6 +9,7 @@ import newFriendIcon from "@app/assets/icons/new-friend.svg";
 import blackListIcon from "@app/assets/icons/black-list.svg";
 import collectIcon from "@app/assets/icons/collect-circle.svg";
 import groupChattingIcon from "@app/assets/icons/group-chatting-circle.svg";
+import myFriend from "@app/assets/icons/my-friend.svg";
 // import image end
 
 @Component({
@@ -24,7 +25,12 @@ export class AddressListComponent implements OnInit {
       label: "新朋友",
       router: 'new-friend',
       icon: this.dom.bypassSecurityTrustResourceUrl(newFriendIcon)
-    },
+      },
+      {
+          label: "我的好友",
+          router: 'my-friends',
+          icon: this.dom.bypassSecurityTrustResourceUrl(myFriend)
+      },
     {
       label: "我的群组",
       router: 'group',
