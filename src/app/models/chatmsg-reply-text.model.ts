@@ -25,4 +25,6 @@ export class ChatmsgReplyOriginModel {
   showMsg: boolean; // 无需解析
   text: string; // "{\"fileMd5\":\"a01a1d24ee2a36376944beb496840c3e\",\"fileName\":\"肥胖性高血压患者资料合并.xlsx\",\"ossFilePath\":\"http:\\/\\/strawberry-im.oss-cn-shenzhen.aliyuncs.com\\/message_file\\/2021-08-30-肥胖性高血压患者资料合并.xlsx\",\"fileLength\":13164}"
   type: number;
+  ossFilePath: string;
+  videoCoverPath: string;
 }
