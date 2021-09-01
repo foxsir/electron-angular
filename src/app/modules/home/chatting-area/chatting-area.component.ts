@@ -44,14 +44,17 @@ import {MsgType} from "@app/config/rbchat-config";
 })
 export class ChattingAreaComponent implements OnInit {
   @ViewChild("chattingContainer") chattingContainer: ElementRef;
-    @ViewChild("chattingSetting") chattingSetting: MatDrawer;
-
-    @ViewChild('chattingVoice') chattingVoice: MatDrawer;
-    @ViewChild('appChatingVoice') appChatingVoice: ChattingVoiceComponent;
+    @ViewChild('appChattingVoice') appChattingVoice: ChattingVoiceComponent;
+    @ViewChild('chattingAreaDrawer') private chattingAreaDrawer: MatDrawer;
 
   public currentChat: AlarmItemInterface;
 
   public formatDate = formatDate;
+
+  public drawerContent = {
+    setting: false,
+    voice: false,
+  };
 
   // icon
   public closeCircleIcon = this.dom.bypassSecurityTrustResourceUrl(closeCircleIcon);
@@ -140,7 +143,7 @@ export class ChattingAreaComponent implements OnInit {
         });
       } else {
         this.currentChat = currentChat;
-        this.chattingSetting.close();
+        this.openEndDrawer('setting', false);
         this.cacheService.getChattingCache(this.currentChat).then(data => {
           if(!!data) {
             this.chatMsgEntityList = Object.values(data);
@@ -256,11 +259,11 @@ export class ChattingAreaComponent implements OnInit {
         console.log('订阅群聊消息 ServerToB：', dataContent);
         if (dataContent.ty == 120) {
             if (dataContent.m == "start_voice") {
-                this.chattingVoice.open();
-                this.appChatingVoice.openPanel();
+              this.openEndDrawer('voice', true);
+                this.appChattingVoice.openPanel();
             }
             else if (dataContent.m == "receive_voice") {
-                this.appChatingVoice.hadReceiveVoice();
+                this.appChattingVoice.hadReceiveVoice();
             }
         }
 
@@ -406,11 +409,19 @@ export class ChattingAreaComponent implements OnInit {
         });
       }
     });
-    }
+  }
 
-    startVoice(matDrawer: MatDrawer) {
-        console.log('开始语音聊天...');
-        matDrawer.toggle();
+  openEndDrawer(target: string, open: boolean) {
+    for (const key in this.drawerContent) {
+      if(this.drawerContent.hasOwnProperty(key)) {
+        this.drawerContent[key] = key === target;
+      }
     }
+    if(open) {
+      this.chattingAreaDrawer.open().then();
+    } else {
+      this.chattingAreaDrawer.close().then();
+    }
+  }
 
 }

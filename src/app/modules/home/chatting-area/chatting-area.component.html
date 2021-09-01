@@ -1,24 +1,25 @@
 <mat-drawer-container fxFill autosize class="container">
-  <mat-drawer #chattingSetting mode="side" position="end">
-    <div fxFlex="280px">
+  <mat-drawer #chattingAreaDrawer mode="side" position="end">
+    <div fxFlex="280px"  *ngIf="drawerContent.setting">
       <mat-card class="mat-elevation-z0" *ngIf="currentChat">
         <!--判断是单聊还是群聊-->
         <!--单聊-->
-        <app-chatting-setting *ngIf="currentChat.metadata.chatType === 'friend'" [currentChat]="currentChat"></app-chatting-setting>
+        <app-chatting-setting [drawer]="chattingAreaDrawer"
+                              *ngIf="currentChat.metadata.chatType === 'friend'"
+                              [currentChat]="currentChat"></app-chatting-setting>
         <!--群聊-->
-        <app-group-chatting-setting *ngIf="currentChat.metadata.chatType === 'group'" [currentChat]="currentChat"></app-group-chatting-setting>
+        <app-group-chatting-setting [drawer]="chattingAreaDrawer"
+                                    *ngIf="currentChat.metadata.chatType === 'group'"
+                                    [currentChat]="currentChat"></app-group-chatting-setting>
+      </mat-card>
+    </div>
+    <!--语音聊天-->
+    <div fxFlex="280px" *ngIf="drawerContent.voice">
+      <mat-card class="mat-elevation-z0" *ngIf="currentChat">
+        <app-chatting-voice [drawer]="chattingAreaDrawer" #appChattingVoice [currentChat]="currentChat"></app-chatting-voice>
       </mat-card>
     </div>
   </mat-drawer>
-
-    <!--语音聊天-->
-    <mat-drawer #chattingVoice mode="side" position="end">
-        <div fxFlex="280px">
-            <mat-card class="mat-elevation-z0" *ngIf="currentChat">
-                <app-chatting-voice #appChatingVoice [currentChat]="currentChat"></app-chatting-voice>
-            </mat-card>
-        </div>
-    </mat-drawer>
 
   <mat-drawer-content>
     <ng-template [ngIf]="!currentChat">
@@ -75,15 +76,14 @@
                   <img class="icon-active" [src]="searchActiveIcon" alt="">
                 </mat-icon>
               </button>
-
               <!--点击按钮：语音聊天-->
-              <button mat-icon-button  (click)="startVoice(chattingVoice);">
+              <button mat-icon-button (click)="openEndDrawer('voice', true);">
                 <mat-icon class="hover-icon">
                   <img class="icon" [src]="voiceIcon" alt="">
                   <img class="icon-active" [src]="voiceActiveIcon" alt="">
                 </mat-icon>
               </button>
-              <button mat-icon-button (click)="chattingSetting.toggle()">
+              <button mat-icon-button (click)="openEndDrawer('setting', true)">
                 <mat-icon class="hover-icon">
                   <img class="icon" [src]="settingIcon" alt="">
                   <img class="icon-active" [src]="settingActiveIcon" alt="">
