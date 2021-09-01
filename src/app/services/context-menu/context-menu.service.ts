@@ -445,6 +445,13 @@ export class ContextMenuService {
       ...com,
     ];
 
+    this.contextMenuForMessage[this.msgType.TYPE_SHORTVIDEO] = [
+      this.actionCollection.quote,
+      this.actionCollection.repeal,
+      // this.actionCollection.download,
+      ...com,
+    ];
+
     this.contextMenuForMessage[this.msgType.TYPE_CONTACT] = [
       this.actionCollection.quote,
       this.actionCollection.select,
