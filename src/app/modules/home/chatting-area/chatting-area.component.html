@@ -176,7 +176,10 @@
               <div fxFlex>
                 <div fxLayout="column" fxFlexFill class="quote-area-text">
                   <div fxFlex="50" class="quote-title">{{quoteMessage.name || quoteMessage.uid}}</div>
-                  <div fxFlex="50" class="quote-message">{{quoteMessage.text}}</div>
+                  <div fxFlex="50" class="quote-message" *ngIf="!quoteMessageText">{{quoteMessage.text}}</div>
+                  <div fxFlex="50" class="quote-message" *ngIf="quoteMessageText">
+                    {{quoteMessageText.fileName}}
+                  </div>
                 </div>
               </div>
             </div>

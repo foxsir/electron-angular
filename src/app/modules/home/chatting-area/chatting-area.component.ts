@@ -34,6 +34,8 @@ import { MatCheckbox } from "@angular/material/checkbox";
 import {DialogService} from "@services/dialog/dialog.service";
 import { TransmitMessageComponent } from "@modules/user-dialogs/transmit-message/transmit-message.component";
 import { ChattingVoiceComponent } from '../chatting-voice/chatting-voice.component';
+import FileMetaInterface from "@app/interfaces/file-meta.interface";
+import {MsgType} from "@app/config/rbchat-config";
 
 @Component({
   selector: 'app-chatting-area',
@@ -72,6 +74,7 @@ export class ChattingAreaComponent implements OnInit {
 
   // 引用回复消息
   public quoteMessage: ChatmsgEntityModel = null;
+  public quoteMessageText: FileMetaInterface = null;
 
   // 右键菜单
   public contextMenu: ContextMenuModel[] = [];
@@ -191,6 +194,10 @@ export class ChattingAreaComponent implements OnInit {
   private subscribeQuote() {
     this.quoteMessageService.message$.subscribe((meg) => {
       this.quoteMessage = meg;
+      // 文本，图片，视频，语音
+      if(this.quoteMessage.msgType !== MsgType.TYPE_TEXT) {
+        this.quoteMessageText = JSON.parse(this.quoteMessage.text);
+      }
       this.scrollToBottom();
     });
   }
@@ -303,7 +310,7 @@ export class ChattingAreaComponent implements OnInit {
           behavior: behavior, block: "start"
         });
       }
-    });
+    }, 350);
   }
 
   /**
