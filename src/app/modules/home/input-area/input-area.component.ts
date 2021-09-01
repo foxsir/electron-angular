@@ -219,7 +219,16 @@ export class InputAreaComponent implements OnInit {
     if (!this.imService.isLogined()) {
       return this.imService.checkLogined();
     }
-    messageText = this.parseReplyMessage(messageText, messageType);
+    if(this.quoteMessage !== null) {
+      // 先获取消息类型
+      messageText = JSON.stringify({
+        msgType: messageType, msgContent: messageText
+      });
+
+      // 重新设置回复类型
+      messageType = MsgType.TYPE_QUOTE;
+    }
+    messageText = this.parseReplyMessage(messageText);
 
     if(this.currentChat.metadata.chatType === 'friend') {
       this.sendFriendMessage(messageType, messageText, emitToUI, replaceEntity);
@@ -320,16 +329,15 @@ export class InputAreaComponent implements OnInit {
   /**
    * 解析回复消息
    * @param messageText
-   * @param messageType
    */
-  parseReplyMessage(messageText: string, messageType: number): string {
+  parseReplyMessage(messageText: string): string {
     if (this.quoteMessage !== null) {
       const replyMsg = {
         duration: 0,
         fileLength: 0,
         fileName: "",
         msg: messageText,
-        msgType: messageType,
+        msgType: this.quoteMessage.msgType,
         reply: this.quoteMessage.text,
         userName: "普通管理员",
       };
