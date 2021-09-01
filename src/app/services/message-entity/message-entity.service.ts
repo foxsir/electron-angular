@@ -53,13 +53,7 @@ export class MessageEntityService {
         return this.createSystemMsgEntity_TEXT(msg, time, fp);
       case MsgType.TYPE_SHORTVIDEO: {
         // 短视频消息的内容体是FileMeta对象的JSON形式
-        var fm = JSON.parse(msg);
-        return this.createChatMsgEntity_COME_SHORTVIDEO(fromUid, nickName
-          , fm != null ? fm.fileName : ""
-          , fm != null ? fm.fileMd5 : ""
-          , fm != null ? fm.fileLength : 0
-          , time
-          , fp);
+        return this.createChatMsgEntity_COME_SHORTVIDEO(fromUid, nickName, msg, time, fp);
       }
       case MsgType.TYPE_CONTACT: {
         // 名片消息的内容体是ContactMeta对象的JSON形式
@@ -143,13 +137,7 @@ export class MessageEntityService {
         return this.createSystemMsgEntity_TEXT(msg, time, fingerPrint, xu_isRead_type);
       case MsgType.TYPE_SHORTVIDEO: {
         // 短视频消息的内容体是FileMeta对象的JSON形式
-        fm = JSON.parse(msg);
-        return this.createChatMsgEntity_TO_SHORTVIDEO(
-          fm != null ? fm.fileName : ""
-          , fm != null ? fm.fileMd5 : ""
-          , fm != null ? fm.fileLength : 0
-          , time
-          , fingerPrint, xu_isRead_type);
+        return this.createChatMsgEntity_TO_SHORTVIDEO(msg, time, fingerPrint, xu_isRead_type);
       }
       case MsgType.TYPE_CONTACT: {
         // 名片消息的内容体是ContactMeta对象的JSON形式
@@ -191,7 +179,14 @@ export class MessageEntityService {
           msgType
         };
         return this.createChatMsgEntity_TO_TEXT(jimsg, time, fingerPrint, xu_isRead_type);
-
+      case MsgType.TYPE_QUOTE: {
+        // 回复类型
+        return this.createChatMsgEntity_COME_QOUTE(this.imService.getLoginInfo().loginUserId, "我", msg, time, fingerPrint);
+      }
+      case MsgType.TYPE_TRANSFER: {
+        // 合并转发
+        return this.createChatMsgEntity_COME_TRANSFER(this.imService.getLoginInfo().loginUserId, "我", msg, time, fingerPrint);
+      }
       default:
         return this.createChatMsgEntity_TO_TEXT(msg, time, fingerPrint, xu_isRead_type);
     }
@@ -261,8 +256,8 @@ export class MessageEntityService {
     return chatMsgEntityObj;
   }
 
-  createChatMsgEntity_TO_SHORTVIDEO(fileName, fileMd5, fileLength, time, fingerPrint, xu_isRead_type = null) {
-    const chatMsgEntityObj = this.createChatMsgEntity_COME_SHORTVIDEO(this.imService.getLoginInfo().loginUserId, "我", fileName, fileMd5, fileLength, time, fingerPrint);
+  createChatMsgEntity_TO_SHORTVIDEO(msg, time, fingerPrint, xu_isRead_type = null) {
+    const chatMsgEntityObj = this.createChatMsgEntity_COME_SHORTVIDEO(this.imService.getLoginInfo().loginUserId, "我", msg, time, fingerPrint);
     chatMsgEntityObj.isOutgoing = true;
     chatMsgEntityObj.xu_isRead_type = xu_isRead_type;  //111 新增已读类型
     return chatMsgEntityObj;
@@ -409,16 +404,9 @@ export class MessageEntityService {
     return chatMsgEntityObj;
   }
 
-  createChatMsgEntity_COME_SHORTVIDEO(fromUid, nickName, fileName, fileMd5, fileLength, time, fingerPrint, xu_isRead_type = null) {
+  createChatMsgEntity_COME_SHORTVIDEO(fromUid, nickName, msg, time, fingerPrint, xu_isRead_type = null) {
 
-    const fileMeta = {
-      /** 文件名 */
-      fileName: fileName,
-      /** 文件md5码 */
-      fileMd5: fileMd5,
-      /** 文件长度（单位：字节） */
-      fileLength: fileLength
-    };
+    const fileMeta = JSON.parse(msg);
 
     const chatMsgEntityObj = new ChatmsgEntityModel();
     chatMsgEntityObj.uid = fromUid;
