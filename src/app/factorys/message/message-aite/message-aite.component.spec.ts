@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CollectFileComponent } from './collect-file.component';
+import { MessageAiteComponent } from './message-aite.component';
 
-describe('CollectFileComponent', () => {
-  let component: CollectFileComponent;
-  let fixture: ComponentFixture<CollectFileComponent>;
+describe('MessageAiteComponent', () => {
+  let component: MessageAiteComponent;
+  let fixture: ComponentFixture<MessageAiteComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ CollectFileComponent ]
+      declarations: [ MessageAiteComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CollectFileComponent);
+    fixture = TestBed.createComponent(MessageAiteComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -13,24 +13,29 @@
 <!--  <p>{{replyMsg.msgType}}</p>-->
 <!--</ng-template>-->
 
-<div fxLayout="column" fxLayoutGap="8px">
+<!--本文，图片，视频，语音-->
+
+<!--{{chatMsg | json}}-->
+<!--{{replyMsg | json}}-->
+
+<div fxLayout="column" fxLayoutGap="8px" *ngIf="chatMsg">
   <div class="quote-message" fxLayout="row">
     <div fxFlex="38px" class="quote-thumbnail" *ngIf="replyMsg.msgType === msgType.TYPE_IMAGE">
-      <img [src]="parseFileMeta(originContent.text).fileName" alt="">
+      <img [src]="replyMsg.reply" alt="">
     </div>
-    <div fxFlex="38px" class="quote-thumbnail" *ngIf="replyMsg.msgType === msgType.TYPE_FILE">
+    <div fxFlex="38px" class="quote-thumbnail" *ngIf="replyMsg.msgType === msgType.TYPE_SHORTVIDEO">
       <div fxLayoutAlign="center center" fxFlexFill class="filetype">
-      <span>
-        .{{parseFileMeta(originContent.text).fileName.split('.').pop()}}
+      <span *ngIf="originContent">
+        <img [src]="originContent.videoCoverPath" class="video-cover" alt="">
       </span>
       </div>
     </div>
-    <div fxFlex *ngIf="replyMsg.msgType === msgType.TYPE_FILE" class="quote-content">
+    <div fxFlex *ngIf="replyMsg.msgType === msgType.TYPE_SHORTVIDEO" class="quote-content">
       <div class="quote-title">
         {{replyMsg.userName}}
       </div>
-      <div class="quote-reply">
-        {{parseFileMeta(originContent.text).fileName}}
+      <div class="quote-reply" *ngIf="originContent">
+        {{messageType[replyMsg.msgType]}}
       </div>
     </div>
 
@@ -42,26 +47,27 @@
         {{replyMsg.reply}}
       </div>
     </div>
-  </div>
-  <div fxLayout="row">
-    <div fxFlex *ngIf="replyMsg.msgType === msgType.TYPE_FILE" class="quote-content">
+
+    <div fxFlex *ngIf="replyMsg.msgType === msgType.TYPE_IMAGE" class="quote-content">
+      <div class="quote-title">
+        {{replyMsg.userName}}
+      </div>
       <div class="quote-reply">
-        <ng-template [ngIf]="msgParse === null">
-          {{replyMsg.msg}}
-        </ng-template>
-        <ng-template [ngIf]="msgParse">
-          {{msgParse.msgContent}}
-        </ng-template>
+        {{messageType[replyMsg.msgType]}}
       </div>
     </div>
-
-    <div fxFlex *ngIf="replyMsg.msgType === msgType.TYPE_TEXT" class="quote-content">
+  </div>
+  <div fxLayout="row">
+    <div fxFlex class="quote-content">
       <div class="quote-reply">
         <ng-template [ngIf]="msgParse === null">
-          {{replyMsg.msg}}
+         {{replyMsg.msg}}
         </ng-template>
         <ng-template [ngIf]="msgParse">
-          {{msgParse.msgContent}}
+          <div *ngIf="msgParse.msgType === msgType.TYPE_TEXT">{{msgParse.msgContent}}</div>
+          <div  *ngIf="msgParse.msgType === msgType.TYPE_IMAGE">
+            <img [src]="msgParse.msgContent" alt="">
+          </div>
         </ng-template>
       </div>
     </div>

@@ -21,19 +21,20 @@ export class MessageQuoteComponent implements OnInit {
 
   public msgParse: {msgType: number; msgContent: string} = null;
 
-  constructor() { }
+  constructor() {
+  }
 
   ngOnInit(): void {
     this.replyMsg = JSON.parse(this.chatMsg.text);
     this.replyContent = JSON.parse(this.replyMsg.msg);
-    if(this.replyMsg.msgType !== 0) {
+    if(this.replyMsg.msgType === this.msgType.TYPE_SHORTVIDEO) {
       this.originContent = JSON.parse(this.replyMsg.reply);
     }
 
     this.parseMsgToJSON();
   }
 
-  parseFileMeta(text: string) : FileMetaInterface {
+  parseFileMeta(text: string): FileMetaInterface {
     return JSON.parse(text);
   }
 
