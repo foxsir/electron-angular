@@ -87,7 +87,7 @@ export class MessageEntityService {
       }
       case MsgType.TYPE_QUOTE: {
         // 回复类型
-        return this.createChatMsgEntity_COME_QOUTE(fromUid, nickName, msg, time, fp);
+        return this.createChatMsgEntity_COME_QUOTE(fromUid, nickName, msg, time, fp);
       }
       case MsgType.TYPE_TRANSFER: {
         // 合并转发
@@ -181,7 +181,7 @@ export class MessageEntityService {
         return this.createChatMsgEntity_TO_TEXT(jimsg, time, fingerPrint, xu_isRead_type);
       case MsgType.TYPE_QUOTE: {
         // 回复类型
-        return this.createChatMsgEntity_COME_QOUTE(this.imService.getLoginInfo().loginUserId, "我", msg, time, fingerPrint);
+        return this.createChatMsgEntity_COME_QUOTE(this.imService.getLoginInfo().loginUserId, "我", msg, time, fingerPrint);
       }
       case MsgType.TYPE_TRANSFER: {
         // 合并转发
@@ -296,7 +296,7 @@ export class MessageEntityService {
   }
 
   // 构造回复消息
-  createChatMsgEntity_COME_QOUTE(fromUid, nickName, message, time, fingerPrint, xu_isRead_type = null) {
+  createChatMsgEntity_COME_QUOTE(fromUid, nickName, message, time, fingerPrint, xu_isRead_type = null) {
     // debugger
     const chatMsgEntityObj = new ChatmsgEntityModel();
     chatMsgEntityObj.uid = fromUid;
