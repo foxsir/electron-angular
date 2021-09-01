@@ -8,16 +8,16 @@
                          directoryType="message_image"
                          (fileUploaded)="imageUploaded($event)"></app-upload-file>
       </button>
-      <button mat-menu-item>
+      <button mat-menu-item [disabled]="!!this.quoteMessage">
         <app-upload-file showText="文件发送" [fileTypes]="['*']"
                          (getFileInfo)="getFileInfo($event)"
                          directoryType="message_file"
                          (fileUploaded)="fileUploaded($event)"></app-upload-file>
       </button>
-      <button mat-menu-item (click)="selectFriend()">
+      <button mat-menu-item (click)="selectFriend()" [disabled]="!!this.quoteMessage">
         名片发送
       </button>
-      <button mat-menu-item>
+      <button mat-menu-item [disabled]="!!this.quoteMessage">
         截图
       </button>
     </mat-menu>
