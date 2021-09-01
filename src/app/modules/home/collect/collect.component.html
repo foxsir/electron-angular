@@ -1,25 +1,38 @@
 <mat-card class="mat-elevation-z0">
-    <mat-card-content>
-        <mat-list>
-            <div mat-subheader style="color:#333333;">收藏</div>
-            <mat-list-item *ngFor="let item of collectList" style="padding-top:10px;"
-                           (contextmenu)="contextMenuForItem($event, createPlanMenuTriggerAvatar, avatarSpan, item)">
-                <div mat-line *ngIf="item.type == 0">{{item.content}}</div>
-                <div mat-line *ngIf="item.type == 16">[聊天记录]</div>
-                <div mat-line style="margin-top:15px;">{{item.createTime}} {{item.nickname}}</div>
-                <mat-divider></mat-divider>
-
-                <span #createPlanMenuTriggerAvatar="matMenuTrigger" #avatarSpan [matMenuTriggerFor]="contextMenuTrigger"></span>
-                <mat-menu #contextMenuTrigger="matMenu">
-                    <button mat-menu-item *ngFor="let menuitem of contextMenu"
-                            (click)="menuitem.action(item)">
-                        {{menuitem.label}}
-                    </button>
-                </mat-menu>
-
-            </mat-list-item>
-        </mat-list>
-    </mat-card-content>
+  <mat-card-content>
+    <h1 mat-card-title style="color:#333333;">收藏</h1>
+    <div fxLayout="row">
+      <div fxFlex="60">
+        <div fxLayout="column" fxLayoutGap="20px">
+          <div  *ngFor="let item of collectChatMsg">
+            <mat-card class="mat-elevation-z0 hover-item light" (contextmenu)="contextMenuForItem($event, menuTrigge, collectSpan, item)">
+              <mat-card-content>
+                <app-message-factory [chatMsg]="item.chatMsg"></app-message-factory>
+              </mat-card-content>
+              <mat-card-content>
+                <mat-card-subtitle>
+                  <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start center">
+                    <div>{{item.collect.nickname}}</div>
+                    <div>{{item.collect.createTime}}</div>
+                  </div>
+                </mat-card-subtitle>
+              </mat-card-content>
+              <mat-card-actions>
+                <mat-divider inset></mat-divider>
+              </mat-card-actions>
+            </mat-card>
+            <span #menuTrigge="matMenuTrigger" #collectSpan [matMenuTriggerFor]="contextMenuTrigger"></span>
+            <mat-menu #contextMenuTrigger="matMenu">
+              <button mat-menu-item *ngFor="let menuitem of contextMenu"
+                      (click)="menuitem.action(item)">
+                {{menuitem.label}}
+              </button>
+            </mat-menu>
+          </div>
+        </div>
+      </div>
+    </div>
+  </mat-card-content>
 </mat-card>
 
 <div fxFlexFill [fxShow]="collectList.length === 0" fxLayoutAlign="center center">

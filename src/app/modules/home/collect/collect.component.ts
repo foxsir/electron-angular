@@ -1,11 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {RestService} from "@services/rest/rest.service";
 import {LocalUserService} from "@services/local-user/local-user.service";
-import {HttpResponse} from "@angular/common/http";
-import { HttpService } from "@services/http/http.service";
-import { MatMenuTrigger } from "@angular/material/menu";
-import { ContextMenuService } from "@services/context-menu/context-menu.service";
+import {HttpService} from "@services/http/http.service";
+import {MatMenuTrigger} from "@angular/material/menu";
+import {ContextMenuService} from "@services/context-menu/context-menu.service";
 import {DialogService} from "@services/dialog/dialog.service";
+import CollectModel from "@app/models/collect.model";
+import {MessageEntityService} from "@services/message-entity/message-entity.service";
+import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
+
+interface CollectChatMsg {
+  collect: CollectModel;
+  chatMsg: ChatmsgEntityModel;
+}
 
 @Component({
     selector: 'app-collect',
@@ -13,9 +20,11 @@ import {DialogService} from "@services/dialog/dialog.service";
     styleUrls: ['./collect.component.scss']
 })
 export class CollectComponent implements OnInit {
-    collectList: any[] = [];
+    collectList: CollectModel[] = [];
     public show_modal = false;
     public current_model: any;
+
+    public collectChatMsg: CollectChatMsg[] = [];
 
     public contextMenu = [
         {
@@ -55,10 +64,19 @@ export class CollectComponent implements OnInit {
         private http: HttpService,
         private contextMenuService: ContextMenuService,
         private dialogService: DialogService,
+        private messageEntityService: MessageEntityService,
     ) {
         this.restService.getMyCollectList().subscribe(res => {
             this.collectList = res.data;
-            console.dir(res.data);
+            this.collectList.forEach(item => {
+                const msgEntity = this.messageEntityService.prepareRecievedMessage(
+                    item.fromUserId, item.nickname, item.content, item.createTime, item.type
+                );
+                this.collectChatMsg.push({
+                  collect: item,
+                  chatMsg: msgEntity,
+                });
+            });
         });
     }
 
