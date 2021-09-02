@@ -1,0 +1,23 @@
+更新package.js后， 执行 yarn
+
+joinChannelEx 函数在 /app/agora-renderer.js
+app/main.ts，preload 中引入
+
+如果修改 joinChannelEx函数， 需要同步修改 src/typings.d.ts 中joinChannelEx声明
+
+无需以这中方式使用：window['joinChannelEx']
+typings.d.ts 声明后可以直接使用 joinChannelEx()
+
+
+如果遇到找不到这个文件的错误：SoftwareRenderer
+node_modules/agora-electron-sdk/types/Renderer/index.d.ts， 文件第一行代码修改为
+import SoftwareRenderer from '../../js/Renderer/SoftwareRenderer';
+
+package.json 需要修改平台platform： darwin 或者 win
+
+"agora_electron": {
+  "electron_version": "10.2.0",
+  "platform": "darwin",
+  "prebuilt": true,
+  "arch": "ia32"
+},

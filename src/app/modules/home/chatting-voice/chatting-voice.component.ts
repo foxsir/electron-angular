@@ -24,8 +24,6 @@ export class ChattingVoiceComponent implements OnInit {
     @Input() currentChat: AlarmItemInterface;
     @Input() drawer: MatDrawer;
 
-    
-
     public closeIcon = this.dom.bypassSecurityTrustResourceUrl(closeIcon);
     public closeActiveIcon = this.dom.bypassSecurityTrustResourceUrl(closeActiveIcon);
     public backspaceIcon = this.dom.bypassSecurityTrustResourceUrl(backspaceIcon);
@@ -59,8 +57,7 @@ export class ChattingVoiceComponent implements OnInit {
             this.messageService.sendMessage(120, this.currentChat.alarmItem.dataId, 'start_voice').then(res => {
                 if (res.success === true) {
                     this.view_mode = "wait_answer_1";
-                    var fun = window['joinChannelEx'];
-                    fun(this.localUserInfo.userId.toString());
+                    joinChannelEx(this.localUserInfo.userId.toString());
                 }
             });
         }
@@ -69,8 +66,7 @@ export class ChattingVoiceComponent implements OnInit {
             this.messageService.sendGroupMessage(120, this.currentChat.alarmItem.dataId, 'start_voice').then(res => {
                 if (res.success === true) {
                     this.view_mode = "wait_answer_1";
-                    var fun = window['joinChannelEx'];
-                    fun(this.localUserInfo.userId.toString());
+                    joinChannelEx(this.localUserInfo.userId.toString());
                 }
             });
         }
@@ -85,8 +81,7 @@ export class ChattingVoiceComponent implements OnInit {
     /* 接收语音请求 */
     receiveVoice() {
         console.log('接收语音请求...');
-        var fun = window['joinChannelEx'];
-        fun(this.localUserInfo.userId.toString());
+        joinChannelEx(this.localUserInfo.userId.toString());
 
         if (this.currentChat.metadata.chatType === 'friend') {
             this.messageService.sendMessage(120, this.currentChat.alarmItem.dataId, 'receive_voice').then(res => {

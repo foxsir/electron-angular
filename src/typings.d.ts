@@ -12,6 +12,8 @@ declare class ClipboardItem {
   constructor(data: { [mimeType: string]: Blob });
 }
 
+declare function joinChannelEx(userid: string);
+
 interface Clipboard {
   write(ClipboardItem): Promise<void>;
   // Add any other methods you need here.

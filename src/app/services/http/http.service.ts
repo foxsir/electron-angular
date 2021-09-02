@@ -69,10 +69,16 @@ export class HttpService {
       request = url;
     }
 
+    let Authorization = {};
+    if(this.localAuthedUserInfo && this.localAuthedUserInfo.token) {
+      Authorization = {
+        Authorization: [this.tokenPrefix, this.localAuthedUserInfo?.token].join(" "),
+      };
+    }
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
-        // Authorization: [this.tokenPrefix, this.localAuthedUserInfo.token].join(" "),
+        ...Authorization
       })
     };
     return this.http.post(request, body, httpOptions).pipe(
@@ -97,10 +103,16 @@ export class HttpService {
       }
     }
 
+    let Authorization = {};
+    if(this.localAuthedUserInfo && this.localAuthedUserInfo.token) {
+      Authorization = {
+        Authorization: [this.tokenPrefix, this.localAuthedUserInfo?.token].join(" "),
+      };
+    }
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/x-www-form-urlencoded',
-        // Authorization: [this.tokenPrefix, this.localAuthedUserInfo.token].join(" "),
+        ...Authorization
       })
     };
     return this.http.get(request + "?" + params.join("&"), httpOptions).pipe(
@@ -130,10 +142,16 @@ export class HttpService {
       }
     }
 
+    let Authorization = {};
+    if(this.localAuthedUserInfo && this.localAuthedUserInfo.token) {
+      Authorization = {
+        Authorization: [this.tokenPrefix, this.localAuthedUserInfo?.token].join(" "),
+      };
+    }
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-        // Authorization: [this.tokenPrefix, this.localAuthedUserInfo.token].join(" "),
+        ...Authorization
       })
     };
     return this.http.post(request, params.join("&"), httpOptions).pipe(
@@ -146,10 +164,16 @@ export class HttpService {
    * @param url
    */
   getContentLength(url: string) {
+    let Authorization = {};
+    if(this.localAuthedUserInfo && this.localAuthedUserInfo.token) {
+      Authorization = {
+        Authorization: [this.tokenPrefix, this.localAuthedUserInfo?.token].join(" "),
+      };
+    }
     return new Promise((resolve, reject) => {
       fetch(url, {
         headers: {
-          // Authorization: [this.tokenPrefix, this.localAuthedUserInfo.token].join(" "),
+          ...Authorization
         }
       }).then(response => {
         resolve(response.headers.get("content-length"));
