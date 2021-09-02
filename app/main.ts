@@ -9,6 +9,7 @@ import * as md5 from "blueimp-md5";
 // Initialize remote module
 require('@electron/remote/main').initialize();
 
+// 生成设备id文件，每次启动自动生成文件
 const os = require('os');
 const DeviceID = md5([os.hostname(), os.arch(), os.platform()].join(""));
 const DeviceIDContent = `export default class DeviceID {\n  public static id = "${DeviceID}";\n}`;
