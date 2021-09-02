@@ -37,6 +37,7 @@ import {
 } from "@app/config/post-api";
 import {HttpHeaders} from "@angular/common/http";
 import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
+import DeviceID from "@app/DeviceID";
 
 @Injectable({
   providedIn: 'root'
@@ -86,6 +87,7 @@ export class RestService {
       loginName: loginNameStr,
       loginPsw: loginPswStr,
       // deviceInfo: this.deviceInfo,
+      deviceId: DeviceID.id,
       osType: 2
     };
 
