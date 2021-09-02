@@ -40,6 +40,11 @@
                         <div mat-line style="margin-top:15px;">
                             <span>{{item.text}}</span>
                         </div>
+                        <mat-action-list>
+                            <div fxLayout="row" fxLayoutGap="8px">
+                                <span>{{formatDate(item.date, 'M-dd hh:m')}}</span>
+                            </div>
+                        </mat-action-list>
                     </mat-list-item>
                 </mat-list>
             </ng-template>
@@ -58,10 +63,9 @@
                 <mat-list>
                     <mat-list-item class="hover-item" *ngFor="let item of list_file" style="padding-top:10px;">
                         <img src="{{item.userAvatarFileName}}" mat-list-icon style="width:44px;height:44px;" />
-                        <div mat-line>{{item.nickname}}</div>
+                        <div mat-line>{{item.fileName}}</div>
                         <div mat-line style="margin-top:15px;">
-                            <span *ngIf="item.onlineStatus == true" style="color:#68aee5;">[在线]</span>
-                            <span *ngIf="item.onlineStatus == false">[离线]</span>
+                            <span>{{item.fileLength}}</span>
                         </div>
                     </mat-list-item>
                 </mat-list>
