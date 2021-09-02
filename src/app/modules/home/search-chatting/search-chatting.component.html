@@ -3,7 +3,8 @@
         <div fxFlex="112px">
             <div fxLayout="column" fxFlexFill>
                 <div fxFlex="50">
-                    <input nz-input placeholder="Basic usage" />
+                    <input nz-input placeholder="请输入搜索关键词" [(ngModel)]="keywords" 
+                           (keyup)="txtSearchChange($event)"/>
                 </div>
                 <div fxFlex="50">
                     <div fxLayout="row" fxLayoutGap="20px">
@@ -35,10 +36,9 @@
                 <mat-list>
                     <mat-list-item class="hover-item" *ngFor="let item of list_chat" style="padding-top:10px;">
                         <img src="{{item.userAvatarFileName}}" mat-list-icon style="width:44px;height:44px;" />
-                        <div mat-line>{{item.nickname}}</div>
+                        <div mat-line>{{item.name}}</div>
                         <div mat-line style="margin-top:15px;">
-                            <span *ngIf="item.onlineStatus == true" style="color:#68aee5;">[在线]</span>
-                            <span *ngIf="item.onlineStatus == false">[离线]</span>
+                            <span>{{item.text}}</span>
                         </div>
                     </mat-list-item>
                 </mat-list>
