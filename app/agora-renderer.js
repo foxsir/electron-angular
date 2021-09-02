@@ -7,7 +7,7 @@ const path = require('path')
 // 填入你的 App ID
 const APPID = "7422abc69a69429681bac6f1e48208fc"
 // 填入你的 Token
-const token = "0067422abc69a69429681bac6f1e48208fcIADY9BcfPa3dOLNlJXhKDlBHmEvUwD/zy9dLgWZAzkYAFwx+f9gAAAAAEADn8NlKlxUrYQEAAQCVFSth"
+const token = "0067422abc69a69429681bac6f1e48208fcIACoA3TA4LpB0bix3bUCxfjDVCsnAFWzeBZTRocoZHPTswx+f9gAAAAAEADgLUYOsocxYQEAAQCthzFh"
 
 
 const sdkLogPath = path.resolve(os.homedir(), "./test.log")
@@ -35,6 +35,7 @@ window.test_function = function (msg) {
     console.log('preload: ', msg);
 };
 
-window.joinChannelEx = function () {
-    rtcEngine.joinChannel(token, "test", null, 123456);
+window.joinChannelEx = function (userid) {
+    console.log('joinChannelEx: ', userid);
+    rtcEngine.joinChannel(token, "test", null, parseInt(userid));
 };
