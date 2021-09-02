@@ -13,3 +13,11 @@ typings.d.ts 声明后可以直接使用 joinChannelEx()
 node_modules/agora-electron-sdk/types/Renderer/index.d.ts， 文件第一行代码修改为
 import SoftwareRenderer from '../../js/Renderer/SoftwareRenderer';
 
+package.json 需要修改平台platform： darwin 或者 win
+
+"agora_electron": {
+  "electron_version": "10.2.0",
+  "platform": "darwin",
+  "prebuilt": true,
+  "arch": "ia32"
+},
