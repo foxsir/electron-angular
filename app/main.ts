@@ -1,13 +1,23 @@
 import { app, BrowserWindow, screen, ipcMain, Menu } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
-import * as url from 'url';
 
 import WindowEventListen from "./windowEventListen";
 import defaultOptions from "./DefaultOptions";
+import * as md5 from "blueimp-md5";
 
 // Initialize remote module
 require('@electron/remote/main').initialize();
+
+const os = require('os');
+const DeviceID = md5([os.hostname(), os.arch(), os.platform()].join(""));
+const DeviceIDContent = `export default class DeviceID {\n  public static id = "${DeviceID}";\n}`;
+fs.writeFile("src/app/DeviceID.ts", DeviceIDContent, (err) => {
+  console.dir(err)
+});
+
+// 如果使用 Electron 9.x 及以上版本，需要将 allowRendererProcessReuse 设为 false
+app.allowRendererProcessReuse = false
 
 const args = process.argv.slice(1),
   serve = args.some(val => val === '--serve');
@@ -35,9 +45,10 @@ function createWindow(): BrowserWindow {
     frame: false,
     webPreferences: {
       nodeIntegration: true,
-      allowRunningInsecureContent: (serve) ? true : false,
-      contextIsolation: false,  // false if you want to run e2e test with Spectron
-      enableRemoteModule : true // true if you want to run e2e test with Spectron or use remote module in renderer context (ie. Angular)
+      // allowRunningInsecureContent: (serve) ? true : false,
+      // contextIsolation: false,  // false if you want to run e2e test with Spectron
+      // enableRemoteModule : true, // true if you want to run e2e test with Spectron or use remote module in renderer context (ie. Angular)
+      preload: path.resolve(__dirname, 'agora-renderer.js')
     },
   });
 
