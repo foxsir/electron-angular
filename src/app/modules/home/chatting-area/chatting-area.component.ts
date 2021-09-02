@@ -286,7 +286,7 @@ export class ChattingAreaComponent implements OnInit {
     this.imService.callback_messagesBeReceived = (fingerPrint) => {
       if (fingerPrint) {
         this.cacheService.getChattingCache(this.currentChat).then(data => {
-          if(data[fingerPrint]) {
+          if(data && data[fingerPrint]) {
             const chat: ChatmsgEntityModel = data[fingerPrint];
             chat.isOutgoing = true;
             this.cacheService.putChattingCache(this.currentChat, chat).then(() => {
