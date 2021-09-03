@@ -1,0 +1,13 @@
+.search-container {
+  position: relative;
+  background: #fafafa;
+
+  .search-area {
+    width: 100%;
+    height: calc(100vh - 70px);
+    background: #fafafa;
+    position: absolute;
+    z-index: 10;
+    top: 40px
+  }
+}
