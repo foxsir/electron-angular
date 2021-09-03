@@ -97,10 +97,10 @@
         <app-search-chatting fxFlexFill [chatting]="currentChat"></app-search-chatting>
       </div>
       <div [fxHide]="searching === true" fxLayout="column" fxFlex="calc(100% - 60px)" class="chatting-body">
-        <div fxFlex id="chatting-panel" style="overflow-y: scroll">
+        <div fxFlex id="chatting-panel" style="overflow-y: scroll" #chattingContainer>
           <mat-card class="mat-elevation-z0 transparent">
             <mat-card-content *ngIf="chatMsgEntityList">
-              <div fxLayout="column" fxLayoutGap="20px" class="chatting-panel-container" #chattingContainer>
+              <div fxLayout="column" fxLayoutGap="20px" class="chatting-panel-container">
                 <div fxLayout="row" *ngFor="let chat of chatMsgEntityList"
                      (click)="selectMessage ? collectMessage(chat, msgCheckbox) : false"
                      [fxLayoutAlign]="chat.uid.toString() === localUserInfo.userId.toString() ? 'space-between' : 'start'"
