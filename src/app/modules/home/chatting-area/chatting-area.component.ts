@@ -118,6 +118,7 @@ export class ChattingAreaComponent implements OnInit {
   ngOnInit(): void {
     this.currentChattingChangeService.currentChatting$.subscribe(alarm => {
       this.searching = false;
+      this.scrollToBottom();
     });
 
     this.subscribeQuote();
@@ -316,13 +317,23 @@ export class ChattingAreaComponent implements OnInit {
    * @param behavior
    */
   scrollToBottom(behavior: "auto" | "smooth" = "smooth") {
+    const sb = () => {
+      this.chattingContainer.nativeElement.scrollTo({
+        top: this.chattingContainer.nativeElement.scrollHeight,
+        behavior: behavior
+      });
+    };
     setTimeout(() => {
       if(this.chattingContainer) {
-        this.chattingContainer.nativeElement.lastElementChild?.scrollIntoView({
-          behavior: behavior, block: "start"
+        const images = this.chattingContainer.nativeElement.querySelectorAll("img");
+        images.forEach(img => {
+          img.onload = () => {
+            setTimeout(() => sb());
+          };
         });
+        sb();
       }
-    }, 350);
+    });
   }
 
   /**
