@@ -30,7 +30,7 @@ import {FileService} from "@services/file/file.service";
 import {CacheService} from "@services/cache/cache.service";
 import {UploadedFile} from "@app/factorys/upload/upload-file/upload-file.component";
 import {QuoteMessageService} from "@services/quote-message/quote-message.service";
-import {ProtocalModel, ProtocalModelDataContent} from "@app/models/protocal.model";
+import {ProtocalModelDataContent} from "@app/models/protocal.model";
 import EmojiMap from "@app/factorys/message/message-text/EmojiMap";
 import {MatMenu, MatMenuTrigger} from "@angular/material/menu";
 import {MatButton} from "@angular/material/button";
@@ -41,9 +41,9 @@ import {GroupMemberModel} from "@app/models/group-member.model";
 import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 import {CurrentChattingChangeService} from "@services/current-chatting-change/current-chatting-change.service";
 import {ElementService} from "@services/element/element.service";
-import FileMetaInterface from "@app/interfaces/file-meta.interface";
 import {DialogService} from "@services/dialog/dialog.service";
 import {SelectFriendContactComponent} from "@modules/user-dialogs/select-friend-contact/select-friend-contact.component";
+import {LocalUserService} from "@services/local-user/local-user.service";
 
 @Component({
   selector: 'app-input-area',
@@ -98,6 +98,7 @@ export class InputAreaComponent implements OnInit {
     private currentChattingChangeService: CurrentChattingChangeService,
     private elementService: ElementService,
     private dialogService: DialogService,
+    private localUserService: LocalUserService
   ) { }
 
   ngOnInit(): void {
@@ -154,7 +155,7 @@ export class InputAreaComponent implements OnInit {
       this.sendChatMap[file.uid].isOutgoing = false;
       this.sendMessage.emit({
         chat: this.sendChatMap[file.uid],
-        dataContent: null
+        dataContent: this.getDefaultDataContent()
       });
     });
   }
@@ -164,11 +165,23 @@ export class InputAreaComponent implements OnInit {
       this.sendChatMap[file.uid] = this.messageEntityService.createChatMsgEntity_TO_FILE('',
         blob, 0, CommonTools.fingerPrint(), 0
       );
+      const dataContent: ProtocalModelDataContent = {
+        cy: 0, // 对应ChatType，聊天类型。比如单人聊天，群聊天
+        f: this.localUserService.localUserInfo.userId, // 消息发送方
+        m: "", // 消息内容
+        t: this.currentChat.alarmItem.dataId, // 消息接收方
+        ty: MsgType.TYPE_IMAGE, // 对应MsgType，消息类型。比如普通文本，图片消息等
+        m2: "PC", // 设别
+        nickName: this.localUserService.localUserInfo.nickname, //
+        showMsg: false, //
+        sync: "", //
+        uh: "",
+      };
       // 尚未发出
       this.sendChatMap[file.uid].isOutgoing = false;
       this.sendMessage.emit({
         chat: this.sendChatMap[file.uid],
-        dataContent: null
+        dataContent: this.getDefaultDataContent()
       });
     });
   }
@@ -558,6 +571,21 @@ export class InputAreaComponent implements OnInit {
         });
       }
     });
+  }
+
+  getDefaultDataContent(): ProtocalModelDataContent {
+    return {
+      cy: 0, // 对应ChatType，聊天类型。比如单人聊天，群聊天
+      f: this.localUserService.localUserInfo.userId, // 消息发送方
+      m: "", // 消息内容
+      t: this.currentChat.alarmItem.dataId, // 消息接收方
+      ty: MsgType.TYPE_IMAGE, // 对应MsgType，消息类型。比如普通文本，图片消息等
+      m2: "PC", // 设别
+      nickName: this.localUserService.localUserInfo.nickname, //
+      showMsg: false, //
+      sync: "", //
+      uh: "",
+    };
   }
 
 }
