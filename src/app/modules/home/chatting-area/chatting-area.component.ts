@@ -44,8 +44,8 @@ import {MsgType} from "@app/config/rbchat-config";
 })
 export class ChattingAreaComponent implements OnInit {
   @ViewChild("chattingContainer") chattingContainer: ElementRef;
-    @ViewChild('appChattingVoice') appChattingVoice: ChattingVoiceComponent;
-    @ViewChild('chattingAreaDrawer') private chattingAreaDrawer: MatDrawer;
+  @ViewChild('appChattingVoice') appChattingVoice: ChattingVoiceComponent;
+  @ViewChild('chattingAreaDrawer') private chattingAreaDrawer: MatDrawer;
 
   public currentChat: AlarmItemInterface;
 
@@ -161,7 +161,13 @@ export class ChattingAreaComponent implements OnInit {
     });
   }
 
-  pushMessageToPanel(data: {chat: ChatmsgEntityModel; dataContent: ProtocalModelDataContent}) {
+  pushMessageToPanel(data: {chat: ChatmsgEntityModel; dataContent: ProtocalModelDataContent}, type: 'send' | 'incept' = 'send') {
+    let chatActive = false;
+    if(type === 'send') {
+      chatActive = this.currentChat.alarmItem.dataId.toString() === data.dataContent.t.toString();
+    } else if(type === 'incept') {
+      chatActive = this.currentChat.alarmItem.dataId.toString() === data.dataContent.f.toString();
+    }
     if(!data.dataContent) {
       if(this.chatMsgEntityList) {
         this.chatMsgEntityList.push(data.chat);
@@ -169,14 +175,14 @@ export class ChattingAreaComponent implements OnInit {
       }
     } else {
       if(data.dataContent.cy.toString() === '0') { // 单聊
-        if(this.currentChat && this.currentChat.alarmItem.dataId.toString() === data.dataContent.f.toString()) {
+        if(this.currentChat && chatActive) {
           if(this.chatMsgEntityList) {
             this.chatMsgEntityList.push(data.chat);
             this.scrollToBottom();
           }
         }
       } else if(data.dataContent.cy.toString() === '1') { // 临时聊天/陌生人聊天
-        if(this.currentChat && this.currentChat.alarmItem.dataId.toString() === data.dataContent.f.toString()) {
+        if(this.currentChat && chatActive) {
           if(this.chatMsgEntityList) {
             this.chatMsgEntityList.push(data.chat);
             this.scrollToBottom();
@@ -195,13 +201,16 @@ export class ChattingAreaComponent implements OnInit {
   }
 
   private subscribeQuote() {
-    this.quoteMessageService.message$.subscribe((meg) => {
-      this.quoteMessage = meg;
-      // 文本，图片，视频，语音
-      if(this.quoteMessage.msgType !== MsgType.TYPE_TEXT) {
-        this.quoteMessageText = JSON.parse(this.quoteMessage.text);
+    this.quoteMessageService.message$.subscribe((msg) => {
+      // msg 不能为空
+      if(msg) {
+        this.quoteMessage = msg;
+        // 文本，图片，视频，语音
+        if(this.quoteMessage.msgType !== MsgType.TYPE_TEXT) {
+          this.quoteMessageText = JSON.parse(this.quoteMessage.text);
+        }
+        this.scrollToBottom();
       }
-      this.scrollToBottom();
     });
   }
 
@@ -225,7 +234,7 @@ export class ChattingAreaComponent implements OnInit {
       // fromUid, nickName, msg, time, msgType, fp = null
       chatMsgEntity.isOutgoing = true;
       this.cacheService.putChattingCache(this.currentChat, chatMsgEntity).then(() => {
-        this.pushMessageToPanel({chat: chatMsgEntity, dataContent: dataContent});
+        this.pushMessageToPanel({chat: chatMsgEntity, dataContent: dataContent}, 'incept');
       });
     });
   }
@@ -273,7 +282,7 @@ export class ChattingAreaComponent implements OnInit {
         dataContent.f, dataContent.nickName, dataContent.m, res.recvTime, dataContent.ty, res.fp
       );
       this.cacheService.putChattingCache(this.currentChat, chatMsgEntity).then(() => {
-        this.pushMessageToPanel({chat: chatMsgEntity, dataContent: dataContent});
+        this.pushMessageToPanel({chat: chatMsgEntity, dataContent: dataContent}, 'incept');
       });
     });
   }
