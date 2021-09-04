@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable, OnInit} from '@angular/core';
 import * as localforage from "localforage";
 import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
@@ -16,6 +16,7 @@ import {GroupModel} from "@app/models/group.model";
 import {GroupAdminModel} from "@app/models/group-admin.model";
 import {FileService} from "@services/file/file.service";
 import {UserModel} from "@app/models/user.model";
+import CommonTools from "@app/common/common.tools";
 
 interface CacheItem {
   alarmData: unknown;
@@ -33,13 +34,28 @@ export class CacheService {
   private cacheSource = new Subject<Partial<CacheItem>>();
   public cacheUpdate$ = this.cacheSource.asObservable();
 
+  private dataKeys = {
+    alarmData: "alarmData",
+    friendList: "friendList",
+    groupList: "groupList",
+    groupAdminList: "groupAdminList",
+    myInfo: "myInfo",
+  };
+
   constructor(
     private messageRoamService: MessageRoamService,
     private messageEntityService: MessageEntityService,
     private rosterProviderService: RosterProviderService,
     private restService: RestService,
     private localUserService: LocalUserService,
-  ) { }
+  ) {
+    const userId = this.localUserService.localUserInfo.userId;
+    for (const key in this.dataKeys) {
+      if(this.dataKeys.hasOwnProperty(key)) {
+        this.dataKeys[key] = [this.dataKeys[key], CommonTools.md5(userId.toString())].join("-");
+      }
+    }
+  }
 
   /**
    * 缓存消息
@@ -47,12 +63,12 @@ export class CacheService {
    * @param message
    */
   putChattingCache(alarmData: AlarmItemInterface, message: ChatmsgEntityModel = null): Promise<any> {
-    return localforage.getItem("alarmData").then(data => {
+    return localforage.getItem(this.dataKeys.alarmData).then(data => {
       // 缓存中没有数据
       const cache = message !== null ? {[message.fingerPrintOfProtocal]: message} : {};
       alarmData.alarmItem.msgContent = !message ? "" : message.text;
       if (data === null) {
-        return localforage.setItem("alarmData", {
+        return localforage.setItem(this.dataKeys.alarmData, {
           [alarmData.alarmItem.dataId]: {
             alarmData: alarmData,
             message: cache,
@@ -64,7 +80,7 @@ export class CacheService {
         // 有数据时更新
         const check = data[alarmData.alarmItem.dataId];
         const alreadyMessageMap = !check ? {} : check.message;
-        return localforage.setItem("alarmData", Object.assign({
+        return localforage.setItem(this.dataKeys.alarmData, Object.assign({
           [alarmData.alarmItem.dataId]: {
             alarmData: alarmData,
             message: Object.assign(
@@ -84,14 +100,14 @@ export class CacheService {
    * @param messages
    */
   deleteChattingCache(alarmData: AlarmItemInterface, messages: ChatmsgEntityModel[] = null): Promise<any> {
-    return localforage.getItem("alarmData").then(data => {
+    return localforage.getItem(this.dataKeys.alarmData).then(data => {
       const check = data[alarmData.alarmItem.dataId];
       const alreadyMessageMap = !check ? {} : check.message;
       if(check) {
         messages.forEach(m => {
           delete alreadyMessageMap[m.fingerPrintOfProtocal];
         })
-        return localforage.setItem("alarmData", Object.assign({
+        return localforage.setItem(this.dataKeys.alarmData, Object.assign({
           [alarmData.alarmItem.dataId]: {
             alarmData: alarmData,
             message: alreadyMessageMap,
@@ -123,9 +139,9 @@ export class CacheService {
    */
   removeChattingCache(alarmData: AlarmItemInterface): Promise<any> {
     return new Promise((resolve, reject) => {
-      localforage.getItem("alarmData").then(data => {
+      localforage.getItem(this.dataKeys.alarmData).then(data => {
         delete data[alarmData.alarmItem.dataId];
-        localforage.setItem("alarmData", data).then((res) => {
+        localforage.setItem(this.dataKeys.alarmData, data).then((res) => {
           resolve(res);
         });
       });
@@ -138,7 +154,7 @@ export class CacheService {
    */
   getChattingCache(alarmData: AlarmItemInterface): Promise<any> {
     return new Promise((resolve, reject) => {
-      localforage.getItem("alarmData").then(data => {
+      localforage.getItem(this.dataKeys.alarmData).then(data => {
         if (data === null) {
           resolve(data);
         } else {
@@ -153,7 +169,7 @@ export class CacheService {
    * 获取聊天列表缓存
    */
   getChattingList(): Promise<unknown> {
-    return localforage.getItem("alarmData");
+    return localforage.getItem(this.dataKeys.alarmData);
   }
 
   /**
@@ -244,7 +260,7 @@ export class CacheService {
           friendList.forEach(f => {
             data[f.friendUserUid] = f;
           });
-          localforage.setItem("friendList", data).then((newCache) => {
+          localforage.setItem(this.dataKeys.friendList, data).then((newCache) => {
             this.cacheSource.next({friendList: newCache});
           });
         }
@@ -262,7 +278,7 @@ export class CacheService {
         res.data.forEach(g => {
           groupMap[g.gid] = g;
         });
-        localforage.setItem("groupList", groupMap).then((newCache) => {
+        localforage.setItem(this.dataKeys.groupList, groupMap).then((newCache) => {
           this.cacheSource.next({groupList: newCache});
         });
       }
@@ -281,14 +297,14 @@ export class CacheService {
         });
 
         let newData = {};
-        localforage.getItem("groupAdminList").then(data => {
+        localforage.getItem(this.dataKeys.groupAdminList).then(data => {
           if(data) {
             data[gid] = groupAdminMap;
             newData = data;
           } else {
             newData[gid] = groupAdminMap;
           }
-          localforage.setItem("groupAdminList", newData).then((newCache) => {
+          localforage.setItem(this.dataKeys.groupAdminList, newData).then((newCache) => {
             this.cacheSource.next({groupAdminList: newCache});
           });
         });
@@ -300,21 +316,21 @@ export class CacheService {
    * 获取好友列表
    */
   getCacheGroupAdmins(): Promise<any> {
-    return localforage.getItem("groupAdminList");
+    return localforage.getItem(this.dataKeys.groupAdminList);
   }
 
   /**
    * 获取好友列表
    */
   getCacheFriends(): Promise<any> {
-    return localforage.getItem("friendList");
+    return localforage.getItem(this.dataKeys.friendList);
   }
 
   /**
    * 获取好友列表
    */
   getCacheGroups(): Promise<any> {
-    return localforage.getItem("groupList");
+    return localforage.getItem(this.dataKeys.groupList);
   }
 
   /**
