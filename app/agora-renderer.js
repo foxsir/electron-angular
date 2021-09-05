@@ -5,9 +5,9 @@ const os = require('os')
 const path = require('path')
 
 // 填入你的 App ID
-const APPID = "7422abc69a69429681bac6f1e48208fc"
+const APPID = "4e62d9d9541242c69f1e00f2cbb1bc3f"
 // 填入你的 Token
-const token = "0067422abc69a69429681bac6f1e48208fcIACoA3TA4LpB0bix3bUCxfjDVCsnAFWzeBZTRocoZHPTswx+f9gAAAAAEADgLUYOsocxYQEAAQCthzFh"
+//const token = ""
 
 
 const sdkLogPath = path.resolve(os.homedir(), "./test.log")
@@ -17,7 +17,7 @@ let rtcEngine = new AgoraRtcEngine()
 rtcEngine.initialize(APPID)
 
 rtcEngine.on('error', (err, msg) => {
-    console.log("Error!")
+    console.log("rtcEngine Error!", err, msg)
 })
 
 // 视频模块默认开启，需要调用 disableVideo 关闭视频模块，才能开启纯语音模式
@@ -35,7 +35,17 @@ window.test_function = function (msg) {
     console.log('preload: ', msg);
 };
 
-window.joinChannelEx = function (userid) {
-    console.log('joinChannelEx: ', userid);
-    rtcEngine.joinChannel(token, "test", null, parseInt(userid));
+window.joinChannelEx = function (parms_str) {
+    var parms = JSON.parse(parms_str);
+    console.log('joinChannelEx: ', parms);
+
+    var channel = "";
+    if (parms.islanch == true) {
+        channel = parms.userid + "-" + parms.touserid
+    }
+    else {
+        channel = parms.touserid + "-" + parms.userid
+    }
+
+    rtcEngine.joinChannel(parms.token, channel, null, 0);
 };

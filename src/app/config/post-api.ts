@@ -45,7 +45,7 @@ export const deleteMissuCollectById = _HTTP_SERVER_URL +"/api/missuCollect/delet
 export const getUserIdByUserName = _HTTP_SERVER_URL +"/api/user/getUserIdByUserName";
 
 //获取声网音视频token
-export const generate = _HTTP_SERVER_URL +"/api/token/generate";
+export const generateAgoraToken = _HTTP_SERVER_URL +"/api/token/generate";
 
 //获取时间戳
 export const systemTime = _HTTP_SERVER_URL +"/api/token/systemTime";

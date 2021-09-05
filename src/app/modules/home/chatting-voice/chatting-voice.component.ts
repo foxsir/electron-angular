@@ -31,6 +31,9 @@ export class ChattingVoiceComponent implements OnInit {
 
     public view_mode = "default";
     public localUserInfo: LocalUserinfoModel;
+    public chatUserid = "";
+
+    public joinChannelEx = window['joinChannelEx'];
 
     constructor(
         private dom: DomSanitizer,
@@ -43,7 +46,8 @@ export class ChattingVoiceComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        console.log('chatingVoice ngOnInit: ', this.currentChat);
+        console.log('语音聊天 初始化: ', this.currentChat, this.currentChat.alarmItem.dataId);
+        this.chatUserid = this.currentChat.alarmItem.dataId;
 
         this.localUserInfo = this.localUserService.localUserInfo;
     }
@@ -52,21 +56,25 @@ export class ChattingVoiceComponent implements OnInit {
     startVoice() {
         console.log('发起语音聊天...');
 
-        if (this.currentChat.metadata.chatType === 'friend')
-        {
+        if (this.currentChat.metadata.chatType === 'friend') {
             this.messageService.sendMessage(120, this.currentChat.alarmItem.dataId, 'start_voice').then(res => {
                 if (res.success === true) {
                     this.view_mode = "wait_answer_1";
-                    joinChannelEx(this.localUserInfo.userId.toString());
+                    this.restService.generateAgoraToken(this.chatUserid, true).subscribe(res => {
+                        console.log('生成声网Token：', res.data.accessToken);
+                        this.joinChannelEx(JSON.stringify({ userid: this.localUserInfo.userId.toString(), token: res.data.accessToken, touserid: this.chatUserid, islanch: true }));
+                    });
                 }
             });
         }
-        else if (this.currentChat.metadata.chatType === 'group')
-        {
+        else if (this.currentChat.metadata.chatType === 'group') {
             this.messageService.sendGroupMessage(120, this.currentChat.alarmItem.dataId, 'start_voice').then(res => {
                 if (res.success === true) {
                     this.view_mode = "wait_answer_1";
-                    joinChannelEx(this.localUserInfo.userId.toString());
+                    this.restService.generateAgoraToken(this.chatUserid, true).subscribe(res => {
+                        console.log('生成声网Token：', res.data.accessToken);
+                        this.joinChannelEx(JSON.stringify({ userid: this.localUserInfo.userId.toString(), token: res.data.accessToken, touserid: this.chatUserid, islanch: true }));
+                    });
                 }
             });
         }
@@ -81,7 +89,10 @@ export class ChattingVoiceComponent implements OnInit {
     /* 接收语音请求 */
     receiveVoice() {
         console.log('接收语音请求...');
-        joinChannelEx(this.localUserInfo.userId.toString());
+        this.restService.generateAgoraToken(this.chatUserid, false).subscribe(res => {
+            console.log('生成声网Token：', res.data.accessToken);
+            this.joinChannelEx(JSON.stringify({ userid: this.localUserInfo.userId.toString(), token: res.data.accessToken, touserid: this.chatUserid, islanch: false }));
+        });
 
         if (this.currentChat.metadata.chatType === 'friend') {
             this.messageService.sendMessage(120, this.currentChat.alarmItem.dataId, 'receive_voice').then(res => {
