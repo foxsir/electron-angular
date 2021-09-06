@@ -4,14 +4,14 @@ import {ChatModeType, MsgType, UserProtocalsType} from "@app/config/rbchat-confi
 import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 import {createCommonData2} from "@app/libs/mobileimsdk-client-common";
 import {ImService} from "@services/im/im.service";
-import {CacheService} from "@services/cache/cache.service";
 import * as uuid from "uuid";
 import {GroupsProviderService} from "@services/groups-provider/groups-provider.service";
 import {LocalUserService} from "@services/local-user/local-user.service";
 import {FriendRequestModel} from "@app/models/friend-request.model";
 import {FriendAddWay} from "@app/config/friend-add-way";
-import FriendModel from "@app/models/friend.model";
 import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
+import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
+import {CacheService} from "@services/cache/cache.service";
 
 interface SendMessageResponse {
   success: boolean;
@@ -37,6 +37,7 @@ export class MessageService {
     private imService: ImService,
     private localUserService: LocalUserService,
     private groupsProviderService: GroupsProviderService,
+    private cacheService: CacheService,
   ) {
   }
 
@@ -108,7 +109,7 @@ export class MessageService {
       case MsgType.TYPE_AITE: //111 新增消息  @
         messageContentForShow = "[有人" + JSON.parse(messageContent).content + "]";
         break;
-      case MsgType.TYPE_NOTALK: //111 撤回
+      case MsgType.TYPE_NOTALK: //111 禁言
         messageContentForShow = JSON.parse(messageContent).msg;
         break;
       default:
@@ -358,7 +359,7 @@ export class MessageService {
    */
   constructGroupChatMsgBody(msgType, srcUserUid, srcNickName, toGid, msg) {
     // 新的MsgBody4Group对象
-    var tcmd = {
+    const tcmd = {
       cy: ChatModeType.CHAT_TYPE_GROUP$CHAT, // 聊天模式类型：群组聊天
       f: srcUserUid,
       nickName: srcNickName,
@@ -497,5 +498,121 @@ export class MessageService {
       });
     });
   }
+
+  /**
+   * 撤回单聊消息
+   * @param currentChat
+   * @param chat
+   */
+  backFriendMessage(currentChat: AlarmItemInterface, chat: ChatmsgEntityModel): Promise<SendMessageResponse> {
+    // 单聊 "{"sendId":"400340","msg":"foxsir撤回了我的一条消息","uuid":"AD8B64D1-4E77-46B8-A290-C6BAA0BEFD3C"}"
+    // 群聊 {"sendId":"400340","msg":"foxsir撤回了foxsir的一条消息","adminId":"400340,400070,400340","uuid":"9827078A-C7F1-4EAD-AE87-FE3FF16A5603"}
+    return new Promise((resolve, reject) => {
+      const localUserInfo = this.localUserService.localUserInfo;
+      let success = false;
+      let adminId = {};
+      if (currentChat.metadata.chatType === 'group') {
+        adminId = {
+          adminId: "400340,400070,400340",
+        };
+      }
+
+      const msgBody = {
+        cy: currentChat.metadata.chatType === 'group' ? ChatModeType.CHAT_TYPE_GROUP$CHAT : ChatModeType.CHAT_TYPE_FRIEND$CHAT,
+        f: localUserInfo.userId,
+        m: JSON.stringify({
+          isBanned: false,
+          showMsg: false,
+          senderId: localUserInfo.userId.toString(),
+          msg: localUserInfo.nickname + "撤回了我的一条消息",
+          uuid: chat.fingerPrintOfProtocal,
+          ...adminId
+        }),
+        m3: "PC",
+        nickName: localUserInfo.nickname,
+        t: currentChat.alarmItem.dataId,
+        ty: MsgType.TYPE_BACK,
+      };
+
+      const typeu = currentChat.metadata.chatType === 'group' ?
+        UserProtocalsType.MT45_OF_GROUP$CHAT$MSG_SERVER$TO$B :
+        UserProtocalsType.MT03_OF_CHATTING_MESSAGE;
+
+      const p: any = createCommonData2(
+        JSON.stringify(msgBody), localUserInfo.userId, currentChat.alarmItem.dataId, typeu
+      );
+      p.bridge = false;
+      p.QoS = true;
+
+      // console.dir("msgBody")
+      // console.dir(p)
+      // console.dir(msgBody)
+      // console.dir("msgBody")
+      this.imService.sendData(p);
+      success = true;
+
+      resolve({
+        success: success,
+        msgBody:msgBody,
+        fingerPrint: p.fp,
+      });
+    });
+  }
+
+  backGroupMessage(currentChat: AlarmItemInterface, chat: ChatmsgEntityModel): Promise<SendMessageResponse> {
+    // 单聊 "{"sendId":"400340","msg":"foxsir撤回了我的一条消息","uuid":"AD8B64D1-4E77-46B8-A290-C6BAA0BEFD3C"}"
+    // 群聊 {"sendId":"400340","msg":"foxsir撤回了foxsir的一条消息","adminId":"400340,400070,400340","uuid":"9827078A-C7F1-4EAD-AE87-FE3FF16A5603"}
+    return new Promise((resolve, reject) => {
+      const localUserInfo = this.localUserService.localUserInfo;
+      let success = false;
+      let adminId = {};
+      if (currentChat.metadata.chatType === 'group') {
+        adminId = {
+          adminId: "400070,400340",
+        };
+      }
+
+      // this.cacheService.getCacheGroupAdmins().then(data => {
+      //   console.dir(data[currentChat.alarmItem.dataId]);
+      // });
+
+      const msgBody = {
+        cy: ChatModeType.CHAT_TYPE_GROUP$CHAT,
+        f: localUserInfo.userId.toString(),
+        m: JSON.stringify({
+          isBanned: false,
+          showMsg: false,
+          senderId: currentChat.alarmItem.dataId.toString(),
+          msg: "普通管理员撤回了我的一条消息",
+          uuid: chat.fingerPrintOfProtocal,
+          adminId: "400073"
+        }),
+        m3: "android",
+        nickName: "普通管理员",
+        t: currentChat.alarmItem.dataId,
+        ty: MsgType.TYPE_BACK,
+      };
+
+      const p: any = createCommonData2(
+        JSON.stringify(msgBody), localUserInfo.userId.toString(), "0", UserProtocalsType.MT44_OF_GROUP$CHAT$MSG_A$TO$SERVER
+      );
+      p.bridge = false;
+      p.QoS = true;
+
+      console.dir("msgBody")
+      console.dir(p)
+      console.dir("msgBody")
+      this.imService.sendData(p);
+      success = true;
+
+      resolve({
+        success: success,
+        msgBody:msgBody,
+        fingerPrint: p.fp,
+      });
+    });
+  }
+
+
 
 }
