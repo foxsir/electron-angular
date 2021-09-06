@@ -46,6 +46,7 @@ import { NzListModule } from 'ng-zorro-antd/list';
 import {SettingDialogsModule} from "../setting-dialogs/setting-dialogs.module";
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import { MyFriendsComponent } from './my-friends/my-friends.component';
+import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 
 @NgModule({
   declarations: [
@@ -70,33 +71,34 @@ import { MyFriendsComponent } from './my-friends/my-friends.component';
     ChattingAreaComponent,
     MyFriendsComponent
   ],
-  imports: [
-    CommonModule,
-    HomeRoutingModule,
-    FlexLayoutModule,
-    MatSidenavModule,
-    MatButtonModule,
-    MatCardModule,
-    MatIconModule,
-    MatListModule,
-    MatInputModule,
-    MatBadgeModule,
-    NzInputModule,
-    MatMenuModule,
-    MessageModule,
-    EmptyDataModule,
-    TitleBarModule,
-    FormsModule,
-    UserDialogsModule,
-    UploadModule,
-    NzModalModule,
-    DialogsModule,
-    NzSwitchModule,
-    NzSelectModule,
-    NzButtonModule,
-    NzListModule,
-    SettingDialogsModule,
-    MatCheckboxModule,
-  ]
+    imports: [
+        CommonModule,
+        HomeRoutingModule,
+        FlexLayoutModule,
+        MatSidenavModule,
+        MatButtonModule,
+        MatCardModule,
+        MatIconModule,
+        MatListModule,
+        MatInputModule,
+        MatBadgeModule,
+        NzInputModule,
+        MatMenuModule,
+        MessageModule,
+        EmptyDataModule,
+        TitleBarModule,
+        FormsModule,
+        UserDialogsModule,
+        UploadModule,
+        NzModalModule,
+        DialogsModule,
+        NzSwitchModule,
+        NzSelectModule,
+        NzButtonModule,
+        NzListModule,
+        SettingDialogsModule,
+        MatCheckboxModule,
+        MatProgressSpinnerModule,
+    ]
 })
 export class HomeModule { }
