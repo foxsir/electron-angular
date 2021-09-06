@@ -155,7 +155,7 @@ export class InputAreaComponent implements OnInit {
       this.sendChatMap[file.uid].isOutgoing = false;
       this.sendMessage.emit({
         chat: this.sendChatMap[file.uid],
-        dataContent: this.getDefaultDataContent()
+        dataContent: this.getDefaultDataContent(MsgType.TYPE_IMAGE)
       });
     });
   }
@@ -165,23 +165,11 @@ export class InputAreaComponent implements OnInit {
       this.sendChatMap[file.uid] = this.messageEntityService.createChatMsgEntity_TO_FILE('',
         blob, 0, CommonTools.fingerPrint(), 0
       );
-      const dataContent: ProtocalModelDataContent = {
-        cy: 0, // 对应ChatType，聊天类型。比如单人聊天，群聊天
-        f: this.localUserService.localUserInfo.userId, // 消息发送方
-        m: "", // 消息内容
-        t: this.currentChat.alarmItem.dataId, // 消息接收方
-        ty: MsgType.TYPE_IMAGE, // 对应MsgType，消息类型。比如普通文本，图片消息等
-        m2: "PC", // 设别
-        nickName: this.localUserService.localUserInfo.nickname, //
-        showMsg: false, //
-        sync: "", //
-        uh: "",
-      };
       // 尚未发出
       this.sendChatMap[file.uid].isOutgoing = false;
       this.sendMessage.emit({
         chat: this.sendChatMap[file.uid],
-        dataContent: this.getDefaultDataContent()
+        dataContent: this.getDefaultDataContent(MsgType.TYPE_FILE)
       });
     });
   }
@@ -307,7 +295,7 @@ export class InputAreaComponent implements OnInit {
     emitToUI: boolean = true,
     replaceEntity: ChatmsgEntityModel = null
   ) {
-    this.messageService.atGroupMember(this.currentChat, messageText, this.atTargetMember).then();
+    // this.messageService.atGroupMember(this.currentChat, messageText, this.atTargetMember).then();
     this.messageService.sendGroupMessage(messageType, this.currentChat.alarmItem.dataId, messageText).then(res => {
       if(res.success === true) {
         const friendUid = this.currentChat.alarmItem.dataId;
@@ -573,17 +561,17 @@ export class InputAreaComponent implements OnInit {
     });
   }
 
-  getDefaultDataContent(): ProtocalModelDataContent {
+  getDefaultDataContent(msgType: number): ProtocalModelDataContent {
     return {
       cy: 0, // 对应ChatType，聊天类型。比如单人聊天，群聊天
       f: this.localUserService.localUserInfo.userId, // 消息发送方
       m: "", // 消息内容
       t: this.currentChat.alarmItem.dataId, // 消息接收方
-      ty: MsgType.TYPE_IMAGE, // 对应MsgType，消息类型。比如普通文本，图片消息等
+      ty: msgType, // 对应MsgType，消息类型。比如普通文本，图片消息等
       m2: "PC", // 设别
       nickName: this.localUserService.localUserInfo.nickname, //
       showMsg: false, //
-      sync: "", //
+      sync: "0", //
       uh: "",
     };
   }
