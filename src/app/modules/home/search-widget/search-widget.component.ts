@@ -35,7 +35,7 @@ export class SearchWidgetComponent implements OnInit {
                 console.log('聊天列表 01：', chatlist);
             }
 
-            this.cacheService.SyncChattingList(res || {}).then(list => {
+            this.cacheService.syncChattingList(res || {}).then(list => {
                 console.log('聊天列表 02：', list);
                 this.alarmItemList = list;
             });
