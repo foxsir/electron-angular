@@ -97,6 +97,17 @@ export class ContextMenuService {
       },
       action: (chat: ChatmsgEntityModel, messageContainer: HTMLDivElement) => {
         chat.msgType = this.msgType.TYPE_BACK;
+        return this.cacheService.putChattingCache(
+          this.currentChattingChangeService.currentChatting,
+          chat
+        ).then(() => {
+          const chatting = this.currentChattingChangeService.currentChatting;
+          if (chatting.metadata.chatType === 'friend') {
+            this.messageService.backFriendMessage(this.currentChattingChangeService.currentChatting, chat);
+          } else {
+            this.messageService.backGroupMessage(this.currentChattingChangeService.currentChatting, chat);
+          }
+        });
       }
     },
     quote: {
