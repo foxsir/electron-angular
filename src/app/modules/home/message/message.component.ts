@@ -142,7 +142,7 @@ export class MessageComponent implements OnInit {
           this.insertItem(item.alarmData);
         });
       }
-      this.cacheService.SyncChattingList(res || {}).then(list => {
+      this.cacheService.syncChattingList(res || {}).then(list => {
         list.forEach(item => this.insertItem(item));
       });
     });
