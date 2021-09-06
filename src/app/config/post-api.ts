@@ -137,6 +137,11 @@ export const UpGroupCustomerService = _HTTP_SERVER_URL + "/api/groupBase/UpGroup
 // 修改密码
 export const UpdatePassword = _HTTP_SERVER_URL + "/api/user/updPwd";
 
+// 单聊漫游消息
+export const GetFriendHistory = _HTTP_SERVER_URL + "/v1/chat/friend-his";
+
+// 群聊漫游消息
+export const GetGroupHistory = _HTTP_SERVER_URL + "/v1/chat/group-his";
 
 //
 //  //封装请求函数
