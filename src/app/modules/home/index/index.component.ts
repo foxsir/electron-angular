@@ -117,13 +117,13 @@ export class IndexComponent implements OnInit {
     this.doLoginIMServer();
 
     // 缓存个人信息
-    this.cacheService.cacheMyInfo().then();
-
-    // 使用缓存中的头像
-    this.cacheService.getMyInfo().then((data: UserModel) => {
-      if(data.userAvatarFileName.length > 0) {
-        this.myAvatar = this.dom.bypassSecurityTrustResourceUrl(data.userAvatarFileName);
-      }
+    this.cacheService.cacheMyInfo().then(() => {
+      // 使用缓存中的头像
+      this.cacheService.getMyInfo().then((data: UserModel) => {
+        if(data.userAvatarFileName.length > 0) {
+          this.myAvatar = this.dom.bypassSecurityTrustResourceUrl(data.userAvatarFileName);
+        }
+      });
     });
 
     this.messageDistributeService.MT03_OF_CHATTING_MESSAGE$.subscribe(data => {
