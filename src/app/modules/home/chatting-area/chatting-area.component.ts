@@ -1,4 +1,13 @@
-import {AfterViewChecked, AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
+import {
+  AfterContentInit,
+  AfterViewChecked,
+  AfterViewInit,
+  Component,
+  ElementRef,
+  Input,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 import {DomSanitizer, SafeResourceUrl} from "@angular/platform-browser";
 import {AvatarService} from "@services/avatar/avatar.service";
@@ -13,6 +22,8 @@ import voiceIcon from "@app/assets/icons/voice.svg";
 import voiceActiveIcon from "@app/assets/icons/voice-active.svg";
 import closeCircleIcon from "@app/assets/icons/close-circle.svg";
 import closeCircleActiveIcon from "@app/assets/icons/close-circle-active.svg";
+import downArrowIcon from "@app/assets/icons/keyboard_arrow_down.svg";
+import downArrowActiveIcon from "@app/assets/icons/keyboard_arrow_down-active.svg";
 
 import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 import {QuoteMessageService} from "@services/quote-message/quote-message.service";
@@ -36,6 +47,8 @@ import { TransmitMessageComponent } from "@modules/user-dialogs/transmit-message
 import { ChattingVoiceComponent } from '../chatting-voice/chatting-voice.component';
 import FileMetaInterface from "@app/interfaces/file-meta.interface";
 import {MsgType} from "@app/config/rbchat-config";
+import {HistoryMessageService} from "@services/history-message/history-message.service";
+import {ServerForwardService} from "@services/server-forward/server-forward.service";
 
 @Component({
   selector: 'app-chatting-area',
@@ -65,10 +78,13 @@ export class ChattingAreaComponent implements OnInit {
   public searchActiveIcon = this.dom.bypassSecurityTrustResourceUrl(searchActiveIcon);
   public voiceIcon = this.dom.bypassSecurityTrustResourceUrl(voiceIcon);
   public voiceActiveIcon = this.dom.bypassSecurityTrustResourceUrl(voiceActiveIcon);
+  public downArrowIcon = this.dom.bypassSecurityTrustResourceUrl(downArrowIcon);
+  public downArrowActiveIcon = this.dom.bypassSecurityTrustResourceUrl(downArrowActiveIcon);
   // end icon
 
   public currentChatSubtitle: string = null;
-  public chatMsgEntityList: ChatmsgEntityModel[];
+  public chatMsgEntityList: ChatmsgEntityModel[] = [];
+  public chatMsgEntityListTemp: ChatmsgEntityModel[] = [];
 
   public localUserInfo: LocalUserinfoModel;
 
@@ -87,6 +103,9 @@ export class ChattingAreaComponent implements OnInit {
   public selectMessage: boolean = false;
   public selectMessageList: ChatmsgEntityModel[] = [];
 
+  public showDownArrow: boolean = false;
+  public loadingMessage: boolean = false;
+
   constructor(
     private avatarService: AvatarService,
     private dom: DomSanitizer,
@@ -101,6 +120,8 @@ export class ChattingAreaComponent implements OnInit {
     private currentChattingChangeService: CurrentChattingChangeService,
     private elementService: ElementService,
     private dialogService: DialogService,
+    private historyMessageService: HistoryMessageService,
+    private serverForwardService: ServerForwardService
   ) {
     this.localUserInfo = this.localUserService.localUserInfo;
 
@@ -116,39 +137,30 @@ export class ChattingAreaComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.currentChattingChangeService.currentChatting$.subscribe(alarm => {
-      this.searching = false;
-      this.scrollToBottom();
-    });
-
     this.subscribeQuote();
 
     if(this.currentChattingChangeService.currentChatting) {
       this.currentChat = this.currentChattingChangeService.currentChatting;
       this.cacheService.getChattingCache(this.currentChat).then(data => {
         if(!!data) {
-          this.chatMsgEntityList = Object.values(data);
-          this.scrollToBottom('auto');
+          this.chatMsgEntityListTemp = Object.values(data);
+          this.loadMessage(true);
         }
       });
     }
 
     // 获取缓存
     this.currentChattingChangeService.currentChatting$.subscribe(currentChat => {
+      this.searching = false;
+      this.scrollToBottom();
       // === 为刷新聊天列表，只更新数据
-      if (this.currentChat === currentChat) {
-        this.cacheService.getChattingCache(this.currentChat).then(data => {
-          if(!!data) {
-            this.chatMsgEntityList = Object.values(data);
-          }
-        });
-      } else {
+      if (this.currentChat !== currentChat) {
         this.currentChat = currentChat;
         this.openEndDrawer('setting', false);
         this.cacheService.getChattingCache(this.currentChat).then(data => {
           if(!!data) {
-            this.chatMsgEntityList = Object.values(data);
-            this.scrollToBottom('auto');
+            this.chatMsgEntityListTemp = Object.values(data);
+            this.loadMessage(true);
           }
         });
         this.restService.getUserBaseById(this.currentChat.alarmItem.dataId).subscribe(res => {
@@ -264,7 +276,7 @@ export class ChattingAreaComponent implements OnInit {
    */
   private subscribeOfGroupChatMsgServerToB() {
     this.messageDistributeService.MT45_OF_GROUP$CHAT$MSG_SERVER$TO$B$.subscribe((res: ProtocalModel) => {
-        const dataContent: any = JSON.parse(res.dataContent);
+        const dataContent: ProtocalModelDataContent = JSON.parse(res.dataContent);
 
         console.log('订阅群聊消息 ServerToB：', dataContent);
         if (dataContent.ty == 120) {
@@ -277,14 +289,17 @@ export class ChattingAreaComponent implements OnInit {
             }
         }
 
-      // alert("群组" + dataContent.t);
-      // this.massageBadges[dataContent.t.trim()] = 99;
-      const chatMsgEntity = this.messageEntityService.prepareRecievedMessage(
-        dataContent.f, dataContent.nickName, dataContent.m, res.recvTime, dataContent.ty, res.fp
-      );
-      this.cacheService.putChattingCache(this.currentChat, chatMsgEntity).then(() => {
-        this.pushMessageToPanel({chat: chatMsgEntity, dataContent: dataContent}, 'incept');
-      });
+      const func = this.serverForwardService.functions[dataContent.ty];
+      if(func) {
+        func(res);
+      } else {
+        const chatMsgEntity = this.messageEntityService.prepareRecievedMessage(
+          dataContent.f, dataContent.nickName, dataContent.m, res.recvTime, dataContent.ty, res.fp
+        );
+        this.cacheService.putChattingCache(this.currentChat, chatMsgEntity).then(() => {
+          this.pushMessageToPanel({chat: chatMsgEntity, dataContent: dataContent}, 'incept');
+        });
+      }
     });
   }
 
@@ -324,6 +339,7 @@ export class ChattingAreaComponent implements OnInit {
       });
     };
     setTimeout(() => {
+      this.chattingAreaOnScroll();
       if(this.chattingContainer) {
         const images = this.chattingContainer.nativeElement.querySelectorAll("img");
         images.forEach(img => {
@@ -441,6 +457,83 @@ export class ChattingAreaComponent implements OnInit {
       this.chattingAreaDrawer.open().then();
     } else {
       this.chattingAreaDrawer.close().then();
+    }
+  }
+
+  /**
+   * 监听聊天区域滚动
+   */
+  chattingAreaOnScroll() {
+    // const container = this.chattingContainer.nativeElement;
+    const container = document.getElementById("chatting-panel");
+    if(container.onscroll === null) {
+      container.addEventListener('scroll', () => {
+        const bottom = container.scrollHeight - container.offsetHeight - container.scrollTop;
+        this.showDownArrow = bottom > 200;
+
+        if(container.scrollTop === 0 && this.loadingMessage === false) {
+          this.loadMessage();
+        }
+      });
+    }
+  }
+
+  private loadMessage(goBottom: boolean = false) {
+    if(this.loadingMessage) {
+      return false;
+    } {
+      this.loadingMessage = true;
+      const container = this.chattingContainer.nativeElement;
+      if(this.chatMsgEntityListTemp.length > 0) {
+        // 从缓存获取消息
+        container.scrollTop = 1;
+        this.chatMsgEntityList = [
+          ...this.chatMsgEntityListTemp.splice(0, 15),
+          ...this.chatMsgEntityList
+        ];
+        if(goBottom) {
+          this.scrollToBottom("auto");
+        }
+        setTimeout(() => {
+          this.loadingMessage = false;
+        }, 100);
+      } else {
+        // 从漫游接口获取数据
+        this.historyMessageService.getFriendMessage(this.currentChat, this.chatMsgEntityList[0], 'top', 2).subscribe(res => {
+          if(res.status === 200 && res.data.list.length) {
+            const msgs: ChatmsgEntityModel[]  = [];
+            res.data.list.forEach(msg => {
+              const msgJson = JSON.parse(msg);
+              const dataContent = JSON.parse(msgJson.dataContent);
+              const chatMsgEntity = this.messageEntityService.prepareSendedMessage(
+                dataContent.m, msgJson.recvTime, msgJson.fp, dataContent.ty
+              );
+              msgs.push(chatMsgEntity);
+            });
+            container.scrollTop = 1;
+            // this.chatMsgEntityList = [
+            //   ...msgs,
+            //   ...this.chatMsgEntityList
+            // ];
+            const iterator = msgs.entries();
+            while (this.loadingMessage) {
+              const it = iterator.next();
+              if(it && it.value) {
+                this.chatMsgEntityList.unshift(it.value[1]);
+              } else {
+                this.loadingMessage = false;
+              }
+            }
+
+            if(goBottom) {
+              this.scrollToBottom("auto");
+            }
+          } else {
+            this.loadingMessage = false;
+          }
+          console.dir("拉取漫游消息");
+        });
+      }
     }
   }
 
