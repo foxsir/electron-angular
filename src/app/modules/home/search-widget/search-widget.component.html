@@ -1,45 +1,47 @@
 <div fxLayout="row" class="search-container">
-  <div fxFlex="calc(100% - 60px)">
-    <div fxLayout="row" fxLayoutAlign="end center">
-      <div fxFlex="0 0 calc(294px - 40px)">
-        <input type="text" (keydown.escape)="cancelSearch()" [(ngModel)]="search" (ngModelChange)="searchContent()" nz-input placeholder="搜索" />
-      </div>
-    </div>
-  </div>
-  <div fxFlex="60px" fxLayoutAlign="center center">
-    <div>
-      <button mat-icon-button [matMenuTriggerFor]="friendActions">
-        <mat-icon>
-          <img [src]="editIcon" alt="">
-        </mat-icon>
-      </button>
-      <mat-menu #friendActions="matMenu">
-        <button mat-menu-item (click)="searchFriend()">添加好友</button>
-        <button mat-menu-item (click)="createGroup()">创建群聊</button>
-      </mat-menu>
-    </div>
-  </div>
-  <div class="search-area" *ngIf="showResource">
-    <div fxLayout="column">
-      <div fxFlex>
-        <div fxLayoutAlign="end">
-          <div fxFlex="60px" fxLayoutAlign="center">
-            <button mat-icon-button>
-              <mat-icon class="hover-icon icon14" (click)="cancelSearch()">
-                <img [src]="closeIcon" class="icon" alt="">
-                <img [src]="closeActiveIcon" class="icon-active" alt="">
-              </mat-icon>
-            </button>
-          </div>
+    <div fxFlex="calc(100% - 60px)">
+        <div fxLayout="row" fxLayoutAlign="end center">
+            <div fxFlex="0 0 calc(294px - 40px)">
+                <input type="text" (keydown.escape)="cancelSearch()" [(ngModel)]="search"
+                       (keyup)="txtSearchChange($event)"
+                       (ngModelChange)="searchContent()" nz-input placeholder="搜索" />
+            </div>
         </div>
-      </div>
-      <div fxFlex>
-        <mat-card class="mat-elevation-z0">
-          <mat-card-content>
-            {{search}}
-          </mat-card-content>
-        </mat-card>
-      </div>
     </div>
-  </div>
+    <div fxFlex="60px" fxLayoutAlign="center center">
+        <div>
+            <button mat-icon-button [matMenuTriggerFor]="friendActions">
+                <mat-icon>
+                    <img [src]="editIcon" alt="">
+                </mat-icon>
+            </button>
+            <mat-menu #friendActions="matMenu">
+                <button mat-menu-item (click)="searchFriend()">添加好友</button>
+                <button mat-menu-item (click)="createGroup()">创建群聊</button>
+            </mat-menu>
+        </div>
+    </div>
+    <div class="search-area" *ngIf="showResource">
+        <div fxLayout="column">
+            <div fxFlex>
+                <div fxLayoutAlign="end">
+                    <div fxFlex="60px" fxLayoutAlign="center">
+                        <button mat-icon-button>
+                            <mat-icon class="hover-icon icon14" (click)="cancelSearch()">
+                                <img [src]="closeIcon" class="icon" alt="">
+                                <img [src]="closeActiveIcon" class="icon-active" alt="">
+                            </mat-icon>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div fxFlex>
+                <mat-card class="mat-elevation-z0">
+                    <mat-card-content>
+                        {{search}}
+                    </mat-card-content>
+                </mat-card>
+            </div>
+        </div>
+    </div>
 </div>

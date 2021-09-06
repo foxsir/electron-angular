@@ -2,7 +2,8 @@ import {Component, Input, OnInit} from '@angular/core';
 import ChattingModel from "@app/models/chatting.model";
 import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 import {CacheService} from "@services/cache/cache.service";
-import {formatDate} from "@app/libs/mobileimsdk-client-common";
+import { formatDate } from "@app/libs/mobileimsdk-client-common";
+import CommonTools from "@app/common/common.tools";
 
 @Component({
     selector: 'app-search-chatting',
@@ -13,6 +14,7 @@ export class SearchChattingComponent implements OnInit {
     @Input() chatting: AlarmItemInterface;
 
     public formatDate = formatDate;
+    public commonTools = CommonTools;
     public currentTab: "chat" | "media" | "file" = "chat";
     public keywords = "";
     

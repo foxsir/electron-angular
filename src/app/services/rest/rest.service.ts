@@ -6,7 +6,8 @@ import {Observable} from "rxjs";
 import {LocalUserService} from "@services/local-user/local-user.service";
 import {ImService} from "@services/im/im.service";
 import {
-  getAppConfig,
+    getAppConfig,
+    generateAgoraToken,
   getMissuCollectById,
   deleteMissuCollectById,
   getMyBlackUser,
@@ -842,6 +843,24 @@ export class RestService {
         data.userUid = localUserInfo.userId;
 
         return this.http.post(updateUserBaseById, data);
+    }
+
+    /**
+    * 系统设置 - 获取声网Token
+    * @param user_id
+    */
+    generateAgoraToken(touserid: any, islanch: boolean): Observable<any> {
+        const localUserInfo = this.localUserService.getObj();
+
+        var channelId = "";
+        if (islanch == true) {
+            channelId = localUserInfo.userId.toString() + '-' + touserid.toString();
+        }
+        else {
+            channelId = touserid.toString() + '-' + localUserInfo.userId.toString();
+        }
+
+        return this.http.get(generateAgoraToken, { channelId: channelId });
     }
 
    /**

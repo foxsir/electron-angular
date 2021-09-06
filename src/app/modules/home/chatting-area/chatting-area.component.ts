@@ -241,9 +241,22 @@ export class ChattingAreaComponent implements OnInit {
         // alert("单聊" + data.from);
         console.log('订阅单聊消息：', dataContent);
 
-      const chatMsgEntity = this.messageEntityService.prepareRecievedMessage(
-        res.from, dataContent.nickName, dataContent.m, (new Date()).getTime(), dataContent.ty, res.fp
-      );
+        if (dataContent.ty == 120) {
+            if (dataContent.m == "start_voice") {
+                this.openEndDrawer('voice', true);
+                this.appChattingVoice.openPanel();
+            }
+            else if (dataContent.m == "receive_voice") {
+                this.appChattingVoice.hadReceiveVoice();
+            }
+            else if (dataContent.m == 'end_voice') {
+                this.appChattingVoice.endVoiceCallback();
+            }
+        }
+
+        const chatMsgEntity = this.messageEntityService.prepareRecievedMessage(
+            res.from, dataContent.nickName, dataContent.m, (new Date()).getTime(), dataContent.ty, res.fp
+        );
       // fromUid, nickName, msg, time, msgType, fp = null
       chatMsgEntity.isOutgoing = true;
       this.cacheService.putChattingCache(this.currentChat, chatMsgEntity).then(() => {
