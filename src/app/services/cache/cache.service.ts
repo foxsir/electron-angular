@@ -176,7 +176,7 @@ export class CacheService {
    * 从服务器同步聊天列表，并缓存列表, 返回同步后的聊天列表
    * @constructor
    */
-  SyncChattingList(chattingListCache: unknown): Promise<AlarmItemInterface[]> {
+  syncChattingList(chattingListCache: unknown): Promise<AlarmItemInterface[]> {
     return new Promise((resolve, reject) => {
       this.getAllLastMessage().then(res =>{
         const newList: AlarmItemInterface[] = [];
@@ -348,7 +348,7 @@ export class CacheService {
       const localUserInfo = this.localUserService.localUserInfo;
       this.restService.getUserBaseById(localUserInfo.userId.toString()).subscribe((res: NewHttpResponseInterface<UserModel>) => {
         if(res.status === 200) {
-          localforage.setItem('myInfo', res.data).then(data => {
+          localforage.setItem(this.dataKeys.myInfo, res.data).then(data => {
             this.cacheSource.next({myInfo: data});
             resolve(data);
           });
@@ -362,7 +362,7 @@ export class CacheService {
    */
   getMyInfo(): Promise<UserModel> {
     return new Promise((resolve, reject) => {
-      localforage.getItem('myInfo').then((data: UserModel) => {
+      localforage.getItem(this.dataKeys.myInfo).then((data: UserModel) => {
         if(data) {
           resolve(data);
         } else {
