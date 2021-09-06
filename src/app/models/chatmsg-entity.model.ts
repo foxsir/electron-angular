@@ -20,7 +20,7 @@ export default class ChatmsgEntityModel {
   /** 消息类型 */
   msgType: number = MsgType.TYPE_TEXT;
   /** 消息所对应的原始协议包指纹，目前只在发出的消息对象中有意义 */
-  fingerPrintOfProtocal: any = null;
+  fingerPrintOfProtocal: string = null;
 
   /** true表示是发出的消息，否则表示收到的消息 */
   isOutgoing: boolean = false;
