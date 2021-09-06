@@ -34,6 +34,7 @@ export class ChattingVoiceComponent implements OnInit {
     public chatUserid = "";
 
     public joinChannelEx = window['joinChannelEx'];
+    public leaveChannel = window['leaveChannel'];
 
     constructor(
         private dom: DomSanitizer,
@@ -114,5 +115,25 @@ export class ChattingVoiceComponent implements OnInit {
     /* 接收语音请求之后，回调通知 */
     hadReceiveVoice() {
         console.log('接收语音请求之后，回调通知');
+    }
+
+    /* 挂断语音: 主动（发起者或者接收者都可以主动挂断语音） */
+    endVoice() {
+        if (this.currentChat.metadata.chatType === 'friend') {
+            this.messageService.sendMessage(120, this.currentChat.alarmItem.dataId, 'end_voice').then(res => {
+                if (res.success === true) {
+                    this.leaveChannel('');
+                    this.view_mode = "default";
+                    this.drawer.close();
+                }
+            });
+        }
+    }
+
+    /* 挂断语音：被动（对方挂断语音，通知对方） */
+    endVoiceCallback() {
+        this.leaveChannel('');
+        this.view_mode = "default";
+        this.drawer.close();
     }
 }

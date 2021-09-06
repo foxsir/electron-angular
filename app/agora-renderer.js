@@ -49,3 +49,8 @@ window.joinChannelEx = function (parms_str) {
 
     rtcEngine.joinChannel(parms.token, channel, null, 0);
 };
+
+window.leaveChannel = function (parms_str) {
+    var result = rtcEngine.leaveChannel();
+    console.log('Leave Channel Result: ', result);
+};

@@ -237,6 +237,9 @@ export class ChattingAreaComponent implements OnInit {
             else if (dataContent.m == "receive_voice") {
                 this.appChattingVoice.hadReceiveVoice();
             }
+            else if (dataContent.m == 'end_voice') {
+                this.appChattingVoice.endVoiceCallback();
+            }
         }
 
         const chatMsgEntity = this.messageEntityService.prepareRecievedMessage(
