@@ -44,7 +44,7 @@ export class GroupComponent implements OnInit, OnDestroy {
         dataId: item.gid,
         date: "",
         istop: true,
-        msgContent: "0",
+        msgContent: "",
         title: item.gname,
         avatar: item.avatar,
       },
