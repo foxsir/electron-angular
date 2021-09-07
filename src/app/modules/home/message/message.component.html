@@ -4,7 +4,7 @@
   </mat-drawer>
 
   <div fxLayout="row" id="message-root-container">
-    <div fxFlex="334px" fxLayout="column" fxLayoutGap="14px" class="border1px right">
+    <div fxFlex="260px" fxLayout="column" fxLayoutGap="14px" class="border1px right">
       <div class="search-widget">
         <app-search-widget></app-search-widget>
       </div>
@@ -15,10 +15,7 @@
                   *ngFor="let alarm of alarmItemList" (click)="switchChat(alarm); chattingSetting.close();"
                   (contextmenu)="contextMenuForChatting($event, createPlanMenuTrigger, span, alarm)">
           <div fxLayout="row" fxLayoutGap="10px">
-            <div fxFlex="40px" [matBadge]="massageBadges[alarm.alarmItem.dataId]" matBadgeColor="warn"
-                 matBadgePosition="above after" matBadgeSize="small"
-                 [matBadgeHidden]="massageBadges[alarm.alarmItem.dataId] === 0"
-                 matBadgeOverlap="true">
+            <div fxFlex="40px">
               <img [src]="alarm.alarmItem.avatar" mat-card-avatar alt="">
             </div>
             <div fxFlex="calc(100% - 110px)">
@@ -43,7 +40,7 @@
                     </mat-icon>
                   </div>
                   <div fxFlex="50">
-                    1
+                    <div class="message-badges" [fxHide]="!alarm.metadata.unread">{{alarm.metadata.unread}}</div>
                   </div>
                 </div>
               </div>
@@ -59,7 +56,7 @@
         </mat-card>
       </div>
     </div>
-    <div fxFlex="calc(100% - 334px)">
+    <div fxFlex="calc(100% - 260px)">
       <router-outlet></router-outlet>
     </div>
   </div>

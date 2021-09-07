@@ -72,9 +72,6 @@ export class MessageComponent implements OnInit {
   public formatDate = formatDate;
   public localUserInfo: LocalUserinfoModel;
 
-  // 新消息提醒
-  public massageBadges = {};
-
   // 右键菜单
   public contextMenu: ContextMenuModel[] = [];
   public contextMenuChatting: ContextMenuChattingModel[] = [];
@@ -196,13 +193,22 @@ export class MessageComponent implements OnInit {
   private subscribeChattingListUpdate() {
     this.cacheService.cacheUpdate$.subscribe(cache => {
       console.dir("subscribe cache");
-      if (cache.alarmData) {
-        const alarmDataList: AlarmItemInterface[] = [];
-        Object.values(cache.alarmData).forEach((alarm: {alarmData: AlarmItemInterface}) => {
-          alarmDataList.push(alarm.alarmData);
-        });
-        this.alarmItemList = alarmDataList;
-      }
+      this.cacheService.getChattingList().then(res => {
+        if(res) {
+          this.alarmItemList = [];
+          Object.values(res).forEach(item => {
+            this.insertItem(item.alarmData);
+          });
+        }
+      });
+      // if (cache.alarmData) {
+      //   const alarmDataList: AlarmItemInterface[] = [];
+      //   Object.values(cache.alarmData).forEach((item: {alarmData: AlarmItemInterface}) => {
+      //     // alarmDataList.push(item.alarmData);
+      //     this.insertItem(item.alarmData);
+      //   });
+      //   // this.alarmItemList = alarmDataList;
+      // }
     });
   }
 
@@ -238,7 +244,9 @@ export class MessageComponent implements OnInit {
     this.messageDistributeService.MT03_OF_CHATTING_MESSAGE$.subscribe((res: ProtocalModel) => {
       const dataContent: any = JSON.parse(res.dataContent);
       // alert("单聊" + data.from);
-      this.massageBadges[res.from.trim()] = 4;
+      // this.cacheService.generateAlarmItem(res).then(alarm => {
+      //   this.cacheService.setChattingBadges(alarm, 1);
+      // });
 
       // const chatMsgEntity = this.messageEntityService.prepareRecievedMessage(
       //   res.from, dataContent.nickName, dataContent.m, (new Date()).getTime(), dataContent.ty, res.fp
@@ -274,7 +282,6 @@ export class MessageComponent implements OnInit {
     this.messageDistributeService.MT45_OF_GROUP$CHAT$MSG_SERVER$TO$B$.subscribe((res: ProtocalModel) => {
       const dataContent: ProtocalModelDataContent = JSON.parse(res.dataContent);
       // alert("群组" + dataContent.t);
-      this.massageBadges[dataContent.t.trim()] = 99;
       const ty = Number(dataContent.ty);
       switch (ty) {
         case MsgType.TYPE_AITE: // 处理@
@@ -300,8 +307,6 @@ export class MessageComponent implements OnInit {
   }
 
   insertItem(alarmData: AlarmItemInterface) {
-    Object.assign(this.massageBadges, {[alarmData.alarmItem.dataId.trim()]: 0});
-
     if (Object.is(Boolean(alarmData.alarmItem.istop), true)) {
       this.alarmItemList = [alarmData, ...this.alarmItemList];
     } else {
@@ -314,17 +319,19 @@ export class MessageComponent implements OnInit {
    * @param alarm
    */
   switchChat(alarm: AlarmItemInterface) {
-    // 检查本地缓存是否是最新，如果不是需要更新漫游消息，放在之后做
-    // this.cacheService.checkCacheIsNewest(alarm);
-
-    this.currentChat = alarm;
-    this.currentChattingChangeService.switchCurrentChatting(this.currentChat);
-    return this.router.navigate(['/home/message']).then(() => {
-      // 缓存群管理员列表
-      if (this.currentChat.metadata.chatType === 'group') {
-        this.cacheService.cacheGroupAdmins(this.currentChat.alarmItem.dataId);
-      }
-    });
+    if(!this.currentChat || this.currentChat.alarmItem.dataId !== alarm.alarmItem.dataId) {
+      this.currentChat = alarm;
+      this.currentChattingChangeService.switchCurrentChatting(this.currentChat);
+      return this.router.navigate(['/home/message']).then(() => {
+        // 缓存群管理员列表
+        if (this.currentChat.metadata.chatType === 'group') {
+          this.cacheService.cacheGroupAdmins(this.currentChat.alarmItem.dataId);
+        }
+      });
+    } else {
+      // 如果是当前会话，只清除badges
+      this.cacheService.setChattingBadges(this.currentChat, 0);
+    }
   }
 
   contextMenuForChatting(
