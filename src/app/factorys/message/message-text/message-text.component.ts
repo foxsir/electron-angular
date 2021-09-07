@@ -45,6 +45,7 @@ export class MessageTextComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.chatMsg.text = this.showEmoji(this.chatMsg.text as string);
     // const chat = this.quoteMessageService.checkMessageIsPureText(this.chatMsg.text as string);
     // if (chat === true) {
     //   this.chatMsg.text = this.showEmoji(this.chatMsg.text as string);
