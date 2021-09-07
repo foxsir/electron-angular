@@ -108,7 +108,7 @@ export class MyFriendsComponent implements OnInit {
                 dataId: item.friendUserUid.toString(),
                 date: "",
                 istop: true,
-                msgContent: "0",
+                msgContent: "",
                 title: item.nickname,
                 avatar: item.userAvatarFileName,
             },
