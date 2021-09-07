@@ -59,13 +59,93 @@ export class ContextMenuService {
   // };
 
   private actionChattingCollection = {
-    copyText: {
-      label: "复制",
+    setTop: {
+      label: "置顶消息",
       visibility: function(filterData: MenuFilterData): boolean {
         return true;
       },
-      action: (chatting: AlarmItemInterface, chattingList: AlarmItemInterface[]) => {
-        alert(chattingList.indexOf(chatting));
+      action: (chatting: AlarmItemInterface) => {
+        alert(chatting.metadata.unread);
+      }
+    },
+    unsetTop: {
+      label: "取消置顶",
+      visibility: function(filterData: MenuFilterData): boolean {
+        return true;
+      },
+      action: (chatting: AlarmItemInterface) => {
+        alert(chatting.metadata.unread);
+      }
+    },
+    viewUser: {
+      label: "查看个人消息",
+      visibility: function(filterData: MenuFilterData): boolean {
+        return true;
+      },
+      action: (chatting: AlarmItemInterface) => {
+        alert(chatting.alarmItem.dataId);
+      }
+    },
+    closeSound: {
+      label: "关闭消息声音通知",
+      visibility: function(filterData: MenuFilterData): boolean {
+        return true;
+      },
+      action: (chatting: AlarmItemInterface) => {
+        alert(chatting.metadata.unread);
+      }
+    },
+    openSound: {
+      label: "开启消息声音通知",
+      visibility: function(filterData: MenuFilterData): boolean {
+        return true;
+      },
+      action: (chatting: AlarmItemInterface) => {
+        alert(chatting.metadata.unread);
+      }
+    },
+    contactCard: {
+      label: "发送名片",
+      visibility: function(filterData: MenuFilterData): boolean {
+        return true;
+      },
+      action: (chatting: AlarmItemInterface) => {
+        alert(chatting.metadata.unread);
+      }
+    },
+    remove: {
+      label: "删除会话",
+      visibility: function(filterData: MenuFilterData): boolean {
+        return true;
+      },
+      action: (chatting: AlarmItemInterface) => {
+        this.dialogService.confirm({title: '删除会话'}).then((ok) => {
+          if(ok) {
+            this.cacheService.deleteChattingCache(chatting).then();
+          }
+        });
+      }
+    },
+    clearMessage: {
+      label: "清除历史消息",
+      visibility: function(filterData: MenuFilterData): boolean {
+        return true;
+      },
+      action: (chatting: AlarmItemInterface) => {
+        this.dialogService.confirm({title: '清除历史消息'}).then((ok) => {
+          if(ok) {
+            this.cacheService.clearChattingCache(chatting).then();
+          }
+        });
+      }
+    },
+    setBackList: {
+      label: "拉入黑名单",
+      visibility: function(filterData: MenuFilterData): boolean {
+        return true;
+      },
+      action: (chatting: AlarmItemInterface) => {
+        alert("拉入黑名单");
       }
     },
   };
@@ -121,7 +201,7 @@ export class ContextMenuService {
       }
     },
     download: {
-      label: "下载",
+      label: "保存到...",
       visibility: function(filterData: MenuFilterData): boolean {
         return true;
       },
@@ -149,7 +229,7 @@ export class ContextMenuService {
         this.dialogService.confirm({title: '删除消息', text: '是否删除该条消息？'}).then((ok) => {
           if(ok) {
             // 删除消息
-            return this.cacheService.deleteChattingCache(this.currentChattingChangeService.currentChatting, [chat]).then(res => {
+            return this.cacheService.deleteMessageCache(this.currentChattingChangeService.currentChatting, [chat]).then(res => {
               // 刷新聊天数据
               this.currentChattingChangeService.switchCurrentChatting(this.currentChattingChangeService.currentChatting);
             });
@@ -213,7 +293,7 @@ export class ContextMenuService {
                 dataId: chat.uid,
                 date: null,
                 istop: true,
-                msgContent: null,
+                msgContent: "",
                 title: chat.name,
                 avatar: list[chat.uid]?.userAvatarFileName,
               },
@@ -420,9 +500,7 @@ export class ContextMenuService {
 
   // 初始化会话右键
   private initChattingMenu() {
-    this.contextMenuForChatting = [
-      this.actionChattingCollection.copyText
-    ];
+    this.contextMenuForChatting = Object.values(this.actionChattingCollection);
   }
 
   // 初始化消息右键
@@ -444,7 +522,7 @@ export class ContextMenuService {
     this.contextMenuForMessage[this.msgType.TYPE_FILE] = [
       this.actionCollection.quote,
       this.actionCollection.repeal,
-      // this.actionCollection.download,
+      this.actionCollection.download,
       ...com,
     ];
 
@@ -452,14 +530,14 @@ export class ContextMenuService {
       this.actionCollection.copyImage,
       this.actionCollection.quote,
       this.actionCollection.repeal,
-      // this.actionCollection.download,
+      this.actionCollection.download,
       ...com,
     ];
 
     this.contextMenuForMessage[this.msgType.TYPE_SHORTVIDEO] = [
       this.actionCollection.quote,
       this.actionCollection.repeal,
-      // this.actionCollection.download,
+      this.actionCollection.download,
       ...com,
     ];
 
