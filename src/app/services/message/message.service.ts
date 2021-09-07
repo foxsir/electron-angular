@@ -11,7 +11,6 @@ import {FriendRequestModel} from "@app/models/friend-request.model";
 import {FriendAddWay} from "@app/config/friend-add-way";
 import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
-import {CacheService} from "@services/cache/cache.service";
 
 interface SendMessageResponse {
   success: boolean;
@@ -37,7 +36,6 @@ export class MessageService {
     private imService: ImService,
     private localUserService: LocalUserService,
     private groupsProviderService: GroupsProviderService,
-    private cacheService: CacheService,
   ) {
   }
 
@@ -572,10 +570,6 @@ export class MessageService {
         };
       }
 
-      // this.cacheService.getCacheGroupAdmins().then(data => {
-      //   console.dir(data[currentChat.alarmItem.dataId]);
-      // });
-
       const msgBody = {
         cy: ChatModeType.CHAT_TYPE_GROUP$CHAT,
         f: localUserInfo.userId.toString(),
@@ -585,7 +579,7 @@ export class MessageService {
           senderId: currentChat.alarmItem.dataId.toString(),
           msg: "普通管理员撤回了我的一条消息",
           uuid: chat.fingerPrintOfProtocal,
-          adminId: "400073"
+          adminId: adminId
         }),
         m3: "android",
         nickName: "普通管理员",
@@ -599,9 +593,6 @@ export class MessageService {
       p.bridge = false;
       p.QoS = true;
 
-      console.dir("msgBody")
-      console.dir(p)
-      console.dir("msgBody")
       this.imService.sendData(p);
       success = true;
 
@@ -612,7 +603,6 @@ export class MessageService {
       });
     });
   }
-
 
 
 }
