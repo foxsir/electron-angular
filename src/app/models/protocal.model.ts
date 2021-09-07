@@ -9,9 +9,9 @@ export class ProtocalModelDataContent {
   m: string; // 消息内容
   t: string; // 消息接收方
   ty: number; // 对应MsgType，消息类型。比如普通文本，图片消息等
-  m2: string; // 设别
+  m2: string; // 设备
   nickName: string; //
-  showMsg: false; //
+  showMsg: boolean; //
   sync: string; //
   uh: string; // "http://strawberry-im.oss-cn-shenzhen.aliyuncs.com/user_portrait/400340.jpg"
 }
