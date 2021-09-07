@@ -175,6 +175,17 @@ export class ChattingAreaComponent implements OnInit {
         });
       }
     });
+
+    // 清屏
+    this.cacheService.cacheUpdate$.subscribe(cache => {
+      if(this.currentChat && cache.alarmData) {
+        const data = cache.alarmData[this.currentChat.alarmItem.dataId];
+        const l = data.message ? Object.values(data.message).length : 0;
+        if(l === 0) {
+          this.chatMsgEntityList = [];
+        }
+      }
+    });
   }
 
   pushMessageToPanel(data: {chat: ChatmsgEntityModel; dataContent: ProtocalModelDataContent}, type: 'send' | 'incept' = 'send') {
@@ -479,7 +490,7 @@ export class ChattingAreaComponent implements OnInit {
       title: ["删除", this.selectMessageList.length, "条消息"].join("")
     }).then(ok => {
       if(ok) {
-        this.cacheService.deleteChattingCache(this.currentChattingChangeService.currentChatting, this.selectMessageList).then(res => {
+        this.cacheService.deleteMessageCache(this.currentChattingChangeService.currentChatting, this.selectMessageList).then(res => {
           // 刷新聊天数据
           this.cancelSelectMessage();
           this.currentChattingChangeService.switchCurrentChatting(this.currentChattingChangeService.currentChatting);
