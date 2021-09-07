@@ -147,7 +147,7 @@ export class CacheService {
    * @param alarmData
    * @param messages
    */
-  deleteChattingCache(alarmData: AlarmItemInterface, messages: ChatmsgEntityModel[] = null): Promise<any> {
+  deleteMessageCache(alarmData: AlarmItemInterface, messages: ChatmsgEntityModel[] = null): Promise<any> {
     return localforage.getItem(this.dataKeys.alarmData).then(data => {
       const check = data[alarmData.alarmItem.dataId];
       const alreadyMessageMap = !check ? {} : check.message;
@@ -167,7 +167,41 @@ export class CacheService {
     });
   }
 
+  /**
+   * 清除会话消息
+   * @param alarmData
+   */
+  clearChattingCache(alarmData: AlarmItemInterface): Promise<any> {
+    return localforage.getItem(this.dataKeys.alarmData).then(data => {
+      const check = data[alarmData.alarmItem.dataId];
+      if(check) {
+        return localforage.setItem(this.dataKeys.alarmData, Object.assign(data, {
+          [alarmData.alarmItem.dataId]: {
+            alarmData: alarmData,
+            message: {},
+          }
+        })).then((newCache) => {
+          this.cacheSource.next({alarmData: newCache});
+        });
+      }
+    });
+  }
 
+  /**
+   * 删除会话消息
+   * @param alarmData
+   */
+  deleteChattingCache(alarmData: AlarmItemInterface): Promise<any> {
+    return localforage.getItem(this.dataKeys.alarmData).then(data => {
+      const check = data[alarmData.alarmItem.dataId];
+      if(check) {
+        delete data[alarmData.alarmItem.dataId];
+        return localforage.setItem(this.dataKeys.alarmData, data).then((newCache) => {
+          this.cacheSource.next({alarmData: newCache});
+        });
+      }
+    });
+  }
 
   /**
    * 检查本地缓存是否是最新
