@@ -8,7 +8,7 @@ import {GroupModel} from "@app/models/group.model";
 type ActionType = (chat: ChatmsgEntityModel, messageContainer: HTMLDivElement) => void;
 
 // 对话列表action
-type ActionChattingType = (chatting: AlarmItemInterface, chattingList: AlarmItemInterface[]) => void;
+type ActionChattingType = (chatting: AlarmItemInterface) => void;
 
 // 对话列表action
 type ActionAvatarType = (alarmItem: AlarmItemInterface, chat: ChatmsgEntityModel) => void;
