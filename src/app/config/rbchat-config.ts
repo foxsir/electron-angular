@@ -319,6 +319,8 @@ const MsgType = {
   TYPE_AITE: 15,
   /**  ji 新增聊天消息类型之：踢人 */
   TYPE_TIREN: 57,
+  /**  消息已读 */
+  TYPE_READED: 56,
 
   /** 聊天消息类型之：系统消息或提示信息（此类消息通常由服务器即f="0"的用户发出）. */
   TYPE_SYSTEAM$INFO: 90,
