@@ -14,9 +14,11 @@ import {RestService} from "@services/rest/rest.service";
 import {LocalUserService} from "@services/local-user/local-user.service";
 import {GroupModel} from "@app/models/group.model";
 import {GroupAdminModel} from "@app/models/group-admin.model";
-import {FileService} from "@services/file/file.service";
 import {UserModel} from "@app/models/user.model";
 import CommonTools from "@app/common/common.tools";
+import {MessageService} from "@services/message/message.service";
+import {HistoryMessageService} from "@services/history-message/history-message.service";
+import {ChatModeType} from "@app/config/rbchat-config";
 
 interface CacheItem {
   alarmData: unknown;
@@ -48,6 +50,8 @@ export class CacheService {
     private rosterProviderService: RosterProviderService,
     private restService: RestService,
     private localUserService: LocalUserService,
+    private messageService: MessageService,
+    private historyMessageService: HistoryMessageService,
   ) {
     const userId = this.localUserService.localUserInfo.userId;
     for (const key in this.dataKeys) {
@@ -60,13 +64,26 @@ export class CacheService {
   /**
    * 缓存消息
    * @param alarmData
-   * @param message
+   * @param messages
    */
-  putChattingCache(alarmData: AlarmItemInterface, message: ChatmsgEntityModel = null): Promise<any> {
+  putChattingCache(alarmData: AlarmItemInterface, messages: ChatmsgEntityModel | ChatmsgEntityModel[] = null): Promise<any> {
     return localforage.getItem(this.dataKeys.alarmData).then(data => {
       // 缓存中没有数据
-      const cache = message !== null ? {[message.fingerPrintOfProtocal]: message} : {};
-      alarmData.alarmItem.msgContent = !message ? "" : message.text;
+      let cache = {};
+      if(messages !== null) {
+        if(messages.hasOwnProperty("length")) {
+          messages = messages as ChatmsgEntityModel[];
+          messages.forEach(msg => {
+            cache[msg.fingerPrintOfProtocal] = msg;
+          });
+          alarmData.alarmItem.msgContent = messages.slice(-1)[0].text;
+        } else {
+          messages  = messages as ChatmsgEntityModel;
+          cache = {[messages.fingerPrintOfProtocal]: messages};
+          alarmData.alarmItem.msgContent = messages.text;
+        }
+      }
+
       if (data === null) {
         return localforage.setItem(this.dataKeys.alarmData, {
           [alarmData.alarmItem.dataId]: {
@@ -80,14 +97,45 @@ export class CacheService {
         // 有数据时更新
         const check = data[alarmData.alarmItem.dataId];
         const alreadyMessageMap = !check ? {} : check.message;
-        return localforage.setItem(this.dataKeys.alarmData, Object.assign({
+        if(check) {
+          alarmData.metadata.unread = check.alarmData.metadata.unread;
+        }
+        return localforage.setItem(this.dataKeys.alarmData, Object.assign(data, {
           [alarmData.alarmItem.dataId]: {
             alarmData: alarmData,
             message: Object.assign(
               alreadyMessageMap, cache
             ),
           }
-        }, data)).then((newCache) => {
+        })).then((newCache) => {
+          this.cacheSource.next({alarmData: newCache});
+        });
+      }
+    });
+  }
+
+  /**
+   * 清除未读数
+   * @param alarmData
+   * @param badges
+   */
+  setChattingBadges(alarmData: AlarmItemInterface, badges: number) {
+    localforage.getItem(this.dataKeys.alarmData).then(data => {
+      const check = data[alarmData.alarmItem.dataId];
+      const alreadyMessageMap = !check ? {} : check.message;
+      if(check) {
+        if(badges > 0) {
+          check.alarmData.metadata.unread = check.alarmData.metadata.unread || 0;
+          alarmData.metadata.unread = check.alarmData.metadata.unread + badges;
+        }
+        localforage.setItem(this.dataKeys.alarmData, Object.assign(data, {
+          [alarmData.alarmItem.dataId]: {
+            alarmData: alarmData,
+            message: Object.assign(
+              alreadyMessageMap
+            ),
+          }
+        })).then((newCache) => {
           this.cacheSource.next({alarmData: newCache});
         });
       }
@@ -106,13 +154,13 @@ export class CacheService {
       if(check) {
         messages.forEach(m => {
           delete alreadyMessageMap[m.fingerPrintOfProtocal];
-        })
-        return localforage.setItem(this.dataKeys.alarmData, Object.assign({
+        });
+        return localforage.setItem(this.dataKeys.alarmData, Object.assign(data, {
           [alarmData.alarmItem.dataId]: {
             alarmData: alarmData,
             message: alreadyMessageMap,
           }
-        }, data)).then((newCache) => {
+        })).then((newCache) => {
           this.cacheSource.next({alarmData: newCache});
         });
       }
@@ -176,56 +224,64 @@ export class CacheService {
    * 从服务器同步聊天列表，并缓存列表, 返回同步后的聊天列表
    * @constructor
    */
-  syncChattingList(chattingListCache: unknown): Promise<AlarmItemInterface[]> {
+  async syncChattingList(chattingListCache: unknown): Promise<AlarmItemInterface[]> {
+    const friends = await this.getCacheFriends().then(res => res);
+    const groups = await this.getCacheGroups().then(res => res);
+
     return new Promise((resolve, reject) => {
       this.getAllLastMessage().then(res =>{
+        console.dir("getAllLastMessage");
         const newList: AlarmItemInterface[] = [];
         const keys = Object.keys(res);
-        keys.forEach(id => {
-          if(chattingListCache[id] === undefined) {
-            const data: RoamLastMsgModel = res[id];
-            const protocalModel: ProtocalModel = JSON.parse(data.lastMsg);
-            const dataContent: ProtocalModelDataContent = JSON.parse(protocalModel.dataContent);
 
-            const alarmItem: AlarmItemInterface = {
-              alarmItem: {
-                alarmMessageType: protocalModel.type,
-                dataId: id,
-                date: protocalModel.recvTime.toString(),
-                istop: true,
-                msgContent: dataContent.m,
-                title: null,
-                avatar: null,
-              },
-              // 聊天元数据
-              metadata: {
-                chatType: data.chatType, // "friend" | "group"
-              }
-            };
+        this.getCacheFriends();
+
+        keys.forEach(dataID => {
+          const data: RoamLastMsgModel = res[dataID];
+          const protocalModel: ProtocalModel = JSON.parse(data.lastMsg);
+          const dataContent: ProtocalModelDataContent = JSON.parse(protocalModel.dataContent);
+
+          let title = "";
+          let avatar = "";
+          if(data.chatType === 'friend' && friends[dataID]) {
+            title = friends[dataID].nickname;
+            avatar = friends[dataID].userAvatarFileName;
+          } else if(groups[dataID]) {
+            title = groups[dataID].gname;
+            avatar = groups[dataID].avatar;
+          }
+
+          const alarmItem: AlarmItemInterface = {
+            alarmItem: {
+              alarmMessageType: protocalModel.type,
+              dataId: dataID,
+              date: protocalModel.recvTime.toString(),
+              istop: true,
+              msgContent: this.messageService.parseMessageForShow(dataContent.m, dataContent.ty),
+              title: title,
+              avatar: avatar,
+            },
+            // 聊天元数据
+            metadata: {
+              chatType: data.chatType, // "friend" | "group"
+              unread: data.unread
+            }
+          };
+          // 将本地不存在的对话返回到聊天列表
+          if(chattingListCache[dataID] === undefined) {
             newList.push(alarmItem);
           }
+          // 同步消息
+          console.dir("chattingListCache");
+          this.syncMessage(alarmItem, protocalModel);
         });
-        this.getCacheGroups().then(gs => {
-          newList.forEach(item => {
-            if(item.metadata.chatType === 'group') {
-              const g = gs[item.alarmItem.dataId];
-              if(g) {
-                item.alarmItem.avatar =  g.avatar;
-                item.alarmItem.title =  g.gname;
-              }
-            }
-          });
-        });
-        this.getCacheFriends().then(fs => {
-          newList.forEach(item => {
-            if(item.metadata.chatType === 'friend') {
-              const f = fs[item.alarmItem.dataId];
-              if(f) {
-                item.alarmItem.avatar =  f.userAvatarFileName;
-                item.alarmItem.title =  f.nickname;
-              }
-            }
-          });
+        newList.forEach(item => {
+          if(item.metadata.chatType === 'group') {
+            const g = groups[item.alarmItem.dataId];
+          }
+          if(item.metadata.chatType === 'friend') {
+            const f = friends[item.alarmItem.dataId];
+          }
         });
         resolve(newList);
       });
@@ -327,7 +383,7 @@ export class CacheService {
   }
 
   /**
-   * 获取好友列表
+   * 获取群列表
    */
   getCacheGroups(): Promise<any> {
     return localforage.getItem(this.dataKeys.groupList);
@@ -371,6 +427,124 @@ export class CacheService {
           });
         }
       });
+    });
+  }
+
+  /**
+   * 同步其他客户端更新的消息
+   * @param alarmItem
+   * @param protocal
+   */
+  private syncMessage(alarmItem: AlarmItemInterface, protocal: ProtocalModel) {
+    this.getChattingCache(alarmItem).then(data => {
+      let localLastMsgFP = "0";
+      if(data) {
+        const list: ChatmsgEntityModel[] = Object.values(data);
+        const localLastMsg = list.slice(-1)[0];
+        localLastMsgFP = localLastMsg.fingerPrintOfProtocal;
+      }
+      if(localLastMsgFP !== protocal.fp) {
+        if(alarmItem.metadata.chatType === 'friend') {
+          this.historyMessageService.getFriendMessage(
+            alarmItem,
+            {start: localLastMsgFP, end: protocal.fp},
+          'end',
+            0
+          ).subscribe(res => {
+            if(res.status === 200 && res.data) {
+              const entityList = [];
+              res.data.list.forEach(msg => {
+                const msgJson: ProtocalModel = JSON.parse(msg);
+                let chatMsgEntity: ChatmsgEntityModel;
+                const dataContent = JSON.parse(msgJson.dataContent);
+                if(msgJson.from === this.localUserService.localUserInfo.userId.toString()) {
+                  chatMsgEntity = this.messageEntityService.prepareSendedMessage(
+                    dataContent.m, msgJson.recvTime, msgJson.fp, dataContent.ty
+                  );
+                } else {
+                  chatMsgEntity = this.messageEntityService.prepareRecievedMessage(
+                    msgJson.from, alarmItem.alarmItem.title, dataContent.m, msgJson.recvTime, dataContent.ty, msgJson.fp
+                  );
+                }
+                entityList.unshift(chatMsgEntity);
+              });
+              this.putChattingCache(alarmItem, entityList).then(() => {
+                this.setChattingBadges(alarmItem, alarmItem.metadata.unread);
+              });
+            }
+          });
+        } else if(alarmItem.metadata.chatType === 'group') {
+          this.historyMessageService.getGroupMessage(
+            alarmItem,
+            {start: localLastMsgFP, end: protocal.fp},
+            'end',
+            0
+          ).subscribe(res => {
+            if(res.status === 200 && res.data) {
+              const entityList = [];
+              res.data.list.forEach(msg => {
+                const msgJson: ProtocalModel = JSON.parse(msg);
+                let chatMsgEntity: ChatmsgEntityModel;
+                const dataContent = JSON.parse(msgJson.dataContent);
+                if(msgJson.from === this.localUserService.localUserInfo.userId.toString()) {
+                  chatMsgEntity = this.messageEntityService.prepareSendedMessage(
+                    dataContent.m, msgJson.recvTime, msgJson.fp, dataContent.ty
+                  );
+                } else {
+                  chatMsgEntity = this.messageEntityService.prepareRecievedMessage(
+                    msgJson.from, "nickName", dataContent.m, msgJson.recvTime, dataContent.ty, msgJson.fp
+                  );
+                }
+                entityList.unshift(chatMsgEntity);
+              });
+              this.putChattingCache(alarmItem, entityList).then(() => {
+                this.setChattingBadges(alarmItem, alarmItem.metadata.unread);
+              });
+            }
+          });
+        }
+      }
+    });
+  }
+
+  /**
+   * 使用 ProtocalModel 构建 AlarmItemInterface
+   * @param protocal
+   */
+  public async generateAlarmItem(protocal: ProtocalModel): Promise<AlarmItemInterface> {
+    const friends = await this.getCacheFriends().then(res => res);
+    const groups = await this.getCacheGroups().then(res => res);
+
+    return new Promise((resolve, reject) => {
+      const dataContent: ProtocalModelDataContent = JSON.parse(protocal.dataContent);
+
+      let chatType = "friend";
+      if(dataContent.cy === ChatModeType.CHAT_TYPE_GROUP$CHAT) {
+        chatType = 'group';
+      }
+      const alarm =  {
+        alarmItem: {
+          alarmMessageType: dataContent.cy,
+          dataId: chatType === 'group' ? dataContent.t : protocal.from,
+          date: protocal.recvTime.toString(),
+          istop: true,
+          msgContent: this.messageService.parseMessageForShow(dataContent.m, dataContent.ty),
+          title: null,
+          avatar: null,
+        },
+        metadata: {
+          chatType: chatType
+        }
+      };
+      if(chatType === 'group') {
+        alarm.alarmItem.title = groups[alarm.alarmItem.dataId].gname;
+        alarm.alarmItem.avatar = groups[alarm.alarmItem.dataId].avatar;
+      } else {
+        alarm.alarmItem.title = friends[alarm.alarmItem.dataId].nickname;
+        alarm.alarmItem.avatar = friends[alarm.alarmItem.dataId].userAvatarFileName;
+      }
+
+      resolve(alarm);
     });
   }
 
