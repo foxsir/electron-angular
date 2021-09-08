@@ -49,7 +49,7 @@
           <span #createPlanMenuTrigger="matMenuTrigger" #span [matMenuTriggerFor]="contextmenu"></span>
           <mat-menu #contextmenu="matMenu">
             <button mat-menu-item *ngFor="let item of contextMenuChatting"
-                    (click)="item.action(alarm, alarmItemList)">
+                    (click)="item.action(alarm)">
               {{item.label}}
             </button>
           </mat-menu>

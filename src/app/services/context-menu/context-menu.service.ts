@@ -292,7 +292,6 @@ export class ContextMenuService {
                 alarmMessageType: 0, // 0单聊 1临时聊天/陌生人聊天 2群聊
                 dataId: chat.uid,
                 date: null,
-                istop: true,
                 msgContent: "",
                 title: chat.name,
                 avatar: list[chat.uid]?.userAvatarFileName,

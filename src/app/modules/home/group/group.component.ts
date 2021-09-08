@@ -43,7 +43,6 @@ export class GroupComponent implements OnInit, OnDestroy {
         alarmMessageType: 2, // 0单聊 1临时聊天/陌生人聊天 2群聊
         dataId: item.gid,
         date: "",
-        istop: true,
         msgContent: "",
         title: item.gname,
         avatar: item.avatar,

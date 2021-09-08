@@ -11,6 +11,7 @@ export class ServerForwardService {
     [MsgType.TYPE_BACK]: this.backMessage.bind(this),
     [MsgType.TYPE_TIREN]: this.tiRenMessage.bind(this),
     [MsgType.TYPE_SYSTEAM$INFO]: this.systemMessage.bind(this),
+    [MsgType.TYPE_READED]: this.readedStatus.bind(this),
   };
 
   constructor() { }
@@ -22,11 +23,15 @@ export class ServerForwardService {
   }
 
   tiRenMessage(res: ProtocalModel) {
-
+    console.dir(res);
   }
 
   systemMessage(res: ProtocalModel) {
+    console.dir(res);
+  }
 
+  readedStatus(res: ProtocalModel) {
+    console.dir(res);
   }
 
 }

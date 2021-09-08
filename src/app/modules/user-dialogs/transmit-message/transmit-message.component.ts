@@ -6,7 +6,7 @@ import FriendModel from "@app/models/friend.model";
 import {MatSelectionList} from "@angular/material/list";
 import {ReplyMessageChildMessage} from "@app/interfaces/reply-message.interface";
 import {MessageService} from "@services/message/message.service";
-import {MsgType} from "@app/config/rbchat-config";
+import {ChatModeType, MsgType} from "@app/config/rbchat-config";
 import {MessageEntityService} from "@services/message-entity/message-entity.service";
 import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 import {CurrentChattingChangeService} from "@services/current-chatting-change/current-chatting-change.service";
@@ -72,11 +72,10 @@ export class TransmitMessageComponent implements OnInit {
           if(res.success === true) {
             const alarmData: AlarmItemInterface = {
               alarmItem: {
-                alarmMessageType: 0,
+                alarmMessageType: ChatModeType.CHAT_TYPE_FRIEND$CHAT,
                 dataId: friend.friendUserUid.toString(),
-                date: new Date().getTime().toString(),
-                istop: true,
-                msgContent: newMsg.text,
+                date: msg.date.toString(),
+                msgContent: this.messageService.parseMessageForShow(msg.text, msg.msgType),
                 title: friend.nickname,
                 avatar: null,
               },

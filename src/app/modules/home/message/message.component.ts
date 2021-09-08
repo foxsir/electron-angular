@@ -307,11 +307,7 @@ export class MessageComponent implements OnInit {
   }
 
   insertItem(alarmData: AlarmItemInterface) {
-    if (Object.is(Boolean(alarmData.alarmItem.istop), true)) {
-      this.alarmItemList = [alarmData, ...this.alarmItemList];
-    } else {
-      this.alarmItemList = [ ...this.alarmItemList, alarmData];
-    }
+    this.alarmItemList = [alarmData, ...this.alarmItemList];
   }
 
   /**
