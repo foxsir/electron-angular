@@ -112,55 +112,56 @@
                 <div *ngIf="loadingMessage" class="loading-message" fxLayoutAlign="center end">
                   <mat-spinner [diameter]="20" [strokeWidth]="3" mode="indeterminate"></mat-spinner>
                 </div>
-                <div fxLayout="row" *ngFor="let chat of chatMsgEntityList"
-                     (click)="selectMessage ? collectMessage(chat, msgCheckbox) : false"
-                     [fxLayoutAlign]="chat.uid.toString() === localUserInfo.userId.toString() ? 'space-between' : 'start'"
-                     [ngClass]="{'self-message': chat.uid.toString() === localUserInfo.userId.toString()}">
+                <div fxLayout="row" *ngFor="let chat of chatMsgEntityList | keyvalue: asIsOrder"
+                     (click)="selectMessage ? collectMessage(chat.value, msgCheckbox) : false"
+                     [fxLayoutAlign]="chat.value.uid.toString() === localUserInfo.userId.toString() ? 'space-between' : 'start'"
+                     [ngClass]="{'self-message': chat.value.uid.toString() === localUserInfo.userId.toString()}">
                   <div [fxFlex]="selectMessage ? '35px' : '1px'" fxLayoutAlign="start center">
                     <div [fxShow]="selectMessage">
-                      <mat-checkbox #msgCheckbox disableRipple color="primary" (change)="collectMessage(chat, msgCheckbox)"></mat-checkbox>
+                      <mat-checkbox #msgCheckbox disableRipple color="primary" (change)="collectMessage(chat.value, msgCheckbox)"></mat-checkbox>
                     </div>
                   </div>
                   <div fxFlex="65"
-                       [fxLayoutAlign]="chat.uid.toString() === localUserInfo.userId.toString() ? 'end' : 'start'">
+                       [id]="chat.key"
+                       [fxLayoutAlign]="chat.value.uid.toString() === localUserInfo.userId.toString() ? 'end' : 'start'">
                     <div fxLayout="column" class="message-container" fxLayoutGap="5px"
-                         [fxLayoutAlign]="chat.uid.toString() === localUserInfo.userId.toString() ? 'end end' : 'start'">
+                         [fxLayoutAlign]="chat.value.uid.toString() === localUserInfo.userId.toString() ? 'end end' : 'start'">
                       <div class="message-time">
-                        {{formatDate(chat.date, 'M-dd hh:m')}}
+                        {{formatDate(chat.value.date, 'M-dd hh:m')}}
                       </div>
-                      <!--[fxLayoutAlign]="chat.uid === localUserInfo.userId ? 'end' : 'start'"-->
-                      <div [fxLayout]="chat.uid.toString() === localUserInfo.userId.toString() ? 'row-reverse' : 'row'" fxLayoutGap="10px">
+                      <!--[fxLayoutAlign]="chat.value.uid === localUserInfo.userId ? 'end' : 'start'"-->
+                      <div [fxLayout]="chat.value.uid.toString() === localUserInfo.userId.toString() ? 'row-reverse' : 'row'" fxLayoutGap="10px">
                         <div fxFlex="40px" *ngIf="currentChat.metadata.chatType === 'group'">
-                          <img (contextmenu)="contextMenuForAvatar($event, createPlanMenuTriggerAvatar, avatarSpan, chat)"
+                          <img (contextmenu)="contextMenuForAvatar($event, createPlanMenuTriggerAvatar, avatarSpan, chat.value)"
                                src="https://material.angular.io/assets/img/examples/shiba2.jpg" mat-card-avatar alt="">
                           <!--增加头像上的右键功能-->
                           <span #createPlanMenuTriggerAvatar="matMenuTrigger" #avatarSpan [matMenuTriggerFor]="contextmenuForAvatar"></span>
                           <mat-menu #contextmenuForAvatar="matMenu">
                             <button mat-menu-item *ngFor="let item of contextMenuAvatar"
-                                    (click)="item.action(currentChat, chat)">
+                                    (click)="item.action(currentChat, chat.value)">
                               {{item.label}}
                             </button>
                           </mat-menu>
                         </div>
                         <div fxFlex>
                           <div *ngIf="currentChat.metadata.chatType === 'group'"
-                               [fxLayoutAlign]="chat.uid.toString() === localUserInfo.userId.toString() ? 'end end' : 'start'">
-                            {{chat.name}}
+                               [fxLayoutAlign]="chat.value.uid.toString() === localUserInfo.userId.toString() ? 'end end' : 'start'">
+                            {{chat.value.name}}
                           </div>
-                          <div class="message-entity-item" fxLayout="row" (contextmenu)="contextMenuForMessage($event, createPlanMenuTrigger, span, chat)">
+                          <div class="message-entity-item" fxLayout="row" (contextmenu)="contextMenuForMessage($event, createPlanMenuTrigger, span, chat.value)">
                             <div class="message-entity" #messageContainer>
-                              <app-message-factory [chatMsg]="chat"></app-message-factory>
+                              <app-message-factory [chatMsg]="chat.value"></app-message-factory>
                             </div>
                             <span #createPlanMenuTrigger="matMenuTrigger" #span [matMenuTriggerFor]="contextmenu"></span>
                             <mat-menu #contextmenu="matMenu">
                               <button mat-menu-item *ngFor="let item of contextMenu"
-                                      (click)="item.action(chat, messageContainer)">
+                                      (click)="item.action(chat.value, messageContainer)">
                                 {{item.label}}
                               </button>
                             </mat-menu>
                           </div>
                           <div class="wait-sending">
-                            <div [fxShow]="chat.isOutgoing === false && chat.uid.toString() === localUserInfo.userId.toString()">
+                            <div [fxShow]="chat.value.isOutgoing === false && chat.value.uid.toString() === localUserInfo.userId.toString()">
                               <mat-spinner [diameter]="20" [strokeWidth]="3" mode="indeterminate"></mat-spinner>
                             </div>
                           </div>

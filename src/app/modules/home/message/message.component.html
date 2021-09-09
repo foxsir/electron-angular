@@ -10,28 +10,28 @@
       </div>
       <div id="chatting-list" class="scrollbar">
         <mat-card class="mat-elevation-z0"
-                  [ngClass]="{'active-chatting': alarm.alarmItem.dataId === currentChat?.alarmItem.dataId}"
+                  [ngClass]="{'active-chatting': alarm.value.alarmData.alarmItem.dataId === currentChat?.alarmItem.dataId}"
                   style="background: transparent;"
-                  *ngFor="let alarm of alarmItemList" (click)="switchChat(alarm); chattingSetting.close();"
-                  (contextmenu)="contextMenuForChatting($event, createPlanMenuTrigger, span, alarm)">
+                  *ngFor="let alarm of alarmItemList | keyvalue" (click)="switchChat(alarm.value.alarmData); chattingSetting.close();"
+                  (contextmenu)="contextMenuForChatting($event, createPlanMenuTrigger, span, alarm.value.alarmData)">
           <div fxLayout="row" fxLayoutGap="10px">
             <div fxFlex="40px">
-              <img [src]="alarm.alarmItem.avatar" mat-card-avatar alt="">
+              <img [src]="alarm.value.alarmData.alarmItem.avatar" mat-card-avatar alt="">
             </div>
             <div fxFlex="calc(100% - 110px)">
               <div fxLayout="column">
                 <div fxFlex="100">
-                  <mat-card-subtitle>{{alarm.alarmItem.title}}</mat-card-subtitle>
+                  <mat-card-subtitle>{{alarm.value.alarmData.alarmItem.title}}</mat-card-subtitle>
                 </div>
                 <div fxFlex="100">
-                  <div class="chatting-hint">{{alarm.alarmItem.msgContent}}</div>
+                  <div class="chatting-hint">{{alarm.value.alarmData.alarmItem.msgContent}}</div>
                 </div>
               </div>
             </div>
             <div fxFlex="70px" fxLayoutAlign="center">
               <div fxLayout="column" fxFlex="100">
                 <div fxFlex="100" fxLayout="row">
-                  <div style="font-size: 12px;">{{formatDate(alarm.alarmItem.date, 'M-d h:m')}}</div>
+                  <div style="font-size: 12px;">{{formatDate(alarm.value.alarmData.alarmItem.date, 'M-d h:m')}}</div>
                 </div>
                 <div fxFlex="100" fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="end">
                   <div fxFlex="50">
@@ -40,7 +40,7 @@
                     </mat-icon>
                   </div>
                   <div fxFlex="50">
-                    <div class="message-badges" [fxHide]="!alarm.metadata.unread">{{alarm.metadata.unread}}</div>
+                    <div class="message-badges" [fxHide]="!alarm.value.alarmData.metadata.unread">{{alarm.value.alarmData.metadata.unread}}</div>
                   </div>
                 </div>
               </div>
@@ -49,7 +49,7 @@
           <span #createPlanMenuTrigger="matMenuTrigger" #span [matMenuTriggerFor]="contextmenu"></span>
           <mat-menu #contextmenu="matMenu">
             <button mat-menu-item *ngFor="let item of contextMenuChatting"
-                    (click)="item.action(alarm)">
+                    (click)="item.action(alarm.value.alarmData)">
               {{item.label}}
             </button>
           </mat-menu>

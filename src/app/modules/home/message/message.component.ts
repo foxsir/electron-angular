@@ -38,7 +38,7 @@ import {ContextMenuService} from "@services/context-menu/context-menu.service";
 import {ContextMenuModel, ContextMenuChattingModel} from "@app/models/context-menu.model";
 import {AvatarService} from "@services/avatar/avatar.service";
 import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
-import {CacheService} from "@services/cache/cache.service";
+import {AlarmDataMap, CacheService} from "@services/cache/cache.service";
 import {QuoteMessageService} from "@services/quote-message/quote-message.service";
 import {MessageRoamService} from "@services/message-roam/message-roam.service";
 import {Router} from "@angular/router";
@@ -64,7 +64,7 @@ export class MessageComponent implements OnInit {
   public closePromptIcon = this.dom.bypassSecurityTrustResourceUrl(closePromptIcon);
   // end icon
 
-  public alarmItemList: AlarmItemInterface[] = [];
+  public alarmItemList: AlarmDataMap = new Map();
   public chatMsgEntityList: ChatmsgEntityModel[];
   public currentChat: AlarmItemInterface;
   public currentChatAvatar: SafeResourceUrl;
@@ -134,12 +134,11 @@ export class MessageComponent implements OnInit {
 
   ngOnInit(): void {
     this.cacheService.getChattingList().then(res => {
-      if(res) {
-        Object.values(res).forEach(item => {
-          this.insertItem(item.alarmData);
-        });
+      if(res && res.size) {
+        this.alarmItemList = res;
       }
-      this.cacheService.syncChattingList(res || {}).then(list => {
+
+      this.cacheService.syncChattingList(res).then(list => {
         list.forEach(item => this.insertItem(item));
       });
     });
@@ -194,21 +193,10 @@ export class MessageComponent implements OnInit {
     this.cacheService.cacheUpdate$.subscribe(cache => {
       console.dir("subscribe cache");
       this.cacheService.getChattingList().then(res => {
-        if(res) {
-          this.alarmItemList = [];
-          Object.values(res).forEach(item => {
-            this.insertItem(item.alarmData);
-          });
+        if(res && res.size) {
+          this.alarmItemList = res;
         }
       });
-      // if (cache.alarmData) {
-      //   const alarmDataList: AlarmItemInterface[] = [];
-      //   Object.values(cache.alarmData).forEach((item: {alarmData: AlarmItemInterface}) => {
-      //     // alarmDataList.push(item.alarmData);
-      //     this.insertItem(item.alarmData);
-      //   });
-      //   // this.alarmItemList = alarmDataList;
-      // }
     });
   }
 
@@ -307,7 +295,7 @@ export class MessageComponent implements OnInit {
   }
 
   insertItem(alarmData: AlarmItemInterface) {
-    this.alarmItemList = [alarmData, ...this.alarmItemList];
+    // this.alarmItemList = [alarmData, ...this.alarmItemList];
   }
 
   /**

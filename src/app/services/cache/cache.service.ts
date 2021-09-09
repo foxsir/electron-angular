@@ -20,13 +20,16 @@ import {MessageService} from "@services/message/message.service";
 import {HistoryMessageService} from "@services/history-message/history-message.service";
 import {ChatModeType} from "@app/config/rbchat-config";
 
+export type AlarmDataMap = Map<string, {alarmData: AlarmItemInterface; message: Map<string, ChatmsgEntityModel>}>;
+
 interface CacheItem {
-  alarmData: unknown;
-  friendList: unknown;
-  groupList: unknown;
-  groupAdminList: unknown;
-  myInfo: unknown;
+  alarmData: AlarmDataMap;
+  friendList: Map<string, FriendModel>;
+  groupList: Map<string, GroupModel>;
+  groupAdminList: Map<string, Map<number, GroupAdminModel>>;
+  myInfo: UserModel;
 }
+
 
 @Injectable({
   providedIn: 'root'
@@ -65,52 +68,63 @@ export class CacheService {
    * 缓存消息
    * @param alarmData
    * @param messages
+   * @param position end 向下合并，top 向上合并
    */
-  putChattingCache(alarmData: AlarmItemInterface, messages: ChatmsgEntityModel | ChatmsgEntityModel[] = null): Promise<any> {
-    return localforage.getItem(this.dataKeys.alarmData).then(data => {
-      // 缓存中没有数据
-      let cache = {};
-      if(messages !== null) {
-        if(messages.hasOwnProperty("length")) {
-          messages = messages as ChatmsgEntityModel[];
-          messages.forEach(msg => {
-            cache[msg.fingerPrintOfProtocal] = msg;
-          });
-          alarmData.alarmItem.msgContent = messages.slice(-1)[0].text;
-        } else {
-          messages  = messages as ChatmsgEntityModel;
-          cache = {[messages.fingerPrintOfProtocal]: messages};
-          alarmData.alarmItem.msgContent = messages.text;
+  putChattingCache(
+    alarmData: AlarmItemInterface, messages: ChatmsgEntityModel | ChatmsgEntityModel[] = null, position: 'top' | 'end' = 'end'
+  ): Promise<any> {
+    return new Promise((resolve, reject) => {
+      localforage.getItem(this.dataKeys.alarmData).then((data: Map<string, any>) => {
+        // 缓存中没有数据
+        const cache = new Map();
+        if(messages !== null) {
+          if(messages.hasOwnProperty("length")) {
+            messages = messages as ChatmsgEntityModel[];
+            messages.forEach(msg => {
+              cache.set(msg.fingerPrintOfProtocal, msg);
+            });
+            alarmData.alarmItem.msgContent = messages.slice(-1)[0]?.text;
+          } else {
+            messages  = messages as ChatmsgEntityModel;
+            cache.set(messages.fingerPrintOfProtocal, messages);
+            alarmData.alarmItem.msgContent = messages.text;
+          }
         }
-      }
 
-      if (data === null) {
-        return localforage.setItem(this.dataKeys.alarmData, {
-          [alarmData.alarmItem.dataId]: {
+        if (data === null) {
+          const map = new Map();
+          map.set(alarmData.alarmItem.dataId, {
             alarmData: alarmData,
             message: cache,
+          });
+          localforage.setItem(this.dataKeys.alarmData, map).then((newCache) => {
+            resolve(newCache);
+            this.cacheSource.next({alarmData: newCache});
+          });
+        } else {
+          // 有数据时更新
+          const check = data.get(alarmData.alarmItem.dataId);
+          const alreadyMessageMap = !check ? new Map() : check.message;
+          if(check) {
+            alarmData.metadata.unread = check.alarmData.metadata.unread;
           }
-        }).then((newCache) => {
-          this.cacheSource.next({alarmData: newCache});
-        });
-      } else {
-        // 有数据时更新
-        const check = data[alarmData.alarmItem.dataId];
-        const alreadyMessageMap = !check ? {} : check.message;
-        if(check) {
-          alarmData.metadata.unread = check.alarmData.metadata.unread;
-        }
-        return localforage.setItem(this.dataKeys.alarmData, Object.assign(data, {
-          [alarmData.alarmItem.dataId]: {
+
+          let newMessages: Map<string, ChatmsgEntityModel>;
+          if(position === 'end') {
+            newMessages = new Map([...alreadyMessageMap, ...cache]);
+          } else {
+            newMessages = new Map([...cache, ...alreadyMessageMap]);
+          }
+          data.set(alarmData.alarmItem.dataId, {
             alarmData: alarmData,
-            message: Object.assign(
-              alreadyMessageMap, cache
-            ),
-          }
-        })).then((newCache) => {
-          this.cacheSource.next({alarmData: newCache});
-        });
-      }
+            message: newMessages,
+          });
+          localforage.setItem(this.dataKeys.alarmData, data).then((newCache) => {
+            resolve(newCache);
+            this.cacheSource.next({alarmData: newCache});
+          });
+        }
+      });
     });
   }
 
@@ -120,22 +134,20 @@ export class CacheService {
    * @param badges
    */
   setChattingBadges(alarmData: AlarmItemInterface, badges: number) {
-    localforage.getItem(this.dataKeys.alarmData).then(data => {
-      const check = data[alarmData.alarmItem.dataId];
-      const alreadyMessageMap = !check ? {} : check.message;
+    localforage.getItem(this.dataKeys.alarmData).then((data: Map<string, any>) => {
+      const check = data.get(alarmData.alarmItem.dataId);
+      const alreadyMessageMap = !check ? new Map() : check.message;
       if(check) {
         if(badges > 0) {
           check.alarmData.metadata.unread = check.alarmData.metadata.unread || 0;
           alarmData.metadata.unread = check.alarmData.metadata.unread + badges;
         }
-        localforage.setItem(this.dataKeys.alarmData, Object.assign(data, {
-          [alarmData.alarmItem.dataId]: {
-            alarmData: alarmData,
-            message: Object.assign(
-              alreadyMessageMap
-            ),
-          }
-        })).then((newCache) => {
+        const map = new Map();
+        map.set(alarmData.alarmItem.dataId, {
+          alarmData: alarmData,
+          message: alreadyMessageMap,
+        });
+        localforage.setItem(this.dataKeys.alarmData, new Map([...data, ...map])).then((newCache) => {
           this.cacheSource.next({alarmData: newCache});
         });
       }
@@ -148,19 +160,19 @@ export class CacheService {
    * @param messages
    */
   deleteMessageCache(alarmData: AlarmItemInterface, messages: ChatmsgEntityModel[] = null): Promise<any> {
-    return localforage.getItem(this.dataKeys.alarmData).then(data => {
-      const check = data[alarmData.alarmItem.dataId];
-      const alreadyMessageMap = !check ? {} : check.message;
+    return localforage.getItem(this.dataKeys.alarmData).then((data: Map<string, any>) => {
+      const check = data.get(alarmData.alarmItem.dataId);
+      const alreadyMessageMap: Map<string, any> = !check ? new Map() : check.message;
       if(check) {
         messages.forEach(m => {
-          delete alreadyMessageMap[m.fingerPrintOfProtocal];
+          alreadyMessageMap.delete(m.fingerPrintOfProtocal);
         });
-        return localforage.setItem(this.dataKeys.alarmData, Object.assign(data, {
-          [alarmData.alarmItem.dataId]: {
-            alarmData: alarmData,
-            message: alreadyMessageMap,
-          }
-        })).then((newCache) => {
+        const map = new Map();
+        map.set(alarmData.alarmItem.dataId, {
+          alarmData: alarmData,
+          message: alreadyMessageMap,
+        });
+        return localforage.setItem(this.dataKeys.alarmData, new Map([...data, ...map])).then((newCache) => {
           this.cacheSource.next({alarmData: newCache});
         });
       }
@@ -172,15 +184,15 @@ export class CacheService {
    * @param alarmData
    */
   clearChattingCache(alarmData: AlarmItemInterface): Promise<any> {
-    return localforage.getItem(this.dataKeys.alarmData).then(data => {
-      const check = data[alarmData.alarmItem.dataId];
+    return localforage.getItem(this.dataKeys.alarmData).then((data: Map<string, any>) => {
+      const check = data.get(alarmData.alarmItem.dataId);
       if(check) {
-        return localforage.setItem(this.dataKeys.alarmData, Object.assign(data, {
-          [alarmData.alarmItem.dataId]: {
-            alarmData: alarmData,
-            message: {},
-          }
-        })).then((newCache) => {
+        const map = new Map();
+        map.set(alarmData.alarmItem.dataId, {
+          alarmData: alarmData,
+          message: new Map(),
+        });
+        return localforage.setItem(this.dataKeys.alarmData, new Map([...data, ...map])).then((newCache) => {
           this.cacheSource.next({alarmData: newCache});
         });
       }
@@ -192,10 +204,10 @@ export class CacheService {
    * @param alarmData
    */
   deleteChattingCache(alarmData: AlarmItemInterface): Promise<any> {
-    return localforage.getItem(this.dataKeys.alarmData).then(data => {
-      const check = data[alarmData.alarmItem.dataId];
+    return localforage.getItem(this.dataKeys.alarmData).then((data: Map<string, any>) => {
+      const check = data.get(alarmData.alarmItem.dataId);
       if(check) {
-        delete data[alarmData.alarmItem.dataId];
+        data.delete(alarmData.alarmItem.dataId);
         return localforage.setItem(this.dataKeys.alarmData, data).then((newCache) => {
           this.cacheSource.next({alarmData: newCache});
         });
@@ -204,25 +216,13 @@ export class CacheService {
   }
 
   /**
-   * 检查本地缓存是否是最新
-   * @param alarmData
-   */
-  public checkCacheIsNewest(alarmData: AlarmItemInterface) {
-    this.getChattingCache(alarmData).then(data => {
-      this.getAllLastMessage().then(all => {
-        console.dir(all[alarmData.alarmItem.dataId]);
-      });
-    });
-  }
-
-  /**
    * 删除会话列表本地缓存
    * @param alarmData
    */
-  removeChattingCache(alarmData: AlarmItemInterface): Promise<any> {
+  removeChattingCache(alarmData: AlarmItemInterface): Promise<Map<string, ChatmsgEntityModel>> {
     return new Promise((resolve, reject) => {
-      localforage.getItem(this.dataKeys.alarmData).then(data => {
-        delete data[alarmData.alarmItem.dataId];
+      localforage.getItem(this.dataKeys.alarmData).then((data: Map<string, any>) => {
+        data.delete(alarmData.alarmItem.dataId);
         localforage.setItem(this.dataKeys.alarmData, data).then((res) => {
           resolve(res);
         });
@@ -234,14 +234,14 @@ export class CacheService {
    * 根据会话获取消息缓存
    * @param alarmData
    */
-  getChattingCache(alarmData: AlarmItemInterface): Promise<any> {
+  getChattingCache(alarmData: AlarmItemInterface): Promise<Map<string, ChatmsgEntityModel>> {
     return new Promise((resolve, reject) => {
-      localforage.getItem(this.dataKeys.alarmData).then(data => {
+      localforage.getItem(this.dataKeys.alarmData).then((data: Map<string, any>) => {
         if (data === null) {
           resolve(data);
         } else {
-          const cache = data[alarmData.alarmItem.dataId];
-          resolve(!cache ? null : cache.message);
+          const cache = data.get(alarmData.alarmItem.dataId);
+          resolve(!cache ? new Map() : cache.message);
         }
       });
     });
@@ -250,7 +250,7 @@ export class CacheService {
   /**
    * 获取聊天列表缓存
    */
-  getChattingList(): Promise<unknown> {
+  getChattingList(): Promise<AlarmDataMap> {
     return localforage.getItem(this.dataKeys.alarmData);
   }
 
@@ -258,31 +258,28 @@ export class CacheService {
    * 从服务器同步聊天列表，并缓存列表, 返回同步后的聊天列表
    * @constructor
    */
-  async syncChattingList(chattingListCache: unknown): Promise<AlarmItemInterface[]> {
+  async syncChattingList(chattingListCache: AlarmDataMap): Promise<Map<string, AlarmItemInterface>> {
     const friends = await this.getCacheFriends().then(res => res);
     const groups = await this.getCacheGroups().then(res => res);
 
     return new Promise((resolve, reject) => {
-      this.getAllLastMessage().then(res =>{
+      this.getAllLastMessage().then((res: Map<string, any>) =>{
         console.dir("getAllLastMessage");
-        const newList: AlarmItemInterface[] = [];
-        const keys = Object.keys(res);
+        const newMap: Map<string, AlarmItemInterface> = new Map();
 
-        this.getCacheFriends();
-
-        keys.forEach(dataID => {
-          const data: RoamLastMsgModel = res[dataID];
+        res.forEach((_, dataID) => {
+          const data: RoamLastMsgModel = res.get(dataID);
           const protocalModel: ProtocalModel = JSON.parse(data.lastMsg);
           const dataContent: ProtocalModelDataContent = JSON.parse(protocalModel.dataContent);
 
           let title = "";
           let avatar = "";
-          if(data.chatType === 'friend' && friends[dataID]) {
-            title = friends[dataID].nickname;
-            avatar = friends[dataID].userAvatarFileName;
-          } else if(groups[dataID]) {
-            title = groups[dataID].gname;
-            avatar = groups[dataID].avatar;
+          if(data.chatType === 'friend' && friends && friends.get(dataID)) {
+            title = friends.get(dataID).nickname;
+            avatar = friends.get(dataID).userAvatarFileName;
+          } else if(groups && groups.get(dataID)) {
+            title = groups.get(dataID).gname;
+            avatar = groups.get(dataID).avatar;
           }
 
           const alarmItem: AlarmItemInterface = {
@@ -301,22 +298,23 @@ export class CacheService {
             }
           };
           // 将本地不存在的对话返回到聊天列表
-          if(chattingListCache[dataID] === undefined) {
-            newList.push(alarmItem);
+          if(chattingListCache && chattingListCache.get(dataID) === undefined) {
+            newMap.set(alarmItem.alarmItem.dataId, alarmItem);
           }
           // 同步消息
           console.dir("chattingListCache");
           this.syncMessage(alarmItem, protocalModel);
         });
-        newList.forEach(item => {
-          if(item.metadata.chatType === 'group') {
-            const g = groups[item.alarmItem.dataId];
-          }
-          if(item.metadata.chatType === 'friend') {
-            const f = friends[item.alarmItem.dataId];
-          }
-        });
-        resolve(newList);
+
+        // newList.forEach(item => {
+        //   if(item.metadata.chatType === 'group') {
+        //     const g = groups[item.alarmItem.dataId];
+        //   }
+        //   if(item.metadata.chatType === 'friend') {
+        //     const f = friends[item.alarmItem.dataId];
+        //   }
+        // });
+        resolve(newMap);
       });
     });
   }
@@ -324,12 +322,12 @@ export class CacheService {
   /**
    * 返回一个以会话id作为索引的对象
    */
-  getAllLastMessage(): Promise<unknown> {
+  getAllLastMessage(): Promise<Map<string, RoamLastMsgModel>> {
     return new Promise((resolve, reject) => {
       this.messageRoamService.getAllLastMessage().then((res: RoamLastMsgModel[]) => {
-        const all = {};
+        const all = new Map();
         res.forEach(item => {
-          all[item.uid || item.gid] = item;
+          all.set(item.uid || item.gid, item);
         });
         resolve(all);
       });
@@ -345,9 +343,9 @@ export class CacheService {
       if(res.status === 200) {
         const friendList: FriendModel[] = res.data;
         if (friendList.length > 0) {
-          const data = {};
+          const data = new Map<string, FriendModel>();
           friendList.forEach(f => {
-            data[f.friendUserUid] = f;
+            data.set(f.friendUserUid.toString(), f);
           });
           localforage.setItem(this.dataKeys.friendList, data).then((newCache) => {
             this.cacheSource.next({friendList: newCache});
@@ -363,9 +361,9 @@ export class CacheService {
   cacheGroups() {
     this.restService.getUserJoinGroup().subscribe((res: NewHttpResponseInterface<GroupModel[]>) => {
       if(res.status === 200) {
-        const groupMap = {};
+        const groupMap = new Map<string, GroupModel>();
         res.data.forEach(g => {
-          groupMap[g.gid] = g;
+          groupMap.set(g.gid, g);
         });
         localforage.setItem(this.dataKeys.groupList, groupMap).then((newCache) => {
           this.cacheSource.next({groupList: newCache});
@@ -380,18 +378,18 @@ export class CacheService {
   cacheGroupAdmins(gid: string) {
     this.restService.getGroupAdminList(gid).subscribe((res: NewHttpResponseInterface<GroupAdminModel[]>) => {
       if(res.status === 200) {
-        const groupAdminMap = {};
+        const groupAdminMap = new Map<number, GroupAdminModel>();
         res.data.forEach(admin => {
-          groupAdminMap[admin.userUid] = admin;
+          groupAdminMap.set(admin.userUid, admin);
         });
 
-        let newData = {};
-        localforage.getItem(this.dataKeys.groupAdminList).then(data => {
+        let newData = new Map<string, Map<number, GroupAdminModel>>();
+        localforage.getItem(this.dataKeys.groupAdminList).then((data: Map<string, Map<number, GroupAdminModel>>) => {
           if(data) {
-            data[gid] = groupAdminMap;
+            data.set(gid, groupAdminMap);
             newData = data;
           } else {
-            newData[gid] = groupAdminMap;
+            newData.set(gid, groupAdminMap);
           }
           localforage.setItem(this.dataKeys.groupAdminList, newData).then((newCache) => {
             this.cacheSource.next({groupAdminList: newCache});
@@ -404,21 +402,21 @@ export class CacheService {
   /**
    * 获取好友列表
    */
-  getCacheGroupAdmins(): Promise<any> {
+  getCacheGroupAdmins(): Promise<Map<string, Map<number, GroupAdminModel>>> {
     return localforage.getItem(this.dataKeys.groupAdminList);
   }
 
   /**
    * 获取好友列表
    */
-  getCacheFriends(): Promise<any> {
+  getCacheFriends(): Promise<Map<string, FriendModel>> {
     return localforage.getItem(this.dataKeys.friendList);
   }
 
   /**
    * 获取群列表
    */
-  getCacheGroups(): Promise<any> {
+  getCacheGroups(): Promise<Map<string, GroupModel>> {
     return localforage.getItem(this.dataKeys.groupList);
   }
 
@@ -469,12 +467,12 @@ export class CacheService {
    * @param protocal
    */
   private syncMessage(alarmItem: AlarmItemInterface, protocal: ProtocalModel) {
-    this.getChattingCache(alarmItem).then(data => {
-      let localLastMsgFP = "0";
-      if(data) {
-        const list: ChatmsgEntityModel[] = Object.values(data);
-        const localLastMsg = list.slice(-1)[0];
-        localLastMsgFP = localLastMsg.fingerPrintOfProtocal;
+    this.getChattingCache(alarmItem).then((data: Map<string, any>) => {
+      let localLastMsgFP = "";
+      if(data && data.size) {
+        const list: ChatmsgEntityModel[] = new Array(...data.values());
+        const localLastMsg: ChatmsgEntityModel[] = list.slice(-1);
+        localLastMsgFP = localLastMsg[0].fingerPrintOfProtocal;
       }
       if(localLastMsgFP !== protocal.fp) {
         if(alarmItem.metadata.chatType === 'friend') {
@@ -569,15 +567,14 @@ export class CacheService {
         }
       };
       if(chatType === 'group') {
-        alarm.alarmItem.title = groups[alarm.alarmItem.dataId].gname;
-        alarm.alarmItem.avatar = groups[alarm.alarmItem.dataId].avatar;
+        alarm.alarmItem.title = groups.get(alarm.alarmItem.dataId).gname;
+        alarm.alarmItem.avatar = groups.get(alarm.alarmItem.dataId).avatar;
       } else {
-        alarm.alarmItem.title = friends[alarm.alarmItem.dataId].nickname;
-        alarm.alarmItem.avatar = friends[alarm.alarmItem.dataId].userAvatarFileName;
+        alarm.alarmItem.title = friends.get(alarm.alarmItem.dataId.toString()).nickname;
+        alarm.alarmItem.avatar = friends.get(alarm.alarmItem.dataId.toString()).userAvatarFileName;
       }
 
       resolve(alarm);
     });
   }
-
 }

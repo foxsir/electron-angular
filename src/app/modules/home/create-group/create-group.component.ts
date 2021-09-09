@@ -67,11 +67,15 @@ export class CreateGroupComponent implements OnInit {
    * @param filter
    */
   getFriendList(filter: string = null) {
-    this.cacheService.getCacheFriends().then((fl: FriendModel) => {
-      if(fl) {
-        this.friendList = Object.values(fl).filter((item => {
-          return filter === null ? true : item.nickname.includes(filter);
-        }));
+    this.cacheService.getCacheFriends().then((friendMap: Map<string, FriendModel>) => {
+      if(friendMap.size) {
+        friendMap.forEach(item => {
+          if(filter === null) {
+            this.friendList.push(item);
+          } else if(item.nickname.includes(filter)) {
+            this.friendList.push(item);
+          }
+        });
         this.friendList.forEach(friend => {
           this.avatarService.getAvatar(friend.friendUserUid.toString(), friend.userAvatarFileName).then(url => {
             friend.base64Avatar = url;

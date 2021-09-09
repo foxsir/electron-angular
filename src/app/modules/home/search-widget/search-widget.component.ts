@@ -20,7 +20,7 @@ export class SearchWidgetComponent implements OnInit {
     public showResource: boolean = false;
     public search: string;
 
-    public alarmItemList: AlarmItemInterface[] = [];
+    public alarmItemList: Map<string, AlarmItemInterface> = new Map();
 
     constructor(
         private dom: DomSanitizer,
@@ -35,10 +35,10 @@ export class SearchWidgetComponent implements OnInit {
                 console.log('聊天列表 01：', chatlist);
             }
 
-            this.cacheService.syncChattingList(res || {}).then(list => {
-                console.log('聊天列表 02：', list);
-                this.alarmItemList = list;
-            });
+            // this.cacheService.syncChattingList(res || new Map<string, AlarmItemInterface>()).then(list => {
+            //     console.log('聊天列表 02：', list);
+            //     this.alarmItemList = list;
+            // });
         });
     }
 
@@ -68,16 +68,16 @@ export class SearchWidgetComponent implements OnInit {
 
         console.log('回车确认：', this.search);
 
-        for (let alarmitem of this.alarmItemList) {
-            console.log('消息Model：', alarmitem);
-            this.cacheService.getChattingCache(alarmitem).then(data => {
-                console.log('消息列表：', data);
+      this.alarmItemList.forEach(alarmitem => {
+        console.log('消息Model：', alarmitem);
+        this.cacheService.getChattingCache(alarmitem).then(data => {
+          console.log('消息列表：', data);
 
-                if (!!data) {
+          if (!!data) {
 
-                }
-            });
-        }
+          }
+        });
+      });
     }
 
 }

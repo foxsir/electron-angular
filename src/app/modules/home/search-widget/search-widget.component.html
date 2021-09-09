@@ -1,7 +1,7 @@
 <div fxLayout="row" class="search-container">
     <div fxFlex="calc(100% - 60px)">
         <div fxLayout="row" fxLayoutAlign="end center">
-            <div fxFlex="0 0 calc(294px - 40px)">
+            <div fxFlex="0 0 calc(240px - 60px)">
                 <input type="text" (keydown.escape)="cancelSearch()" [(ngModel)]="search"
                        (keyup)="txtSearchChange($event)"
                        (ngModelChange)="searchContent()" nz-input placeholder="搜索" />
