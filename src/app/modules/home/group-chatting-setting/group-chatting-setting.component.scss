@@ -5,6 +5,15 @@
   line-height: 22px;
 }
 
+.mat-icon-cus{
+    img{
+        width:12px;
+        height:12px;
+        position:relative;
+        top:5px;
+    }
+}
+
 .group-pointer{
     cursor:pointer;
 }
