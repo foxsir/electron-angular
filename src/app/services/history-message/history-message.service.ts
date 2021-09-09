@@ -8,20 +8,18 @@ import {LocalUserService} from "@services/local-user/local-user.service";
 import NewHttpResponseInterface from "@app/interfaces/new-http-response.interface";
 
 class QueryFriend {
-  from: string = "0";
   myuid: number;
   page: number = 0;
   pageSize: number = 30;
-  to: string = "0";
-  type: number;
+  from: string = "";
+  to: string = "";
   uid: number;
 }
 
 class QueryGroup {
   gid: string;
-  type: number;
-  from: string = "0";
-  to: string = "0";
+  from: string = "";
+  to: string = "";
   page: number = 0;
   pageSize: number = 30;
 }
@@ -59,13 +57,12 @@ export class HistoryMessageService {
     const params = new QueryFriend();
     params.page = 0;
     params.pageSize = size || params.pageSize;
-    params.type = 0;
     params.uid = Number(alarmItem.alarmItem.dataId);
     params.myuid = this.localUserService.localUserInfo.userId;
 
     if(position === 'top') {
       // to 以为fingerPrintOfProtocal为基点拉去旧消息
-      params.to = area.start;
+      params.from = area.start;
     } else {
       // from 以为fingerPrintOfProtocal为基点拉去新消息
       delete params.pageSize;
@@ -89,7 +86,6 @@ export class HistoryMessageService {
     const params = new QueryGroup();
     params.page = 0;
     params.pageSize = size || params.pageSize;
-    params.type = 0;
     params.gid = alarmItem.alarmItem.dataId;
 
     if(position === 'top') {
