@@ -46,7 +46,7 @@ import {DialogService} from "@services/dialog/dialog.service";
 import { TransmitMessageComponent } from "@modules/user-dialogs/transmit-message/transmit-message.component";
 import { ChattingVoiceComponent } from '../chatting-voice/chatting-voice.component';
 import FileMetaInterface from "@app/interfaces/file-meta.interface";
-import {MsgType} from "@app/config/rbchat-config";
+import {ChatModeType, MsgType} from "@app/config/rbchat-config";
 import {HistoryMessageService} from "@services/history-message/history-message.service";
 import {ServerForwardService} from "@services/server-forward/server-forward.service";
 
@@ -83,8 +83,8 @@ export class ChattingAreaComponent implements OnInit {
   // end icon
 
   public currentChatSubtitle: string = null;
-  public chatMsgEntityList: ChatmsgEntityModel[] = [];
-  public chatMsgEntityListTemp: ChatmsgEntityModel[] = [];
+  public chatMsgEntityListTemp: Map<string, ChatmsgEntityModel> = new Map();
+  public chatMsgEntityList: Map<string, ChatmsgEntityModel> = new Map();
 
   public localUserInfo: LocalUserinfoModel;
 
@@ -143,7 +143,7 @@ export class ChattingAreaComponent implements OnInit {
       this.currentChat = this.currentChattingChangeService.currentChatting;
       this.cacheService.getChattingCache(this.currentChat).then(data => {
         if(!!data) {
-          this.chatMsgEntityListTemp = Object.values(data);
+          this.chatMsgEntityListTemp = data;
           this.loadMessage(true);
         }
       });
@@ -155,13 +155,15 @@ export class ChattingAreaComponent implements OnInit {
       this.scrollToBottom();
       // === 为刷新聊天列表，只更新数据
       if (this.currentChat !== currentChat) {
+        // 切换会话清空列表
+        this.chatMsgEntityListTemp.clear();
+        this.chatMsgEntityList.clear();
+
         this.currentChat = currentChat;
-        this.chatMsgEntityListTemp = [];
-        this.chatMsgEntityList = [];
         this.openEndDrawer('setting', false);
         this.cacheService.getChattingCache(this.currentChat).then(data => {
           if(!!data) {
-            this.chatMsgEntityListTemp = Object.values(data);
+            this.chatMsgEntityListTemp = data;
             this.loadingMessage = false;
             this.loadMessage(true);
           }
@@ -179,13 +181,21 @@ export class ChattingAreaComponent implements OnInit {
     // 清屏
     this.cacheService.cacheUpdate$.subscribe(cache => {
       if(this.currentChat && cache.alarmData) {
-        const data = cache.alarmData[this.currentChat.alarmItem.dataId];
-        const l = data.message ? Object.values(data.message).length : 0;
-        if(l === 0) {
-          this.chatMsgEntityList = [];
+        const data = cache.alarmData.get(this.currentChat.alarmItem.dataId);
+        if(data.message.size === 0) {
+          this.chatMsgEntityList.clear();
         }
       }
     });
+  }
+
+  /**
+   * keep keyvalue order
+   * @param a
+   * @param b
+   */
+  asIsOrder(a, b) {
+    return 1;
   }
 
   pushMessageToPanel(data: {chat: ChatmsgEntityModel; dataContent: ProtocalModelDataContent}, type: 'send' | 'incept' = 'send') {
@@ -196,29 +206,29 @@ export class ChattingAreaComponent implements OnInit {
       chatActive = this.currentChat.alarmItem.dataId.toString() === data.dataContent.f.toString();
     }
     if(!data.dataContent) {
-      if(this.chatMsgEntityList) {
-        this.chatMsgEntityList.push(data.chat);
+      if(this.chatMsgEntityList.size > 0) {
+        this.chatMsgEntityList.set(data.chat.fingerPrintOfProtocal, data.chat);
         this.scrollToBottom();
       }
     } else {
-      if(data.dataContent.cy.toString() === '0') { // 单聊
+      if(data.dataContent.cy === ChatModeType.CHAT_TYPE_FRIEND$CHAT) { // 单聊
         if(this.currentChat && chatActive) {
           if(this.chatMsgEntityList) {
-            this.chatMsgEntityList.push(data.chat);
+            this.chatMsgEntityList.set(data.chat.fingerPrintOfProtocal, data.chat);
             this.scrollToBottom();
           }
         }
-      } else if(data.dataContent.cy.toString() === '1') { // 临时聊天/陌生人聊天
+      } else if(data.dataContent.cy === ChatModeType.CHAT_TYPE_GUEST$CHAT) { // 临时聊天/陌生人聊天
         if(this.currentChat && chatActive) {
           if(this.chatMsgEntityList) {
-            this.chatMsgEntityList.push(data.chat);
+            this.chatMsgEntityList.set(data.chat.fingerPrintOfProtocal, data.chat);
             this.scrollToBottom();
           }
         }
-      } else if(data.dataContent.cy.toString() === '2') { // 是群
+      } else if(data.dataContent.cy === ChatModeType.CHAT_TYPE_GROUP$CHAT) { // 是群
         if(this.currentChat && this.currentChat.alarmItem.dataId.toString() === data.dataContent.t.toString()) {
           if(this.chatMsgEntityList) {
-            this.chatMsgEntityList.push(data.chat);
+            this.chatMsgEntityList.set(data.chat.fingerPrintOfProtocal, data.chat);
             this.scrollToBottom();
           }
         }
@@ -361,21 +371,42 @@ export class ChattingAreaComponent implements OnInit {
    */
   private subscribeMessagesBeReceived() {
     this.imService.callback_messagesBeReceived = (fingerPrint) => {
-      if (fingerPrint) {
-        this.cacheService.getChattingCache(this.currentChat).then(data => {
-          if(data && data[fingerPrint]) {
-            const chat: ChatmsgEntityModel = data[fingerPrint];
-            chat.isOutgoing = true;
-            this.cacheService.putChattingCache(this.currentChat, chat).then(() => {
-              this.cacheService.getChattingCache(this.currentChat).then(res => {
-                if(!!res) {
-                  this.chatMsgEntityList = Object.values(res);
-                }
+      this.cacheService.getChattingCache(this.currentChat).then(data => {
+        if(data && data.get(fingerPrint)) {
+          const chat: ChatmsgEntityModel = data.get(fingerPrint);
+          chat.isOutgoing = true;
+          this.cacheService.putChattingCache(this.currentChat, chat).then(() => {
+            this.chatMsgEntityList.set(chat.fingerPrintOfProtocal, chat);
+          });
+        } else {
+          let reTry = 20;
+          const rt = setInterval(() => {
+            if(reTry === 0) {
+              clearInterval(rt);
+            }
+            if(data && data.get(fingerPrint)) {
+              const chat = data.get(fingerPrint);
+              chat.isOutgoing = true;
+              this.cacheService.putChattingCache(this.currentChat, chat).then(() => {
+                this.chatMsgEntityList.set(chat.fingerPrintOfProtocal, chat);
               });
+              clearInterval(rt);
+            }
+            this.cacheService.getChattingCache(this.currentChat).then(reData => {
+              if(reData && reData.get(fingerPrint)) {
+                const chat: ChatmsgEntityModel = reData.get(fingerPrint);
+                chat.isOutgoing = true;
+                this.cacheService.putChattingCache(this.currentChat, chat).then(() => {
+                  this.chatMsgEntityList.set(chat.fingerPrintOfProtocal, chat);
+                });
+                clearInterval(rt);
+              }
             });
-          }
-        });
-      }
+
+            reTry = reTry -1;
+          }, 1000);
+        }
+      });
     };
   }
 
@@ -541,43 +572,58 @@ export class ChattingAreaComponent implements OnInit {
     } {
       this.loadingMessage = true;
       const container = this.chattingContainer.nativeElement;
-      if(this.chatMsgEntityListTemp.length > 0) {
+      if(this.chatMsgEntityListTemp.size > 0) {
         // 从缓存获取消息
-        container.scrollTop = 1;
-        this.chatMsgEntityList = [
-          ...this.chatMsgEntityListTemp.splice(0, 15),
-          ...this.chatMsgEntityList
-        ];
+        this.loadingMessage = false;
+        container.scrollTop = container.scrollTop - 60;
+        new Array(...this.chatMsgEntityListTemp.entries()).splice(0, 15).forEach(keyvalue => {
+          this.chatMsgEntityListTemp.delete(keyvalue[0]);
+          this.chatMsgEntityList.set(keyvalue[0], keyvalue[1]);
+        });
+
         if(goBottom) {
           this.scrollToBottom("auto");
         }
-        setTimeout(() => {
-          this.loadingMessage = false;
-        }, 100);
-      } else if(this.chatMsgEntityList.length > 0) {
+        console.dir("拉取缓存消息");
+      } else if(this.chatMsgEntityList.size > 0) {
         // 从漫游接口获取数据
+        const list: ChatmsgEntityModel[] = new Array(...this.chatMsgEntityList.values());
+        const localLastMsg: ChatmsgEntityModel[] = list.slice(0, 1);
+        const localFirstMsgFP = localLastMsg[0].fingerPrintOfProtocal;
+
         this.historyMessageService.getFriendMessage(
-          this.currentChat, {start: this.chatMsgEntityList[0].fingerPrintOfProtocal}, 'top', 2
+          this.currentChat, {start: localFirstMsgFP}, 'top', 30
         ).subscribe(res => {
           if(res.status === 200 && res.data.list.length) {
-            const msgs: ChatmsgEntityModel[]  = [];
+            const msgMap: Map<string, ChatmsgEntityModel> = new Map();
             res.data.list.forEach(msg => {
               const msgJson = JSON.parse(msg);
               const dataContent = JSON.parse(msgJson.dataContent);
               const chatMsgEntity = this.messageEntityService.prepareSendedMessage(
                 dataContent.m, msgJson.recvTime, msgJson.fp, dataContent.ty
               );
-              msgs.push(chatMsgEntity);
-            });
-            container.scrollTop = 1;
-            msgs.forEach(msg => {
-              this.chatMsgEntityList.unshift(msg);
+              // 排除 start 消息
+              if(localFirstMsgFP !== chatMsgEntity.fingerPrintOfProtocal) {
+                msgMap.set(chatMsgEntity.fingerPrintOfProtocal, chatMsgEntity);
+              }
             });
             this.loadingMessage = false;
-
+            this.chatMsgEntityList = new Map([...msgMap, ...this.chatMsgEntityList]);
+            setTimeout(() => {
+              document.getElementById(localFirstMsgFP).scrollIntoView();
+              container.scrollTop = container.scrollTop - 60;
+            }, 100);
             if(goBottom) {
               this.scrollToBottom("auto");
             }
+            // 将拉去到的消息放入缓存
+            const msgList: ChatmsgEntityModel[] = [];
+            msgMap.forEach(item => {
+              msgList.push(item);
+            });
+            this.cacheService.putChattingCache(this.currentChat, msgList).then(() => {
+              console.dir("将拉去到的消息放入缓存");
+            });
           } else {
             this.loadingMessage = false;
           }
