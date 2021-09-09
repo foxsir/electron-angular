@@ -82,6 +82,14 @@ export class InputAreaComponent implements OnInit {
 
   private atTargetMember: string[] = [];
 
+  private tempList = [];
+
+  /**
+   * false = 发送中，true 可以发送
+   * @private
+   */
+  private sendStatus: boolean = true;
+
   constructor(
     private router: Router,
     private dom: DomSanitizer,
@@ -214,6 +222,7 @@ export class InputAreaComponent implements OnInit {
     emitToUI: boolean = true,
     replaceEntity: ChatmsgEntityModel = null
   ) {
+    // sendStatus
     if (!messageText || messageText.trim().length === 0) {
       return;
     }
@@ -230,6 +239,8 @@ export class InputAreaComponent implements OnInit {
       messageType = MsgType.TYPE_QUOTE;
     }
     messageText = this.parseReplyMessage(messageText);
+
+    this.clearTextArea();
 
     if(this.currentChat.metadata.chatType === 'friend') {
       this.sendFriendMessage(messageType, messageText, emitToUI, replaceEntity);
@@ -273,13 +284,42 @@ export class InputAreaComponent implements OnInit {
           replaceEntity.fingerPrintOfProtocal = chatMsgEntity.fingerPrintOfProtocal;
         }
         chatMsgEntity.isOutgoing = false;
-        this.cacheService.putChattingCache(this.currentChat, chatMsgEntity).then(() => {
-          if(emitToUI) {
-            this.sendMessage.emit({chat: chatMsgEntity, dataContent: res.msgBody});
-          }
-          this.clearTextArea();
+
+
+        this.tempList.push({
+          chatMsgEntity: chatMsgEntity,
+          emitToUI: emitToUI,
+          msgBody: res.msgBody
         });
+        this.pushCache();
+
+        // this.cacheService.putChattingCache(this.currentChat, chatMsgEntity).then(() => {
+        //   if(emitToUI) {
+        //     this.sendMessage.emit({chat: chatMsgEntity, dataContent: res.msgBody});
+        //   }
+        //   // this.clearTextArea();
+        // });
       }
+    });
+  }
+
+  /**
+   * 将消息房里列表然后逐条放入缓存
+   * @private
+   */
+  private pushCache() {
+    const data = this.tempList.shift();
+    this.cacheService.putChattingCache(this.currentChat, data.chatMsgEntity).then(() => {
+      this.cacheService.getChattingCache(this.currentChat).then((res) => {
+        if(res.get(data.chatMsgEntity.fingerPrintOfProtocal)) {
+          if(data.emitToUI) {
+            this.sendMessage.emit({chat: data.chatMsgEntity, dataContent: data.msgBody});
+          }
+          if(this.tempList.length > 0) {
+            this.pushCache();
+          }
+        }
+      });
     });
   }
 
@@ -309,7 +349,6 @@ export class InputAreaComponent implements OnInit {
 
         //111 新增指纹码 he 消息类型msgType
         // debugger
-        console.dir(res);
         const chatMsgEntity = this.messageEntityService.prepareSendedMessage(
           message, 0, res.fingerPrint, messageType
         );
@@ -317,12 +356,18 @@ export class InputAreaComponent implements OnInit {
           replaceEntity.fingerPrintOfProtocal = chatMsgEntity.fingerPrintOfProtocal;
         }
         chatMsgEntity.isOutgoing = false;
-        this.cacheService.putChattingCache(this.currentChat, chatMsgEntity).then(() => {
-          if(emitToUI) {
-            this.sendMessage.emit({chat: chatMsgEntity, dataContent: res.msgBody});
-          }
-          this.clearTextArea();
+
+        this.tempList.push({
+          chatMsgEntity: chatMsgEntity,
+          emitToUI: emitToUI,
+          msgBody: res.msgBody
         });
+        this.pushCache();
+        // this.cacheService.putChattingCache(this.currentChat, chatMsgEntity).then(() => {
+        //   if(emitToUI) {
+        //     this.sendMessage.emit({chat: chatMsgEntity, dataContent: res.msgBody});
+        //   }
+        // });
       }
     });
   }
