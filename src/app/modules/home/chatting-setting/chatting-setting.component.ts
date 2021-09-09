@@ -8,6 +8,7 @@ import closeIcon from "@app/assets/icons/close.svg";
 import closeActiveIcon from "@app/assets/icons/close-active.svg";
 import backspaceIcon from "@app/assets/icons/backspace.svg";
 import backspaceActiveIcon from "@app/assets/icons/backspace-active.svg";
+import arrowRightIcon from "@app/assets/icons/arrow-right.svg";
 import { RestService } from "@services/rest/rest.service";
 import { DemoDialogComponent } from "@modules/setting-dialogs/demo-dialog/demo-dialog.component";
 import { DialogService } from "@services/dialog/dialog.service";
@@ -25,6 +26,7 @@ export class ChattingSettingComponent implements OnInit {
     public closeActiveIcon = this.dom.bypassSecurityTrustResourceUrl(closeActiveIcon);
     public backspaceIcon = this.dom.bypassSecurityTrustResourceUrl(backspaceIcon);
     public backspaceActiveIcon = this.dom.bypassSecurityTrustResourceUrl(backspaceActiveIcon);
+    public arrowRightIcon = this.dom.bypassSecurityTrustResourceUrl(arrowRightIcon);
 
     public userData;
     public setting_data = {

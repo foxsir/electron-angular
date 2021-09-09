@@ -25,17 +25,19 @@
     </div>
     <div class="split-item"></div>
     <div fxFlex>
-        <mat-card class="mat-elevation-z0">
+        <mat-card class="mat-elevation-z0" *ngIf="view_mode == 'switch_default'">
             <mat-card-content>
                 <!--群基本信息编辑-->
-                <div *ngIf="view_mode == 'switch_default'" fxLayout="column" fxLayoutGap="10px">
+                <div  fxLayout="column" fxLayoutGap="10px">
                     <div fxFlex fxLayoutAlign="space-between center">
                         <span class="privacy-item-text">启用专属客服</span>
                         <nz-switch [(ngModel)]="setting_data.customerServiceSwitch" (ngModelChange)="bySwitch('customerServiceSwitch')" nzSize="small"></nz-switch>
                     </div>
                     <div fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="changeView('customer_service')">
                         <span class="privacy-item-text">客服</span>
-                        <span>&gt;</span>
+                        <mat-icon class="mat-icon-cus" style="text-align:right;">
+                            <img [src]="arrowRightIcon" alt="" class="icon">
+                        </mat-icon>
                     </div>
 
                     <div class="split-item"></div>
@@ -46,7 +48,9 @@
                     </div>
                     <div fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="changeView('group_tab')">
                         <span class="privacy-item-text">群页签设置</span>
-                        <span>&gt;</span>
+                        <mat-icon class="mat-icon-cus" style="text-align:right;">
+                            <img [src]="arrowRightIcon" alt="" class="icon">
+                        </mat-icon>
                     </div>
 
                     <div class="split-item"></div>
@@ -57,7 +61,9 @@
                     </div>
                     <div fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="changeView('group_top')">
                         <span class="privacy-item-text">群上屏编辑</span>
-                        <span>&gt;</span>
+                        <mat-icon class="mat-icon-cus" style="text-align:right;">
+                            <img [src]="arrowRightIcon" alt="" class="icon">
+                        </mat-icon>
                     </div>
 
                     <div class="split-item"></div>
@@ -83,16 +89,19 @@
                     </div>
                     <div fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="changetalkInterval()">
                         <span class="privacy-item-text">普通成员发言间隔</span>
-                        <span>&gt;</span>
+                        <mat-icon class="mat-icon-cus" style="text-align:right;">
+                            <img [src]="arrowRightIcon" alt="" class="icon">
+                        </mat-icon>
                     </div>
                 </div>
+            </mat-card-content>
+        </mat-card>
 
-                <!--群客服配置-->
-                <div *ngIf="view_mode == 'customer_service'" fxLayout="column" fxLayoutGap="10px">
-                    <!--<div fxFlex fxLayoutAlign="space-between center" *ngFor="let item of customerServiceList">
-                        <span class="privacy-item-text">{{item.nickname}}</span>
-                        <nz-switch [(ngModel)]="setting_data.tabSwitch" (ngModelChange)="bySwitch('tabSwitch')" nzSize="small"></nz-switch>
-                    </div>-->
+
+        <!--群客服配置-->
+        <mat-card class="mat-elevation-z0" *ngIf="view_mode == 'customer_service'" style="padding:0px;">
+            <mat-card-content>
+                <div  fxLayout="column" fxLayoutGap="10px">
                     <mat-list>
                         <mat-list-item *ngFor="let item of customerServiceList" class="list-box">
                             <img src="{{item.avatar}}" mat-list-icon style="width:44px;height:44px;" />
@@ -104,9 +113,14 @@
                         </mat-list-item>
                     </mat-list>
                 </div>
+            </mat-card-content>
+        </mat-card>
 
-                <!--群页签配置-->
-                <div *ngIf="view_mode == 'group_tab'" fxLayout="column" fxLayoutGap="10px">
+
+        <!--群页签配置-->
+        <mat-card class="mat-elevation-z0" *ngIf="view_mode == 'group_tab'" style="padding:0px;">
+            <mat-card-content>
+                <div  fxLayout="column" fxLayoutGap="10px">
                     <mat-list>
                         <mat-list-item *ngFor="let item of groupTabList" class="list-box">
                             <img src="{{item.imgUrl}}" mat-list-icon style="width:44px;height:44px;" />
@@ -119,8 +133,12 @@
                         </mat-list-item>
                     </mat-list>
                 </div>
+            </mat-card-content>
+        </mat-card>
 
-                <!--群上屏编辑-->
+        <!--群上屏编辑-->
+        <mat-card class="mat-elevation-z0" *ngIf="view_mode == 'group_top'" style="padding:0px;">
+            <mat-card-content>
                 <div *ngIf="view_mode == 'group_top'" fxLayout="column" fxLayoutGap="10px">
                     <div *ngIf="group_top_view_mode == 'view'">
                         <div>
@@ -128,7 +146,7 @@
                         </div>
                         <div style="text-align:right;">
                             <button nz-button nzType="link" class="btnsave" (click)="editGroupTop()">编辑</button>
-                        </div>                        
+                        </div>
                     </div>
                     <div *ngIf="group_top_view_mode == 'edit'" class="edit-group-top">
                         <div class="martop1">
