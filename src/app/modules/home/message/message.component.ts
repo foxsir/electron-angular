@@ -148,7 +148,7 @@ export class MessageComponent implements OnInit {
     });
     this.cacheService.getTop().then((list) => {
       if(list) {
-        this.topList = list
+        this.topList = list;
       }
       this.topListOfArray = new Array(...this.topList.keys());
       this.cacheService.cacheUpdate$.subscribe(data => {
@@ -162,13 +162,11 @@ export class MessageComponent implements OnInit {
     this.cacheService.cacheSessionStatusList();
 
     this.cacheService.getChattingList().then(res => {
-      if(res && res.size) {
-        res.forEach(item => this.insertItem(item.alarmData));
-
-        this.cacheService.syncChattingList(res).then(list => {
-          list.forEach(item => this.insertItem(item));
-        });
-      }
+      res = res ? res : new Map();
+      res.forEach(item => this.insertItem(item.alarmData));
+      this.cacheService.syncChattingList(res).then(list => {
+        list.forEach(item => this.insertItem(item));
+      });
     });
 
     this.currentChattingChangeService.currentChatting$.subscribe((alarm: AlarmItemInterface) => {
