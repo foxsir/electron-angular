@@ -26,12 +26,12 @@ export class HttpService {
       console.error('An error occurred:', res.error.message);
     } else {
       if (res.status === 0) {
-        this.snackBar.openSnackBar("数据请求错误", 'mat-warn');
+        this.snackBar.openMessage("数据请求错误", 'mat-warn');
       }
       if (res.error.errors && res.error.errors.length) {
         for (const field of res.error.errors) {
           if (field) {
-            this.snackBar.openSnackBar(field.defaultMessage, 'mat-warn');
+            this.snackBar.openMessage(field.defaultMessage, 'mat-warn');
             return throwError(field.defaultMessage);
           }
         }
@@ -40,14 +40,14 @@ export class HttpService {
       if (res.error.data && res.error.data.fieldErrors) {
         for (const field in res.error.data.fieldErrors) {
           if (res.error.data.fieldErrors.hasOwnProperty(field)) {
-            this.snackBar.openSnackBar(res.error.data.fieldErrors[field], 'mat-warn');
+            this.snackBar.openMessage(res.error.data.fieldErrors[field], 'mat-warn');
             return throwError(res.error.data.fieldErrors[field]);
           }
         }
       }
       // 普通错误
       if (res.error.message) {
-        this.snackBar.openSnackBar(res.error.message, 'mat-warn');
+        this.snackBar.openMessage(res.error.message, 'mat-warn');
         return throwError(res.error.message);
       }
     }

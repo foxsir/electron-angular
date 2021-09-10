@@ -42,3 +42,16 @@
     background: #f5f5f5;
   }
 }
+
+// snack bar 剧中样式
+body.center-snack-bar {
+  .cdk-global-overlay-wrapper {
+    align-items: center !important;
+
+    .mat-snack-bar-container {
+      background: #D9EFFF;
+      color: #0091FF;
+      box-shadow: none;
+    }
+  }
+}

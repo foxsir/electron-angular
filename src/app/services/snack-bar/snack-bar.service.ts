@@ -3,6 +3,7 @@ import {Injectable} from '@angular/core';
 import {SnackComponent} from '@services/snack-bar/snack.component';
 import {NzMessageService} from "ng-zorro-antd/message";
 import {NzConfigService} from "ng-zorro-antd/core/config";
+import {OverlayContainer} from "@angular/cdk/overlay";
 
 @Injectable({
   providedIn: 'root'
@@ -16,43 +17,28 @@ export class SnackBarService {
 
   constructor(
     private snackBar: MatSnackBar,
-    private message: NzMessageService,
-    private readonly nzConfigService: NzConfigService
+    private overlayContainer: OverlayContainer,
   ) {
-    this.nzConfigService.set("message", {
-      nzTop: "calc(50% - 22px)",
-      nzDuration: 3000,
-      nzAnimate: false,
-    });
   }
 
   /**
-   * 显示material放个消息提示
-   * @url https://material.angular.io/components/snack-bar/overview
+   * 垂直剧中消息提示
    * @param messageText
    * @param color
    */
-  public openSnackBar(messageText: string, color = "mat-accent"): void {
+  public openMessage(messageText: string, color = "mat-default"): void {
+    const parentElement = this.overlayContainer.getContainerElement().parentElement;
+    parentElement.classList.add("center-snack-bar");
     const snackBar = this.snackBar.openFromComponent(SnackComponent, {
       data: {text: messageText, color},
       verticalPosition: 'top',
-      horizontalPosition: 'right',
-      duration: this.durationInSeconds * 1000
+      horizontalPosition: 'center',
+      duration: this.durationInSeconds * 10000
     });
-    snackBar.onAction().subscribe(() => {
-      snackBar.dismiss();
-    });
-  }
-
-  /**
-   * antd风格消息提示
-   * @url https://ng.ant.design/components/message/en
-   * @param message
-   * @param type
-   */
-  public openMessage(message: string, type: string = ''): void {
-    this.message.create(type, message, {
-      nzDuration: this.durationInSeconds * 1000
+    snackBar.afterDismissed().subscribe((s) => {
+      if(this.snackBar._openedSnackBarRef === null) {
+        parentElement.classList.remove("center-snack-bar");
+      }
     });
   }
 
