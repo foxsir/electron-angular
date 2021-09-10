@@ -52,7 +52,7 @@ export class SoundService {
         this.friendsPassPlayAction.stop();
       }
       this.friendsPassPlayAction = new Howl({
-        src: ['assets/sounds/call.mp3'],
+        src: ['assets/sounds/friends-pass.wav'],
         loop: false,
         volume: 1,
         onend: function() {
@@ -80,8 +80,8 @@ export class SoundService {
       if(this.messagePlayAction) {
         this.messagePlayAction.stop();
       }
-      const sound = new Howl({
-        src: ['assets/sounds/call.mp3'],
+      this.messagePlayAction = new Howl({
+        src: ['assets/sounds/message.mp3'],
         loop: false,
         volume: 1,
         onend: function() {
