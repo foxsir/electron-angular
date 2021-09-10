@@ -147,7 +147,9 @@ export class MessageComponent implements OnInit {
       });
     });
     this.cacheService.getTop().then((list) => {
-      this.topList  = list;
+      if(list) {
+        this.topList = list
+      }
       this.topListOfArray = new Array(...this.topList.keys());
       this.cacheService.cacheUpdate$.subscribe(data => {
         if(data.top) {
@@ -162,11 +164,11 @@ export class MessageComponent implements OnInit {
     this.cacheService.getChattingList().then(res => {
       if(res && res.size) {
         res.forEach(item => this.insertItem(item.alarmData));
-      }
 
-      this.cacheService.syncChattingList(res).then(list => {
-        list.forEach(item => this.insertItem(item));
-      });
+        this.cacheService.syncChattingList(res).then(list => {
+          list.forEach(item => this.insertItem(item));
+        });
+      }
     });
 
     this.currentChattingChangeService.currentChatting$.subscribe((alarm: AlarmItemInterface) => {

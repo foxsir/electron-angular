@@ -606,7 +606,7 @@ export class CacheService {
       if (res.status === 200) {
         res.data.forEach(m => {
           let type = 'friend';
-          if(m.userType.toString() === '1') {
+          if(m.userType && m.userType.toString() === '1') {
             type = 'group';
           }
           this.setMute(m.friendId, type, m.noDisturb).then();
