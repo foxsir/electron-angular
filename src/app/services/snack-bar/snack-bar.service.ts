@@ -33,7 +33,7 @@ export class SnackBarService {
       data: {text: messageText, color},
       verticalPosition: 'top',
       horizontalPosition: 'center',
-      duration: this.durationInSeconds * 10000
+      duration: this.durationInSeconds * 1000
     });
     snackBar.afterDismissed().subscribe((s) => {
       if(this.snackBar._openedSnackBarRef === null) {
