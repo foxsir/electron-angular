@@ -19,8 +19,12 @@ import CommonTools from "@app/common/common.tools";
 import {MessageService} from "@services/message/message.service";
 import {HistoryMessageService} from "@services/history-message/history-message.service";
 import {ChatModeType} from "@app/config/rbchat-config";
+import {HttpService} from "@services/http/http.service";
+import {_HTTP_SERVER_URL} from "@app/config/post-api";
+import {SoundService} from "@services/sound/sound.service";
+import SessionStatusModel from "@app/models/session-status.model";
 
-export type AlarmDataMap = Map<string, {alarmData: AlarmItemInterface; message: Map<string, ChatmsgEntityModel>}>;
+export type AlarmDataMap = Map<string, {alarmData: AlarmItemInterface; message?: Map<string, ChatmsgEntityModel>}>;
 
 interface CacheItem {
   alarmData: AlarmDataMap;
@@ -28,6 +32,8 @@ interface CacheItem {
   groupList: Map<string, GroupModel>;
   groupAdminList: Map<string, Map<number, GroupAdminModel>>;
   myInfo: UserModel;
+  mute: Map<string, boolean>;
+  top: Map<string, boolean>;
 }
 
 
@@ -45,6 +51,8 @@ export class CacheService {
     groupList: "groupList",
     groupAdminList: "groupAdminList",
     myInfo: "myInfo",
+    mute: "mute",
+    top: "top",
   };
 
   constructor(
@@ -55,6 +63,8 @@ export class CacheService {
     private localUserService: LocalUserService,
     private messageService: MessageService,
     private historyMessageService: HistoryMessageService,
+    private httpService: HttpService,
+    private soundService: SoundService
   ) {
     const userId = this.localUserService.localUserInfo.userId;
     for (const key in this.dataKeys) {
@@ -129,7 +139,7 @@ export class CacheService {
   }
 
   /**
-   * 清除未读数
+   * 设置未读数
    * @param alarmData
    * @param badges
    */
@@ -141,6 +151,12 @@ export class CacheService {
         if(badges > 0) {
           check.alarmData.metadata.unread = check.alarmData.metadata.unread || 0;
           alarmData.metadata.unread = check.alarmData.metadata.unread + badges;
+          // 如果不是静音则播放提示音
+          this.getMute().then(mute => {
+            if(mute.get(alarmData.alarmItem.dataId) !== true) {
+              this.soundService.messagePlay().then();
+            }
+          });
         }
         const map = new Map();
         map.set(alarmData.alarmItem.dataId, {
@@ -576,5 +592,107 @@ export class CacheService {
 
       resolve(alarm);
     });
+  }
+
+  /**
+   * 缓存会话状态
+   */
+  cacheSessionStatusList() {
+    const url = _HTTP_SERVER_URL + "/api/user/sessionStatusList";
+    const params = {
+      userId: this.localUserService.localUserInfo.userId,
+    };
+    this.httpService.get(url, params).subscribe((res: NewHttpResponseInterface<SessionStatusModel[]>) => {
+      if (res.status === 200) {
+        res.data.forEach(m => {
+          let type = 'friend';
+          if(m.userType.toString() === '1') {
+            type = 'group';
+          }
+          this.setMute(m.friendId, type, m.noDisturb).then();
+          this.setTop(m.friendId, type, m.noDisturb).then();
+        });
+
+        localforage.getItem(this.dataKeys.mute).then((data: Map<string, boolean>) => {
+          this.cacheSource.next({mute: data});
+        });
+        localforage.getItem(this.dataKeys.top).then((data: Map<string, boolean>) => {
+          this.cacheSource.next({top: data});
+        });
+      }
+    });
+  }
+
+  /**
+   * 设置静音
+   * @param dataId
+   * @param type
+   * @param mute
+   */
+  setMute(dataId: string, type: string, mute: boolean): Promise<Map<string, boolean>> {
+    return new Promise((resolve, reject) => {
+      localforage.getItem(this.dataKeys.mute).then((data: Map<string, boolean>) => {
+        data = data ? data : new Map();
+        data.set(dataId, mute);
+
+        localforage.setItem(this.dataKeys.mute, data).then(() => {
+          resolve(data);
+          this.cacheSource.next({mute: data});
+
+          const url = _HTTP_SERVER_URL + "/api/user/setNoDisturb";
+          const params = {
+            userId: this.localUserService.localUserInfo.userId,
+            noDisturbId: dataId,
+            type: mute ? 1 : 0,
+            userType: type === 'friend' ? 0 : 1,
+          };
+          this.httpService.postForm(url, params).subscribe();
+        });
+      });
+    });
+  }
+
+  /**
+   * 获取静音列表
+   */
+  getMute(): Promise<Map<string, boolean>> {
+    return localforage.getItem(this.dataKeys.mute);
+  }
+
+  /**
+   * 设置顶置
+   * @param dataId
+   * @param type
+   * @param top
+   */
+  setTop(dataId: string, type: string, top: boolean): Promise<Map<string, boolean>> {
+    return new Promise((resolve, reject) => {
+      localforage.getItem(this.dataKeys.top).then((data: Map<string, boolean>) => {
+        data = data ? data : new Map();
+        data.delete(dataId);
+        data = new Map([[dataId, top], ...data]);
+
+        localforage.setItem(this.dataKeys.top, data).then(() => {
+          resolve(data);
+          this.cacheSource.next({top: data});
+
+          const url = _HTTP_SERVER_URL + "/api/user/setTop";
+          const params = {
+            userId: this.localUserService.localUserInfo.userId,
+            topId: dataId,
+            type: top ? 1 : 0,
+            userType: type === 'friend' ? 0 : 1,
+          };
+          this.httpService.postForm(url, params).subscribe();
+        });
+      });
+    });
+  }
+
+  /**
+   * 获取顶置列表
+   */
+  getTop(): Promise<Map<string, boolean>> {
+    return localforage.getItem(this.dataKeys.top);
   }
 }
