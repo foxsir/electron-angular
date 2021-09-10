@@ -47,6 +47,7 @@ import {SettingDialogsModule} from "../setting-dialogs/setting-dialogs.module";
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MyFriendsComponent} from './my-friends/my-friends.component';
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
+import {MatTooltipModule} from "@angular/material/tooltip";
 
 @NgModule({
   declarations: [
@@ -99,6 +100,7 @@ import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
     SettingDialogsModule,
     MatCheckboxModule,
     MatProgressSpinnerModule,
+    MatTooltipModule,
   ]
 })
 export class HomeModule {

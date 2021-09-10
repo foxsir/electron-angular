@@ -4,7 +4,7 @@
       <div class="mat-card-subtitle">{{mergeTransfer.content}}</div>
       <p><mat-divider inset></mat-divider></p>
       <div *ngFor="let message of mergeTransfer.messages">
-        {{message.sendNicName}}: {{message.type === 0 ? message.text : messageType[message.type]}}
+        {{message.sendNicName}}: {{message.type === "0" ? message.text : messageType[message.type]}}
       </div>
     </div>
   </ng-template>

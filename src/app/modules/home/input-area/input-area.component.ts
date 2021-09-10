@@ -148,7 +148,7 @@ export class InputAreaComponent implements OnInit {
         if(res.success) {
           this.memberList = JSON.parse(res.returnValue);
         } else {
-          this.snackBarService.openSnackBar("获取群成员失败");
+          this.snackBarService.openMessage("获取群成员失败");
         }
       });
     }

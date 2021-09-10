@@ -464,7 +464,7 @@ export class IndexComponent implements OnInit {
    * 【建议用途】：开发者不设置的情况下，框架默认将调用window.alert()显示提示信息，否则将使用开发者设置的回调——目的主要是给
    *           开发者自定义这种信息的UI显示，提升UI体验，别无它用。*/
   onIMShowAlert(alertContent) {
-    this.snackBarService.openSnackBar(alertContent);
+    this.snackBarService.openMessage(alertContent);
   }
 
   //#################################################################### 【6】IM相关代码 END
@@ -509,7 +509,7 @@ export class IndexComponent implements OnInit {
   gotoLoginPage() {
     // window.location.href = './login.html';
     this.router.navigate(["/"]).then(() => {
-      this.snackBarService.openSnackBar("请重新登陆后再使用");
+      this.snackBarService.openMessage("请重新登陆后再使用");
     });
   }
 

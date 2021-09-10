@@ -85,7 +85,7 @@ export class SendSmsTypeComponent extends FieldType implements OnInit, AfterView
   //         if (res.data.seconds) {
   //           this.counter = res.data.seconds;
   //         } else {
-  //           this.snackBar.openSnackBar(res.data.Message, 'mat-warn');
+  //           this.snackBar.openMessage(res.data.Message, 'mat-warn');
   //         }
   //         const si = setInterval(() => {
   //           if (this.counter === 0) {
@@ -98,7 +98,7 @@ export class SendSmsTypeComponent extends FieldType implements OnInit, AfterView
   //           }
   //         }, 1000);
   //       } else {
-  //         this.snackBar.openSnackBar("短信发送失败", 'mat-warn');
+  //         this.snackBar.openMessage("短信发送失败", 'mat-warn');
   //         button.disabled = false;
   //       }
   //     });

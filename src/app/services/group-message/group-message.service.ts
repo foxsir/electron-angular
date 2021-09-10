@@ -84,12 +84,12 @@ export class GroupMessageService {
     // } else
     if (!toGid) {
       //alert('消息接收者不能为空！');
-      this.snackBarService.openSnackBar( '要发送到的群组不能为空！');
+      this.snackBarService.openMessage( '要发送到的群组不能为空！');
     } else if (!msgContent) {
       //alert('消息内容不能为空！');
-      this.snackBarService.openSnackBar( '消息内容不能为空！');
+      this.snackBarService.openMessage( '消息内容不能为空！');
     } else if (!currentChattingGe) {
-      this.snackBarService.openSnackBar('友情提示', '您已不在该群组中，无法发送消息哦！');
+      this.snackBarService.openMessage('友情提示', '您已不在该群组中，无法发送消息哦！');
     } else {
       // 消息发送者uid（就是本地用户的uid了）
       // var fromUid = this.imService.getLoginInfo().loginUserId;
@@ -156,12 +156,12 @@ export class GroupMessageService {
     // } else
     if (!toGid) {
       //alert('消息接收者不能为空！');
-      this.snackBarService.openSnackBar( '要发送到的群组不能为空！');
+      this.snackBarService.openMessage( '要发送到的群组不能为空！');
     } else if (!msgContent) {
       //alert('消息内容不能为空！');
-      this.snackBarService.openSnackBar( '消息内容不能为空！');
+      this.snackBarService.openMessage( '消息内容不能为空！');
     } else if (!currentChattingGe) {
-      this.snackBarService.openSnackBar('友情提示', '您已不在该群组中，无法发送消息哦！');
+      this.snackBarService.openMessage('友情提示', '您已不在该群组中，无法发送消息哦！');
     } else {
       // 消息发送者uid（就是本地用户的uid了）
       var fromUid = this.imService.getLoginInfo().loginUserId;

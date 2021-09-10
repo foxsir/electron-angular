@@ -72,7 +72,7 @@ export class SmsCodeTypeComponent extends FieldType implements OnInit {
           // if (res.data.seconds) {
           //   this.counter = res.data.seconds;
           // } else {
-          //   this.snackBar.openSnackBar(res.data.Message, 'mat-warn');
+          //   this.snackBar.openMessage(res.data.Message, 'mat-warn');
           // }
           const si = setInterval(() => {
             if (this.counter === 0) {

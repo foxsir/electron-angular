@@ -60,10 +60,10 @@ export class TempMessageService {
     // } else
     if (!guestUID) {
       //alert('消息接收者不能为空！');
-      this.snackBarService.openSnackBar('消息接收者不能为空！');
+      this.snackBarService.openMessage('消息接收者不能为空！');
     } else if (!msgContent) {
       //alert('消息内容不能为空！');
-      this.snackBarService.openSnackBar('消息内容不能为空！');
+      this.snackBarService.openMessage('消息内容不能为空！');
     } else {
       // 消息发送者uid（就是本地用户的uid了）
       var fromUid = this.imService.getLoginInfo().loginUserId;

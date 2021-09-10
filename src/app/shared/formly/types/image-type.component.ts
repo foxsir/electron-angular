@@ -135,14 +135,14 @@ export class ImageTypeComponent extends FieldType implements OnInit, AfterViewIn
           url: [AppConfig.ossUrl, info.file.response.data.filename].join('/'),
         });
       } else {
-        this.snackBar.openSnackBar(info.file.error.error.message, 'mat-warn');
+        this.snackBar.openMessage(info.file.error.error.message, 'mat-warn');
       }
     }
 
     if (info.file.status === 'error') {
       this.loading = false;
       this.fileList.pop();
-      this.snackBar.openSnackBar('图片上传失败:' + info.file.error.error.message, 'mat-warn');
+      this.snackBar.openMessage('图片上传失败:' + info.file.error.error.message, 'mat-warn');
     }
   }
 
