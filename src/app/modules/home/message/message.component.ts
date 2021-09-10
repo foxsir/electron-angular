@@ -51,6 +51,7 @@ import {CurrentChattingChangeService} from "@services/current-chatting-change/cu
 })
 export class MessageComponent implements OnInit {
   // @ViewChild("chattingContainer") chattingContainer: ElementRef;
+  readonly Infinity = 999999999999999999;
 
   // icon
   public closeCircleIcon = this.dom.bypassSecurityTrustResourceUrl(closeCircleIcon);
@@ -88,6 +89,10 @@ export class MessageComponent implements OnInit {
   // public showCreateGroup: boolean = false;
   // // 显示添加好友组件
   // public showSearchFriend: boolean = false;
+
+  public muteList: Map<string, boolean> = new Map();
+  public topList: Map<string, boolean> = new Map();
+  public topListOfArray: string[] = [];
 
   constructor(
     private alarmsProviderService: AlarmsProviderService,
@@ -133,9 +138,30 @@ export class MessageComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.cacheService.getMute().then((list) => {
+      this.muteList  = list;
+      this.cacheService.cacheUpdate$.subscribe(data => {
+        if(data.mute) {
+          this.muteList = data.mute;
+        }
+      });
+    });
+    this.cacheService.getTop().then((list) => {
+      this.topList  = list;
+      this.topListOfArray = new Array(...this.topList.keys());
+      this.cacheService.cacheUpdate$.subscribe(data => {
+        if(data.top) {
+          this.topList = data.top;
+          this.topListOfArray = new Array(...this.topList.keys());
+        }
+      });
+    });
+
+    this.cacheService.cacheSessionStatusList();
+
     this.cacheService.getChattingList().then(res => {
       if(res && res.size) {
-        this.alarmItemList = res;
+        res.forEach(item => this.insertItem(item.alarmData));
       }
 
       this.cacheService.syncChattingList(res).then(list => {
@@ -148,12 +174,22 @@ export class MessageComponent implements OnInit {
     });
   }
 
+  insertItem(alarmData: AlarmItemInterface) {
+    // if(this.topList.get(alarmData.alarmItem.dataId) === true) {
+    //   this.alarmItemList = new Map([...this.alarmItemList, [alarmData.alarmItem.dataId, {alarmData: alarmData}]]);
+    //   console.dir(this.alarmItemList);
+    // } else {
+    //   this.alarmItemList = new Map([[alarmData.alarmItem.dataId, {alarmData: alarmData}], ...this.alarmItemList]);
+    // }
+    this.alarmItemList.set(alarmData.alarmItem.dataId, {alarmData: alarmData});
+  }
+
   /**
    * 群管理员变更
    */
   subscribeGroupAdminChange() {
     this.messageDistributeService.UPDATE_GROUP_ADMIN$.subscribe((res: ProtocalModel) => {
-      this.snackBarService.openSnackBar('群管理员发生变更');
+      this.snackBarService.openMessage('群管理员发生变更');
     });
   }
 
@@ -162,7 +198,7 @@ export class MessageComponent implements OnInit {
    */
   subscribeGroupMemberQuit() {
     this.messageDistributeService.MT50_OF_GROUP$SYSCMD_SOMEONEB$REMOVED_FROM$SERVER$.subscribe((res: ProtocalModel) => {
-      this.snackBarService.openSnackBar('有人退群');
+      this.snackBarService.openMessage('有人退群');
     });
   }
 
@@ -171,7 +207,7 @@ export class MessageComponent implements OnInit {
    */
   subscribeGroupMemberWasRemoved() {
     this.messageDistributeService.MT49_OF_GROUP$SYSCMD_YOU$BE$KICKOUT_FROM$SERVER$.subscribe((res: ProtocalModel) => {
-      this.snackBarService.openSnackBar('被踢');
+      this.snackBarService.openMessage('被踢');
     });
   }
 
@@ -181,7 +217,7 @@ export class MessageComponent implements OnInit {
   subscribeCommonSystemMessage() {
     this.messageDistributeService.MT47_OF_GROUP$SYSCMD_COMMON$INFO_FROM$SERVER$.subscribe((res: ProtocalModel) => {
       const dataContent: ProtocalModelDataContent = JSON.parse(res.dataContent);
-      this.snackBarService.openSnackBar(dataContent.m);
+      this.snackBarService.openMessage(dataContent.m);
     });
   }
 
@@ -194,7 +230,7 @@ export class MessageComponent implements OnInit {
       console.dir("subscribe cache");
       this.cacheService.getChattingList().then(res => {
         if(res && res.size) {
-          this.alarmItemList = res;
+          res.forEach(item => this.insertItem(item.alarmData));
         }
       });
     });
@@ -292,10 +328,6 @@ export class MessageComponent implements OnInit {
 
   clearSubscribeQuote() {
     this.quoteMessageService.setQuoteMessage(null);
-  }
-
-  insertItem(alarmData: AlarmItemInterface) {
-    // this.alarmItemList = [alarmData, ...this.alarmItemList];
   }
 
   /**
