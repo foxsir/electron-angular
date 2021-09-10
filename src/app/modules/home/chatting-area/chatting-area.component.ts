@@ -49,6 +49,7 @@ import FileMetaInterface from "@app/interfaces/file-meta.interface";
 import {ChatModeType, MsgType} from "@app/config/rbchat-config";
 import {HistoryMessageService} from "@services/history-message/history-message.service";
 import {ServerForwardService} from "@services/server-forward/server-forward.service";
+import {SoundService} from "@services/sound/sound.service";
 
 @Component({
   selector: 'app-chatting-area',
