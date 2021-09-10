@@ -5,13 +5,11 @@ import {
   ContextMenuModel,
   ContextMenuChattingModel,
   ContextMenuAvatarModel,
-  ContextMenuCollectModel, BaseContextMenuModel, MenuFilterData,
+  ContextMenuCollectModel, MenuFilterData,
 } from "@app/models/context-menu.model";
 import {QuoteMessageService} from "@services/quote-message/quote-message.service";
 import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 import {CacheService} from "@services/cache/cache.service";
-import {GroupModel} from "@app/models/group.model";
-import {GroupAdminModel} from "@app/models/group-admin.model";
 import {LocalUserService} from "@services/local-user/local-user.service";
 import {DialogService} from "@services/dialog/dialog.service";
 import {UserInfoComponent} from "@modules/user-dialogs/user-info/user-info.component";
@@ -48,65 +46,62 @@ export class ContextMenuService {
   // 收藏列表上的右键
   private contextMenuForCollect: ContextMenuCollectModel[] = [];
 
-  // 权限是或的关系，只要满足其中一个条件即可
-  // private limits = {
-  //   common: "common",
-  //   manage: "manage",
-  //   owner: "owner",
-  //   isFriend: "isFriend",
-  //   notFriend: "notFriend",
-  //   privacyClose: "privacyClose",
-  // };
+  public muteList: Map<string, boolean> = new Map();
+  public topList: Map<string, boolean> = new Map();
 
   private actionChattingCollection = {
     setTop: {
       label: "置顶消息",
-      visibility: function(filterData: MenuFilterData): boolean {
-        return true;
+      visibility: (filterData: MenuFilterData): boolean => {
+        return !this.topList.get(filterData.alarmItem.alarmItem.dataId);
       },
       action: (chatting: AlarmItemInterface) => {
-        alert(chatting.metadata.unread);
+        this.cacheService.setTop(chatting.alarmItem.dataId, chatting.metadata.chatType, true).then();
       }
     },
     unsetTop: {
       label: "取消置顶",
-      visibility: function(filterData: MenuFilterData): boolean {
-        return true;
+      visibility: (filterData: MenuFilterData): boolean => {
+        return this.topList.get(filterData.alarmItem.alarmItem.dataId) === true;
       },
       action: (chatting: AlarmItemInterface) => {
-        alert(chatting.metadata.unread);
+        this.cacheService.setTop(chatting.alarmItem.dataId, chatting.metadata.chatType, false).then();
       }
     },
     viewUser: {
       label: "查看个人消息",
-      visibility: function(filterData: MenuFilterData): boolean {
-        return true;
+      visibility: (filterData: MenuFilterData): boolean => {
+        return filterData.alarmItem.metadata.chatType === 'friend';
       },
       action: (chatting: AlarmItemInterface) => {
-        alert(chatting.alarmItem.dataId);
+        return this.dialogService.openDialog(UserInfoComponent, {data: {userId: Number(chatting.alarmItem.dataId)}});
       }
     },
     closeSound: {
       label: "关闭消息声音通知",
-      visibility: function(filterData: MenuFilterData): boolean {
-        return true;
+      visibility: (filterData: MenuFilterData): boolean => {
+        return this.muteList.get(filterData.alarmItem.alarmItem.dataId) !== true;
       },
       action: (chatting: AlarmItemInterface) => {
-        alert(chatting.metadata.unread);
+        this.cacheService.setMute(chatting.alarmItem.dataId, chatting.metadata.chatType, true).then(() => {
+          this.snackBarService.openMessage("关闭声音通知");
+        });
       }
     },
     openSound: {
       label: "开启消息声音通知",
-      visibility: function(filterData: MenuFilterData): boolean {
-        return true;
+      visibility: (filterData: MenuFilterData): boolean => {
+        return this.muteList.get(filterData.alarmItem.alarmItem.dataId) === true;
       },
       action: (chatting: AlarmItemInterface) => {
-        alert(chatting.metadata.unread);
+        this.cacheService.setMute(chatting.alarmItem.dataId, chatting.metadata.chatType, false).then(() => {
+          this.snackBarService.openMessage("开启声音通知");
+        });
       }
     },
     contactCard: {
       label: "发送名片",
-      visibility: function(filterData: MenuFilterData): boolean {
+      visibility: (filterData: MenuFilterData): boolean => {
         return true;
       },
       action: (chatting: AlarmItemInterface) => {
@@ -115,7 +110,7 @@ export class ContextMenuService {
     },
     remove: {
       label: "删除会话",
-      visibility: function(filterData: MenuFilterData): boolean {
+      visibility: (filterData: MenuFilterData): boolean => {
         return true;
       },
       action: (chatting: AlarmItemInterface) => {
@@ -128,7 +123,7 @@ export class ContextMenuService {
     },
     clearMessage: {
       label: "清除历史消息",
-      visibility: function(filterData: MenuFilterData): boolean {
+      visibility: (filterData: MenuFilterData): boolean => {
         return true;
       },
       action: (chatting: AlarmItemInterface) => {
@@ -141,7 +136,7 @@ export class ContextMenuService {
     },
     setBackList: {
       label: "拉入黑名单",
-      visibility: function(filterData: MenuFilterData): boolean {
+      visibility: (filterData: MenuFilterData): boolean => {
         return true;
       },
       action: (chatting: AlarmItemInterface) => {
@@ -153,7 +148,7 @@ export class ContextMenuService {
   private actionCollection = {
     copyText: {
       label: "复制",
-      visibility: function(filterData: MenuFilterData): boolean {
+      visibility: (filterData: MenuFilterData): boolean => {
         return true;
       },
       action: (chat: ChatmsgEntityModel, messageContainer: HTMLDivElement) => {
@@ -162,7 +157,7 @@ export class ContextMenuService {
     },
     copyImage: {
       label: "复制",
-      visibility: function(filterData: MenuFilterData): boolean {
+      visibility: (filterData: MenuFilterData): boolean => {
         return true;
       },
       action: (chat: ChatmsgEntityModel, messageContainer: HTMLDivElement) => {
@@ -171,7 +166,7 @@ export class ContextMenuService {
     },
     repeal: {
       label: "撤回",
-      visibility: function(filterData: MenuFilterData): boolean {
+      visibility: (filterData: MenuFilterData): boolean => {
         const localUserInfo: LocalUserinfoModel = RBChatUtils.getAuthedLocalUserInfoFromCookie();
         return filterData.chat.uid.toString() === localUserInfo.userId.toString();
       },
@@ -192,7 +187,7 @@ export class ContextMenuService {
     },
     quote: {
       label: "回复",
-      visibility: function(filterData: MenuFilterData): boolean {
+      visibility: (filterData: MenuFilterData): boolean => {
         return true;
       },
       action: (chat: ChatmsgEntityModel, messageContainer: HTMLDivElement) => {
@@ -202,7 +197,7 @@ export class ContextMenuService {
     },
     download: {
       label: "保存到...",
-      visibility: function(filterData: MenuFilterData): boolean {
+      visibility: (filterData: MenuFilterData): boolean => {
         return true;
       },
       action: (chat: ChatmsgEntityModel, messageContainer: HTMLDivElement) => {
@@ -213,7 +208,7 @@ export class ContextMenuService {
     },
     transmit: {
       label: "转发消息",
-      visibility: function(filterData: MenuFilterData): boolean {
+      visibility: (filterData: MenuFilterData): boolean => {
         return true;
       },
       action: (chat: ChatmsgEntityModel, messageContainer: HTMLDivElement) => {
@@ -222,7 +217,7 @@ export class ContextMenuService {
     },
     delete: {
       label: "删除消息",
-      visibility: function(filterData: MenuFilterData): boolean {
+      visibility: (filterData: MenuFilterData): boolean => {
         return true;
       },
       action: (chat: ChatmsgEntityModel, messageContainer: HTMLDivElement) => {
@@ -239,7 +234,7 @@ export class ContextMenuService {
     },
     select: {
       label: "选择消息",
-      visibility: function(filterData: MenuFilterData): boolean {
+      visibility: (filterData: MenuFilterData): boolean => {
         return true;
       },
       action: (chat: ChatmsgEntityModel, messageContainer: HTMLDivElement) => {
@@ -248,7 +243,7 @@ export class ContextMenuService {
     },
     collect: {
       label: "收藏",
-      visibility: function(filterData: MenuFilterData): boolean {
+      visibility: (filterData: MenuFilterData): boolean => {
         return true;
       },
       action: (chat: ChatmsgEntityModel, messageContainer: HTMLDivElement) => {
@@ -270,6 +265,27 @@ export class ContextMenuService {
     private elementService: ElementService,
     private messageService: MessageService,
   ) {
+    this.cacheService.getMute().then((list) => {
+      if(list) {
+        this.muteList  = list;
+      }
+      this.cacheService.cacheUpdate$.subscribe(data => {
+        if(data.mute) {
+          this.muteList = data.mute;
+        }
+      });
+    });
+    this.cacheService.getTop().then((list) => {
+      if(list) {
+        this.topList  = list;
+      }
+      this.cacheService.cacheUpdate$.subscribe(data => {
+        if(data.top) {
+          this.topList = data.top;
+        }
+      });
+    });
+
     this.initMsgMenu();
     this.initChattingMenu();
     this.initAvatarMenu();
@@ -281,7 +297,7 @@ export class ContextMenuService {
     this.contextMenuForAvatar = [
       {
         label: "发送消息",
-        visibility: function(filterData: MenuFilterData): boolean {
+        visibility: (filterData: MenuFilterData): boolean => {
           const localUserInfo: LocalUserinfoModel = RBChatUtils.getAuthedLocalUserInfoFromCookie();
           return filterData.chat.uid.toString() !== localUserInfo.userId.toString();
         },
@@ -303,7 +319,7 @@ export class ContextMenuService {
       },
       {
         label: "查看资料",
-        visibility: function(filterData: MenuFilterData): boolean {
+        visibility: (filterData: MenuFilterData): boolean => {
           const localUserInfo: LocalUserinfoModel = RBChatUtils.getAuthedLocalUserInfoFromCookie();
           return filterData.chat.uid.toString() !== localUserInfo.userId.toString();
         },
@@ -315,7 +331,7 @@ export class ContextMenuService {
       },
       {
         label: "@TA",
-        visibility: function(filterData: MenuFilterData): boolean {
+        visibility: (filterData: MenuFilterData): boolean => {
           const localUserInfo: LocalUserinfoModel = RBChatUtils.getAuthedLocalUserInfoFromCookie();
           return filterData.chat.uid.toString() !== localUserInfo.userId.toString();
         },
@@ -325,7 +341,7 @@ export class ContextMenuService {
       },
       {
         label: "删除管理员",
-        visibility: function(filterData: MenuFilterData): boolean {
+        visibility: (filterData: MenuFilterData): boolean => {
           const localUserInfo: LocalUserinfoModel = RBChatUtils.getAuthedLocalUserInfoFromCookie();
           const group = filterData.groups[filterData.alarmItem.alarmItem.dataId];
           // 检查是否是群主
@@ -350,7 +366,7 @@ export class ContextMenuService {
       },
       {
         label: "设置备注",
-        visibility: function(filterData: MenuFilterData): boolean {
+        visibility: (filterData: MenuFilterData): boolean => {
           const localUserInfo: LocalUserinfoModel = RBChatUtils.getAuthedLocalUserInfoFromCookie();
           const noSelf = filterData.chat.uid.toString() !== localUserInfo.userId.toString();
           const isFriend = filterData.friends[filterData.chat.uid];
@@ -365,7 +381,7 @@ export class ContextMenuService {
       },
       {
         label: "从本群主中删除",
-        visibility: function(filterData: MenuFilterData): boolean {
+        visibility: (filterData: MenuFilterData): boolean => {
           const localUserInfo: LocalUserinfoModel = RBChatUtils.getAuthedLocalUserInfoFromCookie();
           const caches = filterData.admins[filterData.alarmItem.alarmItem.dataId];
           const chatUid = filterData.chat.uid.toString();
@@ -393,7 +409,7 @@ export class ContextMenuService {
       },
       {
         label: "添加好友",
-        visibility: function(filterData: MenuFilterData): boolean {
+        visibility: (filterData: MenuFilterData): boolean => {
           const localUserInfo: LocalUserinfoModel = RBChatUtils.getAuthedLocalUserInfoFromCookie();
           const noSelf = filterData.chat.uid.toString() !== localUserInfo.userId.toString();
           const isFriend = filterData.friends[filterData.chat.uid];
@@ -423,7 +439,7 @@ export class ContextMenuService {
       },
       {
         label: "设置管理员",
-        visibility: function(filterData: MenuFilterData): boolean {
+        visibility: (filterData: MenuFilterData): boolean => {
           const localUserInfo: LocalUserinfoModel = RBChatUtils.getAuthedLocalUserInfoFromCookie();
           const group = filterData.groups[filterData.alarmItem.alarmItem.dataId];
           // 是群主
@@ -448,7 +464,7 @@ export class ContextMenuService {
       },
       {
         label: "禁言",
-        visibility: function(filterData: MenuFilterData): boolean {
+        visibility: (filterData: MenuFilterData): boolean => {
           const localUserInfo: LocalUserinfoModel = RBChatUtils.getAuthedLocalUserInfoFromCookie();
           const caches = filterData.admins[filterData.alarmItem.alarmItem.dataId];
           const chatUid = filterData.chat.uid.toString();
@@ -465,7 +481,7 @@ export class ContextMenuService {
       },
       {
         label: "移除禁言",
-        visibility: function(filterData: MenuFilterData): boolean {
+        visibility: (filterData: MenuFilterData): boolean => {
           const localUserInfo: LocalUserinfoModel = RBChatUtils.getAuthedLocalUserInfoFromCookie();
           const caches = filterData.admins[filterData.alarmItem.alarmItem.dataId];
           const chatUid = filterData.chat.uid.toString();
@@ -554,7 +570,7 @@ export class ContextMenuService {
     this.contextMenuForCollect = [
       {
         label: "demo",
-        visibility: function(filterData: MenuFilterData): boolean {
+        visibility: (filterData: MenuFilterData): boolean => {
           return true;
         },
         action: () => {
@@ -660,7 +676,7 @@ export class ContextMenuService {
    * @param chatOwner
    */
   getContextMenuForChatting(chatting: AlarmItemInterface, chatOwner: any = null) {
-    return this.contextMenuForChatting;
+    return this.contextMenuForChatting.filter(item => item.visibility({alarmItem: chatting}));
   }
 
   /**
@@ -674,37 +690,13 @@ export class ContextMenuService {
     let groups: unknown = null;
     await this.cacheService.getCacheGroupAdmins().then(data => {
       admins = data;
-      // if(data[chattingId] && data[chattingId][this.localUserService.localUserInfo.userId]) {
-      //   manage = true; // 检查是否是管理员
-      // }
     });
     await this.cacheService.getCacheFriends().then(data => {
       friends = data;
-      // if(data[chat.uid] || chat.uid.toString() === this.localUserService.localUserInfo.userId.toString()) {
-      //   isFriend = true; // 检查是否是好友
-      // } else {
-      //   notFriend = true;
-      // }
     });
     // 获取群信息/成员列表
     await this.cacheService.getCacheGroups().then(data => {
       groups = data;
-      // const g: GroupModel = data[chattingId];
-      // if(g) {
-      //   if(g.gownerUserUid.toString() === this.localUserService.localUserInfo.userId.toString()) {
-      //     owner = true; // 检查是否是群主
-      //   }
-      //   if(g.allowPrivateChat.toString() === '0') {
-      //     privacyClose = true; // 检查是否开启隐私
-      //   }
-      //   // 如果右键目标是自己
-      //   if(g.gownerUserUid.toString() === chat.uid.toString()) {
-      //     owner = false;
-      //     privacyClose = false;
-      //     manage = false;
-      //     isFriend = true;
-      //   }
-      // }
     });
 
     const filterData = {
