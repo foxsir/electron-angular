@@ -4,6 +4,7 @@
   "main": "main.js",
   "private": true,
   "dependencies": {
-    "@electron/remote": "1.2.0"
+    "@electron/remote": "1.2.0",
+    "blueimp-md5": "2.18.0"
   }
 }
