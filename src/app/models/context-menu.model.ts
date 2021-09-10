@@ -13,7 +13,9 @@ type ActionChattingType = (chatting: AlarmItemInterface) => void;
 // 对话列表action
 type ActionAvatarType = (alarmItem: AlarmItemInterface, chat: ChatmsgEntityModel) => void;
 
-type ActionVisibilityForGroupAvatar = (filterData: MenuFilterData) => boolean;
+type ActionVisibilityForGroupAvatar = (filterData: Partial<MenuFilterData>) => boolean;
+
+type ActionVisibilityForChatting = (filterData: Partial<MenuFilterData>) => boolean;
 
 // 对话列表action
 type ActionCollectType = () => void;
@@ -46,7 +48,7 @@ export class ContextMenuChattingModel implements BaseContextMenuModel{
 
 export class ContextMenuAvatarModel implements BaseContextMenuModel{
   label: string;
-  visibility: ActionVisibilityForGroupAvatar;
+  visibility: ActionVisibilityForChatting;
   action: ActionAvatarType;
 }
 
