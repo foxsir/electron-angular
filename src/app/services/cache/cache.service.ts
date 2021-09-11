@@ -23,6 +23,7 @@ import {HttpService} from "@services/http/http.service";
 import {_HTTP_SERVER_URL} from "@app/config/post-api";
 import {SoundService} from "@services/sound/sound.service";
 import SessionStatusModel from "@app/models/session-status.model";
+import {AvatarService} from "@services/avatar/avatar.service";
 
 export type AlarmDataMap = Map<string, {alarmData: AlarmItemInterface; message?: Map<string, ChatmsgEntityModel>}>;
 
@@ -64,7 +65,8 @@ export class CacheService {
     private messageService: MessageService,
     private historyMessageService: HistoryMessageService,
     private httpService: HttpService,
-    private soundService: SoundService
+    private soundService: SoundService,
+    private avatarService: AvatarService,
   ) {
     const userId = this.localUserService.localUserInfo.userId;
     for (const key in this.dataKeys) {
@@ -555,40 +557,43 @@ export class CacheService {
   }
 
   /**
-   * 使用 ProtocalModel 构建 AlarmItemInterface
-   * @param protocal
+   * 构建 AlarmItemInterface
+   * @param dataId
+   * @param chatType
+   * @param text
+   * @param msgType
    */
-  public async generateAlarmItem(protocal: ProtocalModel): Promise<AlarmItemInterface> {
+  public async generateAlarmItem(dataId: string, chatType: 'friend' | 'group', text: string, msgType: number): Promise<AlarmItemInterface> {
     const friends = await this.getCacheFriends().then(res => res);
     const groups = await this.getCacheGroups().then(res => res);
 
     return new Promise((resolve, reject) => {
-      const dataContent: ProtocalModelDataContent = JSON.parse(protocal.dataContent);
-
-      let chatType = "friend";
-      if(dataContent.cy === ChatModeType.CHAT_TYPE_GROUP$CHAT) {
-        chatType = 'group';
+      let title = "聊天";
+      let avatar = this.avatarService.defaultLocalAvatar;
+      if(chatType === 'friend') {
+        if(friends.get(dataId)) {
+          title = friends.get(dataId).nickname;
+          avatar = friends.get(dataId).userAvatarFileName;
+        }
+      } else {
+        if(groups.get(dataId)) {
+          title = groups.get(dataId).gname;
+          avatar = groups.get(dataId).avatar;
+        }
       }
       const alarm =  {
         alarmItem: {
-          alarmMessageType: dataContent.cy,
-          dataId: chatType === 'group' ? dataContent.t : protocal.from,
-          date: protocal.recvTime.toString(),
-          msgContent: this.messageService.parseMessageForShow(dataContent.m, dataContent.ty),
-          title: null,
-          avatar: null,
+          alarmMessageType: chatType === 'friend' ? ChatModeType.CHAT_TYPE_FRIEND$CHAT : ChatModeType.CHAT_TYPE_GROUP$CHAT,
+          dataId: dataId,
+          date: new Date().getTime().toString(),
+          msgContent: this.messageService.parseMessageForShow(text, msgType),
+          title: title,
+          avatar: avatar,
         },
         metadata: {
           chatType: chatType
         }
       };
-      if(chatType === 'group') {
-        alarm.alarmItem.title = groups.get(alarm.alarmItem.dataId).gname;
-        alarm.alarmItem.avatar = groups.get(alarm.alarmItem.dataId).avatar;
-      } else {
-        alarm.alarmItem.title = friends.get(alarm.alarmItem.dataId.toString()).nickname;
-        alarm.alarmItem.avatar = friends.get(alarm.alarmItem.dataId.toString()).userAvatarFileName;
-      }
 
       resolve(alarm);
     });
