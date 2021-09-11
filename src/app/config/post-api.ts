@@ -59,6 +59,24 @@ export const getRemark = _HTTP_SERVER_URL + "/api/user/getRemark";
 // 用户好友相关 - 获取好友列表
 export const getfriendList = _HTTP_SERVER_URL + "/api/user/friendList";
 
+//红包相关 - 是否设置支付密码
+export const checkPayKeyIsExist = _HTTP_SERVER_URL + '/api/custAccountbase/checkPayKeyIsExist';
+
+//红包相关 - 设置支付密码
+export const updatePayKey = _HTTP_SERVER_URL + '/api/custAccountbase/updatePayKey';
+
+//红包相关 - 发送红包
+export const sentRedPacket = _HTTP_SERVER_URL + '/api/redPacket/sentRedPacket';
+
+//红包相关 - 红包详情
+export const getRedPacketById = _HTTP_SERVER_URL + '/api/redPacket/getRedPacketById';
+
+//红包相关 - 领取红包
+export const robRedPacket = _HTTP_SERVER_URL + '/api/redPacket/robRedPacket';
+
+//红包相关 - 红包记录
+export const getConsumeRecordList = _HTTP_SERVER_URL + '/api/custAccountbase/getConsumeRecordList';
+
 
 
 //置顶

@@ -31,6 +31,12 @@ import {
   updRemark,
     getRemark,
     getfriendList,
+    checkPayKeyIsExist,
+    updatePayKey,
+    sentRedPacket,
+    getRedPacketById,
+    robRedPacket,
+    getConsumeRecordList,
   updateGroupAdmin,
   addGroupSilence,
   deleteGroupSilenceById,
@@ -576,6 +582,64 @@ export class RestService {
         data.userId = localUserInfo.userId.toString();
 
         return this.http.get(getfriendList, data);
+    }
+
+    /**
+      * 红包相关 - 是否设置支付密码
+      */
+    checkPayKeyIsExist(): Observable<any> {
+        const localUserInfo = this.localUserService.getObj();
+        return this.http.get(checkPayKeyIsExist, { userId: localUserInfo.userId.toString()});
+    }
+
+    /**
+      * 红包相关 - 设置支付密码
+      */
+    updatePayKey(data: any): Observable<any> {
+        const localUserInfo = this.localUserService.getObj();
+        data.userId = localUserInfo.userId.toString();
+
+        return this.http.get(updatePayKey, data);
+    }
+
+    /**
+      * 红包相关 - 发送红包
+      */
+    sentRedPacket(data: any): Observable<any> {
+        const localUserInfo = this.localUserService.getObj();
+        data.userId = localUserInfo.userId.toString();
+
+        return this.http.postForm(sentRedPacket, data);
+    }
+
+    /**
+      * 红包相关 - 红包详情
+      */
+    getRedPacketById(data: any): Observable<any> {
+        const localUserInfo = this.localUserService.getObj();
+        data.userId = localUserInfo.userId.toString();
+
+        return this.http.get(getRedPacketById, data);
+    }
+
+    /**
+      * 红包相关 - 领取红包
+      */
+    robRedPacket(data: any): Observable<any> {
+        const localUserInfo = this.localUserService.getObj();
+        data.userId = localUserInfo.userId.toString();
+
+        return this.http.get(robRedPacket, data);
+    }
+
+    /**
+      * 红包相关 - 红包记录
+      */
+    getConsumeRecordList(data: any): Observable<any> {
+        const localUserInfo = this.localUserService.getObj();
+        data.userId = localUserInfo.userId.toString();
+
+        return this.http.get(getConsumeRecordList, data);
     }
 
     /**
