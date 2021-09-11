@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   ElementRef,
@@ -44,6 +45,7 @@ import {ElementService} from "@services/element/element.service";
 import {DialogService} from "@services/dialog/dialog.service";
 import {SelectFriendContactComponent} from "@modules/user-dialogs/select-friend-contact/select-friend-contact.component";
 import {LocalUserService} from "@services/local-user/local-user.service";
+import {ForwardMessageService} from "@services/forward-message/forward-message.service";
 
 @Component({
   selector: 'app-input-area',
@@ -51,7 +53,7 @@ import {LocalUserService} from "@services/local-user/local-user.service";
   styleUrls: ['./input-area.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class InputAreaComponent implements OnInit {
+export class InputAreaComponent implements OnInit, AfterViewInit {
   @Input() currentChat: AlarmItemInterface;
   @Output() sendMessage = new EventEmitter<{chat: ChatmsgEntityModel; dataContent: ProtocalModelDataContent}>();
   @ViewChild("textarea") textarea: ElementRef;
@@ -106,7 +108,8 @@ export class InputAreaComponent implements OnInit {
     private currentChattingChangeService: CurrentChattingChangeService,
     private elementService: ElementService,
     private dialogService: DialogService,
-    private localUserService: LocalUserService
+    private localUserService: LocalUserService,
+    private forwardMessageService: ForwardMessageService,
   ) { }
 
   ngOnInit(): void {
@@ -117,6 +120,19 @@ export class InputAreaComponent implements OnInit {
 
     this.chattingChange();
     this.subscribeAtMember();
+  }
+
+  ngAfterViewInit() {
+    this.subscribeForwardMessage();
+  }
+
+  private subscribeForwardMessage() {
+    if(this.forwardMessageService.message) {
+      return this.doSend(this.forwardMessageService.message.text, this.forwardMessageService.message.msgType,true);
+    }
+    this.forwardMessageService.forward$.subscribe((msg) => {
+      return this.doSend(this.forwardMessageService.message.text, this.forwardMessageService.message.msgType,true);
+    });
   }
 
   private subscribeAtMember() {
