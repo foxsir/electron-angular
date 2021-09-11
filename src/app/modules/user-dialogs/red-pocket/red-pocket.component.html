@@ -1,0 +1,37 @@
+<div *ngIf="data.dialog_type === 'start_red_pocket'">
+    <div fxLayout="column" fxLayoutGap="20px">
+        <div fxFlex><label>发红包</label></div>
+        <div fxFlex>
+            <input type="text" nz-input [(ngModel)]="data.money" class="txtcom" placeholder="金额" />
+        </div>
+        <div fxFlex>
+            <input type="text" nz-input [(ngModel)]="data.greetings" class="txtcom" placeholder="恭喜发财，大吉大利" />
+        </div>
+        <div fxFlex>
+            <button mat-flat-button color="primary" class="register-button" fxFlex="100" (click)="showInputPassword()">塞进红包</button>
+        </div>
+        <div fxFlex>            
+            <div fxLayout="row" fxLayoutAlign="end" fxLayoutGap="10">
+                <button nz-button nzType="link" class="btncancel" (click)="cancel()">取消</button>                
+            </div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="data.dialog_type === 'input_password'" style="width:200px;">
+    <div fxLayout="column" fxLayoutGap="20px">
+        <div fxFlex><label>输入支付密码</label></div>
+        <div fxFlex>
+            <span>金额：{{data.money}}</span>
+        </div>
+        <div fxFlex>
+            
+        </div>
+        <div fxFlex>
+            <div fxLayout="row" fxLayoutAlign="end" fxLayoutGap="10">
+                <button nz-button nzType="link" class="btncancel" (click)="cancel(false)">取消</button>
+                <button nz-button nzType="link" class="btnsave" (click)="confirmSendRedpocket(true)">确定</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -17,6 +17,9 @@
       <button mat-menu-item (click)="selectFriend()" [disabled]="!!this.quoteMessage">
         名片发送
       </button>
+        <button mat-menu-item (click)="sendRedpocket()" [disabled]="!!this.quoteMessage">
+            红包
+        </button>
       <button mat-menu-item [disabled]="!!this.quoteMessage">
         截图
       </button>

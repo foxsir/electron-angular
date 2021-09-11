@@ -43,7 +43,8 @@ import {CurrentChattingChangeService} from "@services/current-chatting-change/cu
 import {ElementService} from "@services/element/element.service";
 import {DialogService} from "@services/dialog/dialog.service";
 import {SelectFriendContactComponent} from "@modules/user-dialogs/select-friend-contact/select-friend-contact.component";
-import {LocalUserService} from "@services/local-user/local-user.service";
+import { LocalUserService } from "@services/local-user/local-user.service";
+import { RedPocketComponent } from "@modules/user-dialogs/red-pocket/red-pocket.component";
 
 @Component({
   selector: 'app-input-area',
@@ -605,6 +606,22 @@ export class InputAreaComponent implements OnInit {
       }
     });
   }
+
+    sendRedpocket() {
+        var data = {
+            dialog_type: 'start_red_pocket',
+            toUserId: this.currentChat.alarmItem.dataId
+        };
+
+        this.dialogService.openDialog(RedPocketComponent, { data: data }).then((res: any) => {
+            console.log('red pocket dialog result: ', res);
+
+            if (res.ok == true) {
+
+                
+            }
+        });
+    }
 
   getDefaultDataContent(msgType: number): ProtocalModelDataContent {
     return {
