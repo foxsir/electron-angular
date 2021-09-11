@@ -29,7 +29,8 @@ import {InputAreaComponent} from './input-area/input-area.component';
 import {FormsModule} from "@angular/forms";
 import {UserDialogsModule} from "../user-dialogs/user-dialogs.module";
 import {ChattingSettingComponent} from './chatting-setting/chatting-setting.component';
-import {GroupChattingSettingComponent} from './group-chatting-setting/group-chatting-setting.component';
+import { GroupChattingSettingComponent } from './group-chatting-setting/group-chatting-setting.component';
+import { GroupInfoComponent } from './group-info/group-info.component';
 import {ChattingVoiceComponent} from './chatting-voice/chatting-voice.component';
 import {CreateGroupComponent} from './create-group/create-group.component';
 import {UploadModule} from "../../factorys/upload/upload.module";
@@ -64,7 +65,8 @@ import {MatTooltipModule} from "@angular/material/tooltip";
     SearchChattingComponent,
     InputAreaComponent,
     ChattingSettingComponent,
-    GroupChattingSettingComponent,
+        GroupChattingSettingComponent,
+        GroupInfoComponent,
     ChattingVoiceComponent,
     CreateGroupComponent,
     SearchFriendComponent,
