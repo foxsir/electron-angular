@@ -172,6 +172,7 @@ export class MessageComponent implements OnInit {
     this.currentChattingChangeService.currentChatting$.subscribe((alarm: AlarmItemInterface) => {
       this.currentChat = alarm;
     });
+    this.currentChat = this.currentChattingChangeService.currentChatting;
   }
 
   insertItem(alarmData: AlarmItemInterface) {
@@ -337,8 +338,8 @@ export class MessageComponent implements OnInit {
   switchChat(alarm: AlarmItemInterface) {
     if(!this.currentChat || this.currentChat.alarmItem.dataId !== alarm.alarmItem.dataId) {
       this.currentChat = alarm;
-      this.currentChattingChangeService.switchCurrentChatting(this.currentChat);
       return this.router.navigate(['/home/message']).then(() => {
+        this.currentChattingChangeService.switchCurrentChatting(this.currentChat).then();
         // 缓存群管理员列表
         if (this.currentChat.metadata.chatType === 'group') {
           this.cacheService.cacheGroupAdmins(this.currentChat.alarmItem.dataId);
