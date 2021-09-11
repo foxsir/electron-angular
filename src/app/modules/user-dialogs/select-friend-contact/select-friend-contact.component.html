@@ -1,24 +1,26 @@
-<div fxLayout="column">
-  <div fxFlex="32px">
-    <h1 mat-dialog-title>选择联系人</h1>
-  </div>
-  <div fxFlex="70">
-    <mat-form-field fxFlex="100">
-      <input type="text" matInput (ngModelChange)="filter()" [(ngModel)]="filterFriend" placeholder="搜索"/>
-    </mat-form-field>
-  </div>
-  <div fxFlex>
-    <div style="height: 450px" class="scrollbar">
-      <mat-list class="friend-item-list">
-        <mat-list-item *ngFor="let friend of friendList" class="hover-item" (click)="select(friend)">
-          <mat-icon mat-list-icon class="friend-avatar">
-            <img [src]="friend.base64Avatar || friend.userAvatarFileName" alt="">
-          </mat-icon>
-          <div mat-line>{{friend.nickname}}</div>
-          <div mat-line *ngIf="!!friend.isOnline === true" style="color: #0091FF;">[在线]</div>
-          <div mat-line *ngIf="!!friend.isOnline === false" style="color: #CCCCCC;">[离线]</div>
-        </mat-list-item>
-      </mat-list>
+<div style="width: 300px">
+  <div fxLayout="column">
+    <div fxFlex="32px">
+      <h1 mat-dialog-title>选择联系人</h1>
+    </div>
+    <div fxFlex="70">
+      <mat-form-field fxFlex="100">
+        <input type="text" matInput (ngModelChange)="filter()" [(ngModel)]="filterFriend" placeholder="搜索"/>
+      </mat-form-field>
+    </div>
+    <div fxFlex>
+      <div style="height: 450px" class="scrollbar">
+        <mat-list class="friend-item-list">
+          <mat-list-item *ngFor="let friend of friendList" class="hover-item" (click)="select(friend)">
+            <mat-icon mat-list-icon class="friend-avatar">
+              <img [src]="friend.base64Avatar || friend.userAvatarFileName" alt="">
+            </mat-icon>
+            <div mat-line>{{friend.nickname}}</div>
+            <div mat-line *ngIf="!!friend.isOnline === true" style="color: #0091FF;">[在线]</div>
+            <div mat-line *ngIf="!!friend.isOnline === false" style="color: #CCCCCC;">[离线]</div>
+          </mat-list-item>
+        </mat-list>
+      </div>
     </div>
   </div>
 </div>

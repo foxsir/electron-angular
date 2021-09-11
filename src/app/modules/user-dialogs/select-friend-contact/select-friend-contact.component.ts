@@ -20,7 +20,9 @@ export class SelectFriendContactComponent implements OnInit {
 
   ngOnInit(): void {
     this.cacheService.getCacheFriends().then(data => {
-      this.friendList = Object.values(data);
+      data.forEach(friend => {
+        this.friendList.push(friend);
+      });
     });
   }
 
