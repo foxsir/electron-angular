@@ -20,6 +20,10 @@ export class RedPocketComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
+        /*是否设置支付密码*/
+        this.restService.checkPayKeyIsExist().subscribe(res => {
+            console.log('是否设置支付密码：', res);
+        });
     }
 
     close() {

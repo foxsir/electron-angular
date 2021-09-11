@@ -587,11 +587,9 @@ export class RestService {
     /**
       * 红包相关 - 是否设置支付密码
       */
-    checkPayKeyIsExist(data: any): Observable<any> {
+    checkPayKeyIsExist(): Observable<any> {
         const localUserInfo = this.localUserService.getObj();
-        data.userId = localUserInfo.userId.toString();
-
-        return this.http.get(checkPayKeyIsExist, data);
+        return this.http.get(checkPayKeyIsExist, { userId: localUserInfo.userId.toString()});
     }
 
     /**
@@ -611,7 +609,7 @@ export class RestService {
         const localUserInfo = this.localUserService.getObj();
         data.userId = localUserInfo.userId.toString();
 
-        return this.http.post(sentRedPacket, data);
+        return this.http.postForm(sentRedPacket, data);
     }
 
     /**
