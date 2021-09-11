@@ -273,7 +273,8 @@ export class ChattingAreaComponent implements OnInit {
         // fromUid, nickName, msg, time, msgType, fp = null
         chatMsgEntity.isOutgoing = true;
         const chatType = Number(dataContent.cy) === ChatModeType.CHAT_TYPE_FRIEND$CHAT ? 'friend' : 'group';
-        this.cacheService.generateAlarmItem(dataContent.t, chatType, dataContent.m, dataContent.ty).then(alarm => {
+        const dataId = chatType === 'friend' ? res.from : dataContent.t;
+        this.cacheService.generateAlarmItem(dataId, chatType, dataContent.m, dataContent.ty).then(alarm => {
           this.cacheService.putChattingCache(alarm, chatMsgEntity).then(() => {
             if(this.currentChat && this.currentChat.alarmItem.dataId === alarm.alarmItem.dataId) {
               this.pushMessageToPanel({chat: chatMsgEntity, dataContent: dataContent}, 'incept');
