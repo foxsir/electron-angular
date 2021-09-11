@@ -24,6 +24,7 @@ export class RedPocketComponent implements OnInit {
         this.restService.checkPayKeyIsExist().subscribe(res => {
             console.log('是否设置支付密码：', res);
         });
+        console.log('红包弹出框初始化 data：', this.data);
     }
 
     close() {
@@ -56,7 +57,7 @@ export class RedPocketComponent implements OnInit {
         console.log('确认发送红包...');
 
         var data = {
-            count: 1,
+            count: this.data.count,
             greetings: this.data.greetings,
             money: this.data.money,
             toUserId: this.data.toUserId,

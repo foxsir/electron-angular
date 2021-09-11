@@ -610,7 +610,9 @@ export class InputAreaComponent implements OnInit {
     sendRedpocket() {
         var data = {
             dialog_type: 'start_red_pocket',
-            toUserId: this.currentChat.alarmItem.dataId
+            toUserId: this.currentChat.alarmItem.dataId,
+            chatType: this.currentChat.metadata.chatType,
+            count: '',
         };
 
         this.dialogService.openDialog(RedPocketComponent, { data: data }).then((res: any) => {
