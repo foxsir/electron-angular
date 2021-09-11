@@ -1,4 +1,4 @@
-import { app, BrowserWindow, screen, ipcMain, Menu } from 'electron';
+import { app, BrowserWindow, screen, ipcMain, Menu, globalShortcut } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 
@@ -65,6 +65,7 @@ function createWindow(): BrowserWindow {
       win.webContents.openDevTools();
     });
   } else {
+    registerGlobalShortcut();
     // Path when running electron executable
     let pathIndex = './index.html';
 
@@ -117,6 +118,18 @@ function createWindow(): BrowserWindow {
   // Menu.setApplicationMenu(menu)
   windows.add(win);
   return win;
+}
+
+function registerGlobalShortcut() {
+  globalShortcut.register('Alt+CommandOrControl+I', () => {
+    console.log('open devtool')
+  })
+  globalShortcut.register('CommandOrControl+R', () => {
+    console.log('CR reload')
+  })
+  globalShortcut.register('Shift+CommandOrControl+R', () => {
+    console.log('SCR reload')
+  })
 }
 
 try {
