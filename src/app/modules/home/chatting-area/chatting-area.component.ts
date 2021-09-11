@@ -272,8 +272,8 @@ export class ChattingAreaComponent implements OnInit {
         );
         // fromUid, nickName, msg, time, msgType, fp = null
         chatMsgEntity.isOutgoing = true;
-
-        this.cacheService.generateAlarmItem(res).then(alarm => {
+        const chatType = Number(dataContent.cy) === ChatModeType.CHAT_TYPE_FRIEND$CHAT ? 'friend' : 'group';
+        this.cacheService.generateAlarmItem(dataContent.t, chatType, dataContent.m, dataContent.ty).then(alarm => {
           this.cacheService.putChattingCache(alarm, chatMsgEntity).then(() => {
             if(this.currentChat && this.currentChat.alarmItem.dataId === alarm.alarmItem.dataId) {
               this.pushMessageToPanel({chat: chatMsgEntity, dataContent: dataContent}, 'incept');
@@ -524,8 +524,9 @@ export class ChattingAreaComponent implements OnInit {
       if(ok) {
         this.cacheService.deleteMessageCache(this.currentChattingChangeService.currentChatting, this.selectMessageList).then(res => {
           // 刷新聊天数据
-          this.cancelSelectMessage();
-          this.currentChattingChangeService.switchCurrentChatting(this.currentChattingChangeService.currentChatting);
+          this.currentChattingChangeService.switchCurrentChatting(this.currentChattingChangeService.currentChatting).then(() => {
+            this.cancelSelectMessage();
+          });
         });
       }
     });
@@ -577,9 +578,9 @@ export class ChattingAreaComponent implements OnInit {
         // 从缓存获取消息
         this.loadingMessage = false;
         container.scrollTop = container.scrollTop - 60;
-        new Array(...this.chatMsgEntityListTemp.entries()).splice(0, 15).forEach(keyvalue => {
+        new Array(...this.chatMsgEntityListTemp.entries()).reverse().splice(0, 15).forEach(keyvalue => {
           this.chatMsgEntityListTemp.delete(keyvalue[0]);
-          this.chatMsgEntityList.set(keyvalue[0], keyvalue[1]);
+          this.chatMsgEntityList = new Map([[keyvalue[0], keyvalue[1]], ...this.chatMsgEntityList]);
         });
 
         if(goBottom) {
