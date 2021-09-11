@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 import {Subject} from "rxjs";
-import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 import {CacheService} from "@services/cache/cache.service";
+import {Router} from "@angular/router";
 
 @Injectable({
   providedIn: 'root'
@@ -16,13 +16,19 @@ export class CurrentChattingChangeService {
   currentChatting$ = this.currentChattingSource.asObservable();
 
   constructor(
-    private cacheService: CacheService
+    private router: Router,
+    private cacheService: CacheService,
   ) { }
 
-  switchCurrentChatting(currentChatting: AlarmItemInterface) {
-    currentChatting.metadata.unread = 0;
-    this.cacheService.setChattingBadges(currentChatting, 0);
-    this.currentChatting = currentChatting;
-    this.currentChattingSource.next(currentChatting);
+  switchCurrentChatting(currentChatting: AlarmItemInterface): Promise<boolean> {
+    return new Promise((resolve) => {
+      this.router.navigate(['/home/message']).then(() => {
+        currentChatting.metadata.unread = 0;
+        this.cacheService.setChattingBadges(currentChatting, 0);
+        this.currentChatting = currentChatting;
+        this.currentChattingSource.next(currentChatting);
+        resolve(true);
+      });
+    });
   }
 }
