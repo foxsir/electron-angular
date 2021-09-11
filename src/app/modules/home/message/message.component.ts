@@ -176,13 +176,12 @@ export class MessageComponent implements OnInit {
   }
 
   insertItem(alarmData: AlarmItemInterface) {
-    // if(this.topList.get(alarmData.alarmItem.dataId) === true) {
-    //   this.alarmItemList = new Map([...this.alarmItemList, [alarmData.alarmItem.dataId, {alarmData: alarmData}]]);
-    //   console.dir(this.alarmItemList);
-    // } else {
-    //   this.alarmItemList = new Map([[alarmData.alarmItem.dataId, {alarmData: alarmData}], ...this.alarmItemList]);
-    // }
-    this.alarmItemList.set(alarmData.alarmItem.dataId, {alarmData: alarmData});
+    if(this.alarmItemList.get(alarmData.alarmItem.dataId)) {
+      const item = this.alarmItemList.get(alarmData.alarmItem.dataId);
+      item.alarmData.alarmItem = alarmData.alarmItem;
+    } else {
+      this.alarmItemList.set(alarmData.alarmItem.dataId, {alarmData: alarmData});
+    }
   }
 
   /**
@@ -231,7 +230,7 @@ export class MessageComponent implements OnInit {
       console.dir("subscribe cache");
       this.cacheService.getChattingList().then(res => {
         if(res && res.size) {
-          res.forEach(item => this.insertItem(item.alarmData));
+          this.alarmItemList = res;
         }
       });
     });
