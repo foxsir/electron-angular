@@ -568,7 +568,9 @@ export class ChattingAreaComponent implements OnInit {
    * @param goBottom
    * @private
    */
-  private loadMessage(goBottom: boolean = false) {
+    private loadMessage(goBottom: boolean = false) {
+        console.log('消息列表（chating-area.component loadMessage）: ', this.chatMsgEntityListTemp);
+
     if(this.loadingMessage) {
       return false;
     } {
@@ -580,7 +582,9 @@ export class ChattingAreaComponent implements OnInit {
         container.scrollTop = container.scrollTop - 60;
         new Array(...this.chatMsgEntityListTemp.entries()).reverse().splice(0, 15).forEach(keyvalue => {
           this.chatMsgEntityListTemp.delete(keyvalue[0]);
-          this.chatMsgEntityList = new Map([[keyvalue[0], keyvalue[1]], ...this.chatMsgEntityList]);
+            this.chatMsgEntityList = new Map([[keyvalue[0], keyvalue[1]], ...this.chatMsgEntityList]);
+
+            console.log('消息列表（chating-area.component loadMessage）chatMsgEntityList: ', this.chatMsgEntityList);
         });
 
         if(goBottom) {

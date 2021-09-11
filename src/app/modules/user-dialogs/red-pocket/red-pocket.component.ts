@@ -57,7 +57,7 @@ export class RedPocketComponent implements OnInit {
         console.log('确认发送红包...');
 
         var data = {
-            count: this.data.count,
+            count: this.data.count.length == 0 ? '1' : this.data.count,
             greetings: this.data.greetings,
             money: this.data.money,
             toUserId: this.data.toUserId,

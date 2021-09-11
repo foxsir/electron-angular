@@ -53,7 +53,7 @@ export class GroupInfoComponent implements OnInit {
      */
     public view_mode = "switch_default";
     public view_title_object = {
-        switch_default: '群配置',
+        switch_default: '群组信息',
         group_top: '群上屏编辑',
         customer_service: '专属客服配置',
         group_tab: '群页签配置'
