@@ -132,22 +132,6 @@ export class CreateGroupComponent implements OnInit {
       });
     });
     this.restService.submitCreateGroupToServer(localUserUid, localUserNickname, members).subscribe((res: HttpResponseInterface) => {
-      // create_time: "2021-08-17 22:22"
-      // create_user_name: "普通管理员"
-      // g_id: "0000000499"
-      // g_member_count: "1"
-      // g_name: "梅西大巴黎等"
-      // g_notice: ""
-      // g_notice_updatenick: ""
-      // g_notice_updatetime: ""
-      // g_notice_updateuid: ""
-      // g_owner_name: "普通管理员"
-      // g_owner_user_uid: "400070"
-      // g_status: "1"
-      // imIsInGroup: "-1"
-      // max_member_count: "200"
-      // nickname_ingroup: ""
-      // worldChat: false
       const returnValue = JSON.parse(res.returnValue);
       const alarmData: AlarmItemInterface = {
         alarmItem: {
@@ -164,8 +148,7 @@ export class CreateGroupComponent implements OnInit {
       };
       if(res.success) {
         this.cacheService.putChattingCache(alarmData).then(() => {
-          this.currentChattingChangeService.switchCurrentChatting(alarmData);
-          return this.goBack(true);
+          this.currentChattingChangeService.switchCurrentChatting(alarmData).then();
         });
       }
     });

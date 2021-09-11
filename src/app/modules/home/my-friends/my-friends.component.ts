@@ -116,11 +116,9 @@ export class MyFriendsComponent implements OnInit {
                 chatType: "friend", // "friend" | "group"
             },
         };
-        this.router.navigate(['/home/message']).then(() => {
-            this.cacheService.putChattingCache(alarm).then(() => {
-                this.currentChattingChangeService.switchCurrentChatting(alarm);
-            });
-        });
+      this.cacheService.putChattingCache(alarm).then(() => {
+        this.currentChattingChangeService.switchCurrentChatting(alarm).then();
+      });
     }
 
 }
