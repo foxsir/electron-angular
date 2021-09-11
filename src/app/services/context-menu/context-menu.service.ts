@@ -226,7 +226,7 @@ export class ContextMenuService {
             // 删除消息
             return this.cacheService.deleteMessageCache(this.currentChattingChangeService.currentChatting, [chat]).then(res => {
               // 刷新聊天数据
-              this.currentChattingChangeService.switchCurrentChatting(this.currentChattingChangeService.currentChatting);
+              this.currentChattingChangeService.switchCurrentChatting(this.currentChattingChangeService.currentChatting).then();
             });
           }
         });
@@ -313,7 +313,7 @@ export class ContextMenuService {
                 avatar: list[chat.uid]?.userAvatarFileName,
               },
               metadata: {chatType: 'friend'}
-            });
+            }).then();
           });
         }
       },
@@ -579,79 +579,6 @@ export class ContextMenuService {
       }
     ];
   }
-
-  // /**
-  //  * 获取当前用户可用的群聊菜单权限
-  //  * @param alarmItem
-  //  * @param chat
-  //  * @private
-  //  */
-  // private async generateLimitsForAvatar(alarmItem: AlarmItemInterface, chat: ChatmsgEntityModel) {
-  //   // 检查权限
-  //   const common = true;
-  //   let manage = false;
-  //   let owner = false;
-  //   let isFriend = false;
-  //   let notFriend = false;
-  //   let privacyClose = false;
-  //   // 会话id
-  //   const chattingId = alarmItem.alarmItem.dataId;
-  //   // 会话类型 friend | group
-  //   const chattingType = alarmItem.metadata.chatType;
-  //   if(chattingType === 'group') {
-  //     await this.cacheService.getCacheGroupAdmins().then(data => {
-  //       if(data[chattingId] && data[chattingId][this.localUserService.localUserInfo.userId]) {
-  //         manage = true; // 检查是否是管理员
-  //       }
-  //     });
-  //     await this.cacheService.getCacheFriends().then(data => {
-  //       if(data[chat.uid] || chat.uid.toString() === this.localUserService.localUserInfo.userId.toString()) {
-  //         isFriend = true; // 检查是否是好友
-  //       } else {
-  //         notFriend = true;
-  //       }
-  //     });
-  //     // 获取群信息/成员列表
-  //     await this.cacheService.getCacheGroups().then(data => {
-  //       const g: GroupModel = data[chattingId];
-  //       if(g) {
-  //         if(g.gownerUserUid.toString() === this.localUserService.localUserInfo.userId.toString()) {
-  //           owner = true; // 检查是否是群主
-  //         }
-  //         if(g.allowPrivateChat.toString() === '0') {
-  //           privacyClose = true; // 检查是否开启隐私
-  //         }
-  //         // 如果右键目标是自己
-  //         if(g.gownerUserUid.toString() === chat.uid.toString()) {
-  //           owner = false;
-  //           privacyClose = false;
-  //           manage = false;
-  //           isFriend = true;
-  //         }
-  //       }
-  //     });
-  //   }
-  //
-  //   return [
-  //     (common ? 'common' : false),
-  //     (manage ? 'manage' : false),
-  //     (owner ? 'owner' : false),
-  //     (isFriend ? 'isFriend' : false),
-  //     (notFriend ? 'notFriend' : false),
-  //     (privacyClose ? 'privacyClose' : false),
-  //   ].filter(v => v) as string[];
-  // }
-
-  /**
-   * 过滤可见菜单
-   * @param menus
-   * @param alarmItem
-   * @param chat
-   * @private
-   */
-  // private filterMenus(menus: BaseContextMenuModel[], alarmItem: AlarmItemInterface, chat: ChatmsgEntityModel): BaseContextMenuModel[] {
-  //   return menus.filter(item => item.visibility(alarmItem, chat));
-  // }
 
   /**
    * 消息
