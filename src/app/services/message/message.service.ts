@@ -93,7 +93,7 @@ export class MessageService {
         break;
 
       case MsgType.TYPE_REDBAG: //111 新增红包
-        messageContentForShow = "[红包消息，请至移动端查看]";
+        // messageContentForShow = "[红包消息，请至移动端查看]";
         break;
       case MsgType.TYPE_GETREDBAG: //111 新增红包
         messageContentForShow = "["+ JSON.parse(messageContent).receiveName+"领取了"+JSON.parse(messageContent).sendName+"的红包]";
@@ -557,6 +557,11 @@ export class MessageService {
     });
   }
 
+  /**
+   * 撤回群聊消息
+   * @param currentChat
+   * @param chat
+   */
   backGroupMessage(currentChat: AlarmItemInterface, chat: ChatmsgEntityModel): Promise<SendMessageResponse> {
     // 单聊 "{"sendId":"400340","msg":"foxsir撤回了我的一条消息","uuid":"AD8B64D1-4E77-46B8-A290-C6BAA0BEFD3C"}"
     // 群聊 {"sendId":"400340","msg":"foxsir撤回了foxsir的一条消息","adminId":"400340,400070,400340","uuid":"9827078A-C7F1-4EAD-AE87-FE3FF16A5603"}
