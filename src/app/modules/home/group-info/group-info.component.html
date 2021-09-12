@@ -51,7 +51,7 @@
                             <img [src]="arrowRightIcon" alt="" class="icon">
                         </mat-icon>
                     </div>
-                    <div fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="changeView('group_tab')">
+                    <div fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="changeView('group_notice')">
                         <span class="privacy-item-text">群组公告</span>
                         <mat-icon class="mat-icon-cus" style="text-align:right;">
                             <img [src]="arrowRightIcon" alt="" class="icon">
@@ -200,25 +200,25 @@
             </mat-card-content>
         </mat-card>
 
-        <!--群上屏编辑-->
-        <mat-card class="mat-elevation-z0" *ngIf="view_mode == 'group_top'" style="padding:0px;">
+        <!--群公告编辑-->
+        <mat-card class="mat-elevation-z0" *ngIf="view_mode == 'group_notice'" style="padding:0px;">
             <mat-card-content>
-                <div *ngIf="view_mode == 'group_top'" fxLayout="column" fxLayoutGap="10px">
-                    <div *ngIf="group_top_view_mode == 'view'">
+                <div *ngIf="view_mode == 'group_notice'" fxLayout="column" fxLayoutGap="10px">
+                    <div *ngIf="group_notice_view_mode == 'view'">
                         <div>
-                            <p>{{setting_data.gtopContent}}</p>
+                            <p>{{setting_data.gnoticeContent}}</p>
                         </div>
                         <div style="text-align:right;">
-                            <button nz-button nzType="link" class="btnsave" (click)="editGroupTop()">编辑</button>
+                            <button nz-button nzType="link" class="btnsave" (click)="editGroupNotice()">编辑</button>
                         </div>
                     </div>
-                    <div *ngIf="group_top_view_mode == 'edit'" class="edit-group-top">
+                    <div *ngIf="group_notice_view_mode == 'edit'" class="edit-group-top">
                         <div class="martop1">
-                            <textarea type="text" nz-input [(ngModel)]="setting_data.gtopContentTemp" class="txtcom" placeholder="请输入群上屏信息"></textarea>
+                            <textarea type="text" nz-input [(ngModel)]="setting_data.gnoticeContentTemp" class="txtcom" placeholder="请输入群公告信息"></textarea>
                         </div>
                         <div class="martop2">
-                            <button nz-button nzType="link" class="btncancel" (click)="cancelGroupTop()">取消</button>
-                            <button nz-button nzType="link" class="btnsave" (click)="saveGroupTop()">保存</button>
+                            <button nz-button nzType="link" class="btncancel" (click)="cancelGroupNotice()">取消</button>
+                            <button nz-button nzType="link" class="btnsave" (click)="saveGroupNotice()">保存</button>
                         </div>
                     </div>
                 </div>
