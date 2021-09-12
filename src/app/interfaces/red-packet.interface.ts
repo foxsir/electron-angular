@@ -1,3 +1,5 @@
+import {RedPacketResponseInterface} from "@app/interfaces/red-packet-response.interface";
+
 export interface RedPacketInterface {
   count: number;
   greetings: string;
@@ -6,4 +8,5 @@ export interface RedPacketInterface {
   word: string;
   type: number;
   ok: boolean;
+  res: RedPacketResponseInterface;
 }
