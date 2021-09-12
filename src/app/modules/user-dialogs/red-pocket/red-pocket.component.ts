@@ -4,7 +4,7 @@ import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 import { DialogService } from "@services/dialog/dialog.service"; // 必需
 import { RestService } from "@services/rest/rest.service";
-import {RedPacketInterface} from "@app/interfaces/red-packet-interface";
+import {RedPacketInterface} from "@app/interfaces/red-packet.interface";
 import NewHttpResponseInterface from "@app/interfaces/new-http-response.interface";
 import {RedPacketResponseInterface} from "@app/interfaces/red-packet-response.interface";
 import {SnackBarService} from "@services/snack-bar/snack-bar.service";
@@ -27,6 +27,7 @@ export class RedPocketComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
+      this.dialogRef.addPanelClass("send-red-bag-dialog");
         /*是否设置支付密码*/
         this.restService.checkPayKeyIsExist().subscribe(res => {
             console.log('是否设置支付密码：', res);
@@ -35,6 +36,7 @@ export class RedPocketComponent implements OnInit {
     }
 
     close() {
+        this.dialogRef.removePanelClass("send-red-bag-dialog");
         const result = {};
         this.dialogRef.close(result);
     }

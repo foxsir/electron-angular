@@ -14,7 +14,7 @@
             <span style="font-size:14px;">元</span>
         </div>
         <div class="input-box">
-            <input type="text" nz-input [(ngModel)]="data.greetings" placeholder="恭喜发财，大吉大利" class="txt-com"/>
+            <input type="text" nz-input [(ngModel)]="data.greetings" [placeholder]="defaultGreetings" class="txt-com"/>
         </div>
         <div style="margin-top:20px;">
             <button mat-flat-button color="primary" class="register-button" fxFlex="100" (click)="showInputPassword()">塞进红包</button>
