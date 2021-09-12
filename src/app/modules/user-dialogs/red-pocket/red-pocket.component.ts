@@ -4,6 +4,7 @@ import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 import { DialogService } from "@services/dialog/dialog.service"; // 必需
 import { RestService } from "@services/rest/rest.service";
+import {RedPacketInterface} from "@app/interfaces/red-packet-interface";
 
 @Component({
     selector: 'app-red-pocket',
@@ -13,7 +14,7 @@ import { RestService } from "@services/rest/rest.service";
 export class RedPocketComponent implements OnInit {
 
     constructor(
-        public dialogRef: MatDialogRef<RedPocketComponent>, // 必需
+        public dialogRef: MatDialogRef<RedPocketComponent, Partial<RedPacketInterface>>, // 必需
         @Inject(MAT_DIALOG_DATA) public data: any, // 必需
         private dialogService: DialogService,
         private restService: RestService
@@ -44,31 +45,32 @@ export class RedPocketComponent implements OnInit {
      * 取消发送红包
      */
     cancel() {
-        const result = {
-            ok: false
-        };
-        this.dialogRef.close(result);
+      const result = {
+        ok: false
+      };
+      this.dialogRef.close(result);
     }
 
     /*
      * 确认发送红包
      */
     confirmSendRedpocket() {
-        console.log('确认发送红包...');
+      console.log('确认发送红包...');
 
-        var data = {
-            count: this.data.count,
-            greetings: this.data.greetings,
-            money: this.data.money,
-            toUserId: this.data.toUserId,
-            word: ''
-        };
-        data['type'] = 1;
+      const data: RedPacketInterface = {
+        count: this.data.count,
+        greetings: this.data.greetings,
+        money: this.data.money,
+        toUserId: this.data.toUserId,
+        word: '',
+        type: 1,
+        ok: false,
+      };
 
-        this.restService.sentRedPacket(data).subscribe(res => {
-            data['ok'] = true;
-            this.dialogRef.close(data);
-        });
+      this.restService.sentRedPacket(data).subscribe(res => {
+        data.ok = true;
+        this.dialogRef.close(data);
+      });
     }
 
     //saveFriendRemark(ok) {
