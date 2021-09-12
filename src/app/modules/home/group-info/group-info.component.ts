@@ -41,8 +41,8 @@ export class GroupInfoComponent implements OnInit {
 
         talkInterval: 3, /*发言时间间隔*/
 
-        gtopContent: '', /*群上屏信息*/
-        gtopContentTemp: '', /*群上屏信息，编辑，临时存放*/
+        gnoticeContent: '', /*群上屏信息*/
+        gnoticeContentTemp: '', /*群上屏信息，编辑，临时存放*/
     };
 
     public customerServiceList: any[];
@@ -50,17 +50,17 @@ export class GroupInfoComponent implements OnInit {
 
     /*
      * switch_default: 默认
-     * group_top: 群上屏编辑
+     * group_notice: 群公告编辑
      */
     public view_mode = "switch_default";
     public view_title_object = {
         switch_default: '群组信息',
-        group_top: '群上屏编辑',
+        group_notice: '群公告编辑',
         customer_service: '专属客服配置',
         group_tab: '群页签配置'
     };
 
-    public group_top_view_mode = "view"; /*view 或者 edit*/
+    public group_notice_view_mode = "view"; /*view 或者 edit*/
 
     constructor(private dom: DomSanitizer, private restService: RestService, private dialogService: DialogService) {
         
@@ -159,29 +159,29 @@ export class GroupInfoComponent implements OnInit {
     changeView(view) {
         this.view_mode = view;
 
-        if (view == 'group_top') {
-            this.group_top_view_mode = 'view';
+        if (view == 'group_notice') {
+            this.group_notice_view_mode = 'view';
         }
     }
 
-    editGroupTop() {
-        this.group_top_view_mode = 'edit';
-        this.setting_data.gtopContentTemp = this.setting_data.gtopContent;
+    editGroupNotice() {
+        this.group_notice_view_mode = 'edit';
+        this.setting_data.gnoticeContentTemp = this.setting_data.gnoticeContent;
     }
 
-    cancelGroupTop() {
-        this.group_top_view_mode = 'view';
+    cancelGroupNotice() {
+        this.group_notice_view_mode = 'view';
     }
 
-    saveGroupTop() {
+    saveGroupNotice() {
         var data = {
             gid: this.currentChat.alarmItem.dataId,
-            gtopContent: this.setting_data.gtopContentTemp
+            gnoticeContent: this.setting_data.gnoticeContentTemp
         };
 
         this.restService.updateGroupBaseById(data).subscribe(res => {
-            this.group_top_view_mode = 'view';
-            this.setting_data.gtopContent = this.setting_data.gtopContentTemp;
+            this.group_notice_view_mode = 'view';
+            this.setting_data.gnoticeContent = this.setting_data.gnoticeContentTemp;
         });  
     }
 
