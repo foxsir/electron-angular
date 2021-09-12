@@ -47,7 +47,7 @@ import {SelectFriendContactComponent} from "@modules/user-dialogs/select-friend-
 import {LocalUserService} from "@services/local-user/local-user.service";
 import {ForwardMessageService} from "@services/forward-message/forward-message.service";
 import { RedPocketComponent } from "@modules/user-dialogs/red-pocket/red-pocket.component";
-import {RedPacketInterface} from "@app/interfaces/red-packet-interface";
+import {RedPacketInterface} from "@app/interfaces/red-packet.interface";
 
 @Component({
   selector: 'app-input-area',
@@ -635,9 +635,26 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
 
         this.dialogService.openDialog(RedPocketComponent, { data: data }).then((res: RedPacketInterface) => {
             console.log('red pocket dialog result: ', res);
-
-            if (res.ok === true) {
-
+            if (res && res.ok === true) {
+              const msgContent = JSON.stringify({
+                greetings: res.greetings,
+                isOpen: 0,
+                orderId: res.res.orderId,
+                type: res.type,
+                userId: res.toUserId,
+                word: res.word,
+              });
+              this.messageService.sendMessage(MsgType.TYPE_REDBAG, this.currentChat.alarmItem.dataId, msgContent).then((send) => {
+                const chatMsgEntity = this.messageEntityService.prepareSendedMessage(
+                  send.msgBody.m, 0, send.fingerPrint, send.msgBody.ty
+                );
+                this.tempList.push({
+                  chatMsgEntity: chatMsgEntity,
+                  emitToUI: true,
+                  msgBody: send.msgBody
+                });
+                this.pushCache();
+              });
             }
         });
     }

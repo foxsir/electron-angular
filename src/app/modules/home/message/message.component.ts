@@ -343,7 +343,7 @@ export class MessageComponent implements OnInit {
         this.currentChattingChangeService.switchCurrentChatting(this.currentChat).then();
         // 缓存群管理员列表
         if (this.currentChat.metadata.chatType === 'group') {
-          this.cacheService.cacheGroupAdmins(this.currentChat.alarmItem.dataId);
+          this.cacheService.cacheGroupAdmins(this.currentChat.alarmItem.dataId).then();
         }
       });
     } else {
