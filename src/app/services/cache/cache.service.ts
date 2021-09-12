@@ -24,7 +24,6 @@ import {_HTTP_SERVER_URL} from "@app/config/post-api";
 import {SoundService} from "@services/sound/sound.service";
 import SessionStatusModel from "@app/models/session-status.model";
 import {AvatarService} from "@services/avatar/avatar.service";
-import HttpResponseInterface from "@app/interfaces/http-response.interface";
 import {GroupMemberModel} from "@app/models/group-member.model";
 
 export type AlarmDataMap = Map<string, {alarmData: AlarmItemInterface; message?: Map<string, ChatmsgEntityModel>}>;
@@ -397,27 +396,30 @@ export class CacheService {
   /**
    * 获取并缓存群管理员Map
    */
-  cacheGroupAdmins(gid: string) {
-    this.restService.getGroupAdminList(gid).subscribe((res: NewHttpResponseInterface<GroupAdminModel[]>) => {
-      if(res.status === 200) {
-        const groupAdminMap = new Map<number, GroupAdminModel>();
-        res.data.forEach(admin => {
-          groupAdminMap.set(admin.userUid, admin);
-        });
-
-        let newData = new Map<string, Map<number, GroupAdminModel>>();
-        localforage.getItem(this.dataKeys.groupAdminMap).then((data: Map<string, Map<number, GroupAdminModel>>) => {
-          if(data) {
-            data.set(gid, groupAdminMap);
-            newData = data;
-          } else {
-            newData.set(gid, groupAdminMap);
-          }
-          localforage.setItem(this.dataKeys.groupAdminMap, newData).then((newCache) => {
-            this.cacheSource.next({groupAdminMap: newCache});
+  cacheGroupAdmins(gid: string): Promise<Map<number, GroupAdminModel>> {
+    return new Promise(resolve => {
+      this.restService.getGroupAdminList(gid).subscribe((res: NewHttpResponseInterface<GroupAdminModel[]>) => {
+        if(res.status === 200) {
+          const groupAdminMap = new Map<number, GroupAdminModel>();
+          res.data.forEach(admin => {
+            groupAdminMap.set(admin.userUid, admin);
           });
-        });
-      }
+
+          let newData = new Map<string, Map<number, GroupAdminModel>>();
+          localforage.getItem(this.dataKeys.groupAdminMap).then((data: Map<string, Map<number, GroupAdminModel>>) => {
+            if(data) {
+              data.set(gid, groupAdminMap);
+              newData = data;
+            } else {
+              newData.set(gid, groupAdminMap);
+            }
+            localforage.setItem(this.dataKeys.groupAdminMap, newData).then((newCache) => {
+              resolve(groupAdminMap);
+              this.cacheSource.next({groupAdminMap: newCache});
+            });
+          });
+        }
+      });
     });
   }
 
