@@ -5,6 +5,9 @@ import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 import { DialogService } from "@services/dialog/dialog.service"; // 必需
 import { RestService } from "@services/rest/rest.service";
 import {RedPacketInterface} from "@app/interfaces/red-packet-interface";
+import NewHttpResponseInterface from "@app/interfaces/new-http-response.interface";
+import {RedPacketResponseInterface} from "@app/interfaces/red-packet-response.interface";
+import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 
 @Component({
     selector: 'app-red-pocket',
@@ -13,11 +16,14 @@ import {RedPacketInterface} from "@app/interfaces/red-packet-interface";
 })
 export class RedPocketComponent implements OnInit {
 
+  public defaultGreetings = "恭喜发财，大吉大利";
+
     constructor(
         public dialogRef: MatDialogRef<RedPocketComponent, Partial<RedPacketInterface>>, // 必需
         @Inject(MAT_DIALOG_DATA) public data: any, // 必需
         private dialogService: DialogService,
-        private restService: RestService
+        private restService: RestService,
+        private snackBarService: SnackBarService,
     ) { }
 
     ngOnInit(): void {
@@ -57,19 +63,25 @@ export class RedPocketComponent implements OnInit {
     confirmSendRedpocket() {
       console.log('确认发送红包...');
 
-      const data: RedPacketInterface = {
-        count: this.data.count,
-        greetings: this.data.greetings,
+      const data: Partial<RedPacketInterface> = {
+        count: Boolean(this.data.count) ? this.data.count : 1,
+        greetings: this.data.greetings ? this.data.greetings : this.defaultGreetings,
         money: this.data.money,
         toUserId: this.data.toUserId,
-        word: '',
+        word: '', // 口令
         type: 1,
         ok: false,
       };
 
-      this.restService.sentRedPacket(data).subscribe(res => {
-        data.ok = true;
-        this.dialogRef.close(data);
+      this.restService.sentRedPacket(data).subscribe((res: NewHttpResponseInterface<RedPacketResponseInterface>) => {
+        if(res.status === 200) {
+          data.res = res.data;
+          data.ok = true;
+          this.dialogRef.close(data);
+        } else {
+          this.dialogRef.close(null);
+          this.snackBarService.openMessage("红包发送失败");
+        }
       });
     }
 
