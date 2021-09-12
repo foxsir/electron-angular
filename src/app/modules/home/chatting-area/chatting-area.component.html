@@ -152,9 +152,9 @@
                                [fxLayoutAlign]="chat.value.uid.toString() === localUserInfo.userId.toString() ? 'end end' : 'start'">
                             {{chat.value.name}}
                           </div>
-                          <div class="message-entity-item" fxLayout="row" (contextmenu)="contextMenuForMessage($event, createPlanMenuTrigger, span, chat.value)">
+                          <div class="message-entity-item" #wrapDiv fxLayout="row" (contextmenu)="contextMenuForMessage($event, createPlanMenuTrigger, span, chat.value)">
                             <div class="message-entity" #messageContainer>
-                              <app-message-factory [chatMsg]="chat.value"></app-message-factory>
+                              <app-message-factory [chatMsg]="chat.value" [wrapDiv]="wrapDiv"></app-message-factory>
                             </div>
                             <span #createPlanMenuTrigger="matMenuTrigger" #span [matMenuTriggerFor]="contextmenu"></span>
                             <mat-menu #contextmenu="matMenu">
