@@ -71,23 +71,13 @@ export class GroupInfoDialogComponent implements OnInit {
         });
     }
 
-    //saveFriendRemark(ok) {
-    //    console.log('saveFriendRemark');
-    //    const result = {
-    //        ok: ok,
-    //        remark: (<any>this.data).remark,
-    //    };
-    //    this.dialogRef.close(result);
-    //}
-
-    //savetalkInterval(ok) {
-    //    console.log('savetalkInterval');
-    //    const result = {
-    //        ok: ok,
-    //        talkInterval: (<any>this.data).talkInterval,
-    //    };
-    //    this.dialogRef.close(result);
-    //}
-
-
+    /*
+     * 解散群组： 取消和确定
+     */
+    confirmDismissGroup(ok) {
+        const result = {
+            ok: ok,            
+        };
+        this.dialogRef.close(result);
+    }
 }

@@ -1,4 +1,4 @@
-<div *ngIf="data.dialog_type === 'start_red_pocket'" class="red-pocket-container">
+<div *ngIf="data.dialog_type === 'start_red_pocket'" class="group-info-dialog-container">
     <div fxLayout="column" fxLayoutGap="20px">
         <div style="text-align:center;">
             <label>发红包</label>
@@ -27,7 +27,7 @@
     </div>
 </div>
 
-<div *ngIf="data.dialog_type === 'input_password'" class="red-pocket-container" style="background-color:white;">
+<div *ngIf="data.dialog_type === 'input_password'" class="group-info-dialog-container">
     <div fxLayout="column" fxLayoutGap="20px">
         <div fxFlex><label>输入支付密码</label></div>
         <div fxFlex>
@@ -40,6 +40,25 @@
             <div fxLayout="row" fxLayoutAlign="end" fxLayoutGap="10">
                 <button nz-button nzType="link" class="btncancel" (click)="cancel(false)">取消</button>
                 <button nz-button nzType="link" class="btnsave" (click)="confirmSendRedpocket(true)">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div *ngIf="data.dialog_type === 'dismiss_group'" class="group-info-dialog-container">
+    <div fxLayout="column" fxLayoutGap="20px">
+        <div fxFlex><label>解散群组</label></div>
+        <div fxFlex>
+            <span>此操作不可逆，请慎重操作呦</span>
+        </div>
+        <div fxFlex>
+
+        </div>
+        <div fxFlex>
+            <div fxLayout="row" fxLayoutAlign="end" fxLayoutGap="10">
+                <button nz-button nzType="link" class="btncancel" (click)="confirmDismissGroup(false)">取消</button>
+                <button nz-button nzType="link" class="btnsave" (click)="confirmDismissGroup(true)">确定</button>
             </div>
         </div>
     </div>

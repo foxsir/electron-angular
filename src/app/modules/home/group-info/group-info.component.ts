@@ -12,6 +12,7 @@ import arrowRightIcon from "@app/assets/icons/arrow-right.svg";
 import { RestService } from "@services/rest/rest.service";
 import { DemoDialogComponent } from "@modules/setting-dialogs/demo-dialog/demo-dialog.component";
 import { DialogService } from "@services/dialog/dialog.service";
+import { GroupInfoDialogComponent } from "@modules/user-dialogs/group-info-dialog/group-info-dialog.component";
 
 @Component({
     selector: 'app-group-info',
@@ -204,6 +205,27 @@ export class GroupInfoComponent implements OnInit {
                 this.restService.updateGroupBaseById(post_data).subscribe(res => {
                     this.setting_data.talkInterval = post_data.talkInterval;
                 });
+            }
+        });
+    }
+
+    /*
+     * 解散本群
+     */
+    dismissGroup() {
+        var data = {
+            dialog_type: 'dismiss_group',
+            toUserId: this.currentChat.alarmItem.dataId,
+            chatType: this.currentChat.metadata.chatType,
+            count: '',
+        };
+
+        this.dialogService.openDialog(GroupInfoDialogComponent, { data: data }).then((res: any) => {
+            console.log('group info dialog result: ', res);
+
+            if (res.ok == true) {
+
+
             }
         });
     }
