@@ -77,8 +77,11 @@ export class MessageEntityService {
       }
       case MsgType.TYPE_REDBAG: {
         //111 新增红包
-        const txt = '[红包消息，请至移动端查看]';
-        return this.createChatMsgEntity_COME_TEXT(fromUid, nickName, txt, time, fp);
+        return this.createChatMsgEntity_TO_REDBAG(fromUid, nickName, msg, time, fp);
+      }
+      case MsgType.TYPE_GETREDBAG: {
+        //111 新增拆红包
+        return this.createChatMsgEntity_TO_GETREDBAG(fromUid, nickName, msg, time, fp);
       }
       case MsgType.TYPE_AITE: {
         //111 新增类型 @
@@ -162,8 +165,11 @@ export class MessageEntityService {
       }
       //111 新增了自己发的红包
       case MsgType.TYPE_REDBAG:
-        const xumsg = "[红包消息，请至移动端查看]";
-        return this.createChatMsgEntity_TO_TEXT(xumsg, time, fingerPrint, xu_isRead_type);
+        return this.createChatMsgEntity_TO_REDBAG(this.imService.getLoginInfo().loginUserId, "我", msg, time, fingerPrint);
+
+      //111 新增了自己发的红包
+      case MsgType.TYPE_GETREDBAG:
+        return this.createChatMsgEntity_TO_GETREDBAG(this.imService.getLoginInfo().loginUserId, "我", msg, time, fingerPrint);
 
       //111 新增了 @
       case MsgType.TYPE_AITE:
@@ -305,6 +311,38 @@ export class MessageEntityService {
     chatMsgEntityObj.text = message;
     chatMsgEntityObj.fingerPrintOfProtocal = fingerPrint;
     chatMsgEntityObj.msgType = MsgType.TYPE_QUOTE;
+    chatMsgEntityObj.isOutgoing = false;
+    chatMsgEntityObj.xu_isRead_type = xu_isRead_type;  // 111 新增已读类型
+
+    return chatMsgEntityObj;
+  }
+
+  // 构造红包
+  createChatMsgEntity_TO_REDBAG(fromUid, nickName, message, time, fingerPrint, xu_isRead_type = null) {
+    // debugger
+    const chatMsgEntityObj = new ChatmsgEntityModel();
+    chatMsgEntityObj.uid = fromUid;
+    chatMsgEntityObj.name = nickName;
+    chatMsgEntityObj.date = time <= 0 ? RBChatUtils.getCurrentUTCTimestamp() : time;
+    chatMsgEntityObj.text = message;
+    chatMsgEntityObj.fingerPrintOfProtocal = fingerPrint;
+    chatMsgEntityObj.msgType = MsgType.TYPE_REDBAG;
+    chatMsgEntityObj.isOutgoing = false;
+    chatMsgEntityObj.xu_isRead_type = xu_isRead_type;  // 111 新增已读类型
+
+    return chatMsgEntityObj;
+  }
+
+  // 构造红包
+  createChatMsgEntity_TO_GETREDBAG(fromUid, nickName, message, time, fingerPrint, xu_isRead_type = null) {
+    // debugger
+    const chatMsgEntityObj = new ChatmsgEntityModel();
+    chatMsgEntityObj.uid = fromUid;
+    chatMsgEntityObj.name = nickName;
+    chatMsgEntityObj.date = time <= 0 ? RBChatUtils.getCurrentUTCTimestamp() : time;
+    chatMsgEntityObj.text = message;
+    chatMsgEntityObj.fingerPrintOfProtocal = fingerPrint;
+    chatMsgEntityObj.msgType = MsgType.TYPE_REDBAG;
     chatMsgEntityObj.isOutgoing = false;
     chatMsgEntityObj.xu_isRead_type = xu_isRead_type;  // 111 新增已读类型
 
