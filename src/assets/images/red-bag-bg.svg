@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="270px" height="450px" viewBox="0 0 270 450" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 60.1 (88133) - https://sketch.com -->
+    <title>椭圆形</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="270" height="450" rx="10"></rect>
+        <path d="M135,367.303017 C303.249413,367.303017 554.5,253.144011 554.5,136.75 C554.5,20.355989 366.683453,-74 135,-74 C-96.6834525,-74 -284.5,20.355989 -284.5,136.75 C-284.5,253.144011 -33.2494125,367.303017 135,367.303017 Z" id="path-3"></path>
+        <filter x="-0.4%" y="-0.6%" width="100.8%" height="101.6%" filterUnits="objectBoundingBox" id="filter-4">
+            <feOffset dx="0" dy="1" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="1" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0.516162817   0 0 0 0 0.0227591608   0 0 0 0 0.0227591608  0 0 0 0.5 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="24-f-单聊-红包领取封面备份" transform="translate(-429.000000, -183.000000)">
+            <g id="椭圆形" transform="translate(429.000000, 183.000000)">
+                <mask id="mask-2" fill="white">
+                    <use xlink:href="#path-1"></use>
+                </mask>
+                <use id="蒙版" fill="#F45D4C" xlink:href="#path-1"></use>
+                <g mask="url(#mask-2)">
+                    <use fill="black" fill-opacity="1" filter="url(#filter-4)" xlink:href="#path-3"></use>
+                    <use fill="#F45D4C" fill-rule="evenodd" xlink:href="#path-3"></use>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
