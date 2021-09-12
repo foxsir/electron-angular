@@ -161,6 +161,9 @@ export const GetFriendHistory = _HTTP_SERVER_URL + "/v1/chat/friend-his";
 // 群聊漫游消息
 export const GetGroupHistory = _HTTP_SERVER_URL + "/v1/chat/group-his";
 
+// 群成员
+export const GetGroupMember = _HTTP_SERVER_URL + "/api/groupBase/memberList";
+
 //
 //  //封装请求函数
 // const xuAjaxMobule = function () {
