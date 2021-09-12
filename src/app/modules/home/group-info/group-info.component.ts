@@ -28,7 +28,12 @@ export class GroupInfoComponent implements OnInit {
     public backspaceActiveIcon = this.dom.bypassSecurityTrustResourceUrl(backspaceActiveIcon);
     public arrowRightIcon = this.dom.bypassSecurityTrustResourceUrl(arrowRightIcon);
 
-    public groupData: any;
+    public groupData = {
+        gmute: 0,
+        invite: 0,
+        gmemberCount: 0,
+    };
+
     public setting_data = {
         gmute: false,
         invite: false,
@@ -70,10 +75,6 @@ export class GroupInfoComponent implements OnInit {
 
             this.setting_data.gmute = this.groupData.gmute == 1;
             this.setting_data.invite = this.groupData.invite == 1;
-
-            this.setting_data.talkInterval = this.groupData.talkInterval.toString();
-
-            this.setting_data.gtopContent = this.groupData.gtopContent;
         });
 
         /*获取群客服列表*/

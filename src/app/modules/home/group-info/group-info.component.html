@@ -4,6 +4,10 @@
             <mat-card-content fxFlex="100">
                 <div fxLayout="row">
                     <div fxFlex="130px" fxLayoutAlign="space-between center">
+                        <mat-icon (click)="back()" class="hover-icon">
+                            <img [src]="backspaceIcon" alt="" class="icon">
+                            <img [src]="backspaceActiveIcon" alt="" class="icon-active">
+                        </mat-icon>
                         <span>{{view_title_object[view_mode]}}</span>
                     </div>
                     <div fxFlex fxLayoutAlign="end center">
@@ -29,7 +33,7 @@
             <mat-card-content>
                 <!--群基本信息编辑-->
                 <div  fxLayout="column" fxLayoutGap="10px">
-                    <div fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="changeView('customer_service')">
+                    <div fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="changeView('basic_info')">
                         <span class="privacy-item-text">基本信息</span>
                         <mat-icon class="mat-icon-cus" style="text-align:right;">
                             <img [src]="arrowRightIcon" alt="" class="icon">
@@ -134,6 +138,29 @@
             </mat-card-content>
         </mat-card>
 
+        <!--基本信息-->
+        <mat-card class="mat-elevation-z0" *ngIf="view_mode == 'basic_info'" style="padding:10px 0px 0px 0px">
+            <mat-card-content>
+                <div fxLayout="column" fxLayoutGap="10px">
+                    <div fxFlex fxLayoutAlign="space-between center">
+                        <span class="privacy-item-text">当前群主</span>
+                        <span>xxx</span>
+                    </div>
+                    <div fxFlex fxLayoutAlign="space-between center">
+                        <span class="privacy-item-text">群内昵称</span>
+                        <span>xxx</span>
+                    </div>
+                    <div fxFlex fxLayoutAlign="space-between center">
+                        <span class="privacy-item-text">群创建者</span>
+                        <span>xxx</span>
+                    </div>
+                    <div fxFlex fxLayoutAlign="space-between center">
+                        <span class="privacy-item-text">群创时间</span>
+                        <span>{{groupData.createTime}}</span>
+                    </div>
+                </div>
+            </mat-card-content>
+        </mat-card>
 
         <!--群客服配置-->
         <mat-card class="mat-elevation-z0" *ngIf="view_mode == 'customer_service'" style="padding:0px;">
