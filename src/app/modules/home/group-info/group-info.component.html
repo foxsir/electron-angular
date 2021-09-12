@@ -1,8 +1,5 @@
 <div fxLayout="column" style="background: #F1F1F1;">
-    <!--<div fxFlex>
-        <app-toolbar [visibilityActions]="false"></app-toolbar>
-    </div>-->
-    <div fxFlex="62px">
+    <div fxFlex="100px">
         <mat-card class="mat-elevation-z0" fxLayoutAlign="stretch center" fxFlex="100" style="padding: 11px 16px;">
             <mat-card-content fxFlex="100">
                 <div fxLayout="row">
@@ -20,6 +17,13 @@
                         </mat-icon>
                     </div>
                 </div>
+                <div class="user-info-headimg">
+                    <img class="img-head" [src]="currentChat.alarmItem.avatar"/>
+                    <div class="status-bar">
+                        <span>{{currentChat.alarmItem.title}}</span>
+                        <span style="font-size:12px;">人数：{{groupData.gmemberCount}} 人</span>
+                    </div>
+                </div>
             </mat-card-content>
         </mat-card>
     </div>
@@ -29,12 +33,8 @@
             <mat-card-content>
                 <!--群基本信息编辑-->
                 <div  fxLayout="column" fxLayoutGap="10px">
-                    <div fxFlex fxLayoutAlign="space-between center">
-                        <span class="privacy-item-text">启用专属客服</span>
-                        <nz-switch [(ngModel)]="setting_data.customerServiceSwitch" (ngModelChange)="bySwitch('customerServiceSwitch')" nzSize="small"></nz-switch>
-                    </div>
-                    <div fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="changeView('customer_service')">
-                        <span class="privacy-item-text">客服</span>
+                    <div fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="changeView('basic_info')">
+                        <span class="privacy-item-text">基本信息</span>
                         <mat-icon class="mat-icon-cus" style="text-align:right;">
                             <img [src]="arrowRightIcon" alt="" class="icon">
                         </mat-icon>
@@ -43,52 +43,93 @@
                     <div class="split-item"></div>
 
                     <div fxFlex fxLayoutAlign="space-between center">
-                        <span class="privacy-item-text">启用群页签</span>
-                        <nz-switch [(ngModel)]="setting_data.tabSwitch" (ngModelChange)="bySwitch('tabSwitch')" nzSize="small"></nz-switch>
+                        <span class="privacy-item-text">信息编辑</span>                        
+                    </div>
+                    <div fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="editGroupInfo('group_name')">
+                        <span class="privacy-item-text">群组名称</span>
+                        <mat-icon class="mat-icon-cus" style="text-align:right;">
+                            <img [src]="arrowRightIcon" alt="" class="icon">
+                        </mat-icon>
                     </div>
                     <div fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="changeView('group_tab')">
-                        <span class="privacy-item-text">群页签设置</span>
+                        <span class="privacy-item-text">群组公告</span>
                         <mat-icon class="mat-icon-cus" style="text-align:right;">
                             <img [src]="arrowRightIcon" alt="" class="icon">
                         </mat-icon>
                     </div>
-
-                    <div class="split-item"></div>
-
-                    <div fxFlex fxLayoutAlign="space-between center">
-                        <span class="privacy-item-text">启用群上屏编辑</span>
-                        <nz-switch [(ngModel)]="setting_data.topContentSwitch" (ngModelChange)="bySwitch('topContentSwitch')" nzSize="small"></nz-switch>
-                    </div>
-                    <div fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="changeView('group_top')">
-                        <span class="privacy-item-text">群上屏编辑</span>
+                    <div fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="editGroupInfo('group_nickname')">
+                        <span class="privacy-item-text">群内昵称</span>
                         <mat-icon class="mat-icon-cus" style="text-align:right;">
                             <img [src]="arrowRightIcon" alt="" class="icon">
                         </mat-icon>
-                    </div>
+                    </div>                    
 
                     <div class="split-item"></div>
 
                     <div fxFlex fxLayoutAlign="space-between center">
-                        <span class="privacy-item-text">允许普通成员接受禁言通知</span>
-                        <nz-switch [(ngModel)]="setting_data.silenceNotice" (ngModelChange)="bySwitch('silenceNotice')" nzSize="small"></nz-switch>
+                        <span class="privacy-item-text">群管理</span>
                     </div>
                     <div fxFlex fxLayoutAlign="space-between center">
-                        <span class="privacy-item-text">允许普通成员接受撤回通知</span>
+                        <span class="privacy-item-text">全体禁言</span>
+                        <nz-switch [(ngModel)]="setting_data.gmute" (ngModelChange)="bySwitch('gmute')" nzSize="small"></nz-switch>
+                    </div>
+                    <div fxFlex fxLayoutAlign="space-between center">
+                        <span class="privacy-item-text">成员互相添加好友</span>
                         <nz-switch [(ngModel)]="setting_data.revocationNotice" (ngModelChange)="bySwitch('revocationNotice')" nzSize="small"></nz-switch>
                     </div>
                     <div fxFlex fxLayoutAlign="space-between center">
-                        <span class="privacy-item-text">允许普通成员接受退群通知</span>
+                        <span class="privacy-item-text">消息免打扰</span>
                         <nz-switch [(ngModel)]="setting_data.kickNotice" (ngModelChange)="bySwitch('kickNotice')" nzSize="small"></nz-switch>
+                    </div>
+                    <div fxFlex fxLayoutAlign="space-between center">
+                        <span class="privacy-item-text">置顶聊天</span>
+                        <nz-switch [(ngModel)]="setting_data.kickNotice" (ngModelChange)="bySwitch('kickNotice')" nzSize="small"></nz-switch>
+                    </div>
+                    <div fxFlex fxLayoutAlign="space-between center">
+                        <span class="privacy-item-text">普通成员邀请好友入群</span>
+                        <nz-switch [(ngModel)]="setting_data.invite" (ngModelChange)="bySwitch('invite')" nzSize="small"></nz-switch>
                     </div>
 
                     <div class="split-item"></div>
 
-                    <div fxFlex fxLayoutAlign="space-between center">
-                        <span class="privacy-item-text">发言间隔</span>
-                        <nz-switch [(ngModel)]="setting_data.talkIntervalSwitch" (ngModelChange)="bySwitch('talkIntervalSwitch')" nzSize="small"></nz-switch>
+                    <div fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="changeView('customer_service')">
+                        <span class="privacy-item-text">群配置</span>
+                        <mat-icon class="mat-icon-cus" style="text-align:right;">
+                            <img [src]="arrowRightIcon" alt="" class="icon">
+                        </mat-icon>
+                    </div>
+
+                    <div class="split-item"></div>
+
+                    <div fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="changetalkInterval()">
+                        <span class="privacy-item-text">成员管理</span>
+                        <mat-icon class="mat-icon-cus" style="text-align:right;">
+                            <img [src]="arrowRightIcon" alt="" class="icon">
+                        </mat-icon>
                     </div>
                     <div fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="changetalkInterval()">
-                        <span class="privacy-item-text">普通成员发言间隔</span>
+                        <span class="privacy-item-text">邀请好友</span>
+                        <mat-icon class="mat-icon-cus" style="text-align:right;">
+                            <img [src]="arrowRightIcon" alt="" class="icon">
+                        </mat-icon>
+                    </div>
+                    <div fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="changetalkInterval()">
+                        <span class="privacy-item-text">管理员管理</span>
+                        <mat-icon class="mat-icon-cus" style="text-align:right;">
+                            <img [src]="arrowRightIcon" alt="" class="icon">
+                        </mat-icon>
+                    </div>
+
+                    <div class="split-item"></div>
+
+                    <div fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="changetalkInterval()">
+                        <span class="privacy-item-text" style="color:#0b8eee;">转让本群</span>
+                        <mat-icon class="mat-icon-cus" style="text-align:right;">
+                            <img [src]="arrowRightIcon" alt="" class="icon">
+                        </mat-icon>
+                    </div>
+                    <div fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="dismissGroup()">
+                        <span class="privacy-item-text" style="color:red;">解散本群</span>
                         <mat-icon class="mat-icon-cus" style="text-align:right;">
                             <img [src]="arrowRightIcon" alt="" class="icon">
                         </mat-icon>
@@ -97,6 +138,29 @@
             </mat-card-content>
         </mat-card>
 
+        <!--基本信息-->
+        <mat-card class="mat-elevation-z0" *ngIf="view_mode == 'basic_info'" style="padding:10px 0px 0px 0px">
+            <mat-card-content>
+                <div fxLayout="column" fxLayoutGap="10px">
+                    <div fxFlex fxLayoutAlign="space-between center">
+                        <span class="privacy-item-text">当前群主</span>
+                        <span>xxx</span>
+                    </div>
+                    <div fxFlex fxLayoutAlign="space-between center">
+                        <span class="privacy-item-text">群内昵称</span>
+                        <span>xxx</span>
+                    </div>
+                    <div fxFlex fxLayoutAlign="space-between center">
+                        <span class="privacy-item-text">群创建者</span>
+                        <span>xxx</span>
+                    </div>
+                    <div fxFlex fxLayoutAlign="space-between center">
+                        <span class="privacy-item-text">群创时间</span>
+                        <span>{{groupData.createTime}}</span>
+                    </div>
+                </div>
+            </mat-card-content>
+        </mat-card>
 
         <!--群客服配置-->
         <mat-card class="mat-elevation-z0" *ngIf="view_mode == 'customer_service'" style="padding:0px;">

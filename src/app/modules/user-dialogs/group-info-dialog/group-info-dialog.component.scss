@@ -1,0 +1,36 @@
+.group-info-dialog-container{
+    width:300px;
+
+    .input-box{
+        background-color:white;
+        display:flex;
+        align-items:center;
+        padding:8px 15px;
+    }
+
+    .txt-com-short{
+        width:70px;
+        border:none;
+        outline:none;
+        padding-left:0;
+        text-align:right;       
+    }
+
+    .txt-com{
+        border:none;
+        outline:none;
+        padding-left:0;
+    }
+
+    .txt-border-none{
+        border:none;
+        outline:none;
+        border-bottom:1px solid #d8d8d8;
+    }
+
+    .txt-border-none:focus{
+        border:none;
+        outline:none;
+        border-bottom:1px solid #d8d8d8;
+    }
+}

@@ -8,9 +8,12 @@
                               *ngIf="currentChat.metadata.chatType === 'friend'"
                               [currentChat]="currentChat"></app-chatting-setting>
         <!--群聊-->
-        <app-group-chatting-setting [drawer]="chattingAreaDrawer"
+        <!--<app-group-chatting-setting [drawer]="chattingAreaDrawer"
                                     *ngIf="currentChat.metadata.chatType === 'group'"
-                                    [currentChat]="currentChat"></app-group-chatting-setting>
+                                    [currentChat]="currentChat"></app-group-chatting-setting>-->
+          <app-group-info [drawer]="chattingAreaDrawer"
+                                      *ngIf="currentChat.metadata.chatType === 'group'"
+                                      [currentChat]="currentChat"></app-group-info>
       </mat-card>
     </div>
     <!--语音聊天 drawerContent.voice 不要删除-->

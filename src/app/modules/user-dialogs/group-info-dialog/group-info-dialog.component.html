@@ -1,0 +1,48 @@
+<div *ngIf="data.dialog_type === 'edit_group_name'" class="group-info-dialog-container">
+    <div fxLayout="column" fxLayoutGap="20px">
+        <div fxFlex><label>群组名称</label></div>
+        <div fxFlex>
+            <input type="text" nz-input [(ngModel)]="data.txt_value" class="txt-border-none" placeholder="请输入群组名称" />
+        </div>
+        <div fxFlex>
+            <div fxLayout="row" fxLayoutAlign="end" fxLayoutGap="10">
+                <button nz-button nzType="link" class="btncancel" (click)="cancel(false)">取消</button>
+                <button nz-button nzType="link" class="btnsave" (click)="saveGroupInfo(true)">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="data.dialog_type === 'edit_group_nickname'" class="group-info-dialog-container">
+    <div fxLayout="column" fxLayoutGap="20px">
+        <div fxFlex><label>群内昵称</label></div>
+        <div fxFlex>
+            <input type="text" nz-input [(ngModel)]="data.txt_value" class="txt-border-none" placeholder="请输入群内昵称" />
+        </div>
+        <div fxFlex>
+            <div fxLayout="row" fxLayoutAlign="end" fxLayoutGap="10">
+                <button nz-button nzType="link" class="btncancel" (click)="cancel(false)">取消</button>
+                <button nz-button nzType="link" class="btnsave" (click)="saveGroupInfo(true)">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div *ngIf="data.dialog_type === 'dismiss_group'" class="group-info-dialog-container">
+    <div fxLayout="column" fxLayoutGap="20px">
+        <div fxFlex><label>解散群组</label></div>
+        <div fxFlex>
+            <span>此操作不可逆，请慎重操作呦</span>
+        </div>
+        <div fxFlex>
+
+        </div>
+        <div fxFlex>
+            <div fxLayout="row" fxLayoutAlign="end" fxLayoutGap="10">
+                <button nz-button nzType="link" class="btncancel" (click)="confirmDismissGroup(false)">取消</button>
+                <button nz-button nzType="link" class="btnsave" (click)="confirmDismissGroup(true)">确定</button>
+            </div>
+        </div>
+    </div>
+</div>

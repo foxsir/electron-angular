@@ -12,6 +12,7 @@ import arrowRightIcon from "@app/assets/icons/arrow-right.svg";
 import { RestService } from "@services/rest/rest.service";
 import { DemoDialogComponent } from "@modules/setting-dialogs/demo-dialog/demo-dialog.component";
 import { DialogService } from "@services/dialog/dialog.service";
+import { GroupInfoDialogComponent } from "@modules/user-dialogs/group-info-dialog/group-info-dialog.component";
 
 @Component({
     selector: 'app-group-info',
@@ -28,15 +29,15 @@ export class GroupInfoComponent implements OnInit {
     public backspaceActiveIcon = this.dom.bypassSecurityTrustResourceUrl(backspaceActiveIcon);
     public arrowRightIcon = this.dom.bypassSecurityTrustResourceUrl(arrowRightIcon);
 
-    public groupData;
+    public groupData = {
+        gmute: 0,
+        invite: 0,
+        gmemberCount: 0,
+    };
+
     public setting_data = {
-        customerServiceSwitch: false, /*专属客服开关*/
-        tabSwitch: false, /*群页签开关*/
-        topContentSwitch: false, /*群上屏开关*/
-        silenceNotice: false, /*禁言通知开关*/
-        revocationNotice: false, /*撤回通知开关*/
-        kickNotice: false, /*退群通知开关*/
-        talkIntervalSwitch: false, /*发言间隔开关*/
+        gmute: false,
+        invite: false,
 
         talkInterval: 3, /*发言时间间隔*/
 
@@ -53,7 +54,7 @@ export class GroupInfoComponent implements OnInit {
      */
     public view_mode = "switch_default";
     public view_title_object = {
-        switch_default: '群配置',
+        switch_default: '群组信息',
         group_top: '群上屏编辑',
         customer_service: '专属客服配置',
         group_tab: '群页签配置'
@@ -66,24 +67,15 @@ export class GroupInfoComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        console.log('currentChat: ', this.currentChat);
+        console.log('currentChat（group-info-component）: ', this.currentChat);
 
         /*获取群基本信息*/
         this.restService.getGroupBaseById(this.currentChat.alarmItem.dataId).subscribe(res => {
             console.log('getGroupBaseById result: ', res);
             this.groupData = res.data;
 
-            this.setting_data.customerServiceSwitch = this.groupData.customerServiceSwitch == 1;
-            this.setting_data.tabSwitch = this.groupData.tabSwitch == 1;
-            this.setting_data.topContentSwitch = this.groupData.topContentSwitch == 1;
-            this.setting_data.silenceNotice = this.groupData.silenceNotice == 1;
-            this.setting_data.revocationNotice = this.groupData.revocationNotice == 1;
-            this.setting_data.kickNotice = this.groupData.kickNotice == 1;
-            this.setting_data.talkIntervalSwitch = this.groupData.talkIntervalSwitch == 1;
-
-            this.setting_data.talkInterval = this.groupData.talkInterval.toString();
-
-            this.setting_data.gtopContent = this.groupData.gtopContent;
+            this.setting_data.gmute = this.groupData.gmute == 1;
+            this.setting_data.invite = this.groupData.invite == 1;
         });
 
         /*获取群客服列表*/
@@ -213,6 +205,48 @@ export class GroupInfoComponent implements OnInit {
                 this.restService.updateGroupBaseById(post_data).subscribe(res => {
                     this.setting_data.talkInterval = post_data.talkInterval;
                 });
+            }
+        });
+    }
+
+    /*
+     * 编辑群信息： 群组名称、群内昵称
+     */
+    editGroupInfo(column) {
+        var data = {
+            dialog_type: 'edit_' + column,
+            toUserId: this.currentChat.alarmItem.dataId,
+            chatType: this.currentChat.metadata.chatType,
+            txt_value: '',
+        };
+
+        this.dialogService.openDialog(GroupInfoDialogComponent, { data: data }).then((res: any) => {
+            console.log('group info dialog result: ', res);
+
+            if (res.ok == true) {
+
+
+            }
+        });
+    }
+
+    /*
+     * 解散本群
+     */
+    dismissGroup() {
+        var data = {
+            dialog_type: 'dismiss_group',
+            toUserId: this.currentChat.alarmItem.dataId,
+            chatType: this.currentChat.metadata.chatType,
+            count: '',
+        };
+
+        this.dialogService.openDialog(GroupInfoDialogComponent, { data: data }).then((res: any) => {
+            console.log('group info dialog result: ', res);
+
+            if (res.ok == true) {
+
+
             }
         });
     }
