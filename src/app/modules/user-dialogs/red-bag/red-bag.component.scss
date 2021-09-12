@@ -1,0 +1,51 @@
+::ng-deep {
+  .red-bag-dialog {
+    .mat-dialog-container {
+      width: 270px;
+      background-image: url("~assets/images/red-bag-bg.svg");
+      background-size: 100%;
+      background-repeat: no-repeat;
+      border-radius: 10px;
+      background-color: transparent;
+      box-shadow: none;
+    }
+  }
+
+  .open-red-bag-dialog {
+    .mat-dialog-container {
+      background-image: url("~assets/images/red-bag-opened-bg.svg") !important;
+    }
+
+    .red-bag-main {
+      .nickName {
+        color: #383838 !important;
+      }
+      .money {
+        display: block !important;
+      }
+    }
+  }
+}
+
+.red-bag-main {
+  width: 100%;
+
+  .nickName {
+    text-align: center;
+    font-size: 17px;
+    font-weight: 500;
+    color: #FFE2B1;
+    line-height: 24px;
+  }
+  .avatar {
+    text-align: center;
+  }
+  .money {
+    display: none;
+    height: 56px;
+    font-size: 40px;
+    font-weight: 500;
+    color: #C3A36E;
+    line-height: 56px;
+  }
+}

@@ -1,0 +1,36 @@
+<div fxLayout="column" fxLayoutGap="15px">
+  <div fxFlex="425px" class="red-bag-main">
+    <div fxFlexFill>
+      <div fxLayout="column" style="height: 425px;">
+        <div fxFlex="65">
+          <div fxLayout="column">
+            <div fxLayoutAlign="center">
+              <div fxLayout="column" fxLayoutGap="5px" style="margin-top: 40px;">
+                <div class="avatar" fxFlex><img [src]="avatar" alt="" mat-card-avatar></div>
+                <div class="nickName" fxFlex>{{nickName}}的红包</div>
+                <div class="money" *ngIf="openedRedBag" fxFlexAlign="center">
+                  <span *ngIf="selfOpen === true">{{myRedPacket.money}}</span>
+                  <span *ngIf="selfOpen === false">{{friendRedPacket.redPackVoList[0].robMoney}}</span>
+                </div>
+              </div>
+            </div>
+            <div fxLayout="column" *ngIf="openedRedBag && selfOpen === true">
+              <h5>红包金额{{myRedPacket.money}}，等待对方领取</h5>
+              <mat-divider></mat-divider>
+            </div>
+          </div>
+        </div>
+        <div fxFlex="35" fxLayoutAlign="center center">
+          <a class="mat-button" (click)="openRedBag()" tabindex="-1">
+            <img [src]="redBagOpenIcon" alt="">
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div fxFlex="40px" class="red-bag-action" fxLayoutAlign="center">
+    <button mat-icon-button (click)="close()" tabindex="-1">
+      <img [src]="redBagCloseIcon" alt="">
+    </button>
+  </div>
+</div>

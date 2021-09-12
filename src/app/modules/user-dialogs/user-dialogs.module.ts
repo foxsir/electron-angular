@@ -29,6 +29,7 @@ import {MatListModule} from "@angular/material/list";
 import { UserContactCardComponent } from './user-contact-card/user-contact-card.component';
 import { SelectFriendContactComponent } from './select-friend-contact/select-friend-contact.component';
 import {NgformlyModule} from "../../shared/formly/ngformly.module";
+import { RedBagComponent } from './red-bag/red-bag.component';
 
 
 @NgModule({
@@ -44,7 +45,8 @@ import {NgformlyModule} from "../../shared/formly/ngformly.module";
         UserSilenceComponent,
         TransmitMessageComponent,
         UserContactCardComponent,
-        SelectFriendContactComponent
+        SelectFriendContactComponent,
+        RedBagComponent
     ],
     exports: [
         PrivacySettingComponent
