@@ -26,8 +26,6 @@ interface CollectChatMsg {
 })
 export class CollectComponent implements OnInit {
   collectList: CollectModel[] = [];
-  public show_modal = false;
-  public current_model: any;
 
   public collectChatMsg: CollectChatMsg[] = [];
 
@@ -46,16 +44,18 @@ export class CollectComponent implements OnInit {
     },
     {
       label: "删除",
-      action: (item: ChatmsgEntityModel) => {
+      action: (item: CollectChatMsg) => {
         console.log('删除：', item);
-        // this.show_modal = true;
-        this.current_model = item;
         this.dialogService.confirm({
           title: '删除收藏',
           text: '确认将此内容从收藏中删除？'
         }).then((res: boolean) => {
           if (res) {
-            this.handleOk();
+            this.restService.deleteMissuCollectById(item.collect.id).subscribe(() => {
+              this.restService.getMyCollectList().subscribe(res => {
+                this.collectList = res.data;
+              });
+            });
           }
         });
       }
@@ -97,20 +97,6 @@ export class CollectComponent implements OnInit {
     span.style.left = "0px";
     span.style.transform = `translate3d(${e.pageX}px, ${e.pageY}px, 0px)`;
     return e.defaultPrevented;
-  }
-
-  handleCancel() {
-    this.show_modal = false;
-  }
-
-  handleOk() {
-    this.restService.deleteMissuCollectById(this.current_model.id).subscribe(res => {
-      this.show_modal = false;
-
-      this.restService.getMyCollectList().subscribe(res => {
-        this.collectList = res.data;
-      });
-    });
   }
 
 }

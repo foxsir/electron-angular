@@ -18,7 +18,7 @@ import {CurrentChattingChangeService} from "@services/current-chatting-change/cu
 })
 export class TransmitMessageComponent implements OnInit {
   public filterFriend: string;
-  public friendList: FriendModel[] = [];
+  public friendMap: Map<string, FriendModel> = new Map();
 
   public selectedFriends: FriendModel[] = [];
 
@@ -34,7 +34,7 @@ export class TransmitMessageComponent implements OnInit {
   ngOnInit(): void {
     this.cacheService.getCacheFriends().then(data => {
       if(data) {
-        this.friendList = Object.values(data);
+        this.friendMap = data;
       }
     });
   }
@@ -42,10 +42,11 @@ export class TransmitMessageComponent implements OnInit {
   filter() {
     this.cacheService.getCacheFriends().then(data => {
       if(data) {
-        const list = Object.values(data);
-        this.friendList = list.filter((friend: FriendModel) => {
-          return friend.nickname.includes(this.filterFriend);
-        }) as FriendModel[];
+        data.forEach((friend: FriendModel) => {
+          if(friend.nickname.includes(this.filterFriend)) {
+            this.friendMap.set(friend.friendUserUid.toString(), friend);
+          }
+        });
       }
     });
   }

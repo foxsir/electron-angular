@@ -51,7 +51,7 @@ import {CurrentChattingChangeService} from "@services/current-chatting-change/cu
 })
 export class MessageComponent implements OnInit {
   // @ViewChild("chattingContainer") chattingContainer: ElementRef;
-  readonly Infinity = 999999999999999999;
+  readonly Infinity = 9999999999;
 
   // icon
   public closeCircleIcon = this.dom.bypassSecurityTrustResourceUrl(closeCircleIcon);
@@ -90,9 +90,9 @@ export class MessageComponent implements OnInit {
   // // 显示添加好友组件
   // public showSearchFriend: boolean = false;
 
-  public muteList: Map<string, boolean> = new Map();
-  public topList: Map<string, boolean> = new Map();
-  public topListOfArray: string[] = [];
+  public muteMap: Map<string, boolean> = new Map();
+  public topMap: Map<string, boolean> = new Map();
+  public topMapOfArray: string[] = [];
 
   constructor(
     private alarmsProviderService: AlarmsProviderService,
@@ -138,23 +138,25 @@ export class MessageComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.cacheService.getMute().then((list) => {
-      this.muteList  = list;
+    this.cacheService.getMute().then((map) => {
+      if(map) {
+        this.muteMap = map;
+      }
       this.cacheService.cacheUpdate$.subscribe(data => {
-        if(data.mute) {
-          this.muteList = data.mute;
+        if(data.muteMap) {
+          this.muteMap = data.muteMap;
         }
       });
     });
-    this.cacheService.getTop().then((list) => {
-      if(list) {
-        this.topList = list;
+    this.cacheService.getTop().then((map) => {
+      if(map) {
+        this.topMap = map;
       }
-      this.topListOfArray = new Array(...this.topList.keys());
+      this.topMapOfArray = new Array(...this.topMap.keys());
       this.cacheService.cacheUpdate$.subscribe(data => {
-        if(data.top) {
-          this.topList = data.top;
-          this.topListOfArray = new Array(...this.topList.keys());
+        if(data.topMap) {
+          this.topMap = data.topMap;
+          this.topMapOfArray = new Array(...this.topMap.keys());
         }
       });
     });

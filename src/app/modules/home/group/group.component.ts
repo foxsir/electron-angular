@@ -28,8 +28,8 @@ export class GroupComponent implements OnInit, OnDestroy {
     });
 
     this.subscribe = this.cacheService.cacheUpdate$.subscribe(cache => {
-      if (cache.groupList) {
-        this.chattingGroup = Object.values(cache.groupList);
+      if (cache.groupMap) {
+        this.chattingGroup = Object.values(cache.groupMap);
       }
     });
   }

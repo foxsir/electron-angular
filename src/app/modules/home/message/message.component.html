@@ -12,8 +12,8 @@
         <div fxLayout="column">
           <div fxFlex
                *ngFor="let alarm of alarmItemList | keyvalue"
-               [fxFlexOrder]="topList.get(alarm.value.alarmData.alarmItem.dataId) ? topListOfArray.indexOf(alarm.value.alarmData.alarmItem.dataId) : Infinity"
-               [ngClass]="{'top': topList.get(alarm.value.alarmData.alarmItem.dataId)}">
+               [fxFlexOrder]="topMap.get(alarm.value.alarmData.alarmItem.dataId) ? topMapOfArray.indexOf(alarm.value.alarmData.alarmItem.dataId) : Infinity"
+               [ngClass]="{'top': topMap.get(alarm.value.alarmData.alarmItem.dataId)}">
             <mat-card class="mat-elevation-z0"
                       [ngClass]="{'active-chatting': alarm.value.alarmData.alarmItem.dataId === currentChat?.alarmItem.dataId}"
                       style="background: transparent;"
@@ -40,7 +40,7 @@
                     </div>
                     <div fxFlex="100" fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="end">
                       <div fxFlex="50">
-                        <ng-template [ngIf]="muteList.get(alarm.value.alarmData.alarmItem.dataId)">
+                        <ng-template [ngIf]="muteMap.get(alarm.value.alarmData.alarmItem.dataId)">
                           <mat-icon class="chatting-action-button mini" matTooltip="静音"
                                     matTooltipPosition="above">
                             <img [src]="closePromptIcon" alt="">

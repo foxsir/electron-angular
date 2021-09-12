@@ -134,6 +134,7 @@
                         <div fxFlex="40px" *ngIf="currentChat.metadata.chatType === 'group'">
                           <img (contextmenu)="contextMenuForAvatar($event, createPlanMenuTriggerAvatar, avatarSpan, chat.value)"
                                src="https://material.angular.io/assets/img/examples/shiba2.jpg" mat-card-avatar alt="">
+                          {{chat.value.userAvatarFileNameForBBSCome}}
                           <!--增加头像上的右键功能-->
                           <span #createPlanMenuTriggerAvatar="matMenuTrigger" #avatarSpan [matMenuTriggerFor]="contextmenuForAvatar"></span>
                           <mat-menu #contextmenuForAvatar="matMenu">

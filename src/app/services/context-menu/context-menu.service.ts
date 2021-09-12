@@ -46,14 +46,14 @@ export class ContextMenuService {
   // 收藏列表上的右键
   private contextMenuForCollect: ContextMenuCollectModel[] = [];
 
-  public muteList: Map<string, boolean> = new Map();
-  public topList: Map<string, boolean> = new Map();
+  public muteMap: Map<string, boolean> = new Map();
+  public topMap: Map<string, boolean> = new Map();
 
   private actionChattingCollection = {
     setTop: {
       label: "置顶消息",
       visibility: (filterData: MenuFilterData): boolean => {
-        return !this.topList.get(filterData.alarmItem.alarmItem.dataId);
+        return !this.topMap.get(filterData.alarmItem.alarmItem.dataId);
       },
       action: (chatting: AlarmItemInterface) => {
         this.cacheService.setTop(chatting.alarmItem.dataId, chatting.metadata.chatType, true).then();
@@ -62,7 +62,7 @@ export class ContextMenuService {
     unsetTop: {
       label: "取消置顶",
       visibility: (filterData: MenuFilterData): boolean => {
-        return this.topList.get(filterData.alarmItem.alarmItem.dataId) === true;
+        return this.topMap.get(filterData.alarmItem.alarmItem.dataId) === true;
       },
       action: (chatting: AlarmItemInterface) => {
         this.cacheService.setTop(chatting.alarmItem.dataId, chatting.metadata.chatType, false).then();
@@ -80,7 +80,7 @@ export class ContextMenuService {
     closeSound: {
       label: "关闭消息声音通知",
       visibility: (filterData: MenuFilterData): boolean => {
-        return this.muteList.get(filterData.alarmItem.alarmItem.dataId) !== true;
+        return this.muteMap.get(filterData.alarmItem.alarmItem.dataId) !== true;
       },
       action: (chatting: AlarmItemInterface) => {
         this.cacheService.setMute(chatting.alarmItem.dataId, chatting.metadata.chatType, true).then(() => {
@@ -91,7 +91,7 @@ export class ContextMenuService {
     openSound: {
       label: "开启消息声音通知",
       visibility: (filterData: MenuFilterData): boolean => {
-        return this.muteList.get(filterData.alarmItem.alarmItem.dataId) === true;
+        return this.muteMap.get(filterData.alarmItem.alarmItem.dataId) === true;
       },
       action: (chatting: AlarmItemInterface) => {
         this.cacheService.setMute(chatting.alarmItem.dataId, chatting.metadata.chatType, false).then(() => {
@@ -267,21 +267,21 @@ export class ContextMenuService {
   ) {
     this.cacheService.getMute().then((list) => {
       if(list) {
-        this.muteList  = list;
+        this.muteMap  = list;
       }
       this.cacheService.cacheUpdate$.subscribe(data => {
-        if(data.mute) {
-          this.muteList = data.mute;
+        if(data.muteMap) {
+          this.muteMap = data.muteMap;
         }
       });
     });
     this.cacheService.getTop().then((list) => {
       if(list) {
-        this.topList  = list;
+        this.topMap  = list;
       }
       this.cacheService.cacheUpdate$.subscribe(data => {
-        if(data.top) {
-          this.topList = data.top;
+        if(data.topMap) {
+          this.topMap = data.topMap;
         }
       });
     });

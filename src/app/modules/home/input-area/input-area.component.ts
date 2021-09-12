@@ -47,6 +47,7 @@ import {SelectFriendContactComponent} from "@modules/user-dialogs/select-friend-
 import {LocalUserService} from "@services/local-user/local-user.service";
 import {ForwardMessageService} from "@services/forward-message/forward-message.service";
 import { RedPocketComponent } from "@modules/user-dialogs/red-pocket/red-pocket.component";
+import {RedPacketInterface} from "@app/interfaces/red-packet-interface";
 
 @Component({
   selector: 'app-input-area',
@@ -81,7 +82,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
   // 引用回复消息
   public quoteMessage: ChatmsgEntityModel = null;
 
-  public memberList: GroupMemberModel[] = [];
+  public memberMap: Map<number, GroupMemberModel> = new Map();
 
   private atTargetMember: string[] = [];
 
@@ -138,11 +139,16 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
 
   private subscribeAtMember() {
     this.elementService.atMember$.subscribe((friendId) => {
-      const member = this.memberList.filter(m => m.user_uid.toString() === friendId.toString());
+      const member: GroupMemberModel[] = [];
+      this.memberMap.forEach(m => {
+        if(m.user_uid.toString() === friendId.toString()) {
+          member.push(m);
+        }
+      });
       if(member.length === 1) {
         this.appendAtMark(member.pop(), true);
       } else {
-        this.snackBarService.openMessage("用户可能已经不是群成员");
+        this.snackBarService.openMessage("用户已经不是群成员");
       }
     });
   }
@@ -161,12 +167,8 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
   getGroupMembers(currentChat: AlarmItemInterface) {
     if(currentChat.metadata.chatType === "group") {
       const gid = currentChat.alarmItem.dataId;
-      this.restService.submitGetGroupMembersListFromServer(gid).subscribe((res: HttpResponseInterface) => {
-        if(res.success) {
-          this.memberList = JSON.parse(res.returnValue);
-        } else {
-          this.snackBarService.openMessage("获取群成员失败");
-        }
+      this.cacheService.cacheGroupMembers(gid).then(cache => {
+        this.memberMap = cache;
       });
     }
   }
@@ -631,11 +633,10 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
             count: '',
         };
 
-        this.dialogService.openDialog(RedPocketComponent, { data: data }).then((res: any) => {
+        this.dialogService.openDialog(RedPocketComponent, { data: data }).then((res: RedPacketInterface) => {
             console.log('red pocket dialog result: ', res);
 
-            if (res.ok == true) {
-
+            if (res.ok === true) {
 
             }
         });

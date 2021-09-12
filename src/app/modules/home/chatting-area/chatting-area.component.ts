@@ -181,8 +181,8 @@ export class ChattingAreaComponent implements OnInit {
 
     // 清屏
     this.cacheService.cacheUpdate$.subscribe(cache => {
-      if(this.currentChat && cache.alarmData) {
-        const data = cache.alarmData.get(this.currentChat.alarmItem.dataId);
+      if(this.currentChat && cache.alarmDataMap) {
+        const data = cache.alarmDataMap.get(this.currentChat.alarmItem.dataId);
         if(data.message.size === 0) {
           this.chatMsgEntityList.clear();
         }
