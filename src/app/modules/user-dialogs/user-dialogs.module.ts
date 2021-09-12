@@ -5,6 +5,7 @@ import { PrivacySettingComponent } from './privacy-setting/privacy-setting.compo
 import { MySignatureComponent } from './my-signature/my-signature.component';
 import { UpdatePasswordComponent } from './update-password/update-password.component';
 import { RedPocketComponent } from './red-pocket/red-pocket.component';
+import { GroupInfoDialogComponent } from './group-info-dialog/group-info-dialog.component';
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatButtonModule} from "@angular/material/button";
 import {MatCardModule} from "@angular/material/card";
@@ -37,6 +38,7 @@ import {NgformlyModule} from "../../shared/formly/ngformly.module";
         MySignatureComponent,
         UpdatePasswordComponent,
         RedPocketComponent,
+        GroupInfoDialogComponent,
         UserInfoComponent,
         SetRemarkComponent,
         UserSilenceComponent,

@@ -1,0 +1,32 @@
+/*::ng-deep {
+    .mat-dialog-container{
+        padding:0px;
+    }
+}*/
+
+.red-pocket-container{
+    width:300px;
+    background-color:#f3f4f8;
+    padding:24px;
+
+    .input-box{
+        background-color:white;
+        display:flex;
+        align-items:center;
+        padding:8px 15px;
+    }
+
+    .txt-com-short{
+        width:70px;
+        border:none;
+        outline:none;
+        padding-left:0;
+        text-align:right;       
+    }
+
+    .txt-com{
+        border:none;
+        outline:none;
+        padding-left:0;
+    }
+}
