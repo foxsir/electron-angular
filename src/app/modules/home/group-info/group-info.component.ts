@@ -28,15 +28,10 @@ export class GroupInfoComponent implements OnInit {
     public backspaceActiveIcon = this.dom.bypassSecurityTrustResourceUrl(backspaceActiveIcon);
     public arrowRightIcon = this.dom.bypassSecurityTrustResourceUrl(arrowRightIcon);
 
-    public groupData;
+    public groupData: any;
     public setting_data = {
-        customerServiceSwitch: false, /*专属客服开关*/
-        tabSwitch: false, /*群页签开关*/
-        topContentSwitch: false, /*群上屏开关*/
-        silenceNotice: false, /*禁言通知开关*/
-        revocationNotice: false, /*撤回通知开关*/
-        kickNotice: false, /*退群通知开关*/
-        talkIntervalSwitch: false, /*发言间隔开关*/
+        gmute: false,
+        invite: false,
 
         talkInterval: 3, /*发言时间间隔*/
 
@@ -66,20 +61,15 @@ export class GroupInfoComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        console.log('currentChat: ', this.currentChat);
+        console.log('currentChat（group-info-component）: ', this.currentChat);
 
         /*获取群基本信息*/
         this.restService.getGroupBaseById(this.currentChat.alarmItem.dataId).subscribe(res => {
             console.log('getGroupBaseById result: ', res);
             this.groupData = res.data;
 
-            this.setting_data.customerServiceSwitch = this.groupData.customerServiceSwitch == 1;
-            this.setting_data.tabSwitch = this.groupData.tabSwitch == 1;
-            this.setting_data.topContentSwitch = this.groupData.topContentSwitch == 1;
-            this.setting_data.silenceNotice = this.groupData.silenceNotice == 1;
-            this.setting_data.revocationNotice = this.groupData.revocationNotice == 1;
-            this.setting_data.kickNotice = this.groupData.kickNotice == 1;
-            this.setting_data.talkIntervalSwitch = this.groupData.talkIntervalSwitch == 1;
+            this.setting_data.gmute = this.groupData.gmute == 1;
+            this.setting_data.invite = this.groupData.invite == 1;
 
             this.setting_data.talkInterval = this.groupData.talkInterval.toString();
 

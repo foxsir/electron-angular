@@ -14,10 +14,10 @@
                     </div>
                 </div>
                 <div class="user-info-headimg">
-                    <img class="img-head" />
+                    <img class="img-head" [src]="currentChat.alarmItem.avatar"/>
                     <div class="status-bar">
-                        <span>{{setting_data.nickname}}</span>
-                        <span>在线</span>
+                        <span>{{currentChat.alarmItem.title}}</span>
+                        <span style="font-size:12px;">人数：{{groupData.gmemberCount}} 人</span>
                     </div>
                 </div>
             </mat-card-content>
@@ -67,7 +67,7 @@
                     </div>
                     <div fxFlex fxLayoutAlign="space-between center">
                         <span class="privacy-item-text">全体禁言</span>
-                        <nz-switch [(ngModel)]="setting_data.silenceNotice" (ngModelChange)="bySwitch('silenceNotice')" nzSize="small"></nz-switch>
+                        <nz-switch [(ngModel)]="setting_data.gmute" (ngModelChange)="bySwitch('gmute')" nzSize="small"></nz-switch>
                     </div>
                     <div fxFlex fxLayoutAlign="space-between center">
                         <span class="privacy-item-text">成员互相添加好友</span>
@@ -83,7 +83,7 @@
                     </div>
                     <div fxFlex fxLayoutAlign="space-between center">
                         <span class="privacy-item-text">普通成员邀请好友入群</span>
-                        <nz-switch [(ngModel)]="setting_data.kickNotice" (ngModelChange)="bySwitch('kickNotice')" nzSize="small"></nz-switch>
+                        <nz-switch [(ngModel)]="setting_data.invite" (ngModelChange)="bySwitch('invite')" nzSize="small"></nz-switch>
                     </div>
 
                     <div class="split-item"></div>
