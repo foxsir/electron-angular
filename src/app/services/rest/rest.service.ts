@@ -6,8 +6,8 @@ import {Observable} from "rxjs";
 import {LocalUserService} from "@services/local-user/local-user.service";
 import {ImService} from "@services/im/im.service";
 import {
-    getAppConfig,
-    generateAgoraToken,
+  getAppConfig,
+  generateAgoraToken,
   getMissuCollectById,
   deleteMissuCollectById,
   getMyBlackUser,
@@ -29,18 +29,18 @@ import {
   getFriendSearch,
   getGroupAdminInfo,
   updRemark,
-    getRemark,
-    getfriendList,
-    checkPayKeyIsExist,
-    updatePayKey,
-    sentRedPacket,
-    getRedPacketById,
-    robRedPacket,
-    getConsumeRecordList,
+  getRemark,
+  getfriendList,
+  checkPayKeyIsExist,
+  updatePayKey,
+  sentRedPacket,
+  getRedPacketById,
+  robRedPacket,
+  getConsumeRecordList,
   updateGroupAdmin,
   addGroupSilence,
   deleteGroupSilenceById,
-  getGroupSilenceById, addMissuCollect, UpdatePassword,
+  getGroupSilenceById, addMissuCollect, UpdatePassword, GetGroupMember,
 } from "@app/config/post-api";
 import {HttpHeaders} from "@angular/common/http";
 import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
@@ -529,7 +529,7 @@ export class RestService {
    * @param gid 要获取的目标群组id
    */
   submitGetGroupMembersListFromServer(gid) {
-    return this.restServer(MyProcessorConst.PROCESSOR_GROUP_CHAT, JobDispatchConst.LOGIC_GROUP_QUERY_MGR, SysActionConst.ACTION_APPEND3,gid);
+    return this.http.get(GetGroupMember, {groupId: gid});
   }
 
   /**
