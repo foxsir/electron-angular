@@ -1,0 +1,32 @@
+.red-bag-card {
+  width: 309px;
+  background: #FB9D3B;
+  cursor: pointer;
+
+  .greetings {
+    height: 24px;
+    font-size: 17px;
+    font-weight: 500;
+    color: #FFFFFF;
+    line-height: 24px;
+  }
+  .status-text {
+    height: 20px;
+    font-size: 14px;
+    font-weight: 400;
+    color: #FFFFFF;
+    line-height: 20px;
+  }
+  .red-bag-type {
+    height: 17px;
+    font-size: 12px;
+    font-weight: 400;
+    color: #FFFFFF;
+    line-height: 17px;
+  }
+
+  .mat-divider {
+    margin-top: 10px;
+    border-top-color: rgb(255 255 255);
+  }
+}

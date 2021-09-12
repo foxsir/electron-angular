@@ -1,5 +1,12 @@
 import {Component, Input, OnInit} from '@angular/core';
 import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
+import {DomSanitizer} from "@angular/platform-browser";
+
+import redBagIcon from "@app/assets/icons/red-bag.svg";
+
+import {RedPacketResponseInterface} from "@app/interfaces/red-packet-response.interface";
+import {DialogService} from "@services/dialog/dialog.service";
+import {RedBagComponent} from "@modules/user-dialogs/red-bag/red-bag.component";
 
 @Component({
   selector: 'app-message-red-envelope',
@@ -8,10 +15,26 @@ import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 })
 export class MessageRedEnvelopeComponent implements OnInit {
   @Input() chatMsg: ChatmsgEntityModel;
+  @Input() wrapDiv: HTMLDivElement;
+  public redBag: RedPacketResponseInterface;
 
-  constructor() { }
+  public redBagIcon = this.dom.bypassSecurityTrustResourceUrl(redBagIcon);
+
+  constructor(
+    private dom: DomSanitizer,
+    private dialogService: DialogService
+  ) { }
 
   ngOnInit(): void {
+    this.redBag = JSON.parse(this.chatMsg.text);
+    this.wrapDiv.style.background = '#FB9D3B';
+    this.wrapDiv.style.borderRadius = '6px';
+  }
+
+  openRedBag() {
+    this.dialogService.openDialog(RedBagComponent,{data: this.chatMsg}).then(res => {
+
+    });
   }
 
 }

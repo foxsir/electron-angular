@@ -1,1 +1,19 @@
-{{chatMsg.text}}
+<div fxLayout="column" class="red-bag-card" fxLayoutGap="5px" (click)="openRedBag()">
+  <div fxFlex>
+    <div fxLayout="row" fxLayoutGap="15px">
+      <div fxFlex="35px">
+        <img [src]="redBagIcon" alt="" style="width: 100%">
+      </div>
+      <div fxFlex>
+        <div class="greetings">{{redBag.greetings}}</div>
+        <div class="status-text">待领取</div>
+      </div>
+    </div>
+  </div>
+  <div fxFlex>
+    <mat-divider inset></mat-divider>
+  </div>
+  <div fxFlex class="red-bag-type">
+    普通红包
+  </div>
+</div>
