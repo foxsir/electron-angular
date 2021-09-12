@@ -21,4 +21,16 @@
         outline:none;
         padding-left:0;
     }
+
+    .txt-border-none{
+        border:none;
+        outline:none;
+        border-bottom:1px solid #d8d8d8;
+    }
+
+    .txt-border-none:focus{
+        border:none;
+        outline:none;
+        border-bottom:1px solid #d8d8d8;
+    }
 }

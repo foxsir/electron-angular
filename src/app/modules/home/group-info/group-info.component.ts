@@ -210,6 +210,27 @@ export class GroupInfoComponent implements OnInit {
     }
 
     /*
+     * 编辑群信息： 群组名称、群内昵称
+     */
+    editGroupInfo(column) {
+        var data = {
+            dialog_type: 'edit_' + column,
+            toUserId: this.currentChat.alarmItem.dataId,
+            chatType: this.currentChat.metadata.chatType,
+            txt_value: '',
+        };
+
+        this.dialogService.openDialog(GroupInfoDialogComponent, { data: data }).then((res: any) => {
+            console.log('group info dialog result: ', res);
+
+            if (res.ok == true) {
+
+
+            }
+        });
+    }
+
+    /*
      * 解散本群
      */
     dismissGroup() {
