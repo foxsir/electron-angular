@@ -1,6 +1,8 @@
 <mat-card class="mat-elevation-z0">
   <mat-card-content>
-    <h1 mat-card-title style="color:#333333;">收藏</h1>
+    <mat-card-title>收藏</mat-card-title>
+  </mat-card-content>
+  <mat-card-content>
     <div fxLayout="column" fxLayoutGap="20px">
       <div  *ngFor="let item of collectChatMsg">
         <mat-card class="mat-elevation-z0 hover-item light" (contextmenu)="contextMenuForItem($event, menuTrigge, collectSpan, item)">

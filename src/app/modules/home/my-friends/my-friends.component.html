@@ -1,6 +1,8 @@
 <mat-card class="mat-elevation-z0">
   <mat-card-content>
-    <div mat-subheader style="color:#333333;">我的好友</div>
+    <mat-card-title>我的好友</mat-card-title>
+  </mat-card-content>
+  <mat-card-content>
     <mat-list *ngFor="let friend of frienddata">
       <div style="margin-bottom:15px;">{{friend.char}}</div>
       <mat-divider inset style="margin-bottom: 5px;"></mat-divider>
@@ -17,4 +19,6 @@
   </mat-card-content>
 </mat-card>
 
-<empty-data *ngIf="friendList.length === 0" text="暂时没有好友"></empty-data>
+<div fxFlexFill [fxShow]="friendList.length === 0" fxLayoutAlign="center center">
+  <empty-data *ngIf="friendList.length === 0" text="暂时没有好友"></empty-data>
+</div>

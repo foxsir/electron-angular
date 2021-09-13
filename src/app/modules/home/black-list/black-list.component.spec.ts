@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { BlackListComponent } from './black-list.component';
+import {BlackListComponent} from './black-list.component';
 
 describe('BlackListComponent', () => {
   let component: BlackListComponent;
@@ -8,9 +8,9 @@ describe('BlackListComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ BlackListComponent ]
+      declarations: [BlackListComponent]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {
