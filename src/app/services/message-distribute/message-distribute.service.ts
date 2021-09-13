@@ -82,6 +82,8 @@ export class MessageDistributeService {
   private SENSITIVE_WORD_UPDATESource = new Subject<ProtocalModel>();
   public SENSITIVE_WORD_UPDATE$ = this.SENSITIVE_WORD_UPDATESource.asObservable();
 
+  private PULLED_BLACK_LISTSource = new Subject<ProtocalModel>();
+  public PULLED_BLACK_LIST$ = this.PULLED_BLACK_LISTSource.asObservable();
 
   constructor() { }
 
@@ -154,6 +156,9 @@ export class MessageDistributeService {
         break;
       case UserProtocalsType.SENSITIVE_WORD_UPDATE:
         this.SENSITIVE_WORD_UPDATE(originData);
+        break;
+      case UserProtocalsType.PULLED_BLACK_LIST:
+        this.PULLED_BLACK_LIST(originData);
         break;
       default:
         this.illegalMessage(originData);
@@ -383,6 +388,10 @@ export class MessageDistributeService {
 
   private SENSITIVE_WORD_UPDATE(originData: ProtocalModel) {
     this.SENSITIVE_WORD_UPDATESource.next(originData);
+  }
+
+  private PULLED_BLACK_LIST(originData: ProtocalModel) {
+    this.PULLED_BLACK_LISTSource.next(originData);
   }
 
   /**
