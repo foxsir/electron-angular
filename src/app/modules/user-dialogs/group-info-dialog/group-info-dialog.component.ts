@@ -19,12 +19,19 @@ export class GroupInfoDialogComponent implements OnInit {
         private restService: RestService
     ) { }
 
+    public group_members: any[] = [];
+    public search_keywords = '';
+
     ngOnInit(): void {
         /*是否设置支付密码*/
-        this.restService.checkPayKeyIsExist().subscribe(res => {
-            console.log('是否设置支付密码：', res);
+        this.restService.submitGetGroupMembersListFromServer(this.data.toUserId).subscribe(res => {
+            console.log('群信息弹出框获取群成员：', res);
+            this.group_members = res.data.list;
+            for (let item of this.group_members) {
+                item.show = true;
+            }
         });
-        console.log('红包弹出框初始化 data：', this.data);
+        console.log('群信息弹出框初始化 data：', this.data);
     }
 
     close() {
@@ -33,15 +40,7 @@ export class GroupInfoDialogComponent implements OnInit {
     }
 
     /*
-     * 点击 “塞进红包” 按钮，跳到输入支付密码页面
-     */
-    showInputPassword() {
-        this.data.dialog_type = 'input_password';
-        console.log('red pocket data: ', this.data);
-    }
-
-    /*
-     * 取消发送红包
+     * 取消
      */
     cancel() {
         const result = {
@@ -79,5 +78,25 @@ export class GroupInfoDialogComponent implements OnInit {
             ok: ok,            
         };
         this.dialogRef.close(result);
+    }
+
+    /**
+     * 搜索
+     * @param event
+     */
+    txtSearchChange(event: KeyboardEvent) {
+        if (event.key != 'Enter') {
+            return;
+        }
+
+        console.log('回车确认：', this.search_keywords);
+        for (let item of this.group_members) {
+            if (item.showNickname.indexOf(this.search_keywords) == -1) {
+                item.show = false;
+            }
+            else {
+                item.show = true;
+            }
+        }
     }
 }

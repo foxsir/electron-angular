@@ -231,6 +231,27 @@ export class GroupInfoComponent implements OnInit {
     }
 
     /*
+     * 转让本群
+     */
+    transferGroup() {
+        var data = {
+            dialog_type: 'choose_group_member',
+            toUserId: this.currentChat.alarmItem.dataId,
+            chatType: this.currentChat.metadata.chatType,
+            count: '',
+        };
+
+        this.dialogService.openDialog(GroupInfoDialogComponent, { data: data }).then((res: any) => {
+            console.log('group info dialog result: ', res);
+
+            if (res.ok == true) {
+
+
+            }
+        });
+    }
+
+    /*
      * 解散本群
      */
     dismissGroup() {
