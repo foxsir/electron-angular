@@ -75,15 +75,15 @@
                     </div>
                     <div fxFlex fxLayoutAlign="space-between center">
                         <span class="privacy-item-text">成员互相添加好友</span>
-                        <nz-switch [(ngModel)]="setting_data.revocationNotice" (ngModelChange)="bySwitch('revocationNotice')" nzSize="small"></nz-switch>
+                        <nz-switch [(ngModel)]="setting_data.gmute" (ngModelChange)="bySwitch('revocationNotice')" nzSize="small"></nz-switch>
                     </div>
                     <div fxFlex fxLayoutAlign="space-between center">
                         <span class="privacy-item-text">消息免打扰</span>
-                        <nz-switch [(ngModel)]="setting_data.kickNotice" (ngModelChange)="bySwitch('kickNotice')" nzSize="small"></nz-switch>
+                        <nz-switch [(ngModel)]="setting_data.gmute" (ngModelChange)="bySwitch('kickNotice')" nzSize="small"></nz-switch>
                     </div>
                     <div fxFlex fxLayoutAlign="space-between center">
                         <span class="privacy-item-text">置顶聊天</span>
-                        <nz-switch [(ngModel)]="setting_data.kickNotice" (ngModelChange)="bySwitch('kickNotice')" nzSize="small"></nz-switch>
+                        <nz-switch [(ngModel)]="setting_data.gmute" (ngModelChange)="bySwitch('kickNotice')" nzSize="small"></nz-switch>
                     </div>
                     <div fxFlex fxLayoutAlign="space-between center">
                         <span class="privacy-item-text">普通成员邀请好友入群</span>

@@ -33,6 +33,7 @@ export class GroupInfoComponent implements OnInit {
         gmute: 0,
         invite: 0,
         gmemberCount: 0,
+        createTime: ''
     };
 
     public setting_data = {

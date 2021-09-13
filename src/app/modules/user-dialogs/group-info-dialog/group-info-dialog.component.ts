@@ -70,6 +70,10 @@ export class GroupInfoDialogComponent implements OnInit {
         });
     }
 
+    saveGroupInfo() {
+
+    }
+
     /*
      * 解散群组： 取消和确定
      */
