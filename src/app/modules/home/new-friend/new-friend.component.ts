@@ -9,6 +9,7 @@ import {MsgType} from "@app/config/rbchat-config";
 import NewHttpResponseInterface from "@app/interfaces/new-http-response.interface";
 import {FriendRequestModel} from "@app/models/friend-request.model";
 import {SnackBarService} from "@services/snack-bar/snack-bar.service";
+import {CacheService} from "@services/cache/cache.service";
 
 @Component({
     selector: 'app-new-friend',
@@ -25,9 +26,23 @@ export class NewFriendComponent implements OnInit {
       private localUserService: LocalUserService,
       private messageService: MessageService,
       private snackBarService: SnackBarService,
+      private cacheService: CacheService,
     ) {
-        this.restService.getNewFriend().subscribe((res: NewHttpResponseInterface<FriendRequestModel[]>) => {
-            this.model_list = res.data;
+        this.cacheService.cacheNewFriends();
+        this.cacheService.getNewFriendMap().then(cache => {
+          if(cache) {
+            cache.forEach(item => {
+              this.model_list.push(item);
+            });
+          }
+          this.cacheService.cacheUpdate$.subscribe(data => {
+            if(data.newFriendMap) {
+              this.model_list = [];
+              data.newFriendMap.forEach(item => {
+                this.model_list.push(item);
+              });
+            }
+          });
         });
     }
 
@@ -38,7 +53,8 @@ export class NewFriendComponent implements OnInit {
     refuse(item) {
       this.messageService.friendRequest("cancel", item).then(res => {
         if(res.success) {
-          this.snackBarService.openMessage("已经同意");
+          this.cacheService.updateNewFriendMap(item.reqUserId, false);
+          this.snackBarService.openMessage("已经拒绝");
         } else {
           this.snackBarService.openMessage("请稍后重试");
         }
@@ -48,6 +64,7 @@ export class NewFriendComponent implements OnInit {
     agree(item) {
       this.messageService.friendRequest("ok", item).then(res => {
         if(res.success) {
+          this.cacheService.updateNewFriendMap(item.reqUserId, true);
           this.snackBarService.openMessage("已经同意");
         } else {
           this.snackBarService.openMessage("请稍后重试");
