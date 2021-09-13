@@ -113,8 +113,12 @@ export const updatePrivacyConfig = _HTTP_SERVER_URL + "/api/privacyConfig/update
 //用户相关-用户群聊列表
 export const getUserJoinGroup = _HTTP_SERVER_URL + "/api/groupBase/getUserJoinGroup";
 
-//分组列表
-export const getFriendGroupList = _HTTP_SERVER_URL + "/api/friendGroup/list";
+//分组api
+export const getFriendGroupList = _HTTP_SERVER_URL + "/api/friendGroup/list"; // 分组列表
+export const getFriendGroupFriends = _HTTP_SERVER_URL + "/api/friendGroup/friendList"; // 分组下好友列表
+export const updateFriendGroup = _HTTP_SERVER_URL + "/api/friendGroup"; // post 创建  put 更新
+export const deleteFriendGroupList = _HTTP_SERVER_URL + "/api/friendGroup"; // {groupId} // 删除分组
+export const updateFriendGroupMembers = _HTTP_SERVER_URL + "/api/friendGroup/manageFriend"; // 修改分组成员
 
 // 搜索好友
 export const getFriendSearch = _HTTP_SERVER_URL + "/api/friend/search";
