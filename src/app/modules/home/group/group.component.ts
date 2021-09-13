@@ -24,12 +24,20 @@ export class GroupComponent implements OnInit, OnDestroy {
     private currentChattingChangeService: CurrentChattingChangeService,
   ) {
     this.cacheService.getCacheGroups().then(data => {
-      this.chattingGroup = Object.values(data);
+      if(data) {
+        data.forEach(item => {
+          this.chattingGroup.push(item);
+        });
+      }
     });
 
     this.subscribe = this.cacheService.cacheUpdate$.subscribe(cache => {
+
       if (cache.groupMap) {
-        this.chattingGroup = Object.values(cache.groupMap);
+        this.chattingGroup = [];
+        cache.groupMap.forEach(item => {
+          this.chattingGroup.push(item);
+        });
       }
     });
   }
