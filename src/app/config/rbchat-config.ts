@@ -266,6 +266,9 @@ const UserProtocalsType = {
 
   // 敏感词更新
   SENSITIVE_WORD_UPDATE: 76,
+
+  // 被拉黑
+  PULLED_BLACK_LIST: 61,
 };
 
 // 聊天模式类型常量对象定义，请勿修改各常量值！
