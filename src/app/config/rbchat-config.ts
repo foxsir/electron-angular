@@ -321,6 +321,9 @@ const MsgType = {
   /**  111 新增聊天消息类型之：@ */
   TYPE_AITE: 15,
   /**  ji 新增聊天消息类型之：踢人 */
+
+  TYPE_VOICE_CMD: 17,
+
   TYPE_TIREN: 57,
   /**  消息已读 */
   TYPE_READED: 56,
