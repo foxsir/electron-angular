@@ -6,43 +6,43 @@ import {Observable} from "rxjs";
 import {LocalUserService} from "@services/local-user/local-user.service";
 import {ImService} from "@services/im/im.service";
 import {
-  getAppConfig,
-  generateAgoraToken,
-  getMissuCollectById,
-  deleteMissuCollectById,
-  getMyBlackUser,
-  getUserBaseById,
-  updateUserBaseById,
-  verifyCode,
-  getPrivacyConfigById,
-  updatePrivacyConfig,
-  getUserJoinGroup,
-  getGroupBaseById,
-  getUserGroupTab,
-  UpUserGroupTab,
-  getGroupCustomerService,
-  UpGroupCustomerService,
-  updateGroupBaseById,
-  getNewFriend,
+  addGroupSilence,
+  addMissuCollect,
   blackUser,
+  checkPayKeyIsExist, deleteFriendGroupList,
+  deleteMissuCollectById,
+  generateAgoraToken,
+  getAppConfig,
+  getConsumeRecordList, getFriendGroupFriends,
   getFriendGroupList,
+  getfriendList,
   getFriendSearch,
   getGroupAdminInfo,
-  updRemark,
-  getRemark,
-  getfriendList,
-  checkPayKeyIsExist,
-  updatePayKey,
-  sentRedPacket,
+  getGroupBaseById,
+  getGroupCustomerService,
+  GetGroupMember,
+  getMissuCollectById,
+  getMyBlackUser,
+  getNewFriend,
+  getPrivacyConfigById,
   getRedPacketById,
+  getRemark,
+  getUserBaseById,
+  getUserGroupTab,
+  getUserJoinGroup,
   robRedPacket,
-  getConsumeRecordList,
+  sentRedPacket, updateFriendGroup, updateFriendGroupMembers,
   updateGroupAdmin,
-  addGroupSilence,
-  deleteGroupSilenceById,
-  getGroupSilenceById, addMissuCollect, UpdatePassword, GetGroupMember,
+  updateGroupBaseById,
+  UpdatePassword,
+  updatePayKey,
+  updatePrivacyConfig,
+  updateUserBaseById,
+  updRemark,
+  UpGroupCustomerService,
+  UpUserGroupTab,
+  verifyCode,
 } from "@app/config/post-api";
-import {HttpHeaders} from "@angular/common/http";
 import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 import DeviceID from "@app/DeviceID";
 
@@ -1016,14 +1016,59 @@ export class RestService {
         return this.http.get(getNewFriend + localUserInfo.userId, {});
     }
 
-    /**
-    * 分组列表
-    * @param user_id
-    */
-    getFriendGroupList(): Observable<any> {
-        const localUserInfo = this.localUserService.getObj();
-        return this.http.get(getFriendGroupList, { userId: localUserInfo.userId });
-    }
+  /**
+  * 分组列表
+  */
+  getFriendGroupList(): Observable<any> {
+    const localUserInfo = this.localUserService.getObj();
+    return this.http.get(getFriendGroupList, {userId: localUserInfo.userId});
+  }
+
+  /**
+   * 分组列表下的好友
+   */
+  getFriendGroupFriends(groupId: number): Observable<any> {
+    const localUserInfo = this.localUserService.getObj();
+    return this.http.get(getFriendGroupFriends, {groupId: groupId});
+  }
+
+  /**
+   * 创建我的分组
+   */
+  createFriendGroup(groupName: string, friendList: number[]): Observable<any> {
+    const localUserInfo = this.localUserService.getObj();
+    return this.http.post(updateFriendGroup, {
+      userId: localUserInfo.userId,
+      groupName: groupName,
+      friendList: friendList
+    });
+  }
+
+  /**
+   * 更新我的分组
+   */
+  updateFriendGroup(groupId: number, groupName: string): Observable<any> {
+    const localUserInfo = this.localUserService.getObj();
+    return this.http.put(updateFriendGroup, {groupId: groupId, groupName: groupName});
+  }
+
+  /**
+   * 删除我的分组
+   */
+  deleteFriendGroupList(groupId: number): Observable<any> {
+    const localUserInfo = this.localUserService.getObj();
+    return this.http.post(deleteFriendGroupList, {groupId: groupId});
+  }
+
+  /**
+   * 更新我的分组成员
+   */
+  updateFriendGroupMembers(groupId: number, action: 'del' | 'add', friendList: number[]): Observable<any> {
+    const localUserInfo = this.localUserService.getObj();
+    return this.http.post(updateFriendGroupMembers, {
+      groupId: groupId, action: action === 'add' ? 1 : 0, friendList: friendList
+    });
+  }
 
   /**
    * 搜索好友
