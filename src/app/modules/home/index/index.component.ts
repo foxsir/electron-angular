@@ -137,6 +137,16 @@ export class IndexComponent implements OnInit {
     this.cacheService.cacheFriends();
     // 获取并缓存群列表
     this.cacheService.cacheGroups();
+    // 缓存黑名单
+    this.cacheService.cacheBlackList();
+    // 监听黑名单变化
+    this.messageDistributeService.PULLED_BLACK_LIST$.subscribe(() => {
+      this.cacheService.cacheBlackList();
+    });
+    // 监听好友请求
+    this.messageDistributeService.MT07_OF_ADD_FRIEND_REQUEST_INFO_SERVER$TO$B$.subscribe(() => {
+      this.cacheService.cacheNewFriends();
+    });
   }
 
   //#################################################################### 【1】初始化方面代码 START
