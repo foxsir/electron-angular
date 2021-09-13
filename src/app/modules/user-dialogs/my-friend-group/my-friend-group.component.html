@@ -1,0 +1,19 @@
+<div mat-dialog-title>新建分组</div>
+<mat-dialog-content>
+  <form>
+    <mat-form-field fxFlex="100">
+      <mat-label>请输入分组名称</mat-label>
+      <input type="text" matInput [formControl]="nameFormControl" [(ngModel)]="groupName" placeholder="分组名称">
+      <mat-error *ngIf="nameFormControl.hasError('required')">
+        请输入分组名称
+      </mat-error>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <div fxLayout="row" fxLayoutGap="5px" fxLayoutAlign="end" fxFlex="100">
+    <button type="button" mat-button color="primary" (click)="cancel()">取消</button>
+    <button type="button" mat-button color="primary" (click)="save()">保存</button>
+  </div>
+
+</mat-dialog-actions>

@@ -38,4 +38,8 @@ export class SelectFriendContactComponent implements OnInit {
     this.dialogRef.close(friendList);
   }
 
+  cancel() {
+    this.dialogRef.close();
+  }
+
 }

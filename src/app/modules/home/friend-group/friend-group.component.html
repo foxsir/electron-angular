@@ -1,16 +1,82 @@
 <mat-card class="mat-elevation-z0">
-    <mat-card-content>
-        <mat-list>
-            <div mat-subheader style="color:#333333;">我的分组</div>
-            <mat-list-item *ngFor="let item of friendgrouplist" style="padding-top:10px;">
-                <img src="{{item.avatar}}" mat-list-icon style="width:44px;height:44px;"/>
-                <div mat-line>{{item.gname}}...</div>
-                <div mat-line style="margin-top:15px;">
-                    <span>{{item.gmemberCount}}人</span>
-                    <span style="margin-left:12px;">创建于：{{item.createTime}}</span>
+  <mat-card-content>
+    <div fxLayout="row">
+      <div fxFlex="50">
+        <mat-card-title style="color:#333333;">我的分组</mat-card-title>
+      </div>
+      <div fxFlex="50">
+        <div fxLayoutAlign="end">
+          <button mat-flat-button color="primary" (click)="createGroup()">创建</button>
+        </div>
+      </div>
+    </div>
+  </mat-card-content>
+  <mat-card-content>
+
+
+    <mat-accordion displayMode="flat">
+      <mat-expansion-panel
+        (opened)="loadFriendList(item.groupId)" #panel *ngFor="let item of friendGroupList" hideToggle class="mat-elevation-z0">
+        <mat-expansion-panel-header (contextmenu)="contextMenuForGroup($event, menuTrigge, collectSpan)">
+          <div class="context-menu">
+            <span #menuTrigge="matMenuTrigger" #collectSpan [matMenuTriggerFor]="contextMenuTrigger"></span>
+            <mat-menu #contextMenuTrigger="matMenu">
+              <button mat-menu-item (click)="addFriends(item.groupId)">
+                选择好友移入分组
+              </button>
+              <button mat-menu-item (click)="updateGroupName(item.groupId)">
+                修改分组名称
+              </button>
+              <button mat-menu-item>
+                删除分组
+              </button>
+            </mat-menu>
+          </div>
+          <mat-panel-title>
+            {{item.groupName}}
+          </mat-panel-title>
+          <mat-panel-description>
+            <div fxLayout="row" fxLayoutAlign="end center" fxFlex="100" fxLayoutGap="10px">
+              <span>{{item.memberCount}} 人</span>
+              <mat-icon class="hover-icon icon14" [ngClass]="{'rotate': panel._getExpandedState() === 'expanded'}">
+                <img class="icon" [src]="arrowRightIcon" alt="">
+                <img class="icon-active" [src]="arrowRightIcon" alt="">
+              </mat-icon>
+            </div>
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <div>
+          <mat-progress-bar *ngIf="!friendListMap.get(item.groupId)" mode="indeterminate"></mat-progress-bar>
+          <div *ngIf="friendListMap.get(item.groupId)">
+            <mat-list>
+              <mat-list-item class="hover-item"  *ngFor="let friend of friendListMap.get(item.groupId).list"
+                             (contextmenu)="contextMenuForFriend($event, menuTriggeFriend, friendSpan)"
+                             style="padding-top:10px;">
+                <img src="{{friend.userAvatarFileName}}" mat-list-icon style="width:44px;height:44px;"/>
+                <div mat-line>{{friend.nickname}}</div>
+                <div mat-line>
+                  <span *ngIf="myFriends.get(friend.friendId.toString()) && myFriends.get(friend.friendId.toString()).onlineStatus === true" style="color:#68aee5;">
+                    [在线]
+                  </span>
+                  <span *ngIf="myFriends.get(friend.friendId.toString()) && myFriends.get(friend.friendId.toString()).onlineStatus === false">[离线]</span>
                 </div>
-                <mat-divider></mat-divider>
-            </mat-list-item>
-        </mat-list>
-    </mat-card-content>
+
+                <div class="context-menu">
+                  <span #menuTriggeFriend="matMenuTrigger" #friendSpan [matMenuTriggerFor]="contextMenuFriendTrigger"></span>
+                  <mat-menu #contextMenuFriendTrigger="matMenu">
+                    <button mat-menu-item (click)="removeFriend(item.groupId, friend)">
+                      移出分组
+                    </button>
+                  </mat-menu>
+                </div>
+              </mat-list-item>
+            </mat-list>
+          </div>
+        </div>
+        <mat-divider inset></mat-divider>
+      </mat-expansion-panel>
+    </mat-accordion>
+
+
+  </mat-card-content>
 </mat-card>

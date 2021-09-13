@@ -30,6 +30,7 @@ import { UserContactCardComponent } from './user-contact-card/user-contact-card.
 import { SelectFriendContactComponent } from './select-friend-contact/select-friend-contact.component';
 import {NgformlyModule} from "../../shared/formly/ngformly.module";
 import { RedBagComponent } from './red-bag/red-bag.component';
+import { MyFriendGroupComponent } from './my-friend-group/my-friend-group.component';
 
 
 @NgModule({
@@ -46,7 +47,8 @@ import { RedBagComponent } from './red-bag/red-bag.component';
         TransmitMessageComponent,
         UserContactCardComponent,
         SelectFriendContactComponent,
-        RedBagComponent
+        RedBagComponent,
+        MyFriendGroupComponent
     ],
     exports: [
         PrivacySettingComponent
