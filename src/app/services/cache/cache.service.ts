@@ -25,6 +25,8 @@ import {SoundService} from "@services/sound/sound.service";
 import SessionStatusModel from "@app/models/session-status.model";
 import {AvatarService} from "@services/avatar/avatar.service";
 import {GroupMemberModel} from "@app/models/group-member.model";
+import BlackListModel from "@app/models/black-list.model";
+import {FriendRequestModel} from "@app/models/friend-request.model";
 
 export type AlarmDataMap = Map<string, {alarmData: AlarmItemInterface; message?: Map<string, ChatmsgEntityModel>}>;
 
@@ -37,6 +39,8 @@ interface CacheItem {
   myInfo: UserModel;
   muteMap: Map<string, boolean>;
   topMap: Map<string, boolean>;
+  blackListMap: Map<string, BlackListModel>;
+  newFriendMap: Map<number, FriendRequestModel>;
 }
 
 
@@ -57,6 +61,8 @@ export class CacheService {
     myInfo: "myInfo",
     muteMap: "muteMap",
     topMap: "topMap",
+    blackListMap: "blackListMap",
+    newFriendMap: "newFriendMap",
   };
 
   constructor(
@@ -753,4 +759,71 @@ export class CacheService {
       });
     });
   }
+
+  cacheBlackList() {
+    this.restService.getMyBlackList().subscribe((res: NewHttpResponseInterface<BlackListModel[]>) => {
+      if(res.status === 200) {
+        localforage.removeItem(this.dataKeys.blackListMap).then(() => {
+          const bl = new Map();
+          if(res.data !== null) {
+            res.data.forEach(item => {
+              bl.set(item.userUid, item);
+            });
+            localforage.setItem(this.dataKeys.blackListMap, bl).then(() => {
+              this.cacheSource.next({blackListMap: bl});
+            });
+          } else {
+            this.cacheSource.next({blackListMap: bl});
+          }
+        });
+      }
+    });
+  }
+
+  getBlackList(): Promise<Map<number, BlackListModel>> {
+    return localforage.getItem(this.dataKeys.blackListMap);
+  }
+
+  cacheNewFriends() {
+    this.restService.getNewFriend().subscribe((res: NewHttpResponseInterface<FriendRequestModel[]>) => {
+      if(res.status === 200) {
+        const map = new Map<number, FriendRequestModel>();
+        res.data.forEach(item => {
+          map.set(item.reqUserId, item);
+        });
+
+        this.getNewFriendMap().then(cache => {
+          if(cache) {
+            map.forEach(m => {
+              cache.delete(m.reqUserId);
+            })
+            cache = new Map([...map, ...cache]);
+            localforage.setItem(this.dataKeys.newFriendMap, cache).then(() => {
+              this.cacheSource.next({newFriendMap: cache});
+            });
+          } else {
+            localforage.setItem(this.dataKeys.newFriendMap, map).then(() => {
+              this.cacheSource.next({newFriendMap: map});
+            });
+          }
+        });
+      }
+    });
+  }
+
+  updateNewFriendMap(reqUserId: number, agree: boolean): void {
+    this.getNewFriendMap().then(cache => {
+      if(cache) {
+        cache.get(reqUserId).agree = agree;
+        localforage.setItem(this.dataKeys.newFriendMap, cache).then(() => {
+          this.cacheSource.next({newFriendMap: cache});
+        });
+      }
+    });
+  }
+
+  getNewFriendMap(): Promise<Map<number, FriendRequestModel>> {
+    return localforage.getItem(this.dataKeys.newFriendMap);
+  }
+
 }
