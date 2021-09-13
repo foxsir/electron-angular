@@ -58,8 +58,9 @@ export class HttpService {
    * 以json形式提交数据
    * @param url
    * @param body
+   * @param type
    */
-  post(url: string, body: any) {
+  post(url: string, body: any, type: 'post' | 'delete' | 'put' = 'post') {
     let request;
     if (url.charAt(0) === "/") {
       request = url;
@@ -81,9 +82,26 @@ export class HttpService {
         ...Authorization
       })
     };
-    return this.http.post(request, body, httpOptions).pipe(
-      catchError(this.handleError.bind(this))
-    );
+    if(type === 'post') {
+      return this.http.post(request, body, httpOptions).pipe(
+        catchError(this.handleError.bind(this))
+      );
+    }
+    if(type === 'delete') {
+      return this.http.delete(request, body).pipe(
+        catchError(this.handleError.bind(this))
+      );
+    }
+    if(type === 'put') {
+      return this.http.put(request, body, httpOptions).pipe(
+        catchError(this.handleError.bind(this))
+      );
+    }
+
+  }
+
+  put(url: string, body: any) {
+    return this.post(url, body, 'put');
   }
 
   get(url: string, body: any = {}) {
