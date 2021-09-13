@@ -49,6 +49,8 @@ import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MyFriendsComponent} from './my-friends/my-friends.component';
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 import {MatTooltipModule} from "@angular/material/tooltip";
+import {MatExpansionModule} from "@angular/material/expansion";
+import {MatProgressBarModule} from "@angular/material/progress-bar";
 
 @NgModule({
   declarations: [
@@ -65,8 +67,8 @@ import {MatTooltipModule} from "@angular/material/tooltip";
     SearchChattingComponent,
     InputAreaComponent,
     ChattingSettingComponent,
-        GroupChattingSettingComponent,
-        GroupInfoComponent,
+    GroupChattingSettingComponent,
+    GroupInfoComponent,
     ChattingVoiceComponent,
     CreateGroupComponent,
     SearchFriendComponent,
@@ -103,6 +105,8 @@ import {MatTooltipModule} from "@angular/material/tooltip";
     MatCheckboxModule,
     MatProgressSpinnerModule,
     MatTooltipModule,
+    MatExpansionModule,
+    MatProgressBarModule,
   ]
 })
 export class HomeModule {
