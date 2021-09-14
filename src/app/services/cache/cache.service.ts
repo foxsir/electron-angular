@@ -77,10 +77,16 @@ export class CacheService {
     private soundService: SoundService,
     private avatarService: AvatarService,
   ) {
-    const userId = this.localUserService.localUserInfo.userId;
-    for (const key in this.dataKeys) {
-      if(this.dataKeys.hasOwnProperty(key)) {
-        this.dataKeys[key] = [this.dataKeys[key], CommonTools.md5(userId.toString())].join("-");
+    this.initDataKeys();
+  }
+
+  initDataKeys() {
+    if(this.localUserService.localUserInfo && this.localUserService.localUserInfo.userId) {
+      const userId = this.localUserService.localUserInfo.userId;
+      for (const key in this.dataKeys) {
+        if(this.dataKeys.hasOwnProperty(key)) {
+          this.dataKeys[key] = [this.dataKeys[key], CommonTools.md5(userId.toString())].join("-");
+        }
       }
     }
   }
@@ -461,6 +467,8 @@ export class CacheService {
    * 缓存个人信息
    */
   cacheMyInfo(): Promise<UserModel> {
+    this.initDataKeys();
+
     return new Promise((resolve, reject) => {
       const localUserInfo = this.localUserService.localUserInfo;
       this.restService.getUserBaseById(localUserInfo.userId.toString()).subscribe((res: NewHttpResponseInterface<UserModel>) => {
