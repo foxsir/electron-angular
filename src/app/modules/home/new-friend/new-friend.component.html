@@ -16,10 +16,10 @@
             <button mat-button (click)="agree(item)" color="primary">同意</button>
           </div>
           <div fxLayout="row" fxLayoutGap="8px" *ngIf="item.agree === true">
-            <button mat-button color="primary">已经同意</button>
+            <div mat-card-subtitle>已经同意</div>
           </div>
           <div fxLayout="row" fxLayoutGap="8px" *ngIf="item.agree === false">
-            <button mat-button color="warn">已经拒绝</button>
+            <div mat-card-subtitle>已经拒绝</div>
           </div>
         </mat-action-list>
         <mat-divider></mat-divider>

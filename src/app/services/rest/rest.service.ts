@@ -1028,7 +1028,6 @@ export class RestService {
    * 分组列表下的好友
    */
   getFriendGroupFriends(groupId: number): Observable<any> {
-    const localUserInfo = this.localUserService.getObj();
     return this.http.get(getFriendGroupFriends, {groupId: groupId});
   }
 

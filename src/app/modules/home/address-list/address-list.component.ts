@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {RosterProviderService} from "@services/roster-provider/roster-provider.service";
 import FriendModel from "@app/models/friend.model";
 import {DomSanitizer} from "@angular/platform-browser";
@@ -10,6 +10,8 @@ import blackListIcon from "@app/assets/icons/black-list.svg";
 import collectIcon from "@app/assets/icons/collect-circle.svg";
 import groupChattingIcon from "@app/assets/icons/group-chatting-circle.svg";
 import myFriend from "@app/assets/icons/my-friend.svg";
+import {MatDrawer} from "@angular/material/sidenav";
+import {MiniUiService} from "@services/mini-ui/mini-ui.service";
 // import image end
 
 @Component({
@@ -17,8 +19,12 @@ import myFriend from "@app/assets/icons/my-friend.svg";
   templateUrl: './address-list.component.html',
   styleUrls: ['./address-list.component.scss']
 })
-export class AddressListComponent implements OnInit {
+export class AddressListComponent implements OnInit, AfterViewInit {
+  @ViewChild("addressListPanel") private addressListPanel: MatDrawer;
   friendList: FriendModel[] = [];
+
+  public drawerMode: 'side' | 'over' = 'side';
+  public isMiniUI: boolean = false;
 
   leftMenuList = [
     {
@@ -60,10 +66,31 @@ export class AddressListComponent implements OnInit {
   constructor(
     private rosterProviderService: RosterProviderService,
     private dom: DomSanitizer,
+    private miniUiService: MiniUiService,
   ) { }
 
   ngOnInit(): void {
     // this.getFriendList();
+  }
+
+  ngAfterViewInit() {
+    this.listenMiniUI();
+  }
+
+  listenMiniUI() {
+    this.addressListPanel.open().then();
+    this.drawerMode = this.miniUiService.isMini ? 'over' : 'side';
+    this.miniUiService.addressListDrawer$.subscribe(open => {
+      if(open) {
+        this.addressListPanel.open().then();
+      } else {
+        this.addressListPanel.close().then();
+      }
+    });
+    this.miniUiService.mini$.subscribe((mini) => {
+      this.isMiniUI = mini;
+      this.drawerMode = mini ? 'over' : 'side';
+    });
   }
 
   // getFriendList() {

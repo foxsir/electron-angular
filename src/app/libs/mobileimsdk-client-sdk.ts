@@ -223,11 +223,6 @@ export default class IMSDK {
       } else {
         this.loginInfo$.subscribe(() => {
           console.dir(this._loginInfo)
-          console.dir(this._loginInfo)
-          console.dir(this._loginInfo)
-          console.dir(this._loginInfo)
-          console.dir(this._loginInfo)
-          console.dir(this._loginInfo)
           resolve(this._loginInfo);
         });
       }
