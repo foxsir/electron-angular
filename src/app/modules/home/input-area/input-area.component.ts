@@ -674,4 +674,9 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
     };
   }
 
+  startScreenShot() {
+      let winstartScreenShot = window['startScreenShot'];
+      winstartScreenShot();
+  }
+
 }
