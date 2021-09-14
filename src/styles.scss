@@ -81,6 +81,29 @@ img {
   }
 }
 
+.hover-icon.icon54 {
+  height: 54px !important;
+  width: 54px !important;
+  .icon {
+    height: 54px !important;
+    width: 54px !important;
+  }
+  .icon-active {
+    height: 54px !important;
+    width: 54px !important;
+  }
+  &:hover {
+    .icon {
+      height: 54px !important;
+      width: 54px !important;
+    }
+    .icon-active {
+      height: 54px !important;
+      width: 54px !important;
+    }
+  }
+}
+
 .small-title {
   font-size: 16px;
   color: #383838;

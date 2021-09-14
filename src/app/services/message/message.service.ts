@@ -609,5 +609,27 @@ export class MessageService {
     });
   }
 
+    /**
+     * 自定义消息
+     * @param currentChat
+     * @param chat
+     */
+    sendCustomerMessage(msgBody): Promise<SendMessageResponse> {
+        console.log('发送自定义消息：', msgBody);
+
+        return new Promise((resolve, reject) => {
+            const localUserInfo = this.localUserService.localUserInfo;
+            let p = JSON.stringify(msgBody);
+
+            this.imService.sendData(p);
+
+            resolve({
+                success: true,
+                msgBody: msgBody,
+                fingerPrint: '',
+            });
+        });
+    }
+
 
 }

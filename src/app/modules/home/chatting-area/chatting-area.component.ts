@@ -301,19 +301,35 @@ export class ChattingAreaComponent implements OnInit {
         // alert("单聊" + data.from);
         console.log('订阅单聊消息：', dataContent);
 
-        if (dataContent.ty == 120) {
-            if (dataContent.m == "start_voice") {
-                this.openEndDrawer('voice', true);
-                this.appChattingVoice.openPanel();
-            }
-            else if (dataContent.m == "receive_voice") {
-                this.appChattingVoice.hadReceiveVoice();
-            }
-            else if (dataContent.m == 'end_voice') {
+        //if (dataContent.ty == 120) {
+        //    if (dataContent.m == "start_voice") {
+        //        this.openEndDrawer('voice', true);
+        //        this.appChattingVoice.openPanel();
+        //    }
+        //    else if (dataContent.m == "receive_voice") {
+        //        this.appChattingVoice.hadReceiveVoice();
+        //    }
+        //    else if (dataContent.m == 'end_voice') {
+        //        this.appChattingVoice.endVoiceCallback();
+        //    }
+        //}
+
+        if (res.type == 2) {
+            if (res.typeu == 3 && dataContent.ty == 21) {
                 this.appChattingVoice.endVoiceCallback();
             }
         }
     });
+
+      this.messageDistributeService.MT17_OF_VIDEO$VOICE$REQUEST_REQUESTING$FROM$A$.subscribe(res => {
+          const dataContent: ProtocalModelDataContent = JSON.parse(res.dataContent);
+          console.log('订阅单聊消息：（17）', res, dataContent);
+
+          if (res.type == 2 && res.typeu == 17) {
+              this.openEndDrawer('voice', true);
+              this.appChattingVoice.openPanel(res, dataContent);
+          }
+      });
   }
 
   /**
@@ -346,7 +362,7 @@ export class ChattingAreaComponent implements OnInit {
         if (dataContent.ty == 120) {
             if (dataContent.m == "start_voice") {
               this.openEndDrawer('voice', true);
-                this.appChattingVoice.openPanel();
+                this.appChattingVoice.openPanel('','');
             }
             else if (dataContent.m == "receive_voice") {
                 this.appChattingVoice.hadReceiveVoice();

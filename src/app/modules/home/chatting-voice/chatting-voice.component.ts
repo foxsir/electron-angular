@@ -14,6 +14,8 @@ import { RestService } from "@services/rest/rest.service";
 import { DemoDialogComponent } from "@modules/setting-dialogs/demo-dialog/demo-dialog.component";
 import { DialogService } from "@services/dialog/dialog.service";
 import { LocalUserService } from "@services/local-user/local-user.service";
+import callAccept from "@app/assets/icons/call_accept.svg";
+import callHangup from "@app/assets/icons/call_hangup.svg";
 
 @Component({
     selector: 'app-chatting-voice',
@@ -28,6 +30,8 @@ export class ChattingVoiceComponent implements OnInit {
     public closeActiveIcon = this.dom.bypassSecurityTrustResourceUrl(closeActiveIcon);
     public backspaceIcon = this.dom.bypassSecurityTrustResourceUrl(backspaceIcon);
     public backspaceActiveIcon = this.dom.bypassSecurityTrustResourceUrl(backspaceActiveIcon);
+    public callAccept = this.dom.bypassSecurityTrustResourceUrl(callAccept);
+    public callHangup = this.dom.bypassSecurityTrustResourceUrl(callHangup);
 
     public view_mode = "default";
     public localUserInfo: LocalUserinfoModel;
@@ -35,6 +39,9 @@ export class ChattingVoiceComponent implements OnInit {
 
     public joinChannelEx = window['joinChannelEx'];
     public leaveChannel = window['leaveChannel'];
+
+    public imres: any;
+    public datacontent: any;
 
     constructor(
         private dom: DomSanitizer,
@@ -82,33 +89,43 @@ export class ChattingVoiceComponent implements OnInit {
     }
 
     /* 好友收到语音请求 */
-    public openPanel() {
+    public openPanel(imres:any, datacontent:any) {
         console.log('收到语音请求...');
         this.view_mode = "wait_answer_2";
+        this.imres = imres;
+        this.datacontent = datacontent;
     }
 
     /* 接收语音请求 */
     receiveVoice() {
         console.log('接收语音请求...');
-        this.restService.generateAgoraToken(this.chatUserid, false).subscribe(res => {
-            console.log('生成声网Token：', res.data.accessToken);
-            this.joinChannelEx(JSON.stringify({ userid: this.localUserInfo.userId.toString(), token: res.data.accessToken, touserid: this.chatUserid, islanch: false }));
+
+        this.imres.typeu = 19;
+        this.messageService.sendCustomerMessage(this.imres).then(res => {
+            if (res.success === true) {
+                this.view_mode = "had_receive_voice";
+            }
         });
 
-        if (this.currentChat.metadata.chatType === 'friend') {
-            this.messageService.sendMessage(120, this.currentChat.alarmItem.dataId, 'receive_voice').then(res => {
-                if (res.success === true) {
-                    this.view_mode = "had_receive_voice";
-                }
-            });
-        }
-        else if (this.currentChat.metadata.chatType === 'group') {
-            this.messageService.sendGroupMessage(120, this.currentChat.alarmItem.dataId, 'receive_voice').then(res => {
-                if (res.success === true) {
-                    this.view_mode = "had_receive_voice";
-                }
-            });
-        }
+        //this.restService.generateAgoraToken(this.chatUserid, false).subscribe(res => {
+        //    console.log('生成声网Token：', res.data.accessToken);
+        //    this.joinChannelEx(JSON.stringify({ userid: this.localUserInfo.userId.toString(), token: res.data.accessToken, touserid: this.chatUserid, islanch: false }));
+        //});
+
+        //if (this.currentChat.metadata.chatType === 'friend') {
+        //    this.messageService.sendMessage(120, this.currentChat.alarmItem.dataId, 'receive_voice').then(res => {
+        //        if (res.success === true) {
+        //            this.view_mode = "had_receive_voice";
+        //        }
+        //    });
+        //}
+        //else if (this.currentChat.metadata.chatType === 'group') {
+        //    this.messageService.sendGroupMessage(120, this.currentChat.alarmItem.dataId, 'receive_voice').then(res => {
+        //        if (res.success === true) {
+        //            this.view_mode = "had_receive_voice";
+        //        }
+        //    });
+        //}
     }
 
 
@@ -132,7 +149,7 @@ export class ChattingVoiceComponent implements OnInit {
 
     /* 挂断语音：被动（对方挂断语音，通知对方） */
     endVoiceCallback() {
-        this.leaveChannel('');
+        //this.leaveChannel('');
         this.view_mode = "default";
         this.drawer.close();
     }

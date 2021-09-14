@@ -35,9 +35,21 @@
 
 
                 <!--接收者-->
-                <div fxLayout="column" fxLayoutGap="10px" *ngIf="view_mode == 'wait_answer_2'">
-                    <button nz-button nzType="link" class="btnsave" (click)="endVoice()">挂断</button>
-                    <button nz-button nzType="link" class="btnsave" (click)="receiveVoice()">接收</button>
+                <div fxLayout="row" fxLayoutGap="10px" *ngIf="view_mode == 'wait_answer_2'" style="justify-content:center;">
+                    <div (click)="endVoice()" fxLayout="column">
+                        <mat-icon class="hover-icon icon54">
+                            <img [src]="callHangup" alt="" class="icon">
+                            <img [src]="callHangup" alt="" class="icon-active">
+                        </mat-icon>
+                        <button nz-button nzType="link" class="btnsave">挂断</button>
+                    </div>
+                    <div (click)="receiveVoice()" fxLayout="column">
+                        <mat-icon class="hover-icon icon54">
+                            <img [src]="callAccept" alt="" class="icon">
+                            <img [src]="callAccept" alt="" class="icon-active">
+                        </mat-icon>
+                        <button nz-button nzType="link" class="btnsave">接收</button>
+                    </div>
                 </div>
 
                 <div fxLayout="column" fxLayoutGap="10px" *ngIf="view_mode == 'had_receive_voice'">
