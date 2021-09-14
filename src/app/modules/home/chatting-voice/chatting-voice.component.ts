@@ -104,6 +104,14 @@ export class ChattingVoiceComponent implements OnInit {
         this.messageService.sendCustomerMessage(this.imres).then(res => {
             if (res.success === true) {
                 this.view_mode = "had_receive_voice";
+
+                var jstoken = {
+                    userid: this.localUserInfo.userId.toString(),
+                    token: this.datacontent.token,
+                    touserid: this.chatUserid,
+                    islanch: false
+                };
+                this.joinChannelEx(JSON.stringify(jstoken));
             }
         });
 
@@ -136,20 +144,29 @@ export class ChattingVoiceComponent implements OnInit {
 
     /* 挂断语音: 主动（发起者或者接收者都可以主动挂断语音） */
     endVoice() {
-        if (this.currentChat.metadata.chatType === 'friend') {
-            this.messageService.sendMessage(120, this.currentChat.alarmItem.dataId, 'end_voice').then(res => {
-                if (res.success === true) {
-                    this.leaveChannel('');
-                    this.view_mode = "default";
-                    this.drawer.close();
-                }
-            });
-        }
+        //if (this.currentChat.metadata.chatType === 'friend') {
+        //    this.messageService.sendMessage(120, this.currentChat.alarmItem.dataId, 'end_voice').then(res => {
+        //        if (res.success === true) {
+        //            this.leaveChannel('');
+        //            this.view_mode = "default";
+        //            this.drawer.close();
+        //        }
+        //    });
+        //}
+
+        this.imres.typeu = 18;
+        this.messageService.sendCustomerMessage(this.imres).then(res => {
+            if (res.success === true) {
+                this.view_mode = "default";
+                this.leaveChannel('');
+                this.drawer.close();
+            }
+        });
     }
 
     /* 挂断语音：被动（对方挂断语音，通知对方） */
     endVoiceCallback() {
-        //this.leaveChannel('');
+        this.leaveChannel('');
         this.view_mode = "default";
         this.drawer.close();
     }

@@ -619,9 +619,9 @@ export class MessageService {
 
         return new Promise((resolve, reject) => {
             const localUserInfo = this.localUserService.localUserInfo;
-            let p = JSON.stringify(msgBody);
+            //let p = JSON.stringify(msgBody);
 
-            this.imService.sendData(p);
+            this.imService.sendData(msgBody);
 
             resolve({
                 success: true,

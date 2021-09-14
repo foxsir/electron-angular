@@ -24,6 +24,11 @@
     <div fxFlex >
         <mat-card class="mat-elevation-z0">
             <mat-card-content>
+                <div style="text-align:center;margin-bottom:50px;">
+                    <img [src]="currentChat.alarmItem.avatar" style="display:inline-block;width:64px;height:64px;border-radius:64px;"/>
+                    <label style="display:block;">{{currentChat.alarmItem.title}}</label>
+                </div>
+
                 <!--发起者-->
                 <div fxLayout="column" fxLayoutGap="10px" *ngIf="view_mode == 'default'">
                     <button nz-button nzType="link" class="btnsave" (click)="startVoice()">发起</button>
