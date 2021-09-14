@@ -52,6 +52,10 @@ export class CacheService {
   private cacheSource = new Subject<Partial<CacheItem>>();
   public cacheUpdate$ = this.cacheSource.asObservable();
 
+  // 给ChattingAreaComponent组件使用
+  public chatMsgEntityMapTemp: Map<string, ChatmsgEntityModel> = new Map();
+  public chatMsgEntityMap: Map<string, ChatmsgEntityModel> = new Map();
+
   private dataKeys = {
     alarmDataMap: "alarmDataMap",
     friendMap: "friendMap",

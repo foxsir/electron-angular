@@ -39,9 +39,7 @@ import {ContextMenuModel, ContextMenuChattingModel} from "@app/models/context-me
 import {AvatarService} from "@services/avatar/avatar.service";
 import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 import {AlarmDataMap, CacheService} from "@services/cache/cache.service";
-import {QuoteMessageService} from "@services/quote-message/quote-message.service";
 import {MessageRoamService} from "@services/message-roam/message-roam.service";
-import {Router} from "@angular/router";
 import {CurrentChattingChangeService} from "@services/current-chatting-change/current-chatting-change.service";
 import {MatDrawer} from "@angular/material/sidenav";
 import {MiniUiService} from "@services/mini-ui/mini-ui.service";
@@ -115,11 +113,9 @@ export class MessageComponent implements OnInit, AfterViewInit {
     private snackBarService: SnackBarService,
     private messageDistributeService: MessageDistributeService,
     private dom: DomSanitizer,
-    private router: Router,
     private contextMenuService: ContextMenuService,
     private avatarService: AvatarService,
     private cacheService: CacheService,
-    private quoteMessageService: QuoteMessageService,
     private messageRoamService: MessageRoamService,
     private currentChattingChangeService: CurrentChattingChangeService,
     private miniUiService: MiniUiService
@@ -354,10 +350,6 @@ export class MessageComponent implements OnInit, AfterViewInit {
     });
   }
 
-  clearSubscribeQuote() {
-    this.quoteMessageService.setQuoteMessage(null);
-  }
-
   /**
    * 切换聊天对象
    * @param alarm
@@ -365,8 +357,7 @@ export class MessageComponent implements OnInit, AfterViewInit {
   switchChat(alarm: AlarmItemInterface) {
     if(!this.currentChat || this.currentChat.alarmItem.dataId !== alarm.alarmItem.dataId) {
       this.currentChat = alarm;
-      return this.router.navigate(['/home/message']).then(() => {
-        this.currentChattingChangeService.switchCurrentChatting(this.currentChat).then();
+      this.currentChattingChangeService.switchCurrentChatting(this.currentChat).then(() => {
         // 缓存群管理员列表
         if (this.currentChat.metadata.chatType === 'group') {
           this.cacheService.cacheGroupAdmins(this.currentChat.alarmItem.dataId).then();

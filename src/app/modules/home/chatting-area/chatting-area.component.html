@@ -115,7 +115,7 @@
                 <div *ngIf="loadingMessage" class="loading-message" fxLayoutAlign="center end">
                   <mat-spinner [diameter]="20" [strokeWidth]="3" mode="indeterminate"></mat-spinner>
                 </div>
-                <div fxLayout="row" *ngFor="let chat of chatMsgEntityList | keyvalue: asIsOrder"
+                <div fxLayout="row" *ngFor="let chat of cacheService.chatMsgEntityMap | keyvalue: asIsOrder"
                      (click)="selectMessage ? collectMessage(chat.value, msgCheckbox) : false"
                      [fxLayoutAlign]="chat.value.uid.toString() === localUserInfo.userId.toString() ? 'space-between' : 'start'"
                      [ngClass]="{'self-message': chat.value.uid.toString() === localUserInfo.userId.toString()}">
