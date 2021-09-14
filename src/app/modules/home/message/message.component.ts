@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {AlarmsProviderService} from "@services/alarms-provider/alarms-provider.service";
 import RBChatUtils from "@app/libs/rbchat-utils";
 import {AlarmMessageType, ChatModeType, MsgType, RBChatConfig, UserProtocalsType} from "@app/config/rbchat-config";
@@ -43,15 +43,20 @@ import {QuoteMessageService} from "@services/quote-message/quote-message.service
 import {MessageRoamService} from "@services/message-roam/message-roam.service";
 import {Router} from "@angular/router";
 import {CurrentChattingChangeService} from "@services/current-chatting-change/current-chatting-change.service";
+import {MatDrawer} from "@angular/material/sidenav";
+import {MiniUiService} from "@services/mini-ui/mini-ui.service";
 
 @Component({
   selector: 'app-message',
   templateUrl: './message.component.html',
   styleUrls: ['./message.component.scss'],
 })
-export class MessageComponent implements OnInit {
-  // @ViewChild("chattingContainer") chattingContainer: ElementRef;
+export class MessageComponent implements OnInit, AfterViewInit {
+  @ViewChild("chattingPanel") chattingPanel: MatDrawer;
   readonly Infinity = 9999999999;
+
+  public drawerMode: 'side' | 'over' = 'side';
+  public isMiniUI: boolean = false;
 
   // icon
   public closeCircleIcon = this.dom.bypassSecurityTrustResourceUrl(closeCircleIcon);
@@ -117,6 +122,7 @@ export class MessageComponent implements OnInit {
     private quoteMessageService: QuoteMessageService,
     private messageRoamService: MessageRoamService,
     private currentChattingChangeService: CurrentChattingChangeService,
+    private miniUiService: MiniUiService
   ) {
     this.localUserInfo = this.localUserService.localUserInfo;
 
@@ -175,6 +181,26 @@ export class MessageComponent implements OnInit {
       this.currentChat = alarm;
     });
     this.currentChat = this.currentChattingChangeService.currentChatting;
+  }
+
+  ngAfterViewInit() {
+    this.listenMiniUI();
+  }
+
+  listenMiniUI() {
+    this.chattingPanel.open().then();
+    this.drawerMode = this.miniUiService.isMini ? 'over' : 'side';
+    this.miniUiService.messageDrawer$.subscribe(open => {
+      if(open) {
+        this.chattingPanel.open().then();
+      } else {
+        this.chattingPanel.close().then();
+      }
+    });
+    this.miniUiService.mini$.subscribe((mini) => {
+      this.isMiniUI = mini;
+      this.drawerMode = mini ? 'over' : 'side';
+    });
   }
 
   insertItem(alarmData: AlarmItemInterface) {

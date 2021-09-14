@@ -36,6 +36,7 @@ import netConnect from "@app/assets/icons/net-connect.svg";
 import netDisConnect from "@app/assets/icons/net-disconnect.svg";
 import {UserModel} from "@app/models/user.model";
 import {SoundService} from "@services/sound/sound.service";
+import {MiniUiService} from "@services/mini-ui/mini-ui.service";
 
 // import svg end
 
@@ -104,6 +105,7 @@ export class IndexComponent implements OnInit {
     private dom: DomSanitizer,
     private avatarService: AvatarService,
     private cacheService: CacheService,
+    private miniUiService: MiniUiService,
   ) {
     this.router.events.subscribe(e => {
       if (e instanceof NavigationEnd) {
@@ -155,6 +157,17 @@ export class IndexComponent implements OnInit {
     // this.localUserService.initFromCookie();
     // 初始化IMSDK
     this.initIMServer();
+    const setUI = () => {
+      if(window.outerWidth <= 500) {
+        this.miniUiService.switchMiniUI(true);
+      } else {
+        this.miniUiService.switchMiniUI(false);
+      }
+    };
+    setUI();
+    window.addEventListener('resize', () => {
+      setUI();
+    });
   }
 
   initIMServer() {
@@ -545,6 +558,16 @@ export class IndexComponent implements OnInit {
   isCurrentSelectedAlarm(alarmType, dataId) {
     return (this.mCurrentSelectedAlarmType === alarmType)
       && (this.mCurrentSelectedAlarmDataId === dataId);
+  }
+
+  switchRouter(menu: {path: string; router: string}) {
+    this.router.navigate([menu.router]).then(() => {
+      if(menu.path === 'message') {
+        this.miniUiService.switchMessage();
+      } else if(menu.path === 'address-list') {
+        this.miniUiService.switchAddressList();
+      }
+    });
   }
 
 }

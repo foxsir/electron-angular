@@ -1,22 +1,27 @@
-<div fxLayout="row" style="height: calc(100vh - 30px)">
-  <div fxFlex="260px" fxLayout="column" fxLayoutGap="14px" class="friend-item-list border1px right">
-    <div class="search-widget">
-      <app-search-widget></app-search-widget>
+<mat-drawer-container autosize>
+  <mat-drawer #addressListPanel [mode]="drawerMode" [opened]="isMiniUI === false">
+    <div fxFlex="260px" fxLayout="column" fxLayoutGap="14px" class="friend-item-list border1px right">
+      <div class="search-widget">
+        <app-search-widget></app-search-widget>
+      </div>
+      <div id="left-menu-list">
+        <mat-list role="list" fxLayoutGap="2px">
+          <mat-list-item *ngFor="let menu of leftMenuList" [routerLink]="menu.router">
+            <mat-icon mat-list-icon>
+              <img [src]="menu.icon" alt="">
+            </mat-icon>
+            <div mat-line>{{menu.label}}</div>
+          </mat-list-item>
+        </mat-list>
+      </div>
     </div>
-    <div id="left-menu-list">
-      <mat-list role="list" fxLayoutGap="2px">
-        <mat-list-item *ngFor="let menu of leftMenuList" [routerLink]="menu.router">
-          <mat-icon mat-list-icon>
-            <img [src]="menu.icon" alt="">
-          </mat-icon>
-          <div mat-line>{{menu.label}}</div>
-        </mat-list-item>
-      </mat-list>
+  </mat-drawer>
+
+  <div fxLayout="row" style="height: calc(100vh - 30px)">
+    <div fxFlex="calc(100% - 260px)" fxLayout="column" style="background-color:white;">
+      <div class="scrollbar" fxFlexFill>
+        <router-outlet></router-outlet>
+      </div>
     </div>
   </div>
-  <div fxFlex="calc(100% - 260px)" fxLayout="column" style="background-color:white;">
-    <div class="scrollbar" fxFlexFill>
-      <router-outlet></router-outlet>
-    </div>
-  </div>
-</div>
+</mat-drawer-container>

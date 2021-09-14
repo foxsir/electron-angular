@@ -61,7 +61,9 @@ export class FriendGroupComponent implements OnInit {
   createGroup() {
     this.dialogService.openDialog(MyFriendGroupComponent, {
       width: "314px"
-    }).then();
+    }).then(() => {
+      this.getGroupList();
+    });
   }
 
   loadFriendList(groupId: number) {
