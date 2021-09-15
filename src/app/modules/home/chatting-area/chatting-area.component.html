@@ -135,6 +135,7 @@
                       <!--[fxLayoutAlign]="chat.value.uid === localUserInfo.userId ? 'end' : 'start'"-->
                       <div [fxLayout]="chat.value.uid.toString() === localUserInfo.userId.toString() ? 'row-reverse' : 'row'" fxLayoutGap="10px">
                         <div fxFlex="40px" *ngIf="currentChat.metadata.chatType === 'group'">
+                          {{chat.value.userAvatarFileNameForBBSCome}}
                           <img (contextmenu)="contextMenuForAvatar($event, createPlanMenuTriggerAvatar, avatarSpan, chat.value)"
                                src="https://material.angular.io/assets/img/examples/shiba2.jpg" mat-card-avatar alt="">
                           {{chat.value.userAvatarFileNameForBBSCome}}
@@ -152,21 +153,26 @@
                                [fxLayoutAlign]="chat.value.uid.toString() === localUserInfo.userId.toString() ? 'end end' : 'start'">
                             {{chat.value.name}}
                           </div>
-                          <div class="message-entity-item" #wrapDiv fxLayout="row" (contextmenu)="contextMenuForMessage($event, createPlanMenuTrigger, span, chat.value)">
-                            <div class="message-entity" #messageContainer>
-                              <app-message-factory [chatMsg]="chat.value" [wrapDiv]="wrapDiv"></app-message-factory>
-                            </div>
-                            <span #createPlanMenuTrigger="matMenuTrigger" #span [matMenuTriggerFor]="contextmenu"></span>
-                            <mat-menu #contextmenu="matMenu">
-                              <button mat-menu-item *ngFor="let item of contextMenu"
-                                      (click)="item.action(chat.value, messageContainer)">
-                                {{item.label}}
-                              </button>
-                            </mat-menu>
-                          </div>
-                          <div class="wait-sending">
-                            <div [fxShow]="chat.value.isOutgoing === false && chat.value.uid.toString() === localUserInfo.userId.toString()">
+                          <div fxLayout="row" fxLayoutGap="5px">
+                            <div fxLayoutAlign="center center" [fxShow]="chat.value.isOutgoing === false && chat.value.uid.toString() === localUserInfo.userId.toString()">
                               <mat-spinner [diameter]="20" [strokeWidth]="3" mode="indeterminate"></mat-spinner>
+                            </div>
+                            <div fxFlex class="message-entity-item" #wrapDiv fxLayout="row" (contextmenu)="contextMenuForMessage($event, createPlanMenuTrigger, span, chat.value)">
+                              <div class="message-entity" #messageContainer>
+                                <app-message-factory [chatMsg]="chat.value" [wrapDiv]="wrapDiv"></app-message-factory>
+                              </div>
+                              <span #createPlanMenuTrigger="matMenuTrigger" #span [matMenuTriggerFor]="contextmenu"></span>
+                              <mat-menu #contextmenu="matMenu">
+                                <button mat-menu-item *ngFor="let item of contextMenu"
+                                        (click)="item.action(chat.value, messageContainer)">
+                                  {{item.label}}
+                                </button>
+                              </mat-menu>
+                            </div>
+                          </div>
+                          <div fxLayout="row" fxLayoutAlign="end" *ngIf="currentChat.metadata.chatType === 'friend'">
+                            <div class="message-status" [fxShow]="chat.value.uid.toString() === localUserInfo.userId.toString()">
+                              {{chat.value.xu_isRead_type === true ? '已读' : '未读'}}
                             </div>
                           </div>
                         </div>
@@ -181,7 +187,7 @@
         <div fxFlex="50px" fxLayout="row" class="quote-area" *ngIf="quoteMessage">
           <div fxFlex="100" fxFlexFill>
             <div fxLayout="row" fxFlexFill>
-              <div fxFlex="60px">
+              <div fxFlex="50px" style="margin-top: 10px">
                 <div fxFlexFill fxLayoutAlign="center center">
                   <button mat-icon-button (click)="clearSubscribeQuote()">
                     <mat-icon class="hover-icon">
@@ -194,9 +200,8 @@
               <div fxFlex>
                 <div fxLayout="column" fxFlexFill class="quote-area-text">
                   <div fxFlex="50" class="quote-title">{{quoteMessage.name || quoteMessage.uid}}</div>
-                  <div fxFlex="50" class="quote-message" *ngIf="!quoteMessageText">{{quoteMessage.text}}</div>
                   <div fxFlex="50" class="quote-message" *ngIf="quoteMessageText">
-                    {{quoteMessageText.fileName}}
+                    {{quoteMessageText.text}}
                   </div>
                 </div>
               </div>

@@ -92,7 +92,10 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit {
 
   // 引用回复消息
   public quoteMessage: ChatmsgEntityModel = null;
-  public quoteMessageText: FileMetaInterface = null;
+  public quoteMessageText: {
+    text: string;
+    file?: FileMetaInterface;
+  } = null;
 
   // 右键菜单
   public contextMenu: ContextMenuModel[] = [];
@@ -235,13 +238,35 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit {
   private subscribeQuote() {
     this.quoteMessageService.message$.subscribe((msg) => {
       // msg 不能为空
+      this.quoteMessage = msg;
       if(msg) {
-        this.quoteMessage = msg;
         // 文本，图片，视频，语音
-        if(this.quoteMessage.msgType !== MsgType.TYPE_TEXT) {
-          this.quoteMessageText = JSON.parse(this.quoteMessage.text);
+        // if(this.quoteMessage.msgType === MsgType.TYPE_TEXT) {
+        //   this.quoteMessageText = this.quoteMessage.text;
+        // }
+        switch (this.quoteMessage.msgType) {
+          case MsgType.TYPE_TEXT:
+            this.quoteMessageText = {text: this.quoteMessage.text};
+            break;
+          case MsgType.TYPE_IMAGE:
+            console.dir(this.quoteMessage.text);
+            this.quoteMessageText = {text: '图片'};
+            break;
+          case MsgType.TYPE_SHORTVIDEO:
+            console.dir(this.quoteMessage.text);
+            this.quoteMessageText = {text: '视频'};
+            break;
+          case MsgType.TYPE_VOICE:
+            console.dir(this.quoteMessage.text);
+            this.quoteMessageText = {text: '语音'};
+            break;
+          case MsgType.TYPE_CONTACT:
+            console.dir(this.quoteMessage.text);
+            this.quoteMessageText = {text: '名片'};
+            break;
         }
-        this.scrollToBottom();
+      } else {
+        this.quoteMessageText = null;
       }
     });
   }
@@ -265,10 +290,11 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit {
           res.from, dataContent.nickName, dataContent.m, (new Date()).getTime(), dataContent.ty, res.fp
         );
         // fromUid, nickName, msg, time, msgType, fp = null
-        chatMsgEntity.isOutgoing = true;
         const chatType = Number(dataContent.cy) === ChatModeType.CHAT_TYPE_FRIEND$CHAT ? 'friend' : 'group';
         const dataId = chatType === 'friend' ? res.from : dataContent.t;
         this.cacheService.generateAlarmItem(dataId, chatType, dataContent.m, dataContent.ty).then(alarm => {
+          chatMsgEntity.xu_isRead_type = true;
+          chatMsgEntity.isOutgoing = true;
           this.cacheService.putChattingCache(alarm, chatMsgEntity).then(() => {
             if(this.currentChat && this.currentChat.alarmItem.dataId === alarm.alarmItem.dataId) {
               this.pushMessageToPanel({chat: chatMsgEntity, dataContent: dataContent}, 'incept');
@@ -385,7 +411,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit {
           this.cacheService.chatMsgEntityMap.set(chat.fingerPrintOfProtocal, chat);
         });
       } else {
-        let reTry = 20;
+        let reTry = 10;
         const rt = setInterval(() => {
           if(reTry === 0) {
             clearInterval(rt);
@@ -404,8 +430,8 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit {
               chat.isOutgoing = true;
               this.cacheService.putChattingCache(this.currentChat, chat).then(() => {
                 this.cacheService.chatMsgEntityMap.set(chat.fingerPrintOfProtocal, chat);
+                clearInterval(rt);
               });
-              clearInterval(rt);
             }
           });
 
@@ -578,6 +604,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit {
   /**
    * 从缓存或者漫游接口获取消息
    * @param goBottom
+   * @param lastMessage
    * @private
    */
   private loadMessage(goBottom: boolean = false) {
@@ -616,6 +643,8 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit {
               const chatMsgEntity = this.messageEntityService.prepareSendedMessage(
                 dataContent.m, msgJson.recvTime, msgJson.fp, dataContent.ty
               );
+              chatMsgEntity.isOutgoing = true;
+              chatMsgEntity.xu_isRead_type = true;
               // 排除 start 消息
               if(localFirstMsgFP !== chatMsgEntity.fingerPrintOfProtocal) {
                 msgMap.set(chatMsgEntity.fingerPrintOfProtocal, chatMsgEntity);
