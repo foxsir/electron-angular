@@ -536,7 +536,6 @@ export class ContextMenuService {
     ];
 
     this.contextMenuForMessage[this.msgType.TYPE_FILE] = [
-      this.actionCollection.quote,
       this.actionCollection.repeal,
       this.actionCollection.download,
       ...com,
@@ -558,7 +557,6 @@ export class ContextMenuService {
     ];
 
     this.contextMenuForMessage[this.msgType.TYPE_CONTACT] = [
-      this.actionCollection.quote,
       this.actionCollection.select,
       this.actionCollection.delete,
       this.actionCollection.collect,
