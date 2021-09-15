@@ -120,6 +120,9 @@ export class ChattingVoiceComponent implements OnInit {
                 typeu: 17,
             };
 
+            this.imres = imdata;
+            this.datacontent = dataContent;
+
             console.log('发送语音请求，data：', imdata, dataContent);
             this.messageService.sendCustomerMessage(imdata).then(res => {
                 if (res.success === true) {
