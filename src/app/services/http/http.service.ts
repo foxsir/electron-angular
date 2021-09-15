@@ -88,7 +88,7 @@ export class HttpService {
       );
     }
     if(type === 'delete') {
-      return this.http.delete(request, body).pipe(
+      return this.http.delete(request, httpOptions).pipe(
         catchError(this.handleError.bind(this))
       );
     }
