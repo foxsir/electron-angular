@@ -122,6 +122,11 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
 
     this.chattingChange();
     this.subscribeAtMember();
+
+      let ipcRender = window['ipcRenderer'];
+      ipcRender.on('screenshot-finished', function () {
+          console.log('screenshot finished, input-area.component.');
+      });
   }
 
   ngAfterViewInit() {

@@ -174,6 +174,16 @@ try {
     })
   }
 
+    ipcMain.on("start-screen-capture", (event, message) => {
+        console.log('start-screen-capture...');
+
+        const exec = require("child_process").exec;
+        exec(path.resolve(__dirname, 'screen-capture/screencapture.exe'), (error, stdout, stderr) => {
+            console.log('screen shot finished: ', JSON.stringify(error, stdout, stderr));
+            event.sender.send('screenshot-finished','');
+        });
+    });
+
 } catch (e) {
   // Catch Error
   // throw e;
