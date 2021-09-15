@@ -40,8 +40,14 @@
                     </div>
                 </div>
 
-                <div fxLayout="column" fxLayoutGap="10px" *ngIf="view_mode == 'wait_answer_1'">
-                    <button nz-button nzType="link" class="btnsave" (click)="endVoice('handup')">挂断</button>
+                <div fxLayout="row" fxLayoutGap="10px" *ngIf="view_mode == 'wait_answer_1'" style="justify-content:center;">
+                    <div (click)="endVoice('handup')" fxLayout="column">
+                        <mat-icon class="hover-icon icon54">
+                            <img [src]="callHangup" alt="" class="icon">
+                            <img [src]="callHangup" alt="" class="icon-active">
+                        </mat-icon>
+                        <button nz-button nzType="link" class="btnsave">挂断</button>
+                    </div>
                 </div>
 
 

@@ -114,16 +114,23 @@ export class ChattingVoiceComponent implements OnInit {
                 dataContent: JSON.stringify(dataContent),
                 from: fromuserid,
                 to: touserid,
-                fp: '',
+                fp: '1d3c8f2c-2d0e-4d5e-b9b8-6b9860059596',
                 QoS: true,
                 sm: 0,
                 typeu: 17,
             };
 
-            console.log('发送语音请求，data：', imdata);
+            console.log('发送语音请求，data：', imdata, dataContent);
             this.messageService.sendCustomerMessage(imdata).then(res => {
                 if (res.success === true) {
                     console.log('等待中...');
+                    this.view_mode = "wait_answer_1";
+                    this.joinChannelEx(JSON.stringify({
+                        userid: imdata.from,
+                        token: dataContent.token,
+                        touserid: this.chatUserid,
+                        islanch: true
+                    }));
                 }
             });
         });
