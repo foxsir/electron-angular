@@ -99,7 +99,7 @@ export class MessageService {
         messageContentForShow = "["+ JSON.parse(messageContent).receiveName+"领取了"+JSON.parse(messageContent).sendName+"的红包]";
         break;
       case MsgType.TYPE_BACK: // 111 新增撤回消息样式
-        messageContentForShow = JSON.parse(messageContent).msg;
+        messageContentForShow = messageContent;
         break;
       case MsgType.TYPE_TRANSFER: //111 新增消息转发消息样式
         messageContentForShow = "[合并转发]";
