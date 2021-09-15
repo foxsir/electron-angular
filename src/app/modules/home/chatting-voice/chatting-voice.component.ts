@@ -64,28 +64,69 @@ export class ChattingVoiceComponent implements OnInit {
     startVoice() {
         console.log('发起语音聊天...');
 
-        if (this.currentChat.metadata.chatType === 'friend') {
-            this.messageService.sendMessage(120, this.currentChat.alarmItem.dataId, 'start_voice').then(res => {
+        //if (this.currentChat.metadata.chatType === 'friend') {
+        //    this.messageService.sendMessage(120, this.currentChat.alarmItem.dataId, 'start_voice').then(res => {
+        //        if (res.success === true) {
+        //            this.view_mode = "wait_answer_1";
+        //            this.restService.generateAgoraToken(this.chatUserid, true).subscribe(res => {
+        //                console.log('生成声网Token：', res.data.accessToken);
+        //                this.joinChannelEx(JSON.stringify({ userid: this.localUserInfo.userId.toString(), token: res.data.accessToken, touserid: this.chatUserid, islanch: true }));
+        //            });
+        //        }
+        //    });
+        //}
+        //else if (this.currentChat.metadata.chatType === 'group') {
+        //    this.messageService.sendGroupMessage(120, this.currentChat.alarmItem.dataId, 'start_voice').then(res => {
+        //        if (res.success === true) {
+        //            this.view_mode = "wait_answer_1";
+        //            this.restService.generateAgoraToken(this.chatUserid, true).subscribe(res => {
+        //                console.log('生成声网Token：', res.data.accessToken);
+        //                this.joinChannelEx(JSON.stringify({ userid: this.localUserInfo.userId.toString(), token: res.data.accessToken, touserid: this.chatUserid, islanch: true }));
+        //            });
+        //        }
+        //    });
+        //}
+
+        //xxx
+        //console.log('本地用户信息：', this.localUserInfo);
+        //return;
+
+        this.restService.generateAgoraToken(this.chatUserid, true).subscribe(res => {
+            console.log('生成声网Token：', res.data.accessToken);
+            let fromuserid = this.localUserInfo.userId.toString();
+            let touserid = this.chatUserid.toString();
+
+            var dataContent = {
+                Mode: 1,
+                Conference: false,
+                ChanId: fromuserid + '-' + touserid,
+                toUserId: touserid,
+                fromUserId: fromuserid,
+                from_name: this.localUserInfo.nickname,
+                from_avatar: this.localUserInfo.userAvatarFileName,
+                to_name: this.currentChat.alarmItem.avatar,
+                to_avatar: this.currentChat.alarmItem.title,
+                token: res.data.accessToken,
+            };
+            var imdata = {
+                bridge: false,
+                type: 2,
+                dataContent: JSON.stringify(dataContent),
+                from: fromuserid,
+                to: touserid,
+                fp: '',
+                QoS: true,
+                sm: 0,
+                typeu: 17,
+            };
+
+            console.log('发送语音请求，data：', imdata);
+            this.messageService.sendCustomerMessage(imdata).then(res => {
                 if (res.success === true) {
-                    this.view_mode = "wait_answer_1";
-                    this.restService.generateAgoraToken(this.chatUserid, true).subscribe(res => {
-                        console.log('生成声网Token：', res.data.accessToken);
-                        this.joinChannelEx(JSON.stringify({ userid: this.localUserInfo.userId.toString(), token: res.data.accessToken, touserid: this.chatUserid, islanch: true }));
-                    });
+                    console.log('等待中...');
                 }
             });
-        }
-        else if (this.currentChat.metadata.chatType === 'group') {
-            this.messageService.sendGroupMessage(120, this.currentChat.alarmItem.dataId, 'start_voice').then(res => {
-                if (res.success === true) {
-                    this.view_mode = "wait_answer_1";
-                    this.restService.generateAgoraToken(this.chatUserid, true).subscribe(res => {
-                        console.log('生成声网Token：', res.data.accessToken);
-                        this.joinChannelEx(JSON.stringify({ userid: this.localUserInfo.userId.toString(), token: res.data.accessToken, touserid: this.chatUserid, islanch: true }));
-                    });
-                }
-            });
-        }
+        });
     }
 
     /* 好友收到语音请求 */
