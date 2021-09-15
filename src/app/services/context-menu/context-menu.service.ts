@@ -558,6 +558,7 @@ export class ContextMenuService {
 
     this.contextMenuForMessage[this.msgType.TYPE_CONTACT] = [
       this.actionCollection.select,
+      this.actionCollection.quote,
       this.actionCollection.delete,
       this.actionCollection.collect,
       ...com,
