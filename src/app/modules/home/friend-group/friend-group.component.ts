@@ -136,6 +136,17 @@ export class FriendGroupComponent implements OnInit {
     });
   }
 
+  deleteGroup(group: MyGroupListInterface) {
+    this.dialogService.confirm({text: ['删除：', group.groupName, ' 分组'].join("")}).then(ok => {
+      if(ok) {
+        this.restService.deleteFriendGroupList(group.groupId).subscribe((res: NewHttpResponseInterface<any>) => {
+          this.snackBarService.openMessage(res.msg);
+          this.getGroupList();
+        });
+      }
+    });
+  }
+
   removeFriend(groupId: number, friend: MyGroupChildFriendListInterface) {
     this.dialogService.confirm({text: ['将好友：', friend.nickname, ' 移出分组'].join("")}).then(ok => {
       if(ok) {
