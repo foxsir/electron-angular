@@ -30,8 +30,14 @@
                 </div>
 
                 <!--发起者-->
-                <div fxLayout="column" fxLayoutGap="10px" *ngIf="view_mode == 'default'">
-                    <button nz-button nzType="link" class="btnsave" (click)="startVoice()">发起</button>
+                <div fxLayout="row" fxLayoutGap="10px" *ngIf="view_mode == 'default'" style="justify-content:center;">
+                    <div (click)="startVoice()" fxLayout="column">
+                        <mat-icon class="hover-icon icon54">
+                            <img [src]="callAccept" alt="" class="icon">
+                            <img [src]="callAccept" alt="" class="icon-active">
+                        </mat-icon>
+                        <button nz-button nzType="link" class="btnsave">发起</button>
+                    </div>
                 </div>
 
                 <div fxLayout="column" fxLayoutGap="10px" *ngIf="view_mode == 'wait_answer_1'">
