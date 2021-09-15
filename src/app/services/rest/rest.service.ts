@@ -1047,7 +1047,6 @@ export class RestService {
    * 更新我的分组
    */
   updateFriendGroup(groupId: number, groupName: string): Observable<any> {
-    const localUserInfo = this.localUserService.getObj();
     return this.http.put(updateFriendGroup, {groupId: groupId, groupName: groupName});
   }
 
@@ -1055,15 +1054,13 @@ export class RestService {
    * 删除我的分组
    */
   deleteFriendGroupList(groupId: number): Observable<any> {
-    const localUserInfo = this.localUserService.getObj();
-    return this.http.post(deleteFriendGroupList, {groupId: groupId});
+    return this.http.post(deleteFriendGroupList + "/" + groupId, {}, 'delete');
   }
 
   /**
    * 更新我的分组成员
    */
   updateFriendGroupMembers(groupId: number, action: 'del' | 'add', friendList: number[]): Observable<any> {
-    const localUserInfo = this.localUserService.getObj();
     return this.http.post(updateFriendGroupMembers, {
       groupId: groupId, action: action === 'add' ? 1 : 0, friendList: friendList
     });
