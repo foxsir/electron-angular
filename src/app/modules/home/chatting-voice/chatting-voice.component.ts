@@ -143,7 +143,7 @@ export class ChattingVoiceComponent implements OnInit {
     }
 
     /* 挂断语音: 主动（发起者或者接收者都可以主动挂断语音） */
-    endVoice() {
+    endVoice(end_type) {
         //if (this.currentChat.metadata.chatType === 'friend') {
         //    this.messageService.sendMessage(120, this.currentChat.alarmItem.dataId, 'end_voice').then(res => {
         //        if (res.success === true) {
@@ -154,7 +154,7 @@ export class ChattingVoiceComponent implements OnInit {
         //    });
         //}
 
-        this.imres.typeu = 18;
+        this.imres.typeu = end_type == 'refuse' ? 18 : 21;
         this.messageService.sendCustomerMessage(this.imres).then(res => {
             if (res.success === true) {
                 this.view_mode = "default";

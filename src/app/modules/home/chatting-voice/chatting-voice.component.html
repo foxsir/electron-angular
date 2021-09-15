@@ -35,13 +35,13 @@
                 </div>
 
                 <div fxLayout="column" fxLayoutGap="10px" *ngIf="view_mode == 'wait_answer_1'">
-                    <button nz-button nzType="link" class="btnsave" (click)="endVoice()">挂断</button>
+                    <button nz-button nzType="link" class="btnsave" (click)="endVoice('handup')">挂断</button>
                 </div>
 
 
                 <!--接收者-->
                 <div fxLayout="row" fxLayoutGap="10px" *ngIf="view_mode == 'wait_answer_2'" style="justify-content:center;">
-                    <div (click)="endVoice()" fxLayout="column">
+                    <div (click)="endVoice('refuse')" fxLayout="column">
                         <mat-icon class="hover-icon icon54">
                             <img [src]="callHangup" alt="" class="icon">
                             <img [src]="callHangup" alt="" class="icon-active">
@@ -57,8 +57,14 @@
                     </div>
                 </div>
 
-                <div fxLayout="column" fxLayoutGap="10px" *ngIf="view_mode == 'had_receive_voice'">
-                    <button nz-button nzType="link" class="btnsave" (click)="endVoice()">挂断</button>
+                <div fxLayout="row" fxLayoutGap="10px" *ngIf="view_mode == 'had_receive_voice'" style="justify-content:center;">
+                    <div (click)="endVoice('handup')" fxLayout="column">
+                        <mat-icon class="hover-icon icon54">
+                            <img [src]="callHangup" alt="" class="icon">
+                            <img [src]="callHangup" alt="" class="icon-active">
+                        </mat-icon>
+                        <button nz-button nzType="link" class="btnsave">挂断</button>
+                    </div>
                 </div>
             </mat-card-content>
         </mat-card>
