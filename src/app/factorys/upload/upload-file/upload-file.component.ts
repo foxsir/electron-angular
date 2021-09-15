@@ -12,6 +12,7 @@ import DirectoryType from "@services/file/config/DirectoryType";
 import CommonTools from "@app/common/common.tools";
 import {formatDate} from "@app/libs/mobileimsdk-client-common";
 import {LocalUserService} from "@services/local-user/local-user.service";
+import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 
 export type UploadedFile = {
   file: NzUploadFile;
@@ -41,10 +42,10 @@ export class UploadFileComponent implements OnInit {
   };
 
   constructor(
-    private msg: NzMessageService,
     private dom: DomSanitizer,
     private fileService: FileService,
     private localUserService: LocalUserService,
+    private snackBarService: SnackBarService,
   ) {
   }
 
@@ -60,26 +61,26 @@ export class UploadFileComponent implements OnInit {
       this.getFileInfo.emit(file);
 
       if(this.fileTypes === undefined) {
-        this.msg.error("请定义 fileTypes");
+        this.snackBarService.openMessage("请定义 fileTypes");
         observer.complete();
         return;
       }
 
       const isJpgOrPng = this.fileTypes.includes(file.type) || this.fileTypes.includes('*');
       if (!isJpgOrPng) {
-        this.msg.error(['不允许的文件类型: ', file.type].join(""));
+        this.snackBarService.openMessage(['不允许的文件类型: ', file.type].join(""));
         observer.complete();
         return;
       }
       const isLt2M = file.size! / 1024 / 1024 < 100;
       if (!isLt2M) {
-        this.msg.error('文件大小不允许超过 100MB!');
+        this.snackBarService.openMessage('文件大小不允许超过 100MB!');
         observer.complete();
         return;
       }
 
       if(Object.values(DirectoryType).includes(this.directoryType) === false) {
-        this.msg.error('请使用正确的目录名称，参考：DirectoryType');
+        this.snackBarService.openMessage('请使用正确的目录名称，参考：DirectoryType');
         observer.complete();
         return;
       }
@@ -146,7 +147,7 @@ export class UploadFileComponent implements OnInit {
   //       });
   //       break;
   //     case 'error':
-  //       this.msg.error('Network error');
+  //       this.snackBarService.openMessage('Network error');
   //       this.loading = false;
   //       break;
   //   }
