@@ -174,31 +174,27 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
   }
 
   getImageInfo(file: any) {
-    CommonTools.getBlobUrlFromFile(file).then(blob => {
-      this.sendChatMap[file.uid] = this.messageEntityService.createChatMsgEntity_TO_IMAGE(
-        blob, 0, CommonTools.fingerPrint(), 0
-      );
-      // 尚未发出
-      this.sendChatMap[file.uid].isOutgoing = false;
-      this.sendMessage.emit({
-        chat: this.sendChatMap[file.uid],
-        dataContent: this.getDefaultDataContent(MsgType.TYPE_IMAGE)
-      });
-    });
+    // CommonTools.getBlobUrlFromFile(file).then(blob => {
+    //   this.sendChatMap[file.uid] = this.messageEntityService.createChatMsgEntity_TO_IMAGE(
+    //     blob, 0, CommonTools.fingerPrint(), 0
+    //   );
+    //   this.sendMessage.emit({
+    //     chat: this.sendChatMap[file.uid],
+    //     dataContent: this.getDefaultDataContent(MsgType.TYPE_IMAGE)
+    //   });
+    // });
   }
 
   getFileInfo(file: any) {
-    CommonTools.getBlobUrlFromFile(file).then(blob => {
-      this.sendChatMap[file.uid] = this.messageEntityService.createChatMsgEntity_TO_FILE('',
-        blob, 0, CommonTools.fingerPrint(), 0
-      );
-      // 尚未发出
-      this.sendChatMap[file.uid].isOutgoing = false;
-      this.sendMessage.emit({
-        chat: this.sendChatMap[file.uid],
-        dataContent: this.getDefaultDataContent(MsgType.TYPE_FILE)
-      });
-    });
+    // CommonTools.getBlobUrlFromFile(file).then(blob => {
+    //   this.sendChatMap[file.uid] = this.messageEntityService.createChatMsgEntity_TO_FILE('',
+    //     blob, 0, CommonTools.fingerPrint(), 0
+    //   );
+    //   this.sendMessage.emit({
+    //     chat: this.sendChatMap[file.uid],
+    //     dataContent: this.getDefaultDataContent(MsgType.TYPE_FILE)
+    //   });
+    // });
   }
 
   /**
@@ -206,9 +202,10 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
    * @param uploadedFile
    */
   imageUploaded(uploadedFile: UploadedFile) {
-    const msg = this.sendChatMap[uploadedFile.file.uid];
-    const messageText = msg.text = uploadedFile.url.href;
-    return this.doSend(messageText, MsgType.TYPE_IMAGE,false, msg);
+    // const msg = this.sendChatMap[uploadedFile.file.uid];
+    // const messageText = msg.text = uploadedFile.url.href;
+    const messageText = uploadedFile.url.href;
+    return this.doSend(messageText, MsgType.TYPE_IMAGE,true);
   }
 
   /**
@@ -216,8 +213,8 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
    * @param uploadedFile
    */
   fileUploaded(uploadedFile: UploadedFile) {
-    const msg = this.sendChatMap[uploadedFile.file.uid];
-    const messageText = msg.text = uploadedFile.url.href;
+    // const msg = this.sendChatMap[uploadedFile.file.uid];
+    // const messageText = msg.text = uploadedFile.url.href;
 
     const message = {
       fileName: uploadedFile.file.name,
@@ -225,7 +222,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
       fileMd5 : CommonTools.md5([uploadedFile.file.name, uploadedFile.file.lastModified].join("-")),
       fileLength: uploadedFile.file.size
     };
-    return this.doSend(JSON.stringify(message), MsgType.TYPE_FILE, false, msg);
+    return this.doSend(JSON.stringify(message), MsgType.TYPE_FILE, true);
   }
 
   /**
@@ -301,9 +298,8 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
         );
         if (replaceEntity) {
           replaceEntity.fingerPrintOfProtocal = chatMsgEntity.fingerPrintOfProtocal;
+          // this.cacheService.chatMsgEntityMap.delete(replaceEntity.fingerPrintOfProtocal);
         }
-        chatMsgEntity.isOutgoing = false;
-
 
         this.tempList.push({
           chatMsgEntity: chatMsgEntity,
@@ -374,7 +370,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
         if (replaceEntity) {
           replaceEntity.fingerPrintOfProtocal = chatMsgEntity.fingerPrintOfProtocal;
         }
-        chatMsgEntity.isOutgoing = false;
+        // chatMsgEntity.isOutgoing = false;
 
         this.tempList.push({
           chatMsgEntity: chatMsgEntity,
