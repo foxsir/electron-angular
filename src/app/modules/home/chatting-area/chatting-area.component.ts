@@ -94,7 +94,8 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit {
   public quoteMessage: ChatmsgEntityModel = null;
   public quoteMessageText: {
     text: string;
-    file?: FileMetaInterface;
+    file?: Partial<FileMetaInterface>;
+    type: string;
   } = null;
 
   // 右键菜单
@@ -246,23 +247,32 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit {
         // }
         switch (this.quoteMessage.msgType) {
           case MsgType.TYPE_TEXT:
-            this.quoteMessageText = {text: this.quoteMessage.text};
+            this.quoteMessageText = {text: this.quoteMessage.text, type: 'text'};
             break;
           case MsgType.TYPE_IMAGE:
-            console.dir(this.quoteMessage.text);
-            this.quoteMessageText = {text: '图片'};
+            this.quoteMessageText = {
+              text: '图片',
+              file: {
+                ossFilePath: this.quoteMessage.text
+              },
+              type: 'image'
+            };
             break;
           case MsgType.TYPE_SHORTVIDEO:
             console.dir(this.quoteMessage.text);
-            this.quoteMessageText = {text: '视频'};
+            this.quoteMessageText = {
+              text: '视频',
+              file: JSON.parse(this.quoteMessage.text),
+              type: 'video'
+            };
             break;
           case MsgType.TYPE_VOICE:
             console.dir(this.quoteMessage.text);
-            this.quoteMessageText = {text: '语音'};
+            this.quoteMessageText = {text: '语音', type: 'voice'};
             break;
           case MsgType.TYPE_CONTACT:
             console.dir(this.quoteMessage.text);
-            this.quoteMessageText = {text: '名片'};
+            this.quoteMessageText = {text: '名片', type: 'contact'};
             break;
         }
       } else {

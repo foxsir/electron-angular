@@ -63,8 +63,17 @@
 
   .quote-area-text {
     margin: 10px 0;
-    padding-left: 10px;
+    padding-left: 6px;
     border-left: 2px solid #0091FF;
+
+    .quote-area-preview {
+      img, video {
+        width: 40px;
+        height: 40px;
+        margin-right: 6px;
+        object-fit: cover;
+      }
+    }
   }
   .quote-title {
     height: 20px;
