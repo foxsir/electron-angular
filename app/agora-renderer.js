@@ -1,4 +1,11 @@
-﻿const AgoraRtcEngine = require('agora-electron-sdk').default
+﻿const ipcRenderer = require('electron').ipcRenderer;
+window.ipcRenderer = ipcRenderer;
+
+window.startScreenShot = function () {
+    window.ipcRenderer.send("start-screen-capture", "new message");
+};
+
+const AgoraRtcEngine = require('agora-electron-sdk').default
 
 
 const os = require('os')

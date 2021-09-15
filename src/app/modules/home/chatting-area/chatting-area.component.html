@@ -17,7 +17,7 @@
       </mat-card>
     </div>
     <!--语音聊天 drawerContent.voice 不要删除  *ngIf="drawerContent.voice"-->
-    <div fxFlex="280px" >
+    <div fxFlex="280px" [fxShow]="drawerContent.voice">
       <mat-card class="mat-elevation-z0" *ngIf="currentChat">
         <app-chatting-voice [drawer]="chattingAreaDrawer" #appChattingVoice [currentChat]="currentChat"></app-chatting-voice>
       </mat-card>
