@@ -21,7 +21,7 @@
           <div class="context-menu">
             <span #menuTrigge="matMenuTrigger" #collectSpan [matMenuTriggerFor]="contextMenuTrigger"></span>
             <mat-menu #contextMenuTrigger="matMenu">
-              <button mat-menu-item (click)="addFriends(item.groupId)">
+              <button mat-menu-item (click)="addFriends(item)">
                 选择好友移入分组
               </button>
               <button mat-menu-item (click)="updateGroupName(item.groupId)">
@@ -64,7 +64,7 @@
                 <div class="context-menu">
                   <span #menuTriggeFriend="matMenuTrigger" #friendSpan [matMenuTriggerFor]="contextMenuFriendTrigger"></span>
                   <mat-menu #contextMenuFriendTrigger="matMenu">
-                    <button mat-menu-item (click)="removeFriend(item.groupId, friend)">
+                    <button mat-menu-item (click)="removeFriend(item, friend)">
                       移出分组
                     </button>
                   </mat-menu>

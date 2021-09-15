@@ -111,15 +111,15 @@ export class FriendGroupComponent implements OnInit {
     span.style.transform = `translate3d(${e.pageX}px, ${e.pageY}px, 0px)`;
   }
 
-  addFriends(groupId: number) {
+  addFriends(group: MyGroupListInterface) {
     this.dialogService.openDialog(SelectFriendContactComponent).then((friend: FriendModel) => {
       if(friend) {
         this.dialogService.confirm({text: ['添加好友：', friend.nickname, ' 到组中'].join("")}).then(ok => {
           if(ok) {
-            this.restService.updateFriendGroupMembers(groupId, 'add', [friend.friendUserUid])
-              .subscribe((res: NewHttpResponseInterface<any>) => {
+            this.restService.updateFriendGroupMembers(group.groupId, 'add', [friend.friendUserUid]).subscribe((res: NewHttpResponseInterface<any>) => {
               this.snackBarService.openMessage(res.msg);
-              this.loadFriendList(groupId);
+              this.loadFriendList(group.groupId);
+              group.memberCount += 1;
             });
           }
         });
@@ -147,13 +147,14 @@ export class FriendGroupComponent implements OnInit {
     });
   }
 
-  removeFriend(groupId: number, friend: MyGroupChildFriendListInterface) {
+  removeFriend(group: MyGroupListInterface, friend: MyGroupChildFriendListInterface) {
     this.dialogService.confirm({text: ['将好友：', friend.nickname, ' 移出分组'].join("")}).then(ok => {
       if(ok) {
-        this.restService.updateFriendGroupMembers(groupId, 'del', [friend.friendId])
+        this.restService.updateFriendGroupMembers(group.groupId, 'del', [friend.friendId])
           .subscribe((res: NewHttpResponseInterface<any>) => {
             this.snackBarService.openMessage(res.msg);
-            this.loadFriendList(groupId);
+            this.loadFriendList(group.groupId);
+            group.memberCount -= 1;
           });
       }
     });
