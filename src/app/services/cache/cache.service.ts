@@ -69,6 +69,9 @@ export class CacheService {
     newFriendMap: "newFriendMap",
   };
 
+  // 防止多次初始化
+  private initDataKey = false;
+
   constructor(
     private messageRoamService: MessageRoamService,
     private messageEntityService: MessageEntityService,
@@ -85,11 +88,14 @@ export class CacheService {
   }
 
   initDataKeys() {
-    if(this.localUserService.localUserInfo && this.localUserService.localUserInfo.userId) {
-      const userId = this.localUserService.localUserInfo.userId;
-      for (const key in this.dataKeys) {
-        if(this.dataKeys.hasOwnProperty(key)) {
-          this.dataKeys[key] = [this.dataKeys[key], CommonTools.md5(userId.toString())].join("-");
+    if(this.initDataKey === false) {
+      this.initDataKey = true;
+      if(this.localUserService.localUserInfo && this.localUserService.localUserInfo.userId) {
+        const userId = this.localUserService.localUserInfo.userId;
+        for (const key in this.dataKeys) {
+          if(this.dataKeys.hasOwnProperty(key)) {
+            this.dataKeys[key] = [this.dataKeys[key], CommonTools.md5(userId.toString())].join("-");
+          }
         }
       }
     }
