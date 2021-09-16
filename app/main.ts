@@ -1,4 +1,4 @@
-import { app, BrowserWindow, screen, ipcMain, Menu, globalShortcut } from 'electron';
+import { app, BrowserWindow, screen, ipcMain, Menu, globalShortcut, clipboard } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 
@@ -180,7 +180,12 @@ try {
         const exec = require("child_process").exec;
         exec(path.resolve(__dirname, 'screen-capture/screencapture.exe'), (error, stdout, stderr) => {
             console.log('screen shot finished: ', JSON.stringify(error, stdout, stderr));
-            event.sender.send('screenshot-finished','');
+
+            let nativeImage = clipboard.readImage();
+            if (!nativeImage.isEmpty()) {
+                let base64 = nativeImage.toDataURL();
+                event.sender.send('screenshot-finished', base64);
+            }
         });
     });
 
