@@ -78,7 +78,7 @@ export class SearchChattingComponent implements OnInit {
     });
   }
 
-  txtSearchChange(event: KeyboardEvent) {
+  txtSearchChange() {
     this.currentTab = 'chat';
     this.cacheService.getChattingCache(this.chatting).then(data => {
       this.chatMap.clear();
