@@ -61,6 +61,7 @@ export class HttpService {
    * @param type
    */
   post(url: string, body: any, type: 'post' | 'delete' | 'put' = 'post') {
+    this.updateToken();
     let request;
     if (url.charAt(0) === "/") {
       request = url;
@@ -104,7 +105,13 @@ export class HttpService {
     return this.post(url, body, 'put');
   }
 
+  /**
+   * get
+   * @param url
+   * @param body
+   */
   get(url: string, body: any = {}) {
+    this.updateToken();
     let request;
     if (url.charAt(0) === "/") {
       request = url;
@@ -144,6 +151,7 @@ export class HttpService {
    * @param body
    */
   postForm(url: string, body: any = {}) {
+    this.updateToken();
     let request;
     if (url.charAt(0) === "/") {
       request = url;
@@ -182,6 +190,7 @@ export class HttpService {
    * @param url
    */
   getContentLength(url: string) {
+    this.updateToken();
     let Authorization = {};
     if(this.localAuthedUserInfo && this.localAuthedUserInfo.token) {
       Authorization = {
@@ -197,6 +206,10 @@ export class HttpService {
         resolve(response.headers.get("content-length"));
       });
     });
+  }
+
+  updateToken() {
+    this.localAuthedUserInfo = RBChatUtils.getAuthedLocalUserInfoFromCookie();
   }
 
 }
