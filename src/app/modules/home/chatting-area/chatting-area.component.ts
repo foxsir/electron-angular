@@ -572,9 +572,10 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit {
       if(ok) {
         this.cacheService.deleteMessageCache(this.currentChattingChangeService.currentChatting, this.selectMessageList).then(res => {
           // 刷新聊天数据
-          this.currentChattingChangeService.switchCurrentChatting(this.currentChattingChangeService.currentChatting).then(() => {
-            this.cancelSelectMessage();
+          this.selectMessageList.forEach(chat => {
+            this.cacheService.chatMsgEntityMap.delete(chat.fingerPrintOfProtocal);
           });
+          this.cancelSelectMessage();
         });
       }
     });
