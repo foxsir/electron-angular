@@ -88,13 +88,13 @@ export class TransmitMessageComponent implements OnInit {
             const chatMsgEntity = this.messageEntityService.prepareSendedMessage(
               message, 0, res.fingerPrint, msg.msgType
             );
-            chatMsgEntity.isOutgoing = false;
+            // chatMsgEntity.isOutgoing = false;
             this.cacheService.getCacheFriends().then(list => {
-              const fm: FriendModel = list[alarmData.alarmItem.dataId];
+              const fm: FriendModel = list.get(friend.friendUserUid.toString());
               alarmData.alarmItem.avatar = fm.userAvatarFileName;
               this.cacheService.putChattingCache(alarmData, chatMsgEntity).then(() => {
                 this.currentChattingChangeService.switchCurrentChatting(alarmData).then(() => {
-                  this.dialogRef.close();
+                  this.dialogRef.close(true);
                 });
               });
             });

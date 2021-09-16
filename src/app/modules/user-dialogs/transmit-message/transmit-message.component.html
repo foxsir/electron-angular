@@ -7,7 +7,7 @@
   </div>
   <div fxFlex="400px" class="scrollbar">
     <mat-selection-list class="friend-list" #friendSelect disableRipple color="primary">
-      <mat-list-option class="friend-list-item" *ngFor="let friend of friendMap | keyvalue" [value]="friend">
+      <mat-list-option class="friend-list-item" *ngFor="let friend of friendMap | keyvalue" [value]="friend.value">
         <mat-icon mat-list-icon class="friend-avatar">
           <img [src]="friend.value.base64Avatar || friend.value.userAvatarFileName" alt="">
         </mat-icon>

@@ -29,6 +29,7 @@ export class MessageEntityService {
 
     // 111 新增消息指纹
   prepareRecievedMessage(fromUid, nickName, msg, time, msgType, fp = null) {
+    const xu_isRead_type = true;
     // 强转聊天消息类型：js中的switch语句，在匹配时不会进行类型转换，会使用“===”的方式进行比
     // 较，请确保msgType参数传过来时必须是显示转换为int后的结果（因为服务端的http接口拉过
     // 来的数据时，msgType使用的是String类型）！
@@ -37,23 +38,23 @@ export class MessageEntityService {
     // 注意：js中的switch语句，在匹配时不会进行类型转换，会使用“===”的方式进行比较，请确保msgType参数传过来时必须是显示转换为int后的结果！
     switch (msgType) {
       case MsgType.TYPE_IMAGE:
-        return this.createChatMsgEntity_COME_IMAGE(fromUid, nickName, msg, time, fp);
+        return this.createChatMsgEntity_COME_IMAGE(fromUid, nickName, msg, time, fp, xu_isRead_type);
       case MsgType.TYPE_VOICE:
-        return this.createChatMsgEntity_COME_VOICE(fromUid, nickName, msg, time, fp);
+        return this.createChatMsgEntity_COME_VOICE(fromUid, nickName, msg, time, fp, xu_isRead_type);
       case MsgType.TYPE_FILE: {
         // 文件消息的内容体是FileMeta对象的JSON形式
         var fm = JSON.parse(msg);
-        return this.createChatMsgEntity_COME_FILE(fm, fromUid, nickName, time, fp);
+        return this.createChatMsgEntity_COME_FILE(fm, fromUid, nickName, time, fp, xu_isRead_type);
       }
       case MsgType.TYPE_GIFT$SEND:
-        return this.createChatMsgEntity_COME_GIFT$FOR$SEND(fromUid, nickName, msg, time, fp);
+        return this.createChatMsgEntity_COME_GIFT$FOR$SEND(fromUid, nickName, msg, time, fp, xu_isRead_type);
       case MsgType.TYPE_GIFT$GET:
-        return this.createChatMsgEntity_COME_GIFT$FOR$GET(fromUid, nickName, msg, time, fp);
+        return this.createChatMsgEntity_COME_GIFT$FOR$GET(fromUid, nickName, msg, time, fp, xu_isRead_type);
       case MsgType.TYPE_SYSTEAM$INFO:
-        return this.createSystemMsgEntity_TEXT(msg, time, fp);
+        return this.createSystemMsgEntity_TEXT(msg, time, fp, xu_isRead_type);
       case MsgType.TYPE_SHORTVIDEO: {
         // 短视频消息的内容体是FileMeta对象的JSON形式
-        return this.createChatMsgEntity_COME_SHORTVIDEO(fromUid, nickName, msg, time, fp);
+        return this.createChatMsgEntity_COME_SHORTVIDEO(fromUid, nickName, msg, time, fp, xu_isRead_type);
       }
       case MsgType.TYPE_CONTACT: {
         // 名片消息的内容体是ContactMeta对象的JSON形式
@@ -62,7 +63,7 @@ export class MessageEntityService {
           , cm.uid
           , cm.nickName
           , time
-          , fp);
+          , fp, xu_isRead_type);
       }
       case MsgType.TYPE_LOCATION: {
         // 位置消息的内容体是LocationMeta对象的JSON形式
@@ -73,30 +74,30 @@ export class MessageEntityService {
           , lm != null ? lm.longitude : 0
           , lm != null ? lm.latitude : 0
           , time
-          , null, fp);
+          , null, fp, xu_isRead_type);
       }
       case MsgType.TYPE_REDBAG: {
         //111 新增红包
-        return this.createChatMsgEntity_TO_REDBAG(fromUid, nickName, msg, time, fp);
+        return this.createChatMsgEntity_TO_REDBAG(fromUid, nickName, msg, time, fp, xu_isRead_type);
       }
       case MsgType.TYPE_GETREDBAG: {
         //111 新增拆红包
-        return this.createChatMsgEntity_TO_GETREDBAG(fromUid, nickName, msg, time, fp);
+        return this.createChatMsgEntity_TO_GETREDBAG(fromUid, nickName, msg, time, fp, xu_isRead_type);
       }
       case MsgType.TYPE_AITE: {
         //111 新增类型 @
         const txt = JSON.parse(msg).content;
-        return this.createChatMsgEntity_COME_TEXT(fromUid, nickName, txt, time, fp);
+        return this.createChatMsgEntity_COME_TEXT(fromUid, nickName, txt, time, fp, xu_isRead_type);
       }
       case MsgType.TYPE_QUOTE: {
         // 回复类型
-        return this.createChatMsgEntity_COME_QUOTE(fromUid, nickName, msg, time, fp);
+        return this.createChatMsgEntity_COME_QUOTE(fromUid, nickName, msg, time, fp, xu_isRead_type);
       }
       case MsgType.TYPE_TRANSFER: {
         // 合并转发
-        return this.createChatMsgEntity_COME_TRANSFER(fromUid, nickName, msg, time, fp);
+        return this.createChatMsgEntity_COME_TRANSFER(fromUid, nickName, msg, time, fp, xu_isRead_type);
       }default:
-        return this.createChatMsgEntity_COME_TEXT(fromUid, nickName, msg, time, fp);
+        return this.createChatMsgEntity_COME_TEXT(fromUid, nickName, msg, time, fp, xu_isRead_type);
     }
   }
 
@@ -202,7 +203,7 @@ export class MessageEntityService {
     // const chatMsgEntityObj =
     // this.createChatMsgEntity_COME_TEXT(this.imService.getLoginInfo().loginUserId, "我", message, time, fingerPrint);
     const chatMsgEntityObj = this.createChatMsgEntity_COME_TEXT(this.localUserService.getObj().userId, "我", message, time, fingerPrint);
-    chatMsgEntityObj.isOutgoing = true;
+    // chatMsgEntityObj.isOutgoing = true;
 
     chatMsgEntityObj.xu_isRead_type = xu_isRead_type;  //111 新增已读类型
 
@@ -213,9 +214,8 @@ export class MessageEntityService {
   createChatMsgEntity_TO_IMAGE(fileName, time, fingerPrint, xu_isRead_type = null) {
     const chatMsgEntityObj =
       this.createChatMsgEntity_COME_IMAGE(this.imService.getLoginInfo().loginUserId, "我", fileName, time, fingerPrint);
-    chatMsgEntityObj.isOutgoing = true;
+    // chatMsgEntityObj.isOutgoing = true;
     chatMsgEntityObj.xu_isRead_type = xu_isRead_type;  //111 新增已读类型
-
 
     return chatMsgEntityObj;
   }
@@ -223,7 +223,7 @@ export class MessageEntityService {
   createChatMsgEntity_TO_VOICE(fileName, time, fingerPrint, xu_isRead_type = null) {
     const chatMsgEntityObj =
       this.createChatMsgEntity_COME_VOICE(this.imService.getLoginInfo().loginUserId, "我", fileName, time, fingerPrint);
-    chatMsgEntityObj.isOutgoing = true;
+    // chatMsgEntityObj.isOutgoing = true;
 
     chatMsgEntityObj.xu_isRead_type = xu_isRead_type;  //111 新增已读类型
 
@@ -234,7 +234,7 @@ export class MessageEntityService {
     const chatMsgEntityObj = this.createChatMsgEntity_COME_GIFT$FOR$SEND(
       this.imService.getLoginInfo().loginUserId, "我", giftIdent, time, fingerPrint
     );
-    chatMsgEntityObj.isOutgoing = true;
+    // chatMsgEntityObj.isOutgoing = true;
     chatMsgEntityObj.xu_isRead_type = xu_isRead_type;  //111 新增已读类型
     return chatMsgEntityObj;
   }
@@ -243,7 +243,7 @@ export class MessageEntityService {
     const chatMsgEntityObj = this.createChatMsgEntity_COME_GIFT$FOR$GET(
       this.imService.getLoginInfo().loginUserId, "我", giftIdent, time, fingerPrint
     );
-    chatMsgEntityObj.isOutgoing = true;
+    // chatMsgEntityObj.isOutgoing = true;
     chatMsgEntityObj.xu_isRead_type = xu_isRead_type;  //111 新增已读类型
     return chatMsgEntityObj;
   }
@@ -257,21 +257,21 @@ export class MessageEntityService {
     const chatMsgEntityObj = this.createChatMsgEntity_COME_FILE(msg,
       this.imService.getLoginInfo().loginUserId, "我", time, fingerPrint
     );
-    chatMsgEntityObj.isOutgoing = true;
+    // chatMsgEntityObj.isOutgoing = true;
     chatMsgEntityObj.xu_isRead_type = xu_isRead_type;  //111 新增已读类型
     return chatMsgEntityObj;
   }
 
   createChatMsgEntity_TO_SHORTVIDEO(msg, time, fingerPrint, xu_isRead_type = null) {
     const chatMsgEntityObj = this.createChatMsgEntity_COME_SHORTVIDEO(this.imService.getLoginInfo().loginUserId, "我", msg, time, fingerPrint);
-    chatMsgEntityObj.isOutgoing = true;
+    // chatMsgEntityObj.isOutgoing = true;
     chatMsgEntityObj.xu_isRead_type = xu_isRead_type;  //111 新增已读类型
     return chatMsgEntityObj;
   }
 
   createChatMsgEntity_TO_CONTACT(theUid, theNickName, time, fingerPrint, xu_isRead_type = null) {
     const chatMsgEntityObj = this.createChatMsgEntity_COME_CONTACT(this.imService.getLoginInfo().loginUserId, "我", theUid, theNickName, time, fingerPrint);
-    chatMsgEntityObj.isOutgoing = true;
+    // chatMsgEntityObj.isOutgoing = true;
     chatMsgEntityObj.xu_isRead_type = xu_isRead_type;  //111 新增已读类型
     return chatMsgEntityObj;
   }
@@ -281,7 +281,7 @@ export class MessageEntityService {
     const chatMsgEntityObj = this.createChatMsgEntity_COME_LOCATON(this.imService.getLoginInfo().loginUserId, "我"
       , thLocationTitle, thLocationContent, thLongitude, thLatitude, null
       , time, fingerPrint);
-    chatMsgEntityObj.isOutgoing = true;
+    // chatMsgEntityObj.isOutgoing = true;
     chatMsgEntityObj.xu_isRead_type = xu_isRead_type;  //111 新增已读类型
     return chatMsgEntityObj;
   }
@@ -295,7 +295,6 @@ export class MessageEntityService {
     chatMsgEntityObj.text = message;
     chatMsgEntityObj.fingerPrintOfProtocal = fingerPrint;
     chatMsgEntityObj.msgType = MsgType.TYPE_TEXT;
-    chatMsgEntityObj.isOutgoing = false;
     chatMsgEntityObj.xu_isRead_type = xu_isRead_type;  //111 新增已读类型
 
     return chatMsgEntityObj;
@@ -311,7 +310,6 @@ export class MessageEntityService {
     chatMsgEntityObj.text = message;
     chatMsgEntityObj.fingerPrintOfProtocal = fingerPrint;
     chatMsgEntityObj.msgType = MsgType.TYPE_QUOTE;
-    chatMsgEntityObj.isOutgoing = false;
     chatMsgEntityObj.xu_isRead_type = xu_isRead_type;  // 111 新增已读类型
 
     return chatMsgEntityObj;
@@ -327,7 +325,6 @@ export class MessageEntityService {
     chatMsgEntityObj.text = message;
     chatMsgEntityObj.fingerPrintOfProtocal = fingerPrint;
     chatMsgEntityObj.msgType = MsgType.TYPE_REDBAG;
-    chatMsgEntityObj.isOutgoing = false;
     chatMsgEntityObj.xu_isRead_type = xu_isRead_type;  // 111 新增已读类型
 
     return chatMsgEntityObj;
@@ -343,7 +340,6 @@ export class MessageEntityService {
     chatMsgEntityObj.text = message;
     chatMsgEntityObj.fingerPrintOfProtocal = fingerPrint;
     chatMsgEntityObj.msgType = MsgType.TYPE_REDBAG;
-    chatMsgEntityObj.isOutgoing = false;
     chatMsgEntityObj.xu_isRead_type = xu_isRead_type;  // 111 新增已读类型
 
     return chatMsgEntityObj;
@@ -359,7 +355,6 @@ export class MessageEntityService {
     chatMsgEntityObj.text = message;
     chatMsgEntityObj.fingerPrintOfProtocal = fingerPrint;
     chatMsgEntityObj.msgType = MsgType.TYPE_TRANSFER;
-    chatMsgEntityObj.isOutgoing = false;
     chatMsgEntityObj.xu_isRead_type = xu_isRead_type;  // 111 新增已读类型
 
     return chatMsgEntityObj;
@@ -375,7 +370,6 @@ export class MessageEntityService {
     chatMsgEntityObj.text = fileName;
     chatMsgEntityObj.fingerPrintOfProtocal = fingerPrint;
     chatMsgEntityObj.msgType = MsgType.TYPE_IMAGE;
-    chatMsgEntityObj.isOutgoing = false;
     chatMsgEntityObj.xu_isRead_type = xu_isRead_type;  //111 新增已读类型
 
     return chatMsgEntityObj;
@@ -391,7 +385,6 @@ export class MessageEntityService {
     chatMsgEntityObj.text = fileName;
     chatMsgEntityObj.fingerPrintOfProtocal = fingerPrint;
     chatMsgEntityObj.msgType = MsgType.TYPE_VOICE;
-    chatMsgEntityObj.isOutgoing = false;
     chatMsgEntityObj.xu_isRead_type = xu_isRead_type;  //111 新增已读类型
 
     return chatMsgEntityObj;
@@ -406,7 +399,6 @@ export class MessageEntityService {
     chatMsgEntityObj.text = giftIdent;
     chatMsgEntityObj.fingerPrintOfProtocal = fingerPrint;
     chatMsgEntityObj.msgType = MsgType.TYPE_GIFT$SEND;
-    chatMsgEntityObj.isOutgoing = false;
     chatMsgEntityObj.xu_isRead_type = xu_isRead_type;  //111 新增已读类型
 
     return chatMsgEntityObj;
@@ -421,7 +413,6 @@ export class MessageEntityService {
     chatMsgEntityObj.text = giftIdent;
     chatMsgEntityObj.fingerPrintOfProtocal = fingerPrint;
     chatMsgEntityObj.msgType = MsgType.TYPE_GIFT$GET;
-    chatMsgEntityObj.isOutgoing = false;
     chatMsgEntityObj.xu_isRead_type = xu_isRead_type;  //111 新增已读类型
     return chatMsgEntityObj;
   }
@@ -437,7 +428,6 @@ export class MessageEntityService {
     chatMsgEntityObj.text = JSON.stringify(fileMeta);
     chatMsgEntityObj.fingerPrintOfProtocal = fingerPrint;
     chatMsgEntityObj.msgType = MsgType.TYPE_FILE;
-    chatMsgEntityObj.isOutgoing = false;
     chatMsgEntityObj.xu_isRead_type = xu_isRead_type;  //111 新增已读类型
     return chatMsgEntityObj;
   }
@@ -453,7 +443,6 @@ export class MessageEntityService {
     chatMsgEntityObj.text = JSON.stringify(fileMeta);
     chatMsgEntityObj.fingerPrintOfProtocal = fingerPrint;
     chatMsgEntityObj.msgType = MsgType.TYPE_SHORTVIDEO;
-    chatMsgEntityObj.isOutgoing = false;
 
     return chatMsgEntityObj;
   }
@@ -474,7 +463,6 @@ export class MessageEntityService {
     chatMsgEntityObj.text = JSON.stringify(contactMeta);
     chatMsgEntityObj.fingerPrintOfProtocal = fingerPrint;
     chatMsgEntityObj.msgType = MsgType.TYPE_CONTACT;
-    chatMsgEntityObj.isOutgoing = false;
 
     return chatMsgEntityObj;
   }
@@ -503,7 +491,6 @@ export class MessageEntityService {
     chatMsgEntityObj.text = JSON.stringify(locationMeta);
     chatMsgEntityObj.fingerPrintOfProtocal = fingerPrint;
     chatMsgEntityObj.msgType = MsgType.TYPE_LOCATION;
-    chatMsgEntityObj.isOutgoing = false;
 
     return chatMsgEntityObj;
   }
@@ -517,7 +504,6 @@ export class MessageEntityService {
     chatMsgEntityObj.text = message;
     chatMsgEntityObj.fingerPrintOfProtocal = fingerPrint;
     chatMsgEntityObj.msgType = MsgType.TYPE_SYSTEAM$INFO;
-    chatMsgEntityObj.isOutgoing = false;
 
     return chatMsgEntityObj;
   }

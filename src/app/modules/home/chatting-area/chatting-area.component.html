@@ -198,10 +198,16 @@
                 </div>
               </div>
               <div fxFlex>
-                <div fxLayout="column" fxFlexFill class="quote-area-text">
-                  <div fxFlex="50" class="quote-title">{{quoteMessage.name || quoteMessage.uid}}</div>
-                  <div fxFlex="50" class="quote-message" *ngIf="quoteMessageText">
-                    {{quoteMessageText.text}}
+                <div fxLayout="row" class="quote-area-text">
+                  <div fxFlex *ngIf="quoteMessageText.file" class="quote-area-preview">
+                    <img *ngIf="quoteMessageText.type === 'image'" [src]="quoteMessageText.file.ossFilePath" alt="">
+                    <video *ngIf="quoteMessageText.type === 'video'" [src]="quoteMessageText.file.ossFilePath"></video>
+                  </div>
+                  <div fxLayout="column" fxFlexFill>
+                    <div fxFlex="50" class="quote-title">{{quoteMessage.name || quoteMessage.uid}}</div>
+                    <div fxFlex="50" class="quote-message" *ngIf="quoteMessageText">
+                      {{quoteMessageText.text}}
+                    </div>
                   </div>
                 </div>
               </div>

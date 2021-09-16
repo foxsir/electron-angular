@@ -158,13 +158,15 @@ export class IndexComponent implements OnInit {
     // 初始化IMSDK
     this.initIMServer();
     const setUI = () => {
-      if(window.outerWidth <= 500) {
+      if(document.body.clientWidth <= 500) {
         this.miniUiService.switchMiniUI(true);
       } else {
         this.miniUiService.switchMiniUI(false);
       }
     };
-    setUI();
+    setTimeout(() => {
+      setUI();
+    });
     window.addEventListener('resize', () => {
       setUI();
     });

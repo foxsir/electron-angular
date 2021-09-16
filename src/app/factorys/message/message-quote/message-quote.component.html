@@ -13,7 +13,7 @@
 <!--  <p>{{replyMsg.msgType}}</p>-->
 <!--</ng-template>-->
 
-<!--本文，图片，视频，语音-->
+<!--本文，图片，视频，语音, 名片-->
 
 <!--{{chatMsg | json}}-->
 <!--{{replyMsg | json}}-->
@@ -48,6 +48,15 @@
       </div>
     </div>
 
+    <div fxFlex *ngIf="replyMsg.msgType === msgType.TYPE_CONTACT" class="quote-content">
+      <div class="quote-title">
+        {{replyMsg.userName}}
+      </div>
+      <div class="quote-reply" fxLayoutAlign="center center">
+        <app-message-contact [chatMsg]="contactEntity"></app-message-contact>
+      </div>
+    </div>
+
     <div fxFlex *ngIf="replyMsg.msgType === msgType.TYPE_IMAGE" class="quote-content">
       <div class="quote-title">
         {{replyMsg.userName}}
@@ -61,7 +70,7 @@
     <div fxFlex class="quote-content">
       <div class="quote-reply">
         <ng-template [ngIf]="msgParse === null">
-         {{replyMsg.msg}}
+         {{replyContent.msgContent}}
         </ng-template>
         <ng-template [ngIf]="msgParse">
           <div *ngIf="msgParse.msgType === msgType.TYPE_TEXT">{{msgParse.msgContent}}</div>

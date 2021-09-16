@@ -4,6 +4,8 @@ import {ChatmsgReplyOriginModel, ChatmsgReplyTextModel} from "@app/models/chatms
 import MessageTypeTips from "@app/config/message-type-tips";
 import {AlarmMessageType, MsgType} from "@app/config/rbchat-config";
 import FileMetaInterface from "@app/interfaces/file-meta.interface";
+import {MessageService} from "@services/message/message.service";
+import {MessageEntityService} from "@services/message-entity/message-entity.service";
 
 @Component({
   selector: 'app-message-quote',
@@ -15,13 +17,21 @@ export class MessageQuoteComponent implements OnInit {
   public replyMsg: ChatmsgReplyTextModel;
   public replyContent: {msgType: number; msgContent: string}; // 我回复的消息
   public originContent: ChatmsgReplyOriginModel; // 原始消息
+  public contactMsg: {
+    nickName: string;
+    userAvatar: string;
+    uid: string;
+  }; // 名片
+  public contactEntity: ChatmsgEntityModel;
 
   public messageType = MessageTypeTips;
   public msgType = MsgType;
 
   public msgParse: {msgType: number; msgContent: string} = null;
 
-  constructor() {
+  constructor(
+      private messageEntityService: MessageEntityService
+  ) {
   }
 
   ngOnInit(): void {
@@ -29,6 +39,13 @@ export class MessageQuoteComponent implements OnInit {
     this.replyContent = JSON.parse(this.replyMsg.msg);
     if(this.replyMsg.msgType === this.msgType.TYPE_SHORTVIDEO) {
       this.originContent = JSON.parse(this.replyMsg.reply);
+    }
+
+    if(this.replyMsg.msgType === this.msgType.TYPE_CONTACT) {
+      this.contactMsg = JSON.parse(this.replyMsg.reply);
+      this.contactEntity = this.messageEntityService.prepareRecievedMessage(
+          this.contactMsg.uid, this.contactMsg.nickName, this.replyMsg.reply, null, MsgType.TYPE_CONTACT
+      );
     }
 
     this.parseMsgToJSON();

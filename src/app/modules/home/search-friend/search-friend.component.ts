@@ -61,9 +61,9 @@ export class SearchFriendComponent implements OnInit {
   search() {
     if (this.searchFriend.trim().length > 0) {
       this.restService.getFriendSearch({friendAccount: this.searchFriend})
-        .subscribe((res: NewHttpResponseInterface<{userInfo: SearchFriend; result: number}>) => {
-          if(res.data.result > 0) {
-            this.searchFriendInfo = res.data.userInfo;
+        .subscribe((res: NewHttpResponseInterface<SearchFriend>) => {
+          if(res.data !== null) {
+            this.searchFriendInfo = res.data;
           } else {
             this.searchFriendInfo = null;
             this.snackBarService.openMessage("没有找到匹配的用户");

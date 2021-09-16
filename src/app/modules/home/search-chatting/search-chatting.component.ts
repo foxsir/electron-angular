@@ -2,70 +2,93 @@ import {Component, Input, OnInit} from '@angular/core';
 import ChattingModel from "@app/models/chatting.model";
 import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 import {CacheService} from "@services/cache/cache.service";
-import { formatDate } from "@app/libs/mobileimsdk-client-common";
+import {formatDate} from "@app/libs/mobileimsdk-client-common";
 import CommonTools from "@app/common/common.tools";
+import {MsgType} from "@app/config/rbchat-config";
+import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
+import {CurrentChattingChangeService} from "@services/current-chatting-change/current-chatting-change.service";
 
 @Component({
-    selector: 'app-search-chatting',
-    templateUrl: './search-chatting.component.html',
-    styleUrls: ['./search-chatting.component.scss']
+  selector: 'app-search-chatting',
+  templateUrl: './search-chatting.component.html',
+  styleUrls: ['./search-chatting.component.scss']
 })
 export class SearchChattingComponent implements OnInit {
-    @Input() chatting: AlarmItemInterface;
+  @Input() chatting: AlarmItemInterface;
 
-    public formatDate = formatDate;
-    public commonTools = CommonTools;
-    public currentTab: "chat" | "media" | "file" = "chat";
-    public keywords = "";
-    
-    public list_chat: ChattingModel[] = [];
-    public list_file: ChattingModel[] = [];
+  public formatDate = formatDate;
+  public commonTools = CommonTools;
+  public currentTab: "chat" | "media" | "file" = "chat";
+  public keywords = "";
 
-    constructor(
-        private cacheService: CacheService
-    ) {
+  public avatarMap: Map<string, string> = new Map();
+
+  public chatMap: Map<string, ChatmsgEntityModel> = new Map();
+  public imageMap: Map<string, ChatmsgEntityModel> = new Map();
+  public fileMap: Map<string, ChatmsgEntityModel> = new Map();
+
+  constructor(
+    private cacheService: CacheService,
+    private currentChattingChangeService: CurrentChattingChangeService,
+  ) {
+  }
+
+  ngOnInit(): void {
+    this.loadImageAndFile();
+
+    this.currentChattingChangeService.currentChatting$.subscribe(chatting => {
+      this.chatting = chatting;
+      this.loadImageAndFile();
+    });
+
+    this.loadAvatar();
+  }
+
+  loadAvatar() {
+    if(this.chatting.metadata.chatType === 'friend') {
+      this.cacheService.getMyInfo().then(my => {
+        this.avatarMap.set(my.userUid.toString(), my.userAvatarFileName);
+      });
+      this.cacheService.getCacheFriends().then((friendMap) => {
+        friendMap.forEach(f => {
+          this.avatarMap.set(f.friendUserUid.toString(), f.userAvatarFileName);
+        })
+      });
+    } else {
+      this.cacheService.getGroupMembers(this.chatting.alarmItem.dataId).then((memberMap) => {
+        memberMap.forEach(f => {
+          this.avatarMap.set(f.groupUserId.toString(), f.userAvatarFileName);
+        })
+      });
     }
+  }
 
-    ngOnInit(): void {
-        
-    }
-
-    txtSearchChange(event: KeyboardEvent) {
-        console.log("txtSearchChange: ", event);
-
-        if (event.key != 'Enter') {
-            return;
+  loadImageAndFile() {
+    this.chatMap.clear();
+    this.imageMap.clear();
+    this.fileMap.clear();
+    this.cacheService.getChattingCache(this.chatting).then(data => {
+      data.forEach((msg) => {
+        if(msg.msgType === MsgType.TYPE_IMAGE) {
+          this.imageMap.set(msg.fingerPrintOfProtocal, msg);
+        } else if(msg.msgType === MsgType.TYPE_FILE) {
+          this.fileMap.set(msg.fingerPrintOfProtocal, msg);
         }
+      });
+    });
+  }
 
-        console.log('回车确认：', this.keywords);
-
-        this.cacheService.getChattingCache(this.chatting).then(data => {
-            console.log('消息列表：', data);
-
-            if (!!data) {
-                //this.ChattingModel = Object.values(data);
-                this.list_chat.length = 0;
-                this.list_file.length = 0;
-
-                for (let key in data){
-                    var item = data[key];
-                    if (item.msgType == 0 && item.text.indexOf(this.keywords) != -1) {
-                        this.list_chat.push(item);
-                    }
-
-                    if (item.msgType == 5) {
-                        var obj = JSON.parse(item.text);
-                        if (obj.fileName.indexOf(this.keywords) != -1) {
-                            item.fileName = obj.fileName;
-                            item.fileLength = obj.fileLength;
-                            this.list_file.push(item);
-                        }
-                    }
-                }
-
-                console.log("文字结果：", this.list_chat);
-                console.log("文件结果：", this.list_file);
-            }
-        });
-    }
+  txtSearchChange(event: KeyboardEvent) {
+    this.currentTab = 'chat';
+    this.cacheService.getChattingCache(this.chatting).then(data => {
+      this.chatMap.clear();
+      data.forEach((msg) => {
+        if(msg.msgType === MsgType.TYPE_TEXT) {
+          if(msg.text.includes(this.keywords)) {
+            this.chatMap.set(msg.fingerPrintOfProtocal, msg);
+          }
+        }
+      });
+    });
+  }
 }

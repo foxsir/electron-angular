@@ -48,7 +48,9 @@ import { MessageQuoteComponent } from './message-quote/message-quote.component';
     MessageQuoteComponent
   ],
   exports: [
-    MessageFactoryComponent
+    MessageFactoryComponent,
+    MessageFileComponent,
+    MessageTextComponent
   ],
   imports: [
     CommonModule,

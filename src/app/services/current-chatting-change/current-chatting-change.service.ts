@@ -3,6 +3,7 @@ import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 import {Subject} from "rxjs";
 import {CacheService} from "@services/cache/cache.service";
 import {Router} from "@angular/router";
+import {QuoteMessageService} from "@services/quote-message/quote-message.service";
 
 @Injectable({
   providedIn: 'root'
@@ -18,15 +19,19 @@ export class CurrentChattingChangeService {
   constructor(
     private router: Router,
     private cacheService: CacheService,
+    private quoteMessageService: QuoteMessageService
   ) { }
 
   switchCurrentChatting(currentChatting: AlarmItemInterface): Promise<boolean> {
     return new Promise((resolve) => {
       this.router.navigate(['/home/message']).then(() => {
         currentChatting.metadata.unread = 0;
+        this.cacheService.chatMsgEntityMap.clear();
+        this.cacheService.chatMsgEntityMapTemp.clear();
         this.cacheService.setChattingBadges(currentChatting, 0);
         this.currentChatting = currentChatting;
         this.currentChattingSource.next(currentChatting);
+        this.quoteMessageService.setQuoteMessage(null);
         resolve(true);
       });
     });
