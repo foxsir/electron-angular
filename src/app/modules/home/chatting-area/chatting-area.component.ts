@@ -625,18 +625,27 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit {
       this.loadingMessage = true;
       const container = this.chattingContainer.nativeElement;
       if(this.cacheService.chatMsgEntityMapTemp.size > 0) {
-        // 从缓存获取消息
-        this.loadingMessage = false;
-        container.scrollTop = container.scrollTop - 60;
-        new Array(...this.cacheService.chatMsgEntityMapTemp.entries()).reverse().splice(0, 15).forEach(keyvalue => {
-          this.cacheService.chatMsgEntityMapTemp.delete(keyvalue[0]);
-          this.cacheService.chatMsgEntityMap = new Map([[keyvalue[0], keyvalue[1]], ...this.cacheService.chatMsgEntityMap]);
-        });
+        setTimeout(() => {
+          // 从缓存获取消息
+          this.loadingMessage = false;
+          const last = new Array(...this.cacheService.chatMsgEntityMapTemp.entries()).reverse().splice(0, 15);
+          const appendAfter = new Map();
+          last.forEach(keyvalue => {
+            this.cacheService.chatMsgEntityMapTemp.delete(keyvalue[0]);
+            appendAfter.set(keyvalue[0], keyvalue[1]);
+          });
+          this.cacheService.chatMsgEntityMap = new Map([...appendAfter, ...this.cacheService.chatMsgEntityMap]);
 
-        if(goBottom) {
-          this.scrollToBottom("auto");
-        }
-        console.dir("拉取缓存消息");
+          setTimeout(() => {
+            document.getElementById(last.splice(-1)[0][0]).scrollIntoView();
+          });
+
+
+          if(goBottom) {
+            this.scrollToBottom("auto");
+          }
+          console.dir("拉取缓存消息");
+        }, 500);
       } else if(this.cacheService.chatMsgEntityMap.size > 0) {
         // 从漫游接口获取数据
         const list: ChatmsgEntityModel[] = new Array(...this.cacheService.chatMsgEntityMap.values());
@@ -665,8 +674,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit {
             this.cacheService.chatMsgEntityMap = new Map([...msgMap, ...this.cacheService.chatMsgEntityMap]);
             setTimeout(() => {
               document.getElementById(localFirstMsgFP).scrollIntoView();
-              container.scrollTop = container.scrollTop - 60;
-            }, 100);
+            });
             if(goBottom) {
               this.scrollToBottom("auto");
             }
