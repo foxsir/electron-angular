@@ -20,6 +20,7 @@ import {LocalUserService} from "@services/local-user/local-user.service";
 import {ActivatedRoute, NavigationEnd, Router, RouterEvent} from "@angular/router";
 import {WindowService} from "@services/window/window.service";
 import {UploadedFile} from "@app/factorys/upload/upload-file/upload-file.component";
+import appConfigInterface from "@app/interfaces/app-config.interface";
 
 @Component({
   selector: 'app-register',
@@ -80,7 +81,7 @@ export class RegisterComponent implements OnInit {
   }
 
   checkRegisterType() {
-    this.restService.getAppConfig().subscribe((res: NewHttpResponseInterface<any>) => {
+    this.restService.getAppConfig().subscribe((res: NewHttpResponseInterface<appConfigInterface>) => {
       if(res.data.registerType !== this.registerType) {
         if(res.data.registerType === 1) {
           this.form = this.signupFormMobile;
