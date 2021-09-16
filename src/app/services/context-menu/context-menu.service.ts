@@ -26,6 +26,8 @@ import {ElementService} from "@services/element/element.service";
 import {TransmitMessageComponent} from "@modules/user-dialogs/transmit-message/transmit-message.component";
 import {FriendAddWay} from "@app/config/friend-add-way";
 import {MessageService} from "@services/message/message.service";
+import CommonTools from "@app/common/common.tools";
+import FileMetaInterface from "@app/interfaces/file-meta.interface";
 
 @Injectable({
   providedIn: 'root'
@@ -202,9 +204,20 @@ export class ContextMenuService {
         return true;
       },
       action: (chat: ChatmsgEntityModel, messageContainer: HTMLDivElement) => {
-        alert("下载文件");
-        // chat.msgType = this.msgType.TYPE_BACK;
-        // this.quoteMessageService.setQuoteMessage(chat);
+        let file: FileMetaInterface;
+        switch (chat.msgType) {
+          case MsgType.TYPE_IMAGE:
+            CommonTools.downloadLink(chat.text, chat.date.toString());
+            break;
+          case MsgType.TYPE_FILE:
+            file = JSON.parse(chat.text);
+            CommonTools.downloadLink(file.ossFilePath, file.fileName);
+            break;
+          case MsgType.TYPE_SHORTVIDEO:
+            file = JSON.parse(chat.text);
+            CommonTools.downloadLink(file.ossFilePath, file.fileName);
+            break;
+        }
       }
     },
     transmit: {
