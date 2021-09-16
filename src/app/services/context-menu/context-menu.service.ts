@@ -169,6 +169,12 @@ export class ContextMenuService {
     repeal: {
       label: "撤回",
       visibility: (filterData: MenuFilterData): boolean => {
+        const time = new Date().getTime();
+        if(filterData.alarmItem.metadata.chatType === 'friend') {
+          if(time - filterData.chat.date > 2000 * 60) {
+            return false;
+          }
+        }
         const localUserInfo: LocalUserinfoModel = RBChatUtils.getAuthedLocalUserInfoFromCookie();
         return filterData.chat.uid.toString() === localUserInfo.userId.toString();
       },
