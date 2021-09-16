@@ -227,7 +227,7 @@ export class ContextMenuService {
             // 删除消息
             return this.cacheService.deleteMessageCache(this.currentChattingChangeService.currentChatting, [chat]).then(res => {
               // 刷新聊天数据
-              this.currentChattingChangeService.switchCurrentChatting(this.currentChattingChangeService.currentChatting).then();
+              this.cacheService.chatMsgEntityMap.delete(chat.fingerPrintOfProtocal);
             });
           }
         });
