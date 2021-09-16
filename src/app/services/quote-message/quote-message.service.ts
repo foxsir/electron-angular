@@ -5,7 +5,7 @@ import {ReplyMessageType} from "@app/interfaces/reply-message.interface";
 import {ReplyContentType} from "@app/interfaces/reply-content.interface";
 
 /**
- * 允许被回复的消息类型：文本，图片，视频，语音
+ * 允许被回复的消息类型：文本，图片，视频，语音，名片
  * 回复消息时允许回复的消息类型：本文，图片，视频，语音 【PC端没有视频，语音】
  * 引用消息服务：用来设置和订阅引用回复
  */
