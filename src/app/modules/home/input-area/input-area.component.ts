@@ -47,7 +47,8 @@ import {SelectFriendContactComponent} from "@modules/user-dialogs/select-friend-
 import {LocalUserService} from "@services/local-user/local-user.service";
 import {ForwardMessageService} from "@services/forward-message/forward-message.service";
 import { RedPocketComponent } from "@modules/user-dialogs/red-pocket/red-pocket.component";
-import {RedPacketInterface} from "@app/interfaces/red-packet.interface";
+import { RedPacketInterface } from "@app/interfaces/red-packet.interface";
+import DirectoryType from "@services/file/config/DirectoryType";
 
 @Component({
   selector: 'app-input-area',
@@ -124,14 +125,30 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
     this.subscribeAtMember();
 
       let ipcRender = window['ipcRenderer'];
-      ipcRender.on('screenshot-finished', function () {
-          console.log('screenshot finished, input-area.component.');
+      ipcRender.on('screenshot-finished', (event, base64) => {
+          console.log('screenshot finished, input-area.component. base 64: ', base64);
+
+          var base64Data = base64.replace(/^data:image\/\w+;base64,/, "");
+          let buffer = new Buffer(base64Data, 'base64');
+          let filename = new Date().getTime() + ".png";
+
+          this.fileService.upload(buffer, filename, DirectoryType.OSS_IMAGE).then(res => {
+              console.log('剪贴板图片地址：', res);
+              const message = {
+                  fileName: filename,
+                  ossFilePath: res.url,
+                  fileMd5: CommonTools.md5([filename, res.url].join("-")),
+                  fileLength: 100
+              };              
+              this.doSend(res.url, MsgType.TYPE_IMAGE, true);
+          });
       });
   }
 
   ngAfterViewInit() {
     this.subscribeForwardMessage();
   }
+
 
   private subscribeForwardMessage() {
     if(this.forwardMessageService.message) {
