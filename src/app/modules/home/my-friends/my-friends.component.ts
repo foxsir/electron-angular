@@ -10,7 +10,8 @@ const iconv = window.require('iconv-lite');
 
 class FriendData {
   public char: string;
-  public list: FriendModel[] = [];
+  // 使用map保证 FriendModel 唯一
+  public list: Map<number, FriendModel> = new Map();
 }
 
 @Component({
@@ -52,7 +53,7 @@ export class MyFriendsComponent implements OnInit {
       if(cache.friendMap) {
         this.showFriend(cache.friendMap);
       }
-    })
+    });
   }
 
   showFriend(data: Map<string, FriendModel>) {
@@ -74,10 +75,10 @@ export class MyFriendsComponent implements OnInit {
       if (results.length == 0) {
         var model = new FriendData();
         model.char = first_char;
-        model.list.push(item);
+        model.list.set(item.friendUserUid, item);
         this.frienddata.push(model);
       } else {
-        results[0].list.push(item);
+        results[0].list.set(item.friendUserUid, item);
       }
     }
 
