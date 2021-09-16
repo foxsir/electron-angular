@@ -199,7 +199,7 @@ export class CacheService {
   deleteMessageCache(alarmData: AlarmItemInterface, messages: ChatmsgEntityModel[] = null): Promise<any> {
     return localforage.getItem(this.dataKeys.alarmDataMap).then((data: Map<string, any>) => {
       const check = data.get(alarmData.alarmItem.dataId);
-      const alreadyMessageMap: Map<string, any> = !check ? new Map() : check.message;
+      const alreadyMessageMap: Map<string, ChatmsgEntityModel> = !check ? new Map() : check.message;
       if(check) {
         messages.forEach(m => {
           alreadyMessageMap.delete(m.fingerPrintOfProtocal);
