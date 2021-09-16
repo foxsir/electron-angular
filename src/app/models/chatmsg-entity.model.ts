@@ -40,5 +40,5 @@ export default class ChatmsgEntityModel {
   userAvatarFileNameForBBSCome: string = null;
   //======================================================== 专用于BBS/群聊消息的核心数据字段 START
 
-  xu_isRead_type: any = null;
+  xu_isRead_type: boolean = false;
 }
