@@ -1,4 +1,4 @@
-import {NgModule} from '@angular/core';
+import {LOCALE_ID, NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {IndexComponent} from './index/index.component';
 import {HomeRoutingModule} from './home-routing.module';
@@ -39,6 +39,10 @@ import {SearchFriendComponent} from './search-friend/search-friend.component';
 import {SearchWidgetComponent} from './search-widget/search-widget.component';
 import {ChattingAreaComponent} from './chatting-area/chatting-area.component';
 import {DialogsModule} from "@app/shared/dialogs/dialogs.module";
+
+import { registerLocaleData } from '@angular/common';
+import localeZhHans from '@angular/common/locales/zh-Hans.js';
+registerLocaleData(localeZhHans, 'zh-Hans');
 
 import {NzSwitchModule} from "ng-zorro-antd/switch";
 import {NzSelectModule} from 'ng-zorro-antd/select';
@@ -107,7 +111,8 @@ import {MatProgressBarModule} from "@angular/material/progress-bar";
     MatTooltipModule,
     MatExpansionModule,
     MatProgressBarModule,
-  ]
+  ],
+  providers: [{provide: LOCALE_ID, useValue: 'zh-Hans' }]
 })
 export class HomeModule {
 }
