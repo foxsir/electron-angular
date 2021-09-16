@@ -15,6 +15,7 @@ export class MessageQuoteComponent implements OnInit {
   public replyMsg: ChatmsgReplyTextModel;
   public replyContent: {msgType: number; msgContent: string}; // 我回复的消息
   public originContent: ChatmsgReplyOriginModel; // 原始消息
+  public contactMsg: {nickName: string}; // 名片
 
   public messageType = MessageTypeTips;
   public msgType = MsgType;
@@ -29,6 +30,10 @@ export class MessageQuoteComponent implements OnInit {
     this.replyContent = JSON.parse(this.replyMsg.msg);
     if(this.replyMsg.msgType === this.msgType.TYPE_SHORTVIDEO) {
       this.originContent = JSON.parse(this.replyMsg.reply);
+    }
+
+    if(this.replyMsg.msgType === this.msgType.TYPE_CONTACT) {
+      this.contactMsg = JSON.parse(this.replyMsg.reply);
     }
 
     this.parseMsgToJSON();

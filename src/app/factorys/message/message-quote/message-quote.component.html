@@ -13,7 +13,7 @@
 <!--  <p>{{replyMsg.msgType}}</p>-->
 <!--</ng-template>-->
 
-<!--本文，图片，视频，语音-->
+<!--本文，图片，视频，语音, 名片-->
 
 <!--{{chatMsg | json}}-->
 <!--{{replyMsg | json}}-->
@@ -45,6 +45,15 @@
       </div>
       <div class="quote-reply">
         {{replyMsg.reply}}
+      </div>
+    </div>
+
+    <div fxFlex *ngIf="replyMsg.msgType === msgType.TYPE_CONTACT" class="quote-content">
+      <div class="quote-title">
+        {{replyMsg.userName}}
+      </div>
+      <div class="quote-reply">
+        {{contactMsg.nickName}} 的名片
       </div>
     </div>
 
