@@ -17,6 +17,7 @@ import {UploadModule} from "../../factorys/upload/upload.module";
 import {TitleBarModule} from "../../factorys/title-bar/title-bar.module";
 import {MatProgressBarModule} from "@angular/material/progress-bar";
 import {NzButtonModule} from "ng-zorro-antd/button";
+import {MatCheckboxModule} from "@angular/material/checkbox";
 
 
 
@@ -26,22 +27,23 @@ import {NzButtonModule} from "ng-zorro-antd/button";
     LoginComponent,
     RegisterComponent
   ],
-  imports: [
-    CommonModule,
-    SessionRoutingModule,
-    MatTabsModule,
-    MatCardModule,
-    FlexLayoutModule,
-    MatFormFieldModule,
-    ReactiveFormsModule,
-    MatIconModule,
-    MatInputModule,
-    FormlyModule,
-    MatButtonModule,
-    UploadModule,
-    TitleBarModule,
-    MatProgressBarModule,
-    NzButtonModule,
-  ]
+    imports: [
+        CommonModule,
+        SessionRoutingModule,
+        MatTabsModule,
+        MatCardModule,
+        FlexLayoutModule,
+        MatFormFieldModule,
+        ReactiveFormsModule,
+        MatIconModule,
+        MatInputModule,
+        FormlyModule,
+        MatButtonModule,
+        UploadModule,
+        TitleBarModule,
+        MatProgressBarModule,
+        NzButtonModule,
+        MatCheckboxModule,
+    ]
 })
 export class SessionModule { }

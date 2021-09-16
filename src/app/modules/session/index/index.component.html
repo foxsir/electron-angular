@@ -3,7 +3,7 @@
     <div fxFlex="30px">
       <app-toolbar></app-toolbar>
     </div>
-    <div fxFlex>
+    <div fxFlex="100">
       <mat-card class="mat-elevation-z0">
         <mat-card-content>
           <div fxLayout="column" fxLayoutGap="20px">
@@ -49,6 +49,10 @@
           </div>
         </mat-card-content>
       </mat-card>
+    </div>
+    <div fxFlex="50px" fxLayoutAlign="center center" fxLayoutGap="4px">
+      <mat-checkbox class="example-margin" color="primary" [checked]="true" (click)="false"></mat-checkbox>
+      <span class="mat-button" (click)="openPrivacyPolicyUrl()">登录即视为同意《网络协议》和《服务协议》</span>
     </div>
   </div>
 </div>

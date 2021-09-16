@@ -1,5 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import {NavigationEnd, Router} from "@angular/router";
+import {RestService} from "@services/rest/rest.service";
+import NewHttpResponseInterface from "@app/interfaces/new-http-response.interface";
+import appConfigInterface from "@app/interfaces/app-config.interface";
+import {WindowService} from "@services/window/window.service";
 
 @Component({
   selector: 'app-index',
@@ -10,9 +14,15 @@ export class IndexComponent implements OnInit {
   registerType: number = 0;
   selectedTab: number = 0;
 
+  public appConfig: appConfigInterface;
+
   constructor(
     public router: Router,
-  ) { }
+    public restService: RestService,
+    public windowService: WindowService,
+  ) {
+    this.getAppConfig();
+  }
 
   ngOnInit(): void {
     if(this.router.url === '/session/register') {
@@ -30,6 +40,18 @@ export class IndexComponent implements OnInit {
       return this.router.navigate(["/session/login"]);
     } else {
       return this.router.navigate(["/session/register"]);
+    }
+  }
+
+  getAppConfig() {
+    this.restService.getAppConfig().subscribe((res: NewHttpResponseInterface<appConfigInterface>) => {
+      this.appConfig = res.data;
+    });
+  }
+
+  openPrivacyPolicyUrl() {
+    if(this.appConfig) {
+      this.windowService.openUrl(['http://', this.appConfig.privacyPolicyUrl].join(""));
     }
   }
 
