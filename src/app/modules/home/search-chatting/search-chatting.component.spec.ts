@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { SearchChattingComponent } from './search-chatting.component';
+import {SearchChattingComponent} from './search-chatting.component';
 
 describe('SearchChattingComponent', () => {
   let component: SearchChattingComponent;
@@ -8,9 +8,9 @@ describe('SearchChattingComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SearchChattingComponent ]
+      declarations: [SearchChattingComponent]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {

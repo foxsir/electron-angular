@@ -1,75 +1,70 @@
 <div fxFlexFill>
-    <div fxLayout="column" fxFlexFill fxLayoutGap="20px" class="mat-card mat-elevation-z0">
-        <div fxFlex="112px">
-            <div fxLayout="column" fxFlexFill>
-                <div fxFlex="50">
-                    <input nz-input placeholder="请输入搜索关键词" [(ngModel)]="keywords"
-                           (keyup)="txtSearchChange($event)"/>
-                </div>
-                <div fxFlex="50">
-                    <div fxLayout="row" fxLayoutGap="20px">
-                        <div fxFlex="33" fxLayoutAlign="center">
-                            <button mat-button (click)="currentTab = 'chat'"
-                                    [color]="currentTab === 'chat' ? 'primary' : null">
-                                聊天内容
-                            </button>
-                        </div>
-                        <div fxFlex="33" fxLayoutAlign="center">
-                            <button mat-button (click)="currentTab = 'media'"
-                                    [color]="currentTab === 'media' ? 'primary' : null">
-                                图片视频
-                            </button>
-                        </div>
-                        <div fxFlex="33" fxLayoutAlign="center">
-                            <button mat-button (click)="currentTab = 'file'"
-                                    [color]="currentTab === 'file' ? 'primary' : null">
-                                文件
-                            </button>
-                        </div>
-                    </div>
-                </div>
+  <div fxLayout="column" fxFlexFill fxLayoutGap="20px" class="mat-card mat-elevation-z0">
+    <div fxFlex="112px">
+      <div fxLayout="column" fxFlexFill>
+        <div fxFlex="50">
+          <input nz-input placeholder="请输入搜索关键词" [(ngModel)]="keywords"
+                 (keyup.enter)="txtSearchChange($event)"/>
+        </div>
+        <div fxFlex="50">
+          <div fxLayout="row" fxLayoutGap="20px">
+            <div fxFlex="33" fxLayoutAlign="center">
+              <button mat-button (click)="currentTab = 'chat'"
+                      [color]="currentTab === 'chat' ? 'primary' : null">
+                聊天内容
+              </button>
             </div>
+            <div fxFlex="33" fxLayoutAlign="center">
+              <button mat-button (click)="currentTab = 'media'"
+                      [color]="currentTab === 'media' ? 'primary' : null">
+                图片视频
+              </button>
+            </div>
+            <div fxFlex="33" fxLayoutAlign="center">
+              <button mat-button (click)="currentTab = 'file'"
+                      [color]="currentTab === 'file' ? 'primary' : null">
+                文件
+              </button>
+            </div>
+          </div>
         </div>
-        <div fxFlex style="overflow-y: auto; overflow-x: hidden;">
-            <!--聊天内容-->
-            <ng-template [ngIf]="currentTab === 'chat'">
-                <mat-list>
-                    <!--<mat-list-item class="hover-item" *ngFor="let item of list_chat" style="padding-top:10px;">-->
-                    <!--    <img src="{{item.userAvatarFileName}}" mat-list-icon style="width:44px;height:44px;" />-->
-                    <!--    <div mat-line>{{item.name}}</div>-->
-                    <!--    <div mat-line>-->
-                    <!--        <span>{{item.text}}</span>-->
-                    <!--    </div>-->
-                    <!--    <mat-action-list>-->
-                    <!--        <div fxLayout="row" fxLayoutGap="8px">-->
-                    <!--            <span>{{formatDate(item.date, 'M-dd hh:m')}}</span>-->
-                    <!--        </div>-->
-                    <!--    </mat-action-list>-->
-                    <!--</mat-list-item>-->
-                </mat-list>
-            </ng-template>
-
-            <!--图片视频-->
-            <ng-template [ngIf]="currentTab === 'media'">
-                <div fxFlexFill fxLayout="row wrap" fxLayoutGap="20px grid">
-                    <div fxFlex="25" fxFlex.md="33" fxFlex.lt-md="50" *ngFor="let i of [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]">
-                        <img src="https://material.angular.io/assets/img/examples/shiba2.jpg" style="width: 100%;" alt="">
-                    </div>
-                </div>
-            </ng-template>
-
-            <!--文件-->
-            <ng-template [ngIf]="currentTab === 'file'">
-                <mat-list>
-                    <!--<mat-list-item class="hover-item" *ngFor="let item of list_file" style="padding-top:10px;">-->
-                    <!--    <img src="{{item.userAvatarFileName}}" mat-list-icon style="width:44px;height:44px;" />-->
-                    <!--    <div mat-line>{{item.fileName}}</div>-->
-                    <!--    <div mat-line>-->
-                    <!--        <span>{{commonTools.formatFileSize(item.fileLength)}}</span>-->
-                    <!--    </div>-->
-                    <!--</mat-list-item>-->
-                </mat-list>
-            </ng-template>
-        </div>
+      </div>
     </div>
+    <div fxFlex style="overflow-y: auto; overflow-x: hidden;">
+      <!--聊天内容-->
+      <ng-template [ngIf]="currentTab === 'chat'">
+        <mat-list>
+          <mat-list-item class="hover-item" *ngFor="let chat of chatMap | keyvalue" style="padding-top:10px;">
+            <img src="{{avatarMap.get(chat.value.uid.toString())}}" mat-list-icon/>
+            <div mat-line>{{chat.value.name}}</div>
+            <div mat-line>
+              <div fxLayout="row" fxLayoutAlign="space-between">
+                <div>{{chat.value.text}}</div>
+                <div>{{chat.value.date | date:'Y-m-d H:m:ss'}}</div>
+              </div>
+            </div>
+            <mat-divider></mat-divider>
+          </mat-list-item>
+        </mat-list>
+      </ng-template>
+
+      <!--图片视频-->
+      <ng-template [ngIf]="currentTab === 'media'">
+        <div fxFlexFill fxLayout="row wrap" fxLayoutGap="20px grid">
+          <div fxFlex="25" fxFlex.md="33" fxFlex.lt-md="50" *ngFor="let image of imageMap | keyvalue">
+            <img [src]="image.value.text" style="width: 100%; height: 100%; object-fit: cover;" alt="">
+          </div>
+        </div>
+      </ng-template>
+
+      <!--文件-->
+      <ng-template [ngIf]="currentTab === 'file'">
+        <div fxFlexFill fxLayout="row wrap" fxLayoutGap="20px grid">
+          <div fxFlex="100" *ngFor="let file of fileMap | keyvalue">
+            <app-message-file [chatMsg]="file.value"></app-message-file>
+          </div>
+        </div>
+      </ng-template>
+    </div>
+  </div>
 </div>
