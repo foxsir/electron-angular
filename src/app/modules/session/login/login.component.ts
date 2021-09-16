@@ -11,6 +11,12 @@ import {CacheService} from "@services/cache/cache.service";
 import {UserModel} from "@app/models/user.model";
 import LocalUserinfoModel from "@app/models/local-userinfo.model";
 
+interface Login {
+  login: boolean;
+  userId: number,
+  token: string;
+}
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -34,7 +40,7 @@ export class LoginComponent implements OnInit {
   public onSubmit() {
     if (this.loginForm.form.valid) {
       const value = this.loginForm.form.value;
-      this.restService.submitLoginToServer(value.account, value.password).subscribe((res: NewHttpResponseInterface<any>) => {
+      this.restService.submitLoginToServer(value.account, value.password).subscribe((res: NewHttpResponseInterface<Login>) => {
         if (res.status === 200) {
           const userInfo = res.data;
           this.localUserService.update(userInfo);
@@ -42,10 +48,10 @@ export class LoginComponent implements OnInit {
             this.snackBarService.openMessage("登录成功");
             this.windowService.normalWindow();
 
-            this.cacheService.cacheMyInfo().then(() => {
+            this.cacheService.cacheMyInfo(userInfo.userId).then(() => {
               // 使用缓存中的头像
-              this.cacheService.getMyInfo().then((data: UserModel) => {
-                this.updateLocalUserInfo(data);
+              this.cacheService.getMyInfo().then((myInfo: UserModel) => {
+                this.updateLocalUserInfo(myInfo);
                 // if(data.userAvatarFileName.length > 0) {
                 //   this.myAvatar = this.dom.bypassSecurityTrustResourceUrl(data.userAvatarFileName);
                 // }

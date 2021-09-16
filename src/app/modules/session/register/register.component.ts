@@ -21,6 +21,9 @@ import {ActivatedRoute, NavigationEnd, Router, RouterEvent} from "@angular/route
 import {WindowService} from "@services/window/window.service";
 import {UploadedFile} from "@app/factorys/upload/upload-file/upload-file.component";
 import appConfigInterface from "@app/interfaces/app-config.interface";
+import {UserModel} from "@app/models/user.model";
+import {CacheService} from "@services/cache/cache.service";
+import LocalUserinfoModel from "@app/models/local-userinfo.model";
 
 @Component({
   selector: 'app-register',
@@ -60,6 +63,7 @@ export class RegisterComponent implements OnInit {
     private windowService: WindowService,
     public signupForm: SignupForm,
     public signupFormMobile: SignupMobileForm,
+    private cacheService: CacheService,
   ) {
     this.checkRegisterType();
   }
@@ -164,6 +168,15 @@ export class RegisterComponent implements OnInit {
           this.router.navigate(["/home"]).then(() => {
             this.snackBarService.openMessage("注册成功");
             this.windowService.normalWindow();
+            this.cacheService.cacheMyInfo(userInfo.userId).then(() => {
+              // 使用缓存中的头像
+              this.cacheService.getMyInfo().then((myInfo: UserModel) => {
+                this.updateLocalUserInfo(myInfo);
+                // if(data.userAvatarFileName.length > 0) {
+                //   this.myAvatar = this.dom.bypassSecurityTrustResourceUrl(data.userAvatarFileName);
+                // }
+              });
+            });
           });
         } else {
           this.snackBarService.openMessage(res.msg);
@@ -172,6 +185,27 @@ export class RegisterComponent implements OnInit {
     } else {
       this.step2Form.markAllAsTouched();
     }
+  }
+
+  updateLocalUserInfo(data: UserModel) {
+    const local: Partial<LocalUserinfoModel> = {
+      latest_login_ip: data.latestLoginIp,
+      latest_login_time: null,
+      login: true,
+      maxFriend: data.maxFriend,
+      nickname: data.nickname,
+      online: data.online,
+      userAvatarFileName: data.userAvatarFileName,
+      userDesc: data.whatSUp,
+      userType: data.userType,
+      user_mail: data.userMail,
+      user_phone: data.userPhone,
+      user_sex: data.userSex,
+      whatsUp: data.whatSUp,
+    };
+    this.localUserService.update( Object.assign(local, this.localUserService.localUserInfo) );
+
+    console.dir(this.localUserService.localUserInfo);
   }
 
 }

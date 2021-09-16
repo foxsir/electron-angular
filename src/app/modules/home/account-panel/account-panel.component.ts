@@ -146,6 +146,7 @@ export class AccountPanelComponent implements OnInit {
   logout() {
     this.router.navigate(['/']).then(() => {
       localStorage.removeItem(RBChatUtils.COOKIE_KEY_AUTHED_LOCAL_USER_INFO_ID);
+      this.cacheService.reset();
       this.windowService.loginWindow();
     });
   }

@@ -87,11 +87,11 @@ export class CacheService {
     this.initDataKeys();
   }
 
-  initDataKeys() {
+  initDataKeys(uid: number = null) {
     if(this.initDataKey === false) {
       this.initDataKey = true;
       if(this.localUserService.localUserInfo && this.localUserService.localUserInfo.userId) {
-        const userId = this.localUserService.localUserInfo.userId;
+        const userId = uid ? uid: this.localUserService.localUserInfo.userId;
         for (const key in this.dataKeys) {
           if(this.dataKeys.hasOwnProperty(key)) {
             this.dataKeys[key] = [this.dataKeys[key], CommonTools.md5(userId.toString())].join("-");
@@ -341,13 +341,24 @@ export class CacheService {
             }
           };
           // 将本地不存在的对话返回到聊天Map
-          if(chattingListCache && chattingListCache.get(dataID) === undefined) {
-            newMap.set(alarmItem.alarmItem.dataId, alarmItem);
-          }
+          newMap.set(alarmItem.alarmItem.dataId, alarmItem);
           // 同步消息
-          console.dir("chattingListCache");
-          this.syncMessage(alarmItem, protocalModel);
+          // this.syncMessage(alarmItem, protocalModel);
         });
+
+        const entries = newMap.entries();
+        const next = entries.next();
+        const loop = (alarmItem: AlarmItemInterface) => {
+          this.putChattingCache(alarmItem).then(() => {
+            const n = entries.next();
+            if(n.value) {
+              loop(n.value[1]);
+            }
+          });
+        };
+        if(next.value) {
+          loop(next.value[1]);
+        }
 
         // newList.forEach(item => {
         //   if(item.metadata.chatType === 'group') {
@@ -476,8 +487,8 @@ export class CacheService {
   /**
    * 缓存个人信息
    */
-  cacheMyInfo(): Promise<UserModel> {
-    this.initDataKeys();
+  cacheMyInfo(userId: number = null): Promise<UserModel> {
+    this.initDataKeys(userId);
 
     return new Promise((resolve, reject) => {
       const localUserInfo = this.localUserService.localUserInfo;
@@ -737,10 +748,10 @@ export class CacheService {
    */
   cacheGroupMembers(gid: string): Promise<Map<number, GroupMemberModel>> {
     return new Promise((resolve) => {
-      this.restService.submitGetGroupMembersListFromServer(gid).subscribe((res: NewHttpResponseInterface<GroupMemberModel[]>) => {
+      this.restService.submitGetGroupMembersListFromServer(gid).subscribe((res: NewHttpResponseInterface<{list: GroupMemberModel[]}>) => {
         if(res.status === 200) {
           const groupMemberMap = new Map<number, GroupMemberModel>();
-          res.data.forEach(member => {
+          res.data.list.forEach(member => {
             groupMemberMap.set(Number(member.groupUserId), member);
           });
 
@@ -842,6 +853,10 @@ export class CacheService {
 
   getNewFriendMap(): Promise<Map<number, FriendRequestModel>> {
     return localforage.getItem(this.dataKeys.newFriendMap);
+  }
+
+  reset() {
+    this.initDataKey = false;
   }
 
 }
