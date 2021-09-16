@@ -52,8 +52,8 @@
       <div class="quote-title">
         {{replyMsg.userName}}
       </div>
-      <div class="quote-reply">
-        {{contactMsg.nickName}} 的名片
+      <div class="quote-reply" fxLayoutAlign="center center">
+        <app-message-contact [chatMsg]="contactEntity"></app-message-contact>
       </div>
     </div>
 
@@ -70,7 +70,7 @@
     <div fxFlex class="quote-content">
       <div class="quote-reply">
         <ng-template [ngIf]="msgParse === null">
-         {{replyMsg.msg}}
+         {{replyContent.msgContent}}
         </ng-template>
         <ng-template [ngIf]="msgParse">
           <div *ngIf="msgParse.msgType === msgType.TYPE_TEXT">{{msgParse.msgContent}}</div>
