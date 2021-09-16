@@ -46,4 +46,8 @@ export class WindowService {
     ipcRenderer.send("openDevTools");
   }
 
+  openUrl(url: string) {
+    ipcRenderer.send("openUrl", url);
+  }
+
 }
