@@ -72,5 +72,14 @@ export default class WindowEventListen {
       this.getFocusedWindow().webContents.openDevTools();
       this.getFocusedWindow().setResizable(true);
     });
+
+    ipcMain.on("openUrl", (event, arg) => {
+      const win: BrowserWindow = new BrowserWindow({
+        frame: true,
+      });
+      win.loadURL(arg).then(() => {
+        win.show();
+      });
+    });
   }
 }
