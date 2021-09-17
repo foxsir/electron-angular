@@ -13,6 +13,7 @@ import { RestService } from "@services/rest/rest.service";
 import { DemoDialogComponent } from "@modules/setting-dialogs/demo-dialog/demo-dialog.component";
 import { DialogService } from "@services/dialog/dialog.service";
 import { GroupInfoDialogComponent } from "@modules/user-dialogs/group-info-dialog/group-info-dialog.component";
+import { LocalUserService } from "@services/local-user/local-user.service";
 
 @Component({
     selector: 'app-group-info',
@@ -34,6 +35,10 @@ export class GroupInfoComponent implements OnInit {
         invite: 0,
         gmemberCount: 0,
         createTime: ''
+    };
+    public user_clu_info = {
+        groupOwnerName: '',
+        showNickname: '',
     };
 
     public setting_data = {
@@ -65,7 +70,12 @@ export class GroupInfoComponent implements OnInit {
     public group_member_list: any[] = [];
     public group_admin_list: any[] = [];
 
-    constructor(private dom: DomSanitizer, private restService: RestService, private dialogService: DialogService) {
+    constructor(
+        private dom: DomSanitizer,
+        private restService: RestService,
+        private dialogService: DialogService,
+        private localUserService: LocalUserService
+    ) {
         
     }
 
@@ -97,6 +107,12 @@ export class GroupInfoComponent implements OnInit {
             for (let item of this.group_admin_list) {
                 item.show = true;
             }
+        });
+
+        /* 个人的在群状态 */
+        let userinfo = this.localUserService.localUserInfo;
+        this.restService.getUserClusterVo(userinfo.userId.toString(), this.currentChat.alarmItem.dataId).subscribe(res => {
+            this.user_clu_info = res.data;
         });
     }
 

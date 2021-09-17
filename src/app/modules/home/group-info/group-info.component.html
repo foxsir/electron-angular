@@ -34,10 +34,13 @@
                 <!--群基本信息编辑-->
                 <div  fxLayout="column" fxLayoutGap="10px">
                     <div fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="changeView('basic_info')">
-                        <span class="privacy-item-text">基本信息</span>
-                        <mat-icon class="mat-icon-cus" style="text-align:right;">
-                            <img [src]="arrowRightIcon" alt="" class="icon">
-                        </mat-icon>
+                        <span class="privacy-item-text">当前群主</span>
+                        <div style="display:flex;align-items:center;">
+                            <span class="privacy-item-text">{{user_clu_info.groupOwnerName}}</span>
+                            <mat-icon class="mat-icon-cus" style="text-align:right;">
+                                <img [src]="arrowRightIcon" alt="" class="icon">
+                            </mat-icon>
+                        </div>
                     </div>
 
                     <div class="split-item"></div>
@@ -144,11 +147,11 @@
                 <div fxLayout="column" fxLayoutGap="10px">
                     <div fxFlex fxLayoutAlign="space-between center">
                         <span class="privacy-item-text">当前群主</span>
-                        <span>xxx</span>
+                        <span>{{user_clu_info.groupOwnerName}}</span>
                     </div>
                     <div fxFlex fxLayoutAlign="space-between center">
                         <span class="privacy-item-text">群内昵称</span>
-                        <span>xxx</span>
+                        <span>{{user_clu_info.showNickname}}</span>
                     </div>
                     <!--<div fxFlex fxLayoutAlign="space-between center">
                         <span class="privacy-item-text">群创建者</span>

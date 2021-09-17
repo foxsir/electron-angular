@@ -28,6 +28,7 @@ import {
   getRedPacketById,
   getRemark,
   getUserBaseById,
+  getUserClusterVo,
   getUserGroupTab,
   getUserJoinGroup,
   robRedPacket,
@@ -896,6 +897,14 @@ export class RestService {
    */
   getUserBaseById(user_id: string): Observable<any> {
     return this.http.postForm(getUserBaseById, {userUid: user_id});
+    }
+
+  /**
+* 个人的在群状态
+* @param user_id
+*/
+  getUserClusterVo(user_id: string, clusterId: string): Observable<any> {
+      return this.http.get(getUserClusterVo, { userId: user_id, clusterId: clusterId });
   }
 
     /**
