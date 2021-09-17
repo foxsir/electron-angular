@@ -20,7 +20,10 @@ export class SearchWidgetComponent implements OnInit {
     public showResource: boolean = false;
     public search: string;
 
-    public alarmItemList: Map<string, AlarmItemInterface> = new Map();
+    public alarmItemList: Map<string, any> = new Map();
+
+    public find_friends: any[] = [];
+    public find_messages: any[] = [];
 
     constructor(
         private dom: DomSanitizer,
@@ -29,10 +32,15 @@ export class SearchWidgetComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        this.cacheService.getChattingList().then(res => {
+        this.cacheService.getChattingList().then( res => {
             if (res) {
-                var chatlist = Object.values(res);
-                console.log('聊天列表 01：', chatlist);
+                //var chatlist = Object.values(res);
+                //console.log('聊天列表 01：', chatlist, res);
+
+                this.alarmItemList = new Map();
+                res.forEach(item => this.alarmItemList.set(item.alarmData.alarmItem.dataId, item));
+
+                console.log('聊天列表 01：', this.alarmItemList);
             }
 
             // this.cacheService.syncChattingList(res || new Map<string, AlarmItemInterface>()).then(list => {
@@ -66,18 +74,30 @@ export class SearchWidgetComponent implements OnInit {
             return;
         }
 
-        console.log('回车确认：', this.search);
+        console.log('回车确认：', this.search, this.alarmItemList);
+        let search_low = this.search.toLowerCase();
 
-      this.alarmItemList.forEach(alarmitem => {
-        console.log('消息Model：', alarmitem);
-        this.cacheService.getChattingCache(alarmitem).then(data => {
-          console.log('消息列表：', data);
+        this.alarmItemList.forEach(item => {
+            //console.log('消息Model：', item);
+            if (item.alarmData.alarmItem.title.indexOf(search_low) != -1) {
+                this.find_friends.push(item.alarmData.alarmItem);
+            }
 
-          if (!!data) {
-
-          }
+            item.message.forEach(msg => {
+                //console.log('消息：', msg);
+                if (msg.text.indexOf(search_low) != -1) {
+                    console.log('find msg: ', msg);
+                    this.find_messages.push({
+                        avatar: item.alarmData.alarmItem.avatar,
+                        title: item.alarmData.alarmItem.title,
+                        msgContent: msg.text,
+                    });
+                }
+            });
         });
-      });
+
+        console.log('find_friends: ', this.find_friends);
+        console.log('find_messages: ', this.find_messages);
     }
 
 }
