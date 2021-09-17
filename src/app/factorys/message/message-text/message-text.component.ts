@@ -87,7 +87,6 @@ export class MessageTextComponent implements OnInit {
    */
   encode(html): string {
     return String(html)
-      .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;');
