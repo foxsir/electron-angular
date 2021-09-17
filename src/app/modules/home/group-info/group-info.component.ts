@@ -46,9 +46,6 @@ export class GroupInfoComponent implements OnInit {
         gnoticeContentTemp: '', /*群上屏信息，编辑，临时存放*/
     };
 
-    public customerServiceList: any[];
-    public groupTabList: any[];
-
     /*
      * switch_default: 默认
      * group_notice: 群公告编辑
@@ -58,10 +55,13 @@ export class GroupInfoComponent implements OnInit {
         switch_default: '群组信息',
         group_notice: '群公告编辑',
         customer_service: '专属客服配置',
-        group_tab: '群页签配置'
+        group_tab: '群页签配置',
+        manage_group_member: '群成员管理',
     };
 
     public group_notice_view_mode = "view"; /*view 或者 edit*/
+
+    public group_members: any[] = [];
 
     constructor(private dom: DomSanitizer, private restService: RestService, private dialogService: DialogService) {
         
@@ -79,22 +79,12 @@ export class GroupInfoComponent implements OnInit {
             this.setting_data.invite = this.groupData.invite == 1;
         });
 
-        /*获取群客服列表*/
-        this.restService.getGroupCustomerService(this.currentChat.alarmItem.dataId).subscribe(res => {
-            for (var i = 0; i < res.data.length; i++) {
-                res.data[i].status_switch = res.data[i].status == 0 ? false : true;
+        this.restService.submitGetGroupMembersListFromServer(this.currentChat.alarmItem.dataId).subscribe(res => {
+            console.log('群信息弹出框获取群成员：', res);
+            this.group_members = res.data.list;
+            for (let item of this.group_members) {
+                item.show = true;
             }
-            this.customerServiceList = res.data;
-            console.log('群客服数据：', this.customerServiceList);
-        });
-
-        /*获取群页签列表*/
-        this.restService.getUserGroupTab(this.currentChat.alarmItem.dataId).subscribe(res => {
-            for (var i = 0; i < res.data.length; i++) {
-                res.data[i].status_switch = res.data[i].status == 0 ? false : true;
-            }
-            this.groupTabList = res.data;
-            console.log('群页签数据：', this.groupTabList);
         });
     }
 
