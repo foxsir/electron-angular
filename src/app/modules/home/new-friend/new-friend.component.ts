@@ -65,6 +65,9 @@ export class NewFriendComponent implements OnInit {
       this.messageService.friendRequest("ok", item).then(res => {
         if(res.success) {
           this.cacheService.updateNewFriendMap(item.reqUserId, true);
+          setTimeout(() => {
+            this.cacheService.cacheFriends();
+          }, 1000);
           this.snackBarService.openMessage("已经同意");
         } else {
           this.snackBarService.openMessage("请稍后重试");
