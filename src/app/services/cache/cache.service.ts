@@ -341,7 +341,12 @@ export class CacheService {
             }
           };
           // 将本地不存在的对话返回到聊天Map
-          newMap.set(alarmItem.alarmItem.dataId, alarmItem);
+          if(chattingListCache === null) {
+            newMap.set(alarmItem.alarmItem.dataId, alarmItem);
+          } else if(chattingListCache.get(alarmItem.alarmItem.dataId)) {
+            // 如果已经有缓存， 只更新缓存有的会话
+            newMap.set(alarmItem.alarmItem.dataId, alarmItem);
+          }
           // 同步消息
           // this.syncMessage(alarmItem, protocalModel);
         });
