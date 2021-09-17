@@ -1,3 +1,4 @@
+<!--编辑：群组名称-->
 <div *ngIf="data.dialog_type === 'edit_group_name'" class="group-info-dialog-container">
     <div fxLayout="column" fxLayoutGap="20px">
         <div fxFlex><label>群组名称</label></div>
@@ -13,6 +14,7 @@
     </div>
 </div>
 
+<!--编辑：群内昵称-->
 <div *ngIf="data.dialog_type === 'edit_group_nickname'" class="group-info-dialog-container">
     <div fxLayout="column" fxLayoutGap="20px">
         <div fxFlex><label>群内昵称</label></div>
@@ -28,7 +30,7 @@
     </div>
 </div>
 
-
+<!--解散群组-->
 <div *ngIf="data.dialog_type === 'dismiss_group'" class="group-info-dialog-container">
     <div fxLayout="column" fxLayoutGap="20px">
         <div fxFlex><label>解散群组</label></div>
@@ -46,6 +48,7 @@
     </div>
 </div>
 
+<!--选择群成员-->
 <div *ngIf="data.dialog_type === 'choose_group_member'" class="group-info-dialog-container">
     <div fxLayout="column" fxLayoutGap="20px">
         <div fxFlex><label>选择接收者</label></div>
@@ -56,7 +59,7 @@
         <div fxFlex>
             <div fxLayout="column" fxLayoutGap="10px">
                 <mat-list>
-                    <mat-list-item *ngFor="let item of group_members" class="list-box">
+                    <mat-list-item *ngFor="let item of group_members" class="list-box" (click)="confirmChoose(item)" style="cursor:pointer;">
                         <img src="{{item.userAvatarFileName}}" mat-list-icon style="width:44px;height:44px;" />
                         <div mat-line>{{item.showNickname}}</div>
                         <div mat-line>最近上线：</div>

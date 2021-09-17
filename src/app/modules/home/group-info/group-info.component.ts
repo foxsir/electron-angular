@@ -57,11 +57,13 @@ export class GroupInfoComponent implements OnInit {
         customer_service: '专属客服配置',
         group_tab: '群页签配置',
         manage_group_member: '群成员管理',
+        manage_group_admin: '群管理员管理',
     };
 
     public group_notice_view_mode = "view"; /*view 或者 edit*/
 
-    public group_members: any[] = [];
+    public group_member_list: any[] = [];
+    public group_admin_list: any[] = [];
 
     constructor(private dom: DomSanitizer, private restService: RestService, private dialogService: DialogService) {
         
@@ -79,10 +81,20 @@ export class GroupInfoComponent implements OnInit {
             this.setting_data.invite = this.groupData.invite == 1;
         });
 
+        /* 获取群成员列表 */
         this.restService.submitGetGroupMembersListFromServer(this.currentChat.alarmItem.dataId).subscribe(res => {
             console.log('群信息弹出框获取群成员：', res);
-            this.group_members = res.data.list;
-            for (let item of this.group_members) {
+            this.group_member_list = res.data.list;
+            for (let item of this.group_member_list) {
+                item.show = true;
+            }
+        });
+
+        /* 获取群管理员列表 */
+        this.restService.getGroupAdminList(this.currentChat.alarmItem.dataId).subscribe(res => {
+            console.log('群信息弹出框获取群管理员：', res);
+            this.group_admin_list = res.data;
+            for (let item of this.group_admin_list) {
                 item.show = true;
             }
         });
@@ -96,42 +108,6 @@ export class GroupInfoComponent implements OnInit {
 
         this.restService.updateGroupBaseById(data).subscribe(res => {
 
-        });
-    }
-
-    /**
-     * 群客服设置
-     * @param item
-     */
-    bySwitchCustomer(item) {
-        console.log('bySwitchCustomer: ', item);
-
-        var data = {
-            clusterId: this.currentChat.alarmItem.dataId,
-            customerServiceId: item.customerServiceId,
-            status: item.status_switch == true ? 1 : 0,
-        };
-
-        this.restService.UpGroupCustomerService(data).subscribe(res => {
-            item.status = data.status;
-        });
-    }
-
-    /**
-     * 群页签配置
-     * @param item
-     */
-    bySwitchGroupTab(item) {
-        console.log('bySwitchGroupTab: ', item);
-
-        var data = {
-            clusterId: this.currentChat.alarmItem.dataId,
-            groupTabId: item.groupTabId,
-            status: item.status_switch == true ? 1 : 0,
-        };
-
-        this.restService.UpUserGroupTab(data).subscribe(res => {
-            item.status = data.status;
         });
     }
 
@@ -224,7 +200,7 @@ export class GroupInfoComponent implements OnInit {
     /*
      * 转让本群
      */
-    transferGroup() {
+    chooseGroupPeople(choose_type) {
         var data = {
             dialog_type: 'choose_group_member',
             toUserId: this.currentChat.alarmItem.dataId,

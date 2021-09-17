@@ -49,27 +49,6 @@ export class GroupInfoDialogComponent implements OnInit {
         this.dialogRef.close(result);
     }
 
-    /*
-     * 确认发送红包
-     */
-    confirmSendRedpocket() {
-        console.log('确认发送红包...');
-
-        var data = {
-            count: this.data.count.length == 0 ? '1' : this.data.count,
-            greetings: this.data.greetings,
-            money: this.data.money,
-            toUserId: this.data.toUserId,
-            word: ''
-        };
-        data['type'] = 1;
-
-        this.restService.sentRedPacket(data).subscribe(res => {
-            data['ok'] = true;
-            this.dialogRef.close(data);
-        });
-    }
-
     saveGroupInfo() {
 
     }
@@ -102,5 +81,14 @@ export class GroupInfoDialogComponent implements OnInit {
                 item.show = true;
             }
         }
+    }
+
+    /* 确认选择 */
+    confirmChoose(item) {
+        const result = {
+            ok: true,
+            item: item,
+        };
+        this.dialogRef.close(result);
     }
 }
