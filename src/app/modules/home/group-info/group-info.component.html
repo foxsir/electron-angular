@@ -82,11 +82,11 @@
                     </div>
                     <div fxFlex fxLayoutAlign="space-between center">
                         <span class="privacy-item-text">消息免打扰</span>
-                        <nz-switch [(ngModel)]="setting_data.gmute" (ngModelChange)="bySwitch('kickNotice')" nzSize="small"></nz-switch>
+                        <nz-switch [(ngModel)]="setting_data.no_disturb" (ngModelChange)="bySwitch('no_disturb')" nzSize="small"></nz-switch>
                     </div>
                     <div fxFlex fxLayoutAlign="space-between center">
                         <span class="privacy-item-text">置顶聊天</span>
-                        <nz-switch [(ngModel)]="setting_data.gmute" (ngModelChange)="bySwitch('kickNotice')" nzSize="small"></nz-switch>
+                        <nz-switch [(ngModel)]="setting_data.top_chat" (ngModelChange)="bySwitch('top_chat')" nzSize="small"></nz-switch>
                     </div>
                     <div fxFlex fxLayoutAlign="space-between center">
                         <span class="privacy-item-text">普通成员邀请好友入群</span>

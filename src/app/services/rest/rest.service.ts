@@ -28,6 +28,8 @@ import {
   getRedPacketById,
   getRemark,
   getUserBaseById,
+  noDisturbDetail,
+  topDetail,
   getUserClusterVo,
   getUserGroupTab,
   getUserJoinGroup,
@@ -898,6 +900,22 @@ export class RestService {
   getUserBaseById(user_id: string): Observable<any> {
     return this.http.postForm(getUserBaseById, {userUid: user_id});
     }
+
+  /**
+    * 查看免打扰状态
+    * @param user_id
+    */
+  noDisturbDetail(user_id: string, noDisturbId: string): Observable<any> {
+      return this.http.postForm(noDisturbDetail, { userId: user_id, noDisturbId: noDisturbId });
+  }
+
+  /**
+    * 查看置顶状态
+    * @param user_id
+    */
+  topDetail(user_id: string, topId: string): Observable<any> {
+      return this.http.get(topDetail, { userId: user_id, topId: topId });
+  }
 
   /**
 * 个人的在群状态

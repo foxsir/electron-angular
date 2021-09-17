@@ -14,6 +14,7 @@ import { DemoDialogComponent } from "@modules/setting-dialogs/demo-dialog/demo-d
 import { DialogService } from "@services/dialog/dialog.service";
 import { GroupInfoDialogComponent } from "@modules/user-dialogs/group-info-dialog/group-info-dialog.component";
 import { LocalUserService } from "@services/local-user/local-user.service";
+import { CacheService } from "@services/cache/cache.service";
 
 @Component({
     selector: 'app-group-info',
@@ -45,6 +46,8 @@ export class GroupInfoComponent implements OnInit {
     public setting_data = {
         gmute: false, /*全体禁言*/
         allowPrivateChat: false, /*成员互相添加好友*/
+        no_disturb: false, /*消息免打扰*/
+        top_chat: false, /*置顶聊天*/
         invite: false, /*普通成员邀请好友入群*/
 
         talkInterval: 3, /*发言时间间隔*/
@@ -76,7 +79,8 @@ export class GroupInfoComponent implements OnInit {
         private dom: DomSanitizer,
         private restService: RestService,
         private dialogService: DialogService,
-        private localUserService: LocalUserService
+        private localUserService: LocalUserService,
+        private cacheService: CacheService
     ) {
         
     }
@@ -117,17 +121,39 @@ export class GroupInfoComponent implements OnInit {
         this.restService.getUserClusterVo(userinfo.userId.toString(), this.currentChat.alarmItem.dataId).subscribe(res => {
             this.user_clu_info = res.data;
         });
+
+        /* 查看免打扰状态 */
+        this.restService.noDisturbDetail(userinfo.userId.toString(), this.currentChat.alarmItem.dataId).subscribe(res => {
+            this.setting_data.no_disturb = parseInt(res.data) == 1;
+        });
+
+        /* 查看置顶状态 */
+        this.restService.topDetail(userinfo.userId.toString(), this.currentChat.alarmItem.dataId).subscribe(res => {
+            this.setting_data.top_chat = parseInt(res.data) == 1;
+        });
     }
 
+    /**
+     * 开关设置
+     * @param key
+     */
     bySwitch(key) {
-        var data = {
-            gid: this.currentChat.alarmItem.dataId
-        };
-        data[key] = this.setting_data[key] == true ? 1 : 0,
+        if (key == 'no_disturb') {
 
-        this.restService.updateGroupBaseById(data).subscribe(res => {
+        }
+        else if (key == 'top_chat') {
+            this.cacheService.setTop(this.currentChat.alarmItem.dataId, this.currentChat.metadata.chatType, this.setting_data[key]).then();
+        }
+        else {
+            var data = {
+                gid: this.currentChat.alarmItem.dataId
+            };
+            data[key] = this.setting_data[key] == true ? 1 : 0,
 
-        });
+            this.restService.updateGroupBaseById(data).subscribe(res => {
+
+            });
+        }
     }
 
     back() {
