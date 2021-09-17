@@ -168,6 +168,10 @@ export class GroupInfoComponent implements OnInit {
         }
     }
 
+    /**
+     * 切换视图
+     * @param view
+     */
     changeView(view) {
         this.view_mode = view;
 

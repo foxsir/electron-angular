@@ -1,3 +1,9 @@
+<mat-drawer #groupConfig position="end" fxFill>
+    <div fxFlex="100">
+        <app-group-chatting-setting [drawer]="groupConfig"></app-group-chatting-setting>
+    </div>
+</mat-drawer>
+
 <div fxLayout="column" style="background: #F1F1F1;">
     <div fxFlex="100px">
         <mat-card class="mat-elevation-z0" fxLayoutAlign="stretch center" fxFlex="100" style="padding: 11px 16px;">
@@ -95,7 +101,7 @@
 
                     <div class="split-item"></div>
 
-                    <div fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="changeView('customer_service')">
+                    <div fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="groupConfig.toggle()">
                         <span class="privacy-item-text">群配置</span>
                         <mat-icon class="mat-icon-cus" style="text-align:right;">
                             <img [src]="arrowRightIcon" alt="" class="icon">
