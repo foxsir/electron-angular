@@ -197,8 +197,10 @@ export class GroupInfoComponent implements OnInit {
         });
     }
 
-    /*
-     * 转让本群
+
+    /**
+     * 选择群成员 / 群管理员
+     * @param choose_type: transfer, add_group_admin
      */
     chooseGroupPeople(choose_type) {
         var data = {
@@ -211,10 +213,13 @@ export class GroupInfoComponent implements OnInit {
         this.dialogService.openDialog(GroupInfoDialogComponent, { data: data }).then((res: any) => {
             console.log('group info dialog result: ', res);
 
-            if (res.ok == true) {
-
-
+            if (res.ok == false) {
+                return;
             }
+
+            this.restService.updateGroupAdmin(this.currentChat.alarmItem.dataId, [res.item.userUid], 1).subscribe(res => {
+                
+            });
         });
     }
 
@@ -236,6 +241,25 @@ export class GroupInfoComponent implements OnInit {
 
 
             }
+        });
+    }
+
+    /* 邀请好友 */
+    inviteFriend() {
+        var data = {
+            dialog_type: 'invite_friend',
+            toUserId: this.currentChat.alarmItem.dataId,
+            chatType: this.currentChat.metadata.chatType,
+            count: '',
+        };
+
+        this.dialogService.openDialog(GroupInfoDialogComponent, { data: data }).then((res: any) => {
+            console.log('group info dialog result: ', res);
+
+            if (res.ok == true) { //
+
+
+            } //
         });
     }
 

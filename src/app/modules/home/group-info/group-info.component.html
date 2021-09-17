@@ -107,7 +107,7 @@
                             <img [src]="arrowRightIcon" alt="" class="icon">
                         </mat-icon>
                     </div>
-                    <div fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="changetalkInterval()">
+                    <div fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="inviteFriend()">
                         <span class="privacy-item-text">邀请好友</span>
                         <mat-icon class="mat-icon-cus" style="text-align:right;">
                             <img [src]="arrowRightIcon" alt="" class="icon">
@@ -150,14 +150,14 @@
                         <span class="privacy-item-text">群内昵称</span>
                         <span>xxx</span>
                     </div>
-                    <div fxFlex fxLayoutAlign="space-between center">
+                    <!--<div fxFlex fxLayoutAlign="space-between center">
                         <span class="privacy-item-text">群创建者</span>
                         <span>xxx</span>
                     </div>
                     <div fxFlex fxLayoutAlign="space-between center">
                         <span class="privacy-item-text">群创时间</span>
                         <span>{{groupData.createTime}}</span>
-                    </div>
+                    </div>-->
                 </div>
             </mat-card-content>
         </mat-card>
@@ -222,7 +222,7 @@
                     <mat-list>
                         <mat-list-item *ngFor="let item of group_admin_list" class="list-box">
                             <img src="{{item.userAvatarFileName}}" mat-list-icon style="width:44px;height:44px;" />
-                            <div mat-line>{{item.showNickname}}</div>
+                            <div mat-line>{{item.nickname}}</div>
                             <mat-divider></mat-divider>
                         </mat-list-item>
                     </mat-list>
