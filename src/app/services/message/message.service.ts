@@ -631,5 +631,25 @@ export class MessageService {
         });
     }
 
+  alreadyRead(to: string, chatType: string) {
+    const localUserInfo = this.localUserService.localUserInfo;
+    const msgBody = {
+      cy: 0,
+      f: localUserInfo.userId,
+      m: "已读",
+      m3: "PC",
+      t: to,
+      ty: MsgType.TYPE_READED
+    };
+    const typeu = chatType === 'friend' ? UserProtocalsType.MT03_OF_CHATTING_MESSAGE : UserProtocalsType.MT44_OF_GROUP$CHAT$MSG_A$TO$SERVER
+    const p: any = createCommonData2(
+      JSON.stringify(msgBody), localUserInfo.userId.toString(), to, typeu
+    );
+
+    p.QoS = true;
+    p.bridge = false;
+    this.imService.sendData(p);
+  }
+
 
 }
