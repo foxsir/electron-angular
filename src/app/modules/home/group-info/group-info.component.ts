@@ -33,6 +33,7 @@ export class GroupInfoComponent implements OnInit {
     public groupData = {
         gmute: 0,
         invite: 0,
+        allowPrivateChat: 0,
         gmemberCount: 0,
         createTime: ''
     };
@@ -42,8 +43,9 @@ export class GroupInfoComponent implements OnInit {
     };
 
     public setting_data = {
-        gmute: false,
-        invite: false,
+        gmute: false, /*全体禁言*/
+        allowPrivateChat: false, /*成员互相添加好友*/
+        invite: false, /*普通成员邀请好友入群*/
 
         talkInterval: 3, /*发言时间间隔*/
 
@@ -89,6 +91,7 @@ export class GroupInfoComponent implements OnInit {
 
             this.setting_data.gmute = this.groupData.gmute == 1;
             this.setting_data.invite = this.groupData.invite == 1;
+            this.setting_data.allowPrivateChat = this.groupData.allowPrivateChat == 1;
         });
 
         /* 获取群成员列表 */
