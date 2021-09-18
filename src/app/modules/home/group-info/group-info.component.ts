@@ -42,6 +42,7 @@ export class GroupInfoComponent implements OnInit {
         gmemberCount: 0,
         createTime: '',
         gownerUserUid: '',
+        gnotice: '',
     };
     public user_clu_info = {
         groupOwnerName: '',
@@ -57,8 +58,8 @@ export class GroupInfoComponent implements OnInit {
 
         talkInterval: 3, /*发言时间间隔*/
 
-        gnoticeContent: '', /*群上屏信息*/
-        gnoticeContentTemp: '', /*群上屏信息，编辑，临时存放*/
+        gnotice: '', /*群公告*/
+        gnotice_temp: '', /*群公告，编辑，临时存放*/
     };
 
     /*
@@ -102,6 +103,8 @@ export class GroupInfoComponent implements OnInit {
             this.setting_data.gmute = this.groupData.gmute == 1;
             this.setting_data.invite = this.groupData.invite == 1;
             this.setting_data.allowPrivateChat = this.groupData.allowPrivateChat == 1;
+
+            this.setting_data.gnotice = this.groupData.gnotice;
         });
 
         /* 获取群成员列表 */
@@ -188,7 +191,7 @@ export class GroupInfoComponent implements OnInit {
 
     editGroupNotice() {
         this.group_notice_view_mode = 'edit';
-        this.setting_data.gnoticeContentTemp = this.setting_data.gnoticeContent;
+        this.setting_data.gnotice_temp = this.setting_data.gnotice;
     }
 
     cancelGroupNotice() {
@@ -196,15 +199,46 @@ export class GroupInfoComponent implements OnInit {
     }
 
     saveGroupNotice() {
-        var data = {
-            gid: this.currentChat.alarmItem.dataId,
-            gnoticeContent: this.setting_data.gnoticeContentTemp
+        //console.log('userinfo: ', this.userinfo);
+        //return;
+
+        var post_data = {
+            g_notice: this.setting_data.gnotice_temp,
+            g_notice_updateuid: this.userinfo.userId,
+            g_id: this.currentChat.alarmItem.dataId,
         };
 
-        this.restService.updateGroupBaseById(data).subscribe(res => {
+        this.restService.changeGroupNotice(post_data).subscribe(res => {
+            if (res.success == false) {
+                return;
+            }
+            console.log('修改群公告成功，发送通知消息...');
             this.group_notice_view_mode = 'view';
-            this.setting_data.gnoticeContent = this.setting_data.gnoticeContentTemp;
-        });  
+            this.setting_data.gnotice = this.setting_data.gnotice_temp;
+
+            this.dialogService.confirm({ title: '通知确认', text: '群名称公告成功，是否通知全部群成员？' }).then((ok) => {
+                if (ok) {
+                    console.log('确认通知...');
+
+                    var imdata = {
+                        bridge: false,
+                        dataContent: {
+                            "time": 0, "uh": this.userinfo.userAvatarFileName,
+                            "nickName": this.userinfo.nickname, "cy": 2, "f": this.userinfo.userId,
+                            "m": "@所有人【群公告】" + this.setting_data.gnotice_temp,
+                            "m3": "pc", "t": "0000005019", "ty": this.currentChat.alarmItem.dataId
+                        },
+                        fp: '', from: this.userinfo.userId, to: this.currentChat.alarmItem.dataId,
+                        QoS: true, sm: 0, type: 2, typeu: 44,
+                    };
+                    this.messageService.sendCustomerMessage(imdata).then(res => {
+                        if (res.success === true) {
+
+                        }
+                    });
+                }
+            });
+        });
     }
 
     /*修改发言间隔*/

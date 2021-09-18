@@ -312,6 +312,10 @@ export class RestService {
         return this.restServer(MyProcessorConst.PROCESSOR_LOGIC, JobDispatchConst.LOGIC_SNS, 26, JSON.stringify(post_data));
     }
 
+    changeGroupNotice(post_data: any) {
+        return this.restServer(MyProcessorConst.PROCESSOR_LOGIC, 24, 22, JSON.stringify(post_data));
+    }
+
   /**
    * 【接口1008-1-7】用户注册接口调用.
    */

@@ -177,7 +177,7 @@
                 <div *ngIf="view_mode == 'group_notice'" fxLayout="column" fxLayoutGap="10px">
                     <div *ngIf="group_notice_view_mode == 'view'">
                         <div>
-                            <p>{{setting_data.gnoticeContent}}</p>
+                            <p>{{setting_data.gnotice}}</p>
                         </div>
                         <div style="text-align:right;">
                             <button nz-button nzType="link" class="btnsave" (click)="editGroupNotice()">编辑</button>
@@ -185,7 +185,7 @@
                     </div>
                     <div *ngIf="group_notice_view_mode == 'edit'" class="edit-group-top">
                         <div class="martop1">
-                            <textarea type="text" nz-input [(ngModel)]="setting_data.gnoticeContentTemp" class="txtcom" placeholder="请输入群公告信息"></textarea>
+                            <textarea type="text" nz-input [(ngModel)]="setting_data.gnotice_temp" class="txtcom" placeholder="请输入群公告信息"></textarea>
                         </div>
                         <div class="martop2">
                             <button nz-button nzType="link" class="btncancel" (click)="cancelGroupNotice()">取消</button>
