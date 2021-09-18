@@ -2,7 +2,11 @@ import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
-import {DialogService} from "@services/dialog/dialog.service"; // 必需
+import { DialogService } from "@services/dialog/dialog.service";
+import { DomSanitizer } from "@angular/platform-browser";
+
+import checkboxIcon from "@app/assets/icons/checkbox-unactive.svg";
+import checkboxActiveIcon from "@app/assets/icons/checkbox-active.svg";
 
 @Component({
     selector: 'app-demo-dialog',
@@ -11,30 +15,29 @@ import {DialogService} from "@services/dialog/dialog.service"; // 必需
 })
 export class DemoDialogComponent implements OnInit {
 
+    public internel_list = [3, 5, 10, 15, 20, 30, 60, 120];
+
+    public checkboxIcon = this.dom.bypassSecurityTrustResourceUrl(checkboxIcon);
+    public checkboxActiveIcon = this.dom.bypassSecurityTrustResourceUrl(checkboxActiveIcon);
+
     constructor(
         public dialogRef: MatDialogRef<DemoDialogComponent>, // 必需
         @Inject(MAT_DIALOG_DATA) public data: any, // 必需
-        private dialogService: DialogService
-    ) { }
+        private dialogService: DialogService,
+        private dom: DomSanitizer,
+    ) {
+
+    }
 
     ngOnInit(): void {
+
     }
 
-    close() {
-        const result = {};
-        this.dialogRef.close(result);
-        // this.dialogRef.close(true);
-        // this.dialogRef.close(100);
-    }
-
-    // 示例
-    demo() {
-        const data = {
-
+    cancel() {
+        const result = {
+            ok: false
         };
-        this.dialogService.openDialog(DemoDialogComponent, { data: data }).then((res: any) => {
-            console.dir(res);
-        });
+        this.dialogRef.close(result);
     }
 
     saveFriendRemark(ok) {
@@ -44,6 +47,10 @@ export class DemoDialogComponent implements OnInit {
             remark: (<any>this.data).remark,
         };
         this.dialogRef.close(result);
+    }
+
+    setInternel(item) {
+        this.data.talkInterval = item;
     }
 
     savetalkInterval(ok) {
