@@ -309,7 +309,7 @@ export class RestService {
     }
 
     jieSangGroup(post_data: any) {
-        return this.restServer(MyProcessorConst.PROCESSOR_LOGIC, JobDispatchConst.LOGIC_SNS, 26, JSON.stringify(post_data));
+        return this.restServer(1016, 24, 26, JSON.stringify(post_data));
     }
 
     changeGroupNotice(post_data: any) {
