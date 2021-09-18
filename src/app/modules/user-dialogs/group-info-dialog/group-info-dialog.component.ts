@@ -60,6 +60,11 @@ export class GroupInfoDialogComponent implements OnInit {
      */
     saveGroupInfo(change_type) {
         console.log('userinfo: ', this.userinfo);
+        if (this.data.txt_value.length == 0) {
+            this.dialogService.confirm({ title: '提示', text: '输入框不能为空！' }).then((ok) => {
+            });
+            return;
+        }
 
         if (change_type == 'group_name') {
             var post_data = {
@@ -68,11 +73,20 @@ export class GroupInfoDialogComponent implements OnInit {
                 modify_by_nickname: this.userinfo.nickname,
                 group_name: this.data.txt_value,
             };
-           
+
             this.restService.changeGroupName(post_data).subscribe(res => {
                 const result = {
                     ok: res.success,
                     new_name: post_data.group_name
+                };
+                this.dialogRef.close(result);
+            });
+        }
+        else if (change_type == 'nick_name_in_group') {
+            var post_data_2 = { groupId: this.data.toUserId, nicknameInGroup: this.data.txt_value };
+            this.restService.updateNicknameInGroup(post_data_2).subscribe(res => {
+                const result = {
+                    ok: res.ok
                 };
                 this.dialogRef.close(result);
             });

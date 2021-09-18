@@ -28,6 +28,9 @@ export const topDetail = _HTTP_SERVER_URL + "/api/user/topDetail";
 //编辑个人信息
 export const updateUserBaseById = _HTTP_SERVER_URL + "/api/user/updateUserBaseById";
 
+//修改我的群昵称
+export const updateNicknameInGroup = _HTTP_SERVER_URL + "/api/groupBase/updateNicknameInGroup";
+
 //新增个人群禁言
 export const addGroupSlience = _HTTP_SERVER_URL +"/api/groupSlience/addGroupSlience";
 

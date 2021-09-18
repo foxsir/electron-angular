@@ -41,6 +41,7 @@ import {
   updatePayKey,
   updatePrivacyConfig,
   updateUserBaseById,
+  updateNicknameInGroup,
   updRemark,
   UpGroupCustomerService,
   UpUserGroupTab,
@@ -938,6 +939,17 @@ export class RestService {
         data.userUid = localUserInfo.userId;
 
         return this.http.post(updateUserBaseById, data);
+    }
+
+    /**
+     * 修改我的群昵称
+     * @param user_id
+     */
+    updateNicknameInGroup(data: any): Observable<any> {
+        const localUserInfo = this.localUserService.getObj();
+        data.userId = localUserInfo.userId;
+
+        return this.http.post(updateNicknameInGroup, data);
     }
 
     /**
