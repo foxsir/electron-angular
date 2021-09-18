@@ -51,7 +51,7 @@
 <!--选择群成员-->
 <div *ngIf="data.dialog_type === 'choose_group_member'" class="group-info-dialog-container">
     <div fxLayout="column" fxLayoutGap="20px">
-        <div fxFlex><label>选择接收者</label></div>
+        <div fxFlex><label>添加管理员</label></div>
         <div fxFlex>
             <input type="text" nz-input [(ngModel)]="search_keywords" class="txt-border-none" placeholder="搜索..." 
                    (keyup)="txtSearchChange($event)"/>
@@ -71,6 +71,36 @@
         <div fxFlex>
             <div fxLayout="row" fxLayoutAlign="end" fxLayoutGap="10">
                 <button nz-button nzType="link" class="btncancel" (click)="cancel()">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--删除管理员-->
+<div *ngIf="data.dialog_type === 'delete_group_admin'" class="group-info-dialog-container">
+    <div fxLayout="column" fxLayoutGap="20px">
+        <div fxFlex><label>删除管理员</label></div>
+        <!--<div fxFlex>
+            <input type="text" nz-input [(ngModel)]="search_keywords" class="txt-border-none" placeholder="搜索..."
+                   (keyup)="txtSearchChange($event)" />
+        </div>-->
+        <div fxFlex>
+            <div fxLayout="column" fxLayoutGap="10px">
+                <mat-selection-list class="friend-list" #selectDeleteGroupAdmin disableRipple color="primary">
+                    <mat-list-option class="friend-list-item" *ngFor="let item of data.admin_list" [value]="item.userUid">
+                        <mat-icon mat-list-icon class="friend-avatar">
+                            <img [src]="item.userAvatarFileName" alt="">
+                        </mat-icon>
+                        <div mat-line>{{item.nickname}}</div>
+                        <mat-divider></mat-divider>
+                    </mat-list-option>
+                </mat-selection-list>
+            </div>
+        </div>
+        <div fxFlex>
+            <div fxLayout="row" fxLayoutAlign="end" fxLayoutGap="10">
+                <button nz-button nzType="link" class="btncancel" (click)="cancel()">取消</button>
+                <button nz-button nzType="link" (click)="confirmDeleteGroupAdmin(selectDeleteGroupAdmin)">确定</button>
             </div>
         </div>
     </div>

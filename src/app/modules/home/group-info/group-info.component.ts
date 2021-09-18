@@ -354,6 +354,29 @@ export class GroupInfoComponent implements OnInit {
     }
 
     /*
+     * 删除管理员
+     */
+    deleteGroupAdmin() {
+        var data = {
+            dialog_type: 'delete_group_admin',
+            toUserId: this.currentChat.alarmItem.dataId,
+            chatType: this.currentChat.metadata.chatType,
+            admin_list: this.group_admin_list
+        };
+
+        this.dialogService.openDialog(GroupInfoDialogComponent, { data: data }).then((res: any) => {
+            console.log('group info dialog result: ', res);
+
+            if (res.ok == false) {
+                return;
+            }
+            this.restService.updateGroupAdmin(this.currentChat.alarmItem.dataId, res.selectfriends, 0).subscribe(res => {
+                this.loadGroupAdminList();
+            });
+        });
+    }
+
+    /*
      * 解散本群
      */
     dismissGroup() {

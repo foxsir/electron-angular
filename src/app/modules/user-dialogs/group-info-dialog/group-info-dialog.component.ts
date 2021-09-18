@@ -131,4 +131,27 @@ export class GroupInfoDialogComponent implements OnInit {
         };
         this.dialogRef.close(result);
     }
+
+    /**
+     * 删除管理员
+     * @param friendSelect
+     */
+    confirmDeleteGroupAdmin(selectDeleteGroupAdmin: any) {
+        const names = [];
+        let selectfriends = [];
+        selectDeleteGroupAdmin.selectedOptions.selected.forEach(item => {
+            console.log('item: ', item);
+            selectfriends.push(item.value);
+            names.push(item.value.nickname);
+        });
+
+        console.log('选中的数据：', selectfriends, names);
+
+        const result = {
+            ok: true,
+            names: names,
+            selectfriends: selectfriends,
+        };
+        this.dialogRef.close(result);
+    }
 }
