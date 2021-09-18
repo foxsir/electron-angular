@@ -79,3 +79,23 @@
         padding-right:0px;
     }
 }
+
+.role-group{
+    padding: 5px 10px;
+    color:white;
+    font-size:12px;
+    border-radius:16px;
+    display:inline-block;
+}
+
+.role-group-owner{
+    background-color:#ffa701;
+}
+
+.role-group-admin{
+    background-color:#b0c8db;
+}
+
+.role-group-self{
+    background-color:#0090ff;
+}
