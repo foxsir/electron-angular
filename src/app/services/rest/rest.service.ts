@@ -316,6 +316,10 @@ export class RestService {
         return this.restServer(1016, 24, 22, JSON.stringify(post_data));
     }
 
+    inviteFriendToGroup(post_data: any) {
+        return this.restServer(1016, 24, 24, JSON.stringify(post_data));
+    }
+
   /**
    * 【接口1008-1-7】用户注册接口调用.
    */

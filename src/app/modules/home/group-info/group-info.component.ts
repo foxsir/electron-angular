@@ -396,40 +396,30 @@ export class GroupInfoComponent implements OnInit {
 
     /* 邀请好友 */
     inviteFriend() {
-        var data = {
-            dialog_type: 'invite_friend',
-            toUserId: this.currentChat.alarmItem.dataId,
-            chatType: this.currentChat.metadata.chatType,
-            count: '',
-        };
+        this.dialogService.openDialog(SelectFriendContactComponent, { width: '400px', maxHeight: '600px' }).then((friend) => {
+            if (friend) {
+                console.log('选择的好友：', friend);
+                //return;
 
-        //this.dialogService.openDialog(GroupInfoDialogComponent, { data: data }).then((res: any) => {
-        //    console.log('group info dialog result: ', res);
+                this.dialogService.confirm({ title: "消息提示", text: "确定邀请该好友入群？" }).then((ok) => {
+                    if (ok == false) {
+                        return;
+                    }
 
-        //    if (res.ok == true) { //
+                    var post_data = {
+                        invite_to_gid: this.currentChat.alarmItem.dataId,
+                        invite_uid: this.userinfo.userId,
+                        invite_nickname: this.userinfo.nickname,
+                        members: [friend.friendUserUid.toString()]
+                    };
 
-
-        //    } //
-        //});
-
-        //this.dialogService.openDialog(SelectFriendContactComponent, { width: '314px', maxHeight: '600px' }).then((friend) => {
-        //    if (friend) {
-        //        console.log('选择的好友：', friend);
-        //        //this.dialogService.confirm({ title: "消息提示", text: "确认分享联系信息到当前聊天吗？" }).then((ok) => {
-        //        //    if (ok) {
-        //        //        const messageText = JSON.stringify({
-        //        //            nickName: friend.nickname,
-        //        //            uid: friend.friendUserUid,
-        //        //        });
-        //        //        //this.doSend(messageText, MsgType.TYPE_CONTACT, true);
-        //        //    }
-        //        //});
-        //    }
-        //});
-
-        this.dialogService.openDialog(TransmitMessageComponent, { data: [], width: '314px' }).then((ok) => {
-            if (ok) {
-                
+                    this.restService.inviteFriendToGroup(post_data).subscribe(res => {
+                        if (res.success == false) {
+                            return;
+                        }
+                        this.dialogService.alert({ title: '邀请成功！', text: '' }).then((ok) => {});
+                    });
+                });
             }
         });
     }
