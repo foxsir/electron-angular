@@ -103,6 +103,17 @@ export class GroupInfoComponent implements OnInit {
         this.initGroupData();
     }
 
+    loadGroupAdminList() {
+        /* 获取群管理员列表 */
+        this.restService.getGroupAdminList(this.currentChat.alarmItem.dataId).subscribe(res => {
+            console.log('群信息弹出框获取群管理员：', res);
+            this.group_admin_list = res.data;
+            for (let item of this.group_admin_list) {
+                item.show = true;
+            }
+        });
+    }
+
     initGroupData() {
         console.log('currentChat（group-info-component）: ', this.currentChat);
 
@@ -127,14 +138,7 @@ export class GroupInfoComponent implements OnInit {
             }
         });
 
-        /* 获取群管理员列表 */
-        this.restService.getGroupAdminList(this.currentChat.alarmItem.dataId).subscribe(res => {
-            console.log('群信息弹出框获取群管理员：', res);
-            this.group_admin_list = res.data;
-            for (let item of this.group_admin_list) {
-                item.show = true;
-            }
-        });
+        this.loadGroupAdminList();
 
         /* 个人的在群状态 */
         this.userinfo = this.localUserService.localUserInfo;
@@ -344,7 +348,7 @@ export class GroupInfoComponent implements OnInit {
             }
 
             this.restService.updateGroupAdmin(this.currentChat.alarmItem.dataId, [res.item.userUid], 1).subscribe(res => {
-                
+                this.loadGroupAdminList();
             });
         });
     }
