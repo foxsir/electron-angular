@@ -15,6 +15,8 @@ import { DialogService } from "@services/dialog/dialog.service";
 import { GroupInfoDialogComponent } from "@modules/user-dialogs/group-info-dialog/group-info-dialog.component";
 import { LocalUserService } from "@services/local-user/local-user.service";
 import { CacheService } from "@services/cache/cache.service";
+import { SelectFriendContactComponent } from "@modules/user-dialogs/select-friend-contact/select-friend-contact.component";
+import { TransmitMessageComponent } from "@modules/user-dialogs/transmit-message/transmit-message.component";
 
 @Component({
     selector: 'app-group-info',
@@ -302,13 +304,34 @@ export class GroupInfoComponent implements OnInit {
             count: '',
         };
 
-        this.dialogService.openDialog(GroupInfoDialogComponent, { data: data }).then((res: any) => {
-            console.log('group info dialog result: ', res);
+        //this.dialogService.openDialog(GroupInfoDialogComponent, { data: data }).then((res: any) => {
+        //    console.log('group info dialog result: ', res);
 
-            if (res.ok == true) { //
+        //    if (res.ok == true) { //
 
 
-            } //
+        //    } //
+        //});
+
+        //this.dialogService.openDialog(SelectFriendContactComponent, { width: '314px', maxHeight: '600px' }).then((friend) => {
+        //    if (friend) {
+        //        console.log('选择的好友：', friend);
+        //        //this.dialogService.confirm({ title: "消息提示", text: "确认分享联系信息到当前聊天吗？" }).then((ok) => {
+        //        //    if (ok) {
+        //        //        const messageText = JSON.stringify({
+        //        //            nickName: friend.nickname,
+        //        //            uid: friend.friendUserUid,
+        //        //        });
+        //        //        //this.doSend(messageText, MsgType.TYPE_CONTACT, true);
+        //        //    }
+        //        //});
+        //    }
+        //});
+
+        this.dialogService.openDialog(TransmitMessageComponent, { data: [], width: '314px' }).then((ok) => {
+            if (ok) {
+                
+            }
         });
     }
 
