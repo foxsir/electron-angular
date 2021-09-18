@@ -18,6 +18,7 @@ import { CacheService } from "@services/cache/cache.service";
 import { SelectFriendContactComponent } from "@modules/user-dialogs/select-friend-contact/select-friend-contact.component";
 import { TransmitMessageComponent } from "@modules/user-dialogs/transmit-message/transmit-message.component";
 import { MessageService } from "@services/message/message.service";
+import { CurrentChattingChangeService } from "@services/current-chatting-change/current-chatting-change.service";
 
 @Component({
     selector: 'app-group-info',
@@ -88,8 +89,14 @@ export class GroupInfoComponent implements OnInit {
         private localUserService: LocalUserService,
         private cacheService: CacheService,
         private messageService: MessageService,
+        private currentChattingChangeService: CurrentChattingChangeService,
     ) {
-        
+        this.currentChattingChangeService.currentChatting$.subscribe(currentChat => {
+            console.log('会话切换...');
+            this.currentChat = currentChat;
+            this.view_mode = 'switch_default';
+            this.ngOnInit();
+        });
     }
 
     ngOnInit(): void {
