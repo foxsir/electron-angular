@@ -159,7 +159,9 @@ export class GroupInfoComponent implements OnInit {
      */
     bySwitch(key) {
         if (key == 'no_disturb') {
-
+            this.cacheService.setMute(this.currentChat.alarmItem.dataId, this.currentChat.metadata.chatType, this.setting_data[key]).then(() => {
+                //this.snackBarService.openMessage("关闭声音通知");
+            });
         }
         else if (key == 'top_chat') {
             this.cacheService.setTop(this.currentChat.alarmItem.dataId, this.currentChat.metadata.chatType, this.setting_data[key]).then();
