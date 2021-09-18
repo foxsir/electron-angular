@@ -313,7 +313,7 @@ export class RestService {
     }
 
     changeGroupNotice(post_data: any) {
-        return this.restServer(MyProcessorConst.PROCESSOR_LOGIC, 24, 22, JSON.stringify(post_data));
+        return this.restServer(1016, 24, 22, JSON.stringify(post_data));
     }
 
   /**
