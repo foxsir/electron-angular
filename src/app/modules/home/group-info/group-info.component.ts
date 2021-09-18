@@ -437,7 +437,7 @@ export class GroupInfoComponent implements OnInit {
                         invite_to_gid: this.currentChat.alarmItem.dataId,
                         invite_uid: this.userinfo.userId,
                         invite_nickname: this.userinfo.nickname,
-                        members: [friend.friendUserUid.toString()]
+                        members: [[this.currentChat.alarmItem.dataId, friend.friendUserUid.toString(), friend.nickname]]
                     };
 
                     this.restService.inviteFriendToGroup(post_data).subscribe(res => {
