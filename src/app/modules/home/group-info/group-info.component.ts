@@ -95,11 +95,15 @@ export class GroupInfoComponent implements OnInit {
             console.log('会话切换...');
             this.currentChat = currentChat;
             this.view_mode = 'switch_default';
-            this.ngOnInit();
+            this.initGroupData();
         });
     }
 
     ngOnInit(): void {
+        this.initGroupData();
+    }
+
+    initGroupData() {
         console.log('currentChat（group-info-component）: ', this.currentChat);
 
         /*获取群基本信息*/
