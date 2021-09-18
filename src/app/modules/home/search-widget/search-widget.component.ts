@@ -7,6 +7,7 @@ import { DomSanitizer } from "@angular/platform-browser";
 import { Router } from "@angular/router";
 import { CacheService } from "@services/cache/cache.service";
 import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
+import {CurrentChattingChangeService} from "@services/current-chatting-change/current-chatting-change.service";
 
 @Component({
     selector: 'app-search-widget',
@@ -28,32 +29,31 @@ export class SearchWidgetComponent implements OnInit {
     constructor(
         private dom: DomSanitizer,
         private router: Router,
-        private cacheService: CacheService
+        private cacheService: CacheService,
+        private currentChattingChangeService: CurrentChattingChangeService,
     ) { }
 
     ngOnInit(): void {
         this.cacheService.getChattingList().then( res => {
             if (res) {
-                //var chatlist = Object.values(res);
-                //console.log('聊天列表 01：', chatlist, res);
-
                 this.alarmItemList = new Map();
                 res.forEach(item => this.alarmItemList.set(item.alarmData.alarmItem.dataId, item));
 
                 console.log('聊天列表 01：', this.alarmItemList);
             }
-
-            // this.cacheService.syncChattingList(res || new Map<string, AlarmItemInterface>()).then(list => {
-            //     console.log('聊天列表 02：', list);
-            //     this.alarmItemList = list;
-            // });
         });
     }
 
+    /**
+     * 创建群
+     */
     createGroup() {
         return this.router.navigate(['/home/message/create-group']);
     }
 
+    /**
+     * 搜索好友
+     */
     searchFriend() {
         return this.router.navigate(['/home/message/search-friend']);
     }
@@ -64,11 +64,18 @@ export class SearchWidgetComponent implements OnInit {
         }
     }
 
+    /**
+     * 取消搜索
+     */
     cancelSearch() {
         this.search = null;
         this.showResource = false;
     }
 
+    /**
+     * 文本框搜索
+     * @param event
+     */
     txtSearchChange(event: KeyboardEvent) {
         if (event.key != 'Enter') {
             return;
@@ -78,9 +85,15 @@ export class SearchWidgetComponent implements OnInit {
         let search_low = this.search.toLowerCase();
 
         this.alarmItemList.forEach(item => {
-            //console.log('消息Model：', item);
+            console.log('消息Model：', item);
             if (item.alarmData.alarmItem.title.indexOf(search_low) != -1) {
-                this.find_friends.push(item.alarmData.alarmItem);
+                this.find_friends.push({
+                    avatar: item.alarmData.alarmItem.avatar,
+                    title: item.alarmData.alarmItem.title,
+                    msgContent: item.alarmData.alarmItem.msgContent,
+                    dataId: item.alarmData.alarmItem.dataId,
+                    chatType: item.alarmData.metadata.chatType,
+                });
             }
 
             item.message.forEach(msg => {
@@ -91,6 +104,8 @@ export class SearchWidgetComponent implements OnInit {
                         avatar: item.alarmData.alarmItem.avatar,
                         title: item.alarmData.alarmItem.title,
                         msgContent: msg.text,
+                        dataId: item.dataId,
+                        chatType: item.alarmData.metadata.chatType,
                     });
                 }
             });
@@ -98,6 +113,32 @@ export class SearchWidgetComponent implements OnInit {
 
         console.log('find_friends: ', this.find_friends);
         console.log('find_messages: ', this.find_messages);
+    }
+
+    /**
+     * 切换好友
+     * @param item
+     */
+    switchChatting(item: any) {
+        const alarm: AlarmItemInterface = {
+            alarmItem: {
+                alarmMessageType: item.chatType == 'friend' ? 0 : 1, // 0单聊 1临时聊天/陌生人聊天 2群聊
+                dataId: item.dataId,
+                date: "",
+                msgContent: "",
+                title: item.title,
+                avatar: item.avatar,
+            },
+            // 聊天元数据
+            metadata: {
+                chatType: "friend", // "friend" | "group"
+            },
+        };
+        this.cacheService.putChattingCache(alarm).then(() => {
+            this.currentChattingChangeService.switchCurrentChatting(alarm).then();
+            this.search = null;
+            this.showResource = false;
+        });
     }
 
 }
