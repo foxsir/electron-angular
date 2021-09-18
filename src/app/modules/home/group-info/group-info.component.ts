@@ -17,6 +17,7 @@ import { LocalUserService } from "@services/local-user/local-user.service";
 import { CacheService } from "@services/cache/cache.service";
 import { SelectFriendContactComponent } from "@modules/user-dialogs/select-friend-contact/select-friend-contact.component";
 import { TransmitMessageComponent } from "@modules/user-dialogs/transmit-message/transmit-message.component";
+import { MessageService } from "@services/message/message.service";
 
 @Component({
     selector: 'app-group-info',
@@ -33,6 +34,7 @@ export class GroupInfoComponent implements OnInit {
     public backspaceActiveIcon = this.dom.bypassSecurityTrustResourceUrl(backspaceActiveIcon);
     public arrowRightIcon = this.dom.bypassSecurityTrustResourceUrl(arrowRightIcon);
 
+    public userinfo: any;
     public groupData = {
         gmute: 0,
         invite: 0,
@@ -82,7 +84,8 @@ export class GroupInfoComponent implements OnInit {
         private restService: RestService,
         private dialogService: DialogService,
         private localUserService: LocalUserService,
-        private cacheService: CacheService
+        private cacheService: CacheService,
+        private messageService: MessageService,
     ) {
         
     }
@@ -119,18 +122,18 @@ export class GroupInfoComponent implements OnInit {
         });
 
         /* 个人的在群状态 */
-        let userinfo = this.localUserService.localUserInfo;
-        this.restService.getUserClusterVo(userinfo.userId.toString(), this.currentChat.alarmItem.dataId).subscribe(res => {
+        this.userinfo = this.localUserService.localUserInfo;
+        this.restService.getUserClusterVo(this.userinfo.userId.toString(), this.currentChat.alarmItem.dataId).subscribe(res => {
             this.user_clu_info = res.data;
         });
 
         /* 查看免打扰状态 */
-        this.restService.noDisturbDetail(userinfo.userId.toString(), this.currentChat.alarmItem.dataId).subscribe(res => {
+        this.restService.noDisturbDetail(this.userinfo.userId.toString(), this.currentChat.alarmItem.dataId).subscribe(res => {
             this.setting_data.no_disturb = parseInt(res.data) == 1;
         });
 
         /* 查看置顶状态 */
-        this.restService.topDetail(userinfo.userId.toString(), this.currentChat.alarmItem.dataId).subscribe(res => {
+        this.restService.topDetail(this.userinfo.userId.toString(), this.currentChat.alarmItem.dataId).subscribe(res => {
             this.setting_data.top_chat = parseInt(res.data) == 1;
         });
     }
@@ -250,6 +253,22 @@ export class GroupInfoComponent implements OnInit {
                 this.dialogService.confirm({ title: '通知确认', text: '群名称已修改成功，是否通知全部群成员？' }).then((ok) => {
                     if (ok) {
                         console.log('确认通知...');
+                        
+                        var imdata = {
+                            bridge: false,
+                            dataContent: {
+                                changedByUid: this.userinfo.userId,
+                                nnewGroupName: res.new_name,
+                                notificationContent: this.userinfo.nickname + '修改群名为：' + res.new_name,
+                                gid: this.currentChat.alarmItem.dataId,
+                            },
+                            fp: '', from: 0, qoS: true, sm: -1, sync: 0, type: 2, typeu: 51,
+                        };
+                        this.messageService.sendCustomerMessage(imdata).then(res => {
+                            if (res.success === true) {
+
+                            }
+                        });
                     }
                 });
             }

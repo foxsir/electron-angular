@@ -63,16 +63,16 @@ export class GroupInfoDialogComponent implements OnInit {
 
         if (change_type == 'group_name') {
             var post_data = {
+                gid: this.data.toUserId,
                 modify_by_uid: this.userinfo.userId,
-                    modify_by_nickname: this.userinfo.nickname,
-                    group_name: this.data.group_name,
-                    processorId: 1016,
-                    token: '',
+                modify_by_nickname: this.userinfo.nickname,
+                group_name: this.data.txt_value,
             };
            
             this.restService.changeGroupName(post_data).subscribe(res => {
                 const result = {
                     ok: res.success,
+                    new_name: post_data.group_name
                 };
                 this.dialogRef.close(result);
             });
