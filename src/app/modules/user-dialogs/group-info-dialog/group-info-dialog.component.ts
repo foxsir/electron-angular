@@ -4,6 +4,7 @@ import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 import { DialogService } from "@services/dialog/dialog.service"; // 必需
 import { RestService } from "@services/rest/rest.service";
+import { LocalUserService } from "@services/local-user/local-user.service";
 
 @Component({
     selector: 'app-group-info-dialog',
@@ -16,13 +17,17 @@ export class GroupInfoDialogComponent implements OnInit {
         public dialogRef: MatDialogRef<GroupInfoDialogComponent>, // 必需
         @Inject(MAT_DIALOG_DATA) public data: any, // 必需
         private dialogService: DialogService,
-        private restService: RestService
+        private restService: RestService,
+        private localUserService: LocalUserService,
     ) { }
 
     public group_members: any[] = [];
     public search_keywords = '';
+    public userinfo: any;
 
     ngOnInit(): void {
+        this.userinfo = this.localUserService.localUserInfo;
+
         /*是否设置支付密码*/
         this.restService.submitGetGroupMembersListFromServer(this.data.toUserId).subscribe(res => {
             console.log('群信息弹出框获取群成员：', res);
@@ -49,8 +54,29 @@ export class GroupInfoDialogComponent implements OnInit {
         this.dialogRef.close(result);
     }
 
-    saveGroupInfo() {
+    /**
+     * 修改群名称，群内昵称
+     * @param change_type
+     */
+    saveGroupInfo(change_type) {
+        console.log('userinfo: ', this.userinfo);
 
+        if (change_type == 'group_name') {
+            var post_data = {
+                modify_by_uid: this.userinfo.userId,
+                    modify_by_nickname: this.userinfo.nickname,
+                    group_name: this.data.group_name,
+                    processorId: 1016,
+                    token: '',
+            };
+           
+            this.restService.changeGroupName(post_data).subscribe(res => {
+                const result = {
+                    ok: res.success,
+                };
+                this.dialogRef.close(result);
+            });
+        }
     }
 
     /*

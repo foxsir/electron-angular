@@ -235,15 +235,23 @@ export class GroupInfoComponent implements OnInit {
             dialog_type: 'edit_' + column,
             toUserId: this.currentChat.alarmItem.dataId,
             chatType: this.currentChat.metadata.chatType,
+            group_name: this.currentChat.alarmItem.title,
             txt_value: '',
         };
 
         this.dialogService.openDialog(GroupInfoDialogComponent, { data: data }).then((res: any) => {
             console.log('group info dialog result: ', res);
 
-            if (res.ok == true) {
+            if (res.ok == false) {
+                return;
+            }
 
-
+            if (column == 'group_name') {
+                this.dialogService.confirm({ title: '通知确认', text: '群名称已修改成功，是否通知全部群成员？' }).then((ok) => {
+                    if (ok) {
+                        console.log('确认通知...');
+                    }
+                });
             }
         });
     }
