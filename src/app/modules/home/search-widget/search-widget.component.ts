@@ -104,7 +104,7 @@ export class SearchWidgetComponent implements OnInit {
                         avatar: item.alarmData.alarmItem.avatar,
                         title: item.alarmData.alarmItem.title,
                         msgContent: msg.text,
-                        dataId: item.dataId,
+                        dataId: item.alarmData.alarmItem.dataId,
                         chatType: item.alarmData.metadata.chatType,
                     });
                 }
@@ -131,9 +131,12 @@ export class SearchWidgetComponent implements OnInit {
             },
             // 聊天元数据
             metadata: {
-                chatType: "friend", // "friend" | "group"
+                chatType: item.chatType, // "friend" | "group"
             },
         };
+        console.log('数据：', alarm);
+        //return;
+
         this.cacheService.putChattingCache(alarm).then(() => {
             this.currentChattingChangeService.switchCurrentChatting(alarm).then();
             this.search = null;
