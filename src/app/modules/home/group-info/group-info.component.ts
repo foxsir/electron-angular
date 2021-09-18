@@ -40,7 +40,8 @@ export class GroupInfoComponent implements OnInit {
         invite: 0,
         allowPrivateChat: 0,
         gmemberCount: 0,
-        createTime: ''
+        createTime: '',
+        gownerUserUid: '',
     };
     public user_clu_info = {
         groupOwnerName: '',
@@ -305,20 +306,44 @@ export class GroupInfoComponent implements OnInit {
      * 解散本群
      */
     dismissGroup() {
-        var data = {
-            dialog_type: 'dismiss_group',
-            toUserId: this.currentChat.alarmItem.dataId,
-            chatType: this.currentChat.metadata.chatType,
-            count: '',
-        };
-
-        this.dialogService.openDialog(GroupInfoDialogComponent, { data: data }).then((res: any) => {
-            console.log('group info dialog result: ', res);
-
-            if (res.ok == true) {
-
-
+        this.dialogService.confirm({ title: "解散群组", text: "此操作不可逆，请慎重操作呦" }).then((ok) => {
+            if (ok == false) {
+                return;
             }
+
+            console.log('确认解散...');
+            var post_data = {
+                g_id: this.currentChat.alarmItem.dataId,
+                //owner_uid: this.userinfo.userId,
+                //owner_nickname: this.userinfo.nickname,
+                owner_uid: this.groupData.gownerUserUid,
+                owner_nickname: this.user_clu_info.groupOwnerName,
+            };
+
+            this.restService.jieSangGroup(post_data).subscribe(res => {
+                if (res.success == false) {
+                    return;
+                }
+                console.log('解散成功，发送通知消息...');
+
+                var imdata = {
+                    bridge: false,
+                    dataContent: {
+                        "nickName": "",
+                        "uh": "", "f": "0",
+                        "t": this.currentChat.alarmItem.dataId,
+                        "m": "本群已被" + this.userinfo.nickname + "解散",
+                        "cy": 2, "ty": 90, "sync": "0"
+                    },
+                    fp: '', from: 0, qoS: true, sm: -1, sync: 0, type: 2, typeu: 48,
+                };
+                this.messageService.sendCustomerMessage(imdata).then(res => {
+                    if (res.success === true) {
+                        this.dialogService.alert({ title: '解散成功！', text: '输入框不能为空！' }).then((ok) => {
+                        });
+                    }
+                });
+            });
         });
     }
 

@@ -61,7 +61,7 @@ export class GroupInfoDialogComponent implements OnInit {
     saveGroupInfo(change_type) {
         console.log('userinfo: ', this.userinfo);
         if (this.data.txt_value.length == 0) {
-            this.dialogService.confirm({ title: '提示', text: '输入框不能为空！' }).then((ok) => {
+            this.dialogService.alert({ title: '输入框不能为空！', text: '输入框不能为空！' }).then((ok) => {
             });
             return;
         }
