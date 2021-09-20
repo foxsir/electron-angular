@@ -610,7 +610,7 @@ export class ContextMenuService {
       admins: null,
       friends: null,
       groups: null,
-      alarmItem: null,
+      alarmItem: this.currentChattingChangeService.currentChatting,
       chat: chat
     };
     if(this.contextMenuForMessage[chat.msgType]) {
