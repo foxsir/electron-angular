@@ -28,6 +28,9 @@ import {
   getRedPacketById,
   getRemark,
   getUserBaseById,
+  noDisturbDetail,
+  topDetail,
+  getUserClusterVo,
   getUserGroupTab,
   getUserJoinGroup,
   robRedPacket,
@@ -38,6 +41,7 @@ import {
   updatePayKey,
   updatePrivacyConfig,
   updateUserBaseById,
+  updateNicknameInGroup,
   updRemark,
   UpGroupCustomerService,
   UpUserGroupTab,
@@ -298,7 +302,23 @@ export class RestService {
 
     return this.restServer(MyProcessorConst.PROCESSOR_LOGIC, JobDispatchConst.LOGIC_SNS, SysActionConst.ACTION_APPEND3
       , receiveProcessedMail);
-  }
+    }
+
+    changeGroupName(post_data: any) {
+        return this.restServer(MyProcessorConst.PROCESSOR_LOGIC, JobDispatchConst.LOGIC_SNS, 8, JSON.stringify(post_data));
+    }
+
+    jieSangGroup(post_data: any) {
+        return this.restServer(1016, 24, 26, JSON.stringify(post_data));
+    }
+
+    changeGroupNotice(post_data: any) {
+        return this.restServer(1016, 24, 22, JSON.stringify(post_data));
+    }
+
+    inviteFriendToGroup(post_data: any) {
+        return this.restServer(1016, 24, 24, JSON.stringify(post_data));
+    }
 
   /**
    * 【接口1008-1-7】用户注册接口调用.
@@ -896,6 +916,30 @@ export class RestService {
    */
   getUserBaseById(user_id: string): Observable<any> {
     return this.http.postForm(getUserBaseById, {userUid: user_id});
+    }
+
+  /**
+    * 查看免打扰状态
+    * @param user_id
+    */
+  noDisturbDetail(user_id: string, noDisturbId: string): Observable<any> {
+      return this.http.postForm(noDisturbDetail, { userId: user_id, noDisturbId: noDisturbId });
+  }
+
+  /**
+    * 查看置顶状态
+    * @param user_id
+    */
+  topDetail(user_id: string, topId: string): Observable<any> {
+      return this.http.get(topDetail, { userId: user_id, topId: topId });
+  }
+
+  /**
+* 个人的在群状态
+* @param user_id
+*/
+  getUserClusterVo(user_id: string, clusterId: string): Observable<any> {
+      return this.http.get(getUserClusterVo, { userId: user_id, clusterId: clusterId });
   }
 
     /**
@@ -907,6 +951,17 @@ export class RestService {
         data.userUid = localUserInfo.userId;
 
         return this.http.post(updateUserBaseById, data);
+    }
+
+    /**
+     * 修改我的群昵称
+     * @param user_id
+     */
+    updateNicknameInGroup(data: any): Observable<any> {
+        const localUserInfo = this.localUserService.getObj();
+        data.userId = localUserInfo.userId;
+
+        return this.http.post(updateNicknameInGroup, data);
     }
 
     /**

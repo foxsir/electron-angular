@@ -19,8 +19,17 @@ export const getAppConfig = _HTTP_SERVER_URL +"/api/appConfig/getAppConfig";
 //查询资料
 export const getUserBaseById = _HTTP_SERVER_URL + "/api/user/getUserBaseById";
 
+//查看免打扰状态
+export const noDisturbDetail = _HTTP_SERVER_URL + "/api/user/noDisturbDetail";
+
+//查看置顶状态
+export const topDetail = _HTTP_SERVER_URL + "/api/user/topDetail";
+
 //编辑个人信息
 export const updateUserBaseById = _HTTP_SERVER_URL + "/api/user/updateUserBaseById";
+
+//修改我的群昵称
+export const updateNicknameInGroup = _HTTP_SERVER_URL + "/api/groupBase/updateNicknameInGroup";
 
 //新增个人群禁言
 export const addGroupSlience = _HTTP_SERVER_URL +"/api/groupSlience/addGroupSlience";
