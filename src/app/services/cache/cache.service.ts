@@ -111,7 +111,7 @@ export class CacheService {
     alarmData: AlarmItemInterface, messages: ChatmsgEntityModel | ChatmsgEntityModel[] = null, position: 'top' | 'end' = 'end'
   ): Promise<any> {
     return new Promise((resolve, reject) => {
-      localforage.getItem(this.dataKeys.alarmDataMap).then((data: Map<string, any>) => {
+      localforage.getItem(this.dataKeys.alarmDataMap).then((data: AlarmDataMap) => {
         // 缓存中没有数据
         const cache = new Map();
         if(messages !== null) {
@@ -130,7 +130,7 @@ export class CacheService {
 
         if (data === null) {
           const map = new Map();
-          map.set(alarmData.alarmItem.dataId, {
+          map.set(alarmData.alarmItem.dataId.toString(), {
             alarmData: alarmData,
             message: cache,
           });
@@ -140,8 +140,8 @@ export class CacheService {
           });
         } else {
           // 有数据时更新
-          const check = data.get(alarmData.alarmItem.dataId);
-          const alreadyMessageMap = !check ? new Map() : check.message;
+          const check = data.get(alarmData.alarmItem.dataId.toString());
+          const alreadyMessageMap = check && check.message ? check.message : new Map();
           if(check) {
             alarmData.metadata.unread = check.alarmData.metadata.unread;
           }
@@ -152,7 +152,7 @@ export class CacheService {
           } else {
             newMessages = new Map([...cache, ...alreadyMessageMap]);
           }
-          data.set(alarmData.alarmItem.dataId, {
+          data.set(alarmData.alarmItem.dataId.toString(), {
             alarmData: alarmData,
             message: newMessages,
           });
@@ -172,7 +172,7 @@ export class CacheService {
    */
   setChattingBadges(alarmData: AlarmItemInterface, badges: number) {
     localforage.getItem(this.dataKeys.alarmDataMap).then((data: Map<string, any>) => {
-      const check = data.get(alarmData.alarmItem.dataId);
+      const check = data.get(alarmData.alarmItem.dataId.toString());
       const alreadyMessageMap = !check ? new Map() : check.message;
       if(check) {
         if(badges > 0) {
@@ -180,13 +180,13 @@ export class CacheService {
           alarmData.metadata.unread = check.alarmData.metadata.unread + badges;
           // 如果不是静音则播放提示音
           this.getMute().then(mute => {
-            if(mute && mute.get(alarmData.alarmItem.dataId) !== true) {
+            if(mute && mute.get(alarmData.alarmItem.dataId.toString()) !== true) {
               this.soundService.messagePlay().then();
             }
           });
         }
         const map = new Map();
-        map.set(alarmData.alarmItem.dataId, {
+        map.set(alarmData.alarmItem.dataId.toString(), {
           alarmData: alarmData,
           message: alreadyMessageMap,
         });
@@ -204,14 +204,14 @@ export class CacheService {
    */
   deleteMessageCache(alarmData: AlarmItemInterface, messages: ChatmsgEntityModel[] = null): Promise<any> {
     return localforage.getItem(this.dataKeys.alarmDataMap).then((data: Map<string, any>) => {
-      const check = data.get(alarmData.alarmItem.dataId);
+      const check = data.get(alarmData.alarmItem.dataId.toString());
       const alreadyMessageMap: Map<string, ChatmsgEntityModel> = !check ? new Map() : check.message;
       if(check) {
         messages.forEach(m => {
           alreadyMessageMap.delete(m.fingerPrintOfProtocal);
         });
         const map = new Map();
-        map.set(alarmData.alarmItem.dataId, {
+        map.set(alarmData.alarmItem.dataId.toString(), {
           alarmData: alarmData,
           message: alreadyMessageMap,
         });
@@ -228,10 +228,10 @@ export class CacheService {
    */
   clearChattingCache(alarmData: AlarmItemInterface): Promise<any> {
     return localforage.getItem(this.dataKeys.alarmDataMap).then((data: Map<string, any>) => {
-      const check = data.get(alarmData.alarmItem.dataId);
+      const check = data.get(alarmData.alarmItem.dataId.toString());
       if(check) {
         const map = new Map();
-        map.set(alarmData.alarmItem.dataId, {
+        map.set(alarmData.alarmItem.dataId.toString(), {
           alarmData: alarmData,
           message: new Map(),
         });
@@ -248,9 +248,9 @@ export class CacheService {
    */
   deleteChattingCache(alarmData: AlarmItemInterface): Promise<any> {
     return localforage.getItem(this.dataKeys.alarmDataMap).then((data: Map<string, any>) => {
-      const check = data.get(alarmData.alarmItem.dataId);
+      const check = data.get(alarmData.alarmItem.dataId.toString());
       if(check) {
-        data.delete(alarmData.alarmItem.dataId);
+        data.delete(alarmData.alarmItem.dataId.toString());
         return localforage.setItem(this.dataKeys.alarmDataMap, data).then((newCache) => {
           this.cacheSource.next({alarmDataMap: newCache});
         });
@@ -265,7 +265,7 @@ export class CacheService {
   removeChattingCache(alarmData: AlarmItemInterface): Promise<Map<string, ChatmsgEntityModel>> {
     return new Promise((resolve, reject) => {
       localforage.getItem(this.dataKeys.alarmDataMap).then((data: Map<string, any>) => {
-        data.delete(alarmData.alarmItem.dataId);
+        data.delete(alarmData.alarmItem.dataId.toString());
         localforage.setItem(this.dataKeys.alarmDataMap, data).then((res) => {
           resolve(res);
         });
@@ -283,7 +283,7 @@ export class CacheService {
         if (data === null) {
           resolve(data);
         } else {
-          const cache = data.get(alarmData.alarmItem.dataId);
+          const cache = data.get(alarmData.alarmItem.dataId.toString());
           resolve(!cache ? new Map() : cache.message);
         }
       });
@@ -311,6 +311,7 @@ export class CacheService {
         const newMap: Map<string, AlarmItemInterface> = new Map();
 
         res.forEach((_, dataID) => {
+          dataID = dataID.toString();
           const data: RoamLastMsgModel = res.get(dataID);
           const protocalModel: ProtocalModel = JSON.parse(data.lastMsg);
           const dataContent: ProtocalModelDataContent = JSON.parse(protocalModel.dataContent);
@@ -320,6 +321,10 @@ export class CacheService {
           if(data.chatType === 'friend' && friends && friends.get(dataID)) {
             title = friends.get(dataID).nickname;
             avatar = friends.get(dataID).userAvatarFileName;
+            if(avatar.includes('http') === false) {
+              avatar = this.avatarService.defaultLocalAvatar;
+            }
+
           } else if(groups && groups.get(dataID)) {
             title = groups.get(dataID).gname;
             avatar = groups.get(dataID).avatar;
@@ -348,7 +353,7 @@ export class CacheService {
             newMap.set(alarmItem.alarmItem.dataId, alarmItem);
           }
           // 同步消息
-          // this.syncMessage(alarmItem, protocalModel);
+          this.syncMessage(alarmItem, protocalModel.fp);
         });
 
         const entries = newMap.entries();
@@ -386,7 +391,8 @@ export class CacheService {
       this.messageRoamService.getAllLastMessage().then((res: RoamLastMsgModel[]) => {
         const all = new Map();
         res.forEach(item => {
-          all.set(item.uid || item.gid, item);
+          const dataID = item.uid || item.gid;
+          all.set(dataID.toString(), item);
         });
         resolve(all);
       });
@@ -421,8 +427,11 @@ export class CacheService {
     this.restService.getUserJoinGroup().subscribe((res: NewHttpResponseInterface<GroupModel[]>) => {
       if(res.status === 200) {
         const groupMap = new Map<string, GroupModel>();
+        console.dir(res)
         res.data.forEach(g => {
-          groupMap.set(g.gid, g);
+          if(g) {
+            groupMap.set(g.gid, g);
+          }
         });
         localforage.setItem(this.dataKeys.groupMap, groupMap).then((newCache) => {
           this.cacheSource.next({groupMap: newCache});
@@ -528,9 +537,10 @@ export class CacheService {
   /**
    * 同步其他客户端更新的消息
    * @param alarmItem
-   * @param protocal
+   * @param remoteFP
+   * @param page
    */
-  private syncMessage(alarmItem: AlarmItemInterface, protocal: ProtocalModel) {
+  private syncMessage(alarmItem: AlarmItemInterface, remoteFP: string, page: number = 0) {
     this.getChattingCache(alarmItem).then((data: Map<string, any>) => {
       let localLastMsgFP = "";
       if(data && data.size) {
@@ -538,16 +548,18 @@ export class CacheService {
         const localLastMsg: ChatmsgEntityModel[] = list.slice(-1);
         localLastMsgFP = localLastMsg[0].fingerPrintOfProtocal;
       }
-      if(localLastMsgFP !== protocal.fp) {
+      if(localLastMsgFP !== remoteFP) {
         if(alarmItem.metadata.chatType === 'friend') {
           this.historyMessageService.getFriendMessage(
             alarmItem,
-            {start: localLastMsgFP, end: protocal.fp},
+            {start: localLastMsgFP, end: remoteFP},
+            page,
           'end',
-            0
+            100
           ).subscribe(res => {
             if(res.status === 200 && res.data) {
               const entityList = [];
+              // let checkLocalLastMsg = false;
               res.data.list.forEach(msg => {
                 const msgJson: ProtocalModel = JSON.parse(msg);
                 let chatMsgEntity: ChatmsgEntityModel;
@@ -561,9 +573,16 @@ export class CacheService {
                     msgJson.from, alarmItem.alarmItem.title, dataContent.m, msgJson.recvTime, dataContent.ty, msgJson.fp
                   );
                 }
+                // if(localLastMsgFP === chatMsgEntity.fingerPrintOfProtocal) {
+                //   checkLocalLastMsg = true;
+                // }
                 entityList.unshift(chatMsgEntity);
               });
               this.putChattingCache(alarmItem, entityList).then(() => {
+                // if(checkLocalLastMsg === false && entityList.length > 0) {
+                //   console.dir('friend friend friend friend')
+                //   this.syncMessage(alarmItem, entityList[0].fingerPrintOfProtocal, page + 1);
+                // }
                 this.setChattingBadges(alarmItem, alarmItem.metadata.unread);
               });
             }
@@ -571,28 +590,37 @@ export class CacheService {
         } else if(alarmItem.metadata.chatType === 'group') {
           this.historyMessageService.getGroupMessage(
             alarmItem,
-            {start: localLastMsgFP, end: protocal.fp},
+            {start: localLastMsgFP, end: remoteFP},
+            page,
             'end',
-            0
+            100
           ).subscribe(res => {
             if(res.status === 200 && res.data) {
               const entityList = [];
+              // let checkLocalLastMsg = false;
               res.data.list.forEach(msg => {
                 const msgJson: ProtocalModel = JSON.parse(msg);
                 let chatMsgEntity: ChatmsgEntityModel;
-                const dataContent = JSON.parse(msgJson.dataContent);
+                const dataContent: ProtocalModelDataContent = JSON.parse(msgJson.dataContent);
                 if(msgJson.from === this.localUserService.localUserInfo.userId.toString()) {
                   chatMsgEntity = this.messageEntityService.prepareSendedMessage(
                     dataContent.m, msgJson.recvTime, msgJson.fp, dataContent.ty
                   );
                 } else {
                   chatMsgEntity = this.messageEntityService.prepareRecievedMessage(
-                    msgJson.from, "nickName", dataContent.m, msgJson.recvTime, dataContent.ty, msgJson.fp
+                    msgJson.from, dataContent.nickName, dataContent.m, msgJson.recvTime, dataContent.ty, msgJson.fp
                   );
                 }
+                // if(localLastMsgFP === chatMsgEntity.fingerPrintOfProtocal) {
+                //   checkLocalLastMsg = true;
+                // }
                 entityList.unshift(chatMsgEntity);
               });
-              this.putChattingCache(alarmItem, entityList).then(() => {
+              this.putChattingCache(alarmItem, entityList).then((newCache) => {
+                // if(checkLocalLastMsg === false && entityList.length > 0) {
+                //   console.dir('group group group group')
+                //   this.syncMessage(alarmItem, entityList[0].fingerPrintOfProtocal, page + 1);
+                // }
                 this.setChattingBadges(alarmItem, alarmItem.metadata.unread);
               });
             }
@@ -830,7 +858,7 @@ export class CacheService {
           if(cache) {
             map.forEach(m => {
               cache.delete(m.reqUserId);
-            })
+            });
             cache = new Map([...map, ...cache]);
             localforage.setItem(this.dataKeys.newFriendMap, cache).then(() => {
               this.cacheSource.next({newFriendMap: cache});
