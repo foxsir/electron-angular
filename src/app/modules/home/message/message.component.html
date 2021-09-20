@@ -11,7 +11,7 @@
                [fxFlexOrder]="topMap.get(alarm.value.alarmData.alarmItem.dataId) ? topMapOfArray.indexOf(alarm.value.alarmData.alarmItem.dataId) : Infinity"
                [ngClass]="{'top': topMap.get(alarm.value.alarmData.alarmItem.dataId)}">
             <mat-card class="mat-elevation-z0"
-                      [ngClass]="{'active-chatting': alarm.value.alarmData.alarmItem.dataId === currentChat?.alarmItem.dataId}"
+                      [ngClass]="{'active-chatting': alarm.value.alarmData.alarmItem.dataId.toString() === currentChat?.alarmItem.dataId.toString()}"
                       style="background: transparent;"
                       (click)="switchChat(alarm.value.alarmData);"
                       (contextmenu)="contextMenuForChatting($event, createPlanMenuTrigger, span, alarm.value.alarmData)">

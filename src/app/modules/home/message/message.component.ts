@@ -252,7 +252,6 @@ export class MessageComponent implements OnInit, AfterViewInit {
    */
   private subscribeChattingListUpdate() {
     this.cacheService.cacheUpdate$.subscribe(cache => {
-      console.dir("subscribe cache");
       if(cache.alarmDataMap) {
         this.alarmItemList.clear();
         this.alarmItemList = cache.alarmDataMap;
