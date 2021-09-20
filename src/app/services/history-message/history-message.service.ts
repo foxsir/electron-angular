@@ -48,11 +48,12 @@ export class HistoryMessageService {
    * 获取单聊历史消息
    * @param alarmItem
    * @param area
+   * @param page
    * @param position top: 向上拉取 end：向下拉取
    * @param size
    */
   getFriendMessage(
-    alarmItem: AlarmItemInterface, area: {start: string; end?: string}, position: 'top' | 'end', size?: number
+    alarmItem: AlarmItemInterface, area: {start: string; end?: string}, page: number, position: 'top' | 'end', size?: number
   ): Observable<NewHttpResponseInterface<HistoryData>> {
     const params = new QueryFriend();
     params.page = 0;
@@ -62,12 +63,12 @@ export class HistoryMessageService {
 
     if(position === 'top') {
       // to 以为fingerPrintOfProtocal为基点拉去旧消息
+      params.to = "";
       params.from = area.start;
     } else {
       // from 以为fingerPrintOfProtocal为基点拉去新消息
-      delete params.pageSize;
-      params.from = area.start; // 开始uuid
-      params.to = area.end; // 最新一条消息uuid
+      params.from = area.end; // 开始uuid
+      params.to = ""; // 最新一条消息uuid
     }
 
     return this.http.get(GetFriendHistory, params);
@@ -77,11 +78,12 @@ export class HistoryMessageService {
    * 获取群聊历史消息
    * @param alarmItem
    * @param area
+   * @param page
    * @param position top: 向上拉取 end：向下拉取
    * @param size
    */
   getGroupMessage(
-    alarmItem: AlarmItemInterface, area: {start: string; end?: string}, position: 'top' | 'end', size?: number
+    alarmItem: AlarmItemInterface, area: {start: string; end?: string}, page: number, position: 'top' | 'end', size?: number
   ): Observable<NewHttpResponseInterface<HistoryData>> {
     const params = new QueryGroup();
     params.page = 0;
@@ -90,11 +92,12 @@ export class HistoryMessageService {
 
     if(position === 'top') {
       // to 以为fingerPrintOfProtocal为基点拉去旧消息
-      params.to = area.start;
+      params.to = "";
+      params.from = area.start;
     } else {
       // from 以为fingerPrintOfProtocal为基点拉去新消息
-      params.from = area.start; // 开始uuid
-      params.to = area.end; // 最新一条消息uuid
+      params.from = area.end; // 开始uuid
+      params.to = ""; // 最新一条消息uuid
     }
     return this.http.get(GetGroupHistory, params);
   }
