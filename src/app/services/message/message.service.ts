@@ -242,8 +242,6 @@ export class MessageService {
           msgBody = this.constructFriendChatMsgBody(fromUid, friendUID, msgContent, msgType);
           // 构建建IM协议报文包（即Protocal对象，
           // 详见：http://docs.52im.net/extend/docs/api/mobileimsdk/server/net/openmob/mobileimsdk/server/protocal/Protocal.html）
-          console.dir(msgBody);
-          console.dir(friendUID);
           const p: any = createCommonData2(JSON.stringify(msgBody), fromUid, friendUID, UserProtocalsType.MT03_OF_CHATTING_MESSAGE);
           // 将消息通过websocket发送出去
           // QoS = true 需要质量保证
