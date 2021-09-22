@@ -10,7 +10,6 @@ import {MessageEntityService} from "@services/message-entity/message-entity.serv
 import {TempMessageService} from "@services/temp-message/temp-message.service";
 import {GroupMessageService} from "@services/group-message/group-message.service";
 import {GroupsProviderService} from "@services/groups-provider/groups-provider.service";
-import {RosterProviderService} from "@services/roster-provider/roster-provider.service";
 import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 import {ImService} from "@services/im/im.service";
 
@@ -37,6 +36,7 @@ import netDisConnect from "@app/assets/icons/net-disconnect.svg";
 import {UserModel} from "@app/models/user.model";
 import {SoundService} from "@services/sound/sound.service";
 import {MiniUiService} from "@services/mini-ui/mini-ui.service";
+import {DatabaseService} from "@services/database/database.service";
 
 // import svg end
 
@@ -106,11 +106,20 @@ export class IndexComponent implements OnInit {
     private avatarService: AvatarService,
     private cacheService: CacheService,
     private miniUiService: MiniUiService,
+    private databaseService: DatabaseService,
   ) {
     this.router.events.subscribe(e => {
       if (e instanceof NavigationEnd) {
         this.currentRouter = this.router.url;
       }
+    });
+    this.connectDB();
+  }
+
+  connectDB() {
+    const userInfo = this.localUserService.localUserInfo;
+    this.databaseService.connectionDB(userInfo.userId.toString()).then((connect) => {
+      console.dir("connect: " + connect);
     });
   }
 
