@@ -32,6 +32,7 @@ import {RestService} from "@services/rest/rest.service";
 import {CacheService} from "@services/cache/cache.service";
 import {UploadedFile} from "@app/factorys/upload/upload-file/upload-file.component";
 import {UserModel} from "@app/models/user.model";
+import {DatabaseService} from "@services/database/database.service";
 // import icons end
 
 @Component({
@@ -103,6 +104,7 @@ export class AccountPanelComponent implements OnInit {
     private windowService: WindowService,
     private restService: RestService,
     private cacheService: CacheService,
+    private databaseService: DatabaseService,
   ) {
   }
 
@@ -148,6 +150,8 @@ export class AccountPanelComponent implements OnInit {
       localStorage.removeItem(RBChatUtils.COOKIE_KEY_AUTHED_LOCAL_USER_INFO_ID);
       this.cacheService.reset();
       this.windowService.loginWindow();
+      // 关闭数据库链接
+      this.databaseService.disconnectDB();
     });
   }
 
