@@ -115,43 +115,56 @@ export class CreateGroupComponent implements OnInit {
     }
   }
 
-  doCreate() {
-    const localUser = this.localUserService.getObj();
-    const localUserUid = localUser.userId;
-    const localUserNickname = "foxsir";
-    const members: GroupMember[] = [];
-    this.selectedFriends.forEach(friend => {
-      members.push({
-        groupUserId: "",
-        isAdmin: "",
-        mute: "",
-        nickname: friend.nickname,
-        userAvatarFileName: friend.userAvatarFileName,
-        // "https://strawberry-im.oss-cn-shenzhen.aliyuncs.com/default_portrait/avatar_man_288.png",
-        user_uid: friend.friendUserUid.toString(),
-      });
-    });
-    this.restService.submitCreateGroupToServer(localUserUid, localUserNickname, members).subscribe((res: HttpResponseInterface) => {
-      const returnValue = JSON.parse(res.returnValue);
-      const alarmData: AlarmItemInterface = {
-        alarmItem: {
-          alarmMessageType: 0,
-          dataId: returnValue.g_id,
-          date: new Date(returnValue.create_time).getTime().toString(),
-          msgContent: "",
-          title: returnValue.g_name,
-          avatar: returnValue.avatar,
-        },
-        metadata: {
-          chatType: 'group'
-        }
-      };
-      if(res.success) {
-        this.cacheService.putChattingCache(alarmData).then(() => {
-          this.currentChattingChangeService.switchCurrentChatting(alarmData).then();
+    doCreate() {
+        const localUser = this.localUserService.getObj();
+        console.log('登录的用户信息：', localUser);
+        //return;
+
+        const localUserUid = localUser.userId;
+        const localUserNickname = "foxsir";
+        const members: GroupMember[] = [];
+        this.selectedFriends.forEach(friend => {
+            members.push({
+                groupUserId: "",
+                isAdmin: "",
+                mute: "",
+                nickname: friend.nickname,
+                userAvatarFileName: friend.userAvatarFileName,
+                // "https://strawberry-im.oss-cn-shenzhen.aliyuncs.com/default_portrait/avatar_man_288.png",
+                user_uid: friend.friendUserUid.toString(),
+            });
         });
-      }
-    });
-  }
+
+        members.push({
+            groupUserId: "",
+            isAdmin: "",
+            mute: "",
+            nickname: localUser.nickname,
+            userAvatarFileName: localUser.userAvatarFileName,
+            user_uid: localUser.userId.toString(),
+        });
+
+        this.restService.submitCreateGroupToServer(localUserUid, localUser.nickname, members).subscribe((res: HttpResponseInterface) => {
+            const returnValue = JSON.parse(res.returnValue);
+            const alarmData: AlarmItemInterface = {
+                alarmItem: {
+                    alarmMessageType: 0,
+                    dataId: returnValue.g_id,
+                    date: new Date(returnValue.create_time).getTime().toString(),
+                    msgContent: "",
+                    title: returnValue.g_name,
+                    avatar: returnValue.avatar,
+                },
+                metadata: {
+                    chatType: 'group'
+                }
+            };
+            if (res.success) {
+                this.cacheService.putChattingCache(alarmData).then(() => {
+                    this.currentChattingChangeService.switchCurrentChatting(alarmData).then();
+                });
+            }
+        });
+    }
 
 }
