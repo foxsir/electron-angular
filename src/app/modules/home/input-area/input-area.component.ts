@@ -126,7 +126,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
 
       let ipcRender = window['ipcRenderer'];
       ipcRender.on('screenshot-finished', (event, base64) => {
-          console.log('screenshot finished, input-area.component. base 64: ', base64);
+          //console.log('screenshot finished, input-area.component. base 64: ', base64);
 
           var base64Data = base64.replace(/^data:image\/\w+;base64,/, "");
           let buffer = new Buffer(base64Data, 'base64');
@@ -134,13 +134,25 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
 
           this.fileService.upload(buffer, filename, DirectoryType.OSS_IMAGE).then(res => {
               console.log('剪贴板图片地址：', res);
-              const message = {
-                  fileName: filename,
-                  ossFilePath: res.url,
-                  fileMd5: CommonTools.md5([filename, res.url].join("-")),
-                  fileLength: 100
-              };              
-              this.doSend(res.url, MsgType.TYPE_IMAGE, true);
+              //const message = {
+              //    fileName: filename,
+              //    ossFilePath: res.url,
+              //    fileMd5: CommonTools.md5([filename, res.url].join("-")),
+              //    fileLength: 100
+              //};              
+              //this.doSend(res.url, MsgType.TYPE_IMAGE, true);
+
+              this.dialogService.confirm({ title: "发送图片", text: res.url, width: '500', height: '600' }).then((ok) => {
+                  if (ok) {
+                      const message = {
+                          fileName: filename,
+                          ossFilePath: res.url,
+                          fileMd5: CommonTools.md5([filename, res.url].join("-")),
+                          fileLength: 100
+                      };
+                      this.doSend(res.url, MsgType.TYPE_IMAGE, true);
+                  }
+              });
           });
       });
   }
