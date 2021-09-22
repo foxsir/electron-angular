@@ -173,24 +173,32 @@ export default class MBDataSender {
    * @return {int} 0表示数据发出成功，否则返回的是错误码
    * @see #send()
    */
-  sendCommonData(p) {
-    if (p) {
-      // byte[] b = p.toBytes();
-      const dataWithString = JSON.stringify(p);
-      const code = this.send(dataWithString);
-      if (code === 0) {
-        // 【【C2C或C2S模式下的QoS机制1/4步：将包加入到发送QoS队列中】】
-        // 如果需要进行QoS质量保证，则把它放入质量保证队列中供处理(已在存在于列
-        // 表中就不用再加了，已经存在则意味当前发送的这个是重传包哦)
-        if (p.QoS && !this.mbQoS4SendDaemon.exist(p.fp)) {
-          this.mbQoS4SendDaemon.put(p);
+    sendCommonData(p) {
+        if (p) {
+            try {
+                p.dataContent = JSON.stringify(
+                    Object.assign(JSON.parse(p.dataContent), { m3: "web" })
+                );
+            } catch (e) {
+                console.dir(e);
+            }
+
+            // byte[] b = p.toBytes();
+            const dataWithString = JSON.stringify(p);
+            const code = this.send(dataWithString);
+            if (code === 0) {
+                // 【【C2C或C2S模式下的QoS机制1/4步：将包加入到发送QoS队列中】】
+                // 如果需要进行QoS质量保证，则把它放入质量保证队列中供处理(已在存在于列
+                // 表中就不用再加了，已经存在则意味当前发送的这个是重传包哦)
+                if (p.QoS && !this.mbQoS4SendDaemon.exist(p.fp)) {
+                    this.mbQoS4SendDaemon.put(p);
+                }
+            }
+            return code;
+        } else {
+            return MBErrorCode.COMMON_INVALID_PROTOCAL;
         }
-      }
-      return code;
-    } else {
-      return MBErrorCode.COMMON_INVALID_PROTOCAL;
     }
-  }
 
   /**
    * 发送数据到服务端.
