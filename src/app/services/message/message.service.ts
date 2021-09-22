@@ -473,7 +473,7 @@ export class MessageService {
           content: messageText,
           userIds: atTargetMember,
         }),
-        m3: "PC",
+        m3: "web",
         nickName: localUserInfo.nickname,
         t: currentChat.alarmItem.dataId,
         ty: MsgType.TYPE_AITE,
@@ -524,7 +524,7 @@ export class MessageService {
           uuid: chat.fingerPrintOfProtocal,
           ...adminId
         }),
-        m3: "PC",
+        m3: "web",
         nickName: localUserInfo.nickname,
         t: currentChat.alarmItem.dataId,
         ty: MsgType.TYPE_BACK,
@@ -584,7 +584,7 @@ export class MessageService {
           uuid: chat.fingerPrintOfProtocal,
           adminId: adminId
         }),
-        m3: "android",
+        m3: "web",
         nickName: "普通管理员",
         t: currentChat.alarmItem.dataId,
         ty: MsgType.TYPE_BACK,
@@ -635,7 +635,7 @@ export class MessageService {
       cy: 0,
       f: localUserInfo.userId,
       m: "已读",
-      m3: "PC",
+      m3: "web",
       t: to,
       ty: MsgType.TYPE_READED
     };
