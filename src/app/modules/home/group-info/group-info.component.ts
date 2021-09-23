@@ -36,6 +36,7 @@ export class GroupInfoComponent implements OnInit {
     public arrowRightIcon = this.dom.bypassSecurityTrustResourceUrl(arrowRightIcon);
 
     public userinfo: any;
+    public user_role: string; /*当前用户在这个群的角色：owner, admin, common*/
     public groupData = {
         gmute: 0,
         invite: 0,
@@ -48,6 +49,8 @@ export class GroupInfoComponent implements OnInit {
     public user_clu_info = {
         groupOwnerName: '',
         showNickname: '',
+        groupOwner: '',
+        isAdmin: 0,
     };
 
     public setting_data = {
@@ -144,6 +147,17 @@ export class GroupInfoComponent implements OnInit {
         this.userinfo = this.localUserService.localUserInfo;
         this.restService.getUserClusterVo(this.userinfo.userId.toString(), this.currentChat.alarmItem.dataId).subscribe(res => {
             this.user_clu_info = res.data;
+            if (this.user_clu_info.groupOwner == this.userinfo.userId.toString()) {
+                this.user_role = 'owner';
+            }
+            else if (this.user_clu_info.isAdmin == 1) {
+                this.user_role = 'admin';
+            }
+            else {
+                this.user_role = 'common';
+            }
+
+            console.log('当前用户在这个群的角色: ', this.user_role);
         });
 
         /* 查看免打扰状态 */
