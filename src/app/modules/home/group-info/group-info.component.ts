@@ -19,6 +19,8 @@ import { SelectFriendContactComponent } from "@modules/user-dialogs/select-frien
 import { TransmitMessageComponent } from "@modules/user-dialogs/transmit-message/transmit-message.component";
 import { MessageService } from "@services/message/message.service";
 import { CurrentChattingChangeService } from "@services/current-chatting-change/current-chatting-change.service";
+import NewHttpResponseInterface from "@app/interfaces/new-http-response.interface";
+import GroupInfoModel from "@app/models/group-info.model";
 
 @Component({
     selector: 'app-group-info',
@@ -36,13 +38,13 @@ export class GroupInfoComponent implements OnInit {
     public arrowRightIcon = this.dom.bypassSecurityTrustResourceUrl(arrowRightIcon);
 
     public userinfo: any;
-    public groupData = {
+    public groupData: Partial<GroupInfoModel> = {
         gmute: 0,
         invite: 0,
         allowPrivateChat: 0,
         gmemberCount: 0,
         createTime: '',
-        gownerUserUid: '',
+        gownerUserUid: 0,
         gnotice: '',
     };
     public user_clu_info = {
@@ -118,15 +120,16 @@ export class GroupInfoComponent implements OnInit {
         console.log('currentChat（group-info-component）: ', this.currentChat);
 
         /*获取群基本信息*/
-        this.restService.getGroupBaseById(this.currentChat.alarmItem.dataId).subscribe(res => {
+        this.restService.getGroupBaseById(this.currentChat.alarmItem.dataId).subscribe((res: NewHttpResponseInterface<GroupInfoModel>) => {
             console.log('getGroupBaseById result: ', res);
-            this.groupData = res.data;
+            if(res.status === 200 && res.data) {
+              this.groupData = res.data;
+              this.setting_data.gmute = this.groupData.gmute === 1;
+              this.setting_data.invite = this.groupData.invite === 1;
+              this.setting_data.allowPrivateChat = this.groupData.allowPrivateChat === 1;
+              this.setting_data.gnotice = this.groupData.gnotice;
+            }
 
-            this.setting_data.gmute = this.groupData.gmute == 1;
-            this.setting_data.invite = this.groupData.invite == 1;
-            this.setting_data.allowPrivateChat = this.groupData.allowPrivateChat == 1;
-
-            this.setting_data.gnotice = this.groupData.gnotice;
         });
 
         /* 获取群成员列表 */
@@ -305,7 +308,7 @@ export class GroupInfoComponent implements OnInit {
                 this.dialogService.confirm({ title: '通知确认', text: '群名称已修改成功，是否通知全部群成员？' }).then((ok) => {
                     if (ok) {
                         console.log('确认通知...');
-                        
+
                         var imdata = {
                             bridge: false,
                             dataContent: {
