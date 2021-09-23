@@ -177,12 +177,12 @@ export default class MBDataSender {
     if (p) {
       // 添加设备标识
       try {
-        p.dataContent = JSON.stringify(
-          Object.assign(JSON.parse(p.dataContent), {m3: "web"})
-        );
-      } catch (e) {
-        console.dir(e);
-      }
+        if(p.typeu !== -1) {
+          p.dataContent = JSON.stringify(
+            Object.assign(JSON.parse(p.dataContent), {m3: "web"})
+          );
+        }
+      } catch (e) {}
 
       // byte[] b = p.toBytes();
       const dataWithString = JSON.stringify(p);
