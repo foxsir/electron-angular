@@ -5,8 +5,11 @@
   "private": true,
   "dependencies": {
     "@electron/remote": "1.2.0",
-    "blueimp-md5": "2.18.0",
     "agora-electron-sdk": "^3.4.2",
-    "iconv-lite": "^0.6.2"
+    "blueimp-md5": "2.18.0",
+    "iconv-lite": "^0.6.2",
+    "reflect-metadata": "0.1.13",
+    "sqlite3": "5.0.2",
+    "typeorm": "0.2.37"
   }
 }
