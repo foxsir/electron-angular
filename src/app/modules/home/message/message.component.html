@@ -32,7 +32,9 @@
                 <div fxFlex="70px" fxLayoutAlign="center">
                   <div fxLayout="column" fxFlex="100">
                     <div fxFlex="100" fxLayout="row">
-                      <div style="font-size: 12px;">{{formatDate(alarm.value.alarmData.alarmItem.date, 'M-d h:m')}}</div>
+                      <!--<div style="font-size: 12px;">{{formatDate(alarm.value.alarmData.alarmItem.date, 'M-d h:m')}}</div>-->
+                        <div *ngIf="checkToday(alarm.value.alarmData.alarmItem.date) == true" style="font-size: 12px;">{{alarm.value.alarmData.alarmItem.date | date: 'shortTime'}}</div>
+                        <div *ngIf="checkToday(alarm.value.alarmData.alarmItem.date) == false" style="font-size: 12px;">{{alarm.value.alarmData.alarmItem.date | date: 'M-d'}}</div>
                     </div>
                     <div fxFlex="100" fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="end">
                       <div fxFlex="50">

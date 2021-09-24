@@ -166,11 +166,12 @@ export class MessageComponent implements OnInit, AfterViewInit {
     this.cacheService.cacheSessionStatusList();
 
     this.cacheService.getChattingList().then(res => {
-      if(res) {
-        const aMap = new Map();
-        res.forEach(item => aMap.set(item.alarmData.alarmItem.dataId, {alarmData: item.alarmData}));
-        this.alarmItemList = aMap;
-      }
+        if (res) {
+            const aMap = new Map();
+            res.forEach(item => aMap.set(item.alarmData.alarmItem.dataId, { alarmData: item.alarmData }));
+            this.alarmItemList = aMap;
+            console.log('聊天会话：', res);
+        }
       this.cacheService.syncChattingList(res).then(list => {});
     });
 
@@ -379,5 +380,16 @@ export class MessageComponent implements OnInit, AfterViewInit {
     span.style.transform = `translate3d(${e.pageX}px, ${e.pageY}px, 0px)`;
     return e.defaultPrevented;
   }
+
+    checkToday(timestamp) {
+        let date = new Date(parseInt(timestamp));
+        let now = new Date();
+        if (date.getDate() == now.getDate() && date.getMonth() == now.getMonth()) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
 
 }
