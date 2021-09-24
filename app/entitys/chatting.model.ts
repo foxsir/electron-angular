@@ -18,7 +18,7 @@ export default class ChattingModel extends BaseEntity {
   dataId: string = "";
 
   @Column({nullable: true})
-  date: string = "";
+  date: number = 0;
 
   @Column({nullable: true})
   isTop?: boolean = false;

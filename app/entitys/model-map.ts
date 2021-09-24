@@ -15,6 +15,8 @@ import {GroupMemberModel} from "./group-member.model";
 import LocalUserinfoModel from "./local-userinfo.model";
 import {RoamLastMsgModel} from "./roam-last-msg.model";
 import SessionStatusModel from "./session-status.model";
+import MuteModel from "./mute.model";
+import TopModel from "./top.model";
 
 const ModelMap: Map<string, typeof BaseEntity> = new Map();
 
@@ -33,5 +35,7 @@ ModelMap.set("groupMember", GroupMemberModel);
 ModelMap.set("localUserinfo", LocalUserinfoModel);
 ModelMap.set("roamLastMsg", RoamLastMsgModel);
 ModelMap.set("sessionStatus", SessionStatusModel);
+ModelMap.set("mute", MuteModel);
+ModelMap.set("top", TopModel);
 
 export default ModelMap;
