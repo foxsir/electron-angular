@@ -62,7 +62,7 @@ export class SessionService {
   register(signup: SignupModel) {
     this.restService.submitRegisterToServer(signup).subscribe((res: NewHttpResponseInterface<RegisterResponseModel>) => {
       if (res.status === 200) {
-        this.login(signup.user_phone, signup.user_psw);
+        this.login(signup.user_phone || signup.user_mail, signup.user_psw);
         // this.localUserService.update(userInfo);
         // this.router.navigate(["/home"]).then(() => {
         //   this.snackBarService.openMessage("注册成功");
