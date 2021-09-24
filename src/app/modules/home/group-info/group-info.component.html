@@ -78,11 +78,11 @@
                     <div fxFlex fxLayoutAlign="space-between center">
                         <span class="privacy-item-text">群管理</span>
                     </div>
-                    <div fxFlex fxLayoutAlign="space-between center">
+                    <div *ngIf="user_role != 'common'" fxFlex fxLayoutAlign="space-between center">
                         <span class="privacy-item-text">全体禁言</span>
                         <nz-switch [(ngModel)]="setting_data.gmute" (ngModelChange)="bySwitch('gmute')" nzSize="small"></nz-switch>
                     </div>
-                    <div fxFlex fxLayoutAlign="space-between center">
+                    <div *ngIf="user_role != 'common'" fxFlex fxLayoutAlign="space-between center">
                         <span class="privacy-item-text">成员互相添加好友</span>
                         <nz-switch [(ngModel)]="setting_data.allowPrivateChat" (ngModelChange)="bySwitch('allowPrivateChat')" nzSize="small"></nz-switch>
                     </div>
@@ -94,51 +94,57 @@
                         <span class="privacy-item-text">置顶聊天</span>
                         <nz-switch [(ngModel)]="setting_data.top_chat" (ngModelChange)="bySwitch('top_chat')" nzSize="small"></nz-switch>
                     </div>
-                    <div fxFlex fxLayoutAlign="space-between center">
+                    <div *ngIf="user_role != 'common'" fxFlex fxLayoutAlign="space-between center">
                         <span class="privacy-item-text">普通成员邀请好友入群</span>
                         <nz-switch [(ngModel)]="setting_data.invite" (ngModelChange)="bySwitch('invite')" nzSize="small"></nz-switch>
                     </div>
 
                     <div class="split-item"></div>
 
-                    <div fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="groupConfig.toggle()">
+                    <div *ngIf="user_role != 'common'" fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="groupConfig.toggle()">
                         <span class="privacy-item-text">群配置</span>
                         <mat-icon class="mat-icon-cus" style="text-align:right;">
                             <img [src]="arrowRightIcon" alt="" class="icon">
                         </mat-icon>
                     </div>
 
-                    <div class="split-item"></div>
+                    <div *ngIf="user_role != 'common'" class="split-item"></div>
 
-                    <div fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="changeView('manage_group_member')">
+                    <div *ngIf="user_role != 'common' || setting_data.allowPrivateChat == true" fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="changeView('manage_group_member')">
                         <span class="privacy-item-text">成员管理</span>
                         <mat-icon class="mat-icon-cus" style="text-align:right;">
                             <img [src]="arrowRightIcon" alt="" class="icon">
                         </mat-icon>
                     </div>
-                    <div fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="inviteFriend()">
+                    <div *ngIf="user_role != 'common' || setting_data.invite == true" fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="inviteFriend()">
                         <span class="privacy-item-text">邀请好友</span>
                         <mat-icon class="mat-icon-cus" style="text-align:right;">
                             <img [src]="arrowRightIcon" alt="" class="icon">
                         </mat-icon>
                     </div>
-                    <div fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="changeView('manage_group_admin')">
+                    <div *ngIf="user_role != 'common'" fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="changeView('manage_group_admin')">
                         <span class="privacy-item-text">管理员管理</span>
                         <mat-icon class="mat-icon-cus" style="text-align:right;">
                             <img [src]="arrowRightIcon" alt="" class="icon">
                         </mat-icon>
                     </div>
 
-                    <div class="split-item"></div>
+                    <div *ngIf="user_role != 'common' || setting_data.allowPrivateChat == true  || setting_data.invite == true" class="split-item"></div>
 
-                    <div fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="chooseGroupPeople('transfer')">
+                    <div *ngIf="user_role == 'owner'" fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="chooseGroupPeople('transfer')">
                         <span class="privacy-item-text" style="color:#0b8eee;">转让本群</span>
                         <mat-icon class="mat-icon-cus" style="text-align:right;">
                             <img [src]="arrowRightIcon" alt="" class="icon">
                         </mat-icon>
                     </div>
-                    <div fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="dismissGroup()">
+                    <div *ngIf="user_role == 'owner'" fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="dismissGroup()">
                         <span class="privacy-item-text" style="color:red;">解散本群</span>
+                        <mat-icon class="mat-icon-cus" style="text-align:right;">
+                            <img [src]="arrowRightIcon" alt="" class="icon">
+                        </mat-icon>
+                    </div>
+                    <div *ngIf="user_role != 'owner'" fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="exitGroup()">
+                        <span class="privacy-item-text" style="color:red;">退出本群</span>
                         <mat-icon class="mat-icon-cus" style="text-align:right;">
                             <img [src]="arrowRightIcon" alt="" class="icon">
                         </mat-icon>

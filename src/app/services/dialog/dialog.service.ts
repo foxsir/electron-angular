@@ -23,17 +23,17 @@ export class DialogService {
     });
   }
 
-  confirm(data: Partial<{title: string; text: string; confirm: string; cancel: string }>): Promise<boolean> {
-    return new Promise((resolve, reject) => {
-      this.openDialog(ConfirmComponent, {
-        width: '354px',
-        height: '190px',
-        data: data
-      }).then((res: boolean) => {
-        resolve(res);
-      });
-    });
-  }
+    confirm(data: Partial<{ title: string; text: string; confirm: string; cancel: string, width: string, height: string }>): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+            this.openDialog(ConfirmComponent, {
+                width: data.width == undefined ? '354px' : data.width + 'px',
+                height: data.height == undefined ? '190px' : data.height + 'px',
+                data: data
+            }).then((res: boolean) => {
+                resolve(res);
+            });
+        });
+    }
 
   alert(data: Partial<{title: string; text: string; confirm: string; cancel: string }>): Promise<boolean> {
     return new Promise((resolve, reject) => {
