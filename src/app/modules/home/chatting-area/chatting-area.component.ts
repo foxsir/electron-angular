@@ -209,11 +209,8 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
   }
 
   pushMessageToPanel(data: {chat: ChatmsgEntityModel; dataContent: ProtocalModelDataContent}, type: 'send' | 'incept' = 'send') {
-    let chatActive = false;
-    if(type === 'send') {
-      chatActive = this.currentChat.alarmItem.dataId.toString() === data.dataContent.t.toString();
-    } else if(type === 'incept') {
-      chatActive = this.currentChat.alarmItem.dataId.toString() === data.dataContent.f.toString();
+    const chatActive = this.currentChat.alarmItem.dataId.toString() === data.dataContent.t.toString();;
+    if(type === 'incept') {
       this.messageService.alreadyRead(this.currentChat.alarmItem.dataId, this.currentChat.metadata.chatType);
     }
     if(!data.dataContent) {
@@ -301,13 +298,21 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
       const func = this.serverForwardService.functions[dataContent.ty];
       if(func) {
         func(res);
+      } else if (dataContent.ty == 120) {
+        if (dataContent.m == "start_voice") {
+          this.openEndDrawer('voice', true);
+          this.appChattingVoice.openPanel('','');
+        }
+        else if (dataContent.m == "receive_voice") {
+          this.appChattingVoice.hadReceiveVoice();
+        }
       } else {
         const chatMsgEntity = this.messageEntityService.prepareRecievedMessage(
           res.from, dataContent.nickName, dataContent.m, (new Date()).getTime(), dataContent.ty, res.fp
         );
         // fromUid, nickName, msg, time, msgType, fp = null
         const chatType = Number(dataContent.cy) === ChatModeType.CHAT_TYPE_FRIEND$CHAT ? 'friend' : 'group';
-        const dataId = chatType === 'friend' ? res.from : dataContent.t;
+        const dataId = chatType === 'friend' ? res.to : dataContent.t;
         this.cacheService.generateAlarmItem(dataId, chatType, dataContent.m, dataContent.ty).then(alarm => {
           chatMsgEntity.xu_isRead_type = true;
           chatMsgEntity.isOutgoing = true;
@@ -320,35 +325,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
             }
           });
         });
-
-
-        // QoS: true
-        // bridge: false
-        // dataContent: "{"cy":0,"f":"400340","m":"p","m3":"android","t":"400070","ty":0}"
-        // fp: "ee20eee0-6a12-430d-81ec-f7203a8566da"
-        // from: "400340"
-        // recvTime: 1630986114599
-        // sm: 0
-        // to: "400070"
-        // type: 2
-        // typeu: 3
-
       }
-        // alert("单聊" + data.from);
-        console.log('订阅单聊消息：', dataContent);
-
-        //if (dataContent.ty == 120) {
-        //    if (dataContent.m == "start_voice") {
-        //        this.openEndDrawer('voice', true);
-        //        this.appChattingVoice.openPanel();
-        //    }
-        //    else if (dataContent.m == "receive_voice") {
-        //        this.appChattingVoice.hadReceiveVoice();
-        //    }
-        //    else if (dataContent.m == 'end_voice') {
-        //        this.appChattingVoice.endVoiceCallback();
-        //    }
-        //}
 
         if (res.type == 2) {
             if (res.typeu == 3 && dataContent.ty == 21) {
@@ -390,30 +367,32 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
    */
   private subscribeOfGroupChatMsgServerToB() {
     this.messageDistributeService.MT45_OF_GROUP$CHAT$MSG_SERVER$TO$B$.subscribe((res: ProtocalModel) => {
-        const dataContent: ProtocalModelDataContent = JSON.parse(res.dataContent);
+      const dataContentList: ProtocalModelDataContent[] = JSON.parse(res.dataContent);
+      dataContentList.forEach(dataContent => {
+        const func = this.serverForwardService.functions[dataContent.ty];
+        if(func) {
+          func(res);
+        } else {
+          const chatMsgEntity = this.messageEntityService.prepareRecievedMessage(
+            dataContent.f, dataContent.nickName, dataContent.m, res.recvTime, dataContent.ty, res.fp
+          );
+          const chatType = Number(dataContent.cy) === ChatModeType.CHAT_TYPE_FRIEND$CHAT ? 'friend' : 'group';
+          const dataId = chatType === 'friend' ? res.to : dataContent.t;
 
-        console.log('订阅群聊消息 ServerToB：', dataContent);
-        if (dataContent.ty == 120) {
-            if (dataContent.m == "start_voice") {
-              this.openEndDrawer('voice', true);
-                this.appChattingVoice.openPanel('','');
-            }
-            else if (dataContent.m == "receive_voice") {
-                this.appChattingVoice.hadReceiveVoice();
-            }
+          this.cacheService.generateAlarmItem(dataId, chatType, dataContent.m, dataContent.ty).then(alarm => {
+            chatMsgEntity.xu_isRead_type = true;
+            chatMsgEntity.isOutgoing = true;
+            this.cacheService.putChattingCache(alarm, chatMsgEntity).then(() => {
+              if(this.currentChat && this.currentChat.alarmItem.dataId === alarm.alarmItem.dataId) {
+                this.pushMessageToPanel({chat: chatMsgEntity, dataContent: dataContent}, 'incept');
+              }
+              if(this.localUserService.localUserInfo.userId !== dataContent.f) {
+                this.cacheService.setChattingBadges(alarm, 1);
+              }
+            });
+          });
         }
-
-      const func = this.serverForwardService.functions[dataContent.ty];
-      if(func) {
-        func(res);
-      } else {
-        const chatMsgEntity = this.messageEntityService.prepareRecievedMessage(
-          dataContent.f, dataContent.nickName, dataContent.m, res.recvTime, dataContent.ty, res.fp
-        );
-        this.cacheService.putChattingCache(this.currentChat, chatMsgEntity).then(() => {
-          this.pushMessageToPanel({chat: chatMsgEntity, dataContent: dataContent}, 'incept');
-        });
-      }
+      });
     });
   }
 
