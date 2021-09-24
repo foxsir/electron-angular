@@ -81,12 +81,12 @@ export class AccountPanelComponent implements OnInit {
       iconActive: this.dom.bypassSecurityTrustResourceUrl(lockActiveIcon),
       action: this.updatePassword.bind(this)
     },
-    {
-      label: "清空缓存",
-      icon: this.dom.bypassSecurityTrustResourceUrl(lockIcon),
-      iconActive: this.dom.bypassSecurityTrustResourceUrl(lockActiveIcon),
-      action: this.cacheService.clearAllCache
-    },
+    // {
+    //   label: "清空缓存",
+    //   icon: this.dom.bypassSecurityTrustResourceUrl(lockIcon),
+    //   iconActive: this.dom.bypassSecurityTrustResourceUrl(lockActiveIcon),
+    //   action: this.cacheService.clearAllCache
+    // },
     {
       label: "退出登录",
       icon: this.dom.bypassSecurityTrustResourceUrl(logoutIcon),
