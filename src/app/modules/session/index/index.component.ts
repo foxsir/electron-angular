@@ -52,8 +52,7 @@ export class IndexComponent implements OnInit {
 
   openPrivacyPolicyUrl() {
     if(this.appConfig) {
-      const url = ['http://', this.appConfig.privacyPolicyUrl].join("");
-      this.windowService.openUrl(url);
+      this.windowService.openUrl(this.appConfig.privacyPolicyUrl);
     }
   }
 
