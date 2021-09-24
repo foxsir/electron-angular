@@ -27,7 +27,7 @@ class SignupFields {
               const array = [...field.formControl.value.matchAll(regexp)];
               const newValue = array.map(v => v[0]).join("");
               if(newValue.length !== field.formControl.value.length) {
-                // field.formControl.setValue(newValue);
+                field.formControl.reset(newValue);
                 document.execCommand("undo");
               }
             }
