@@ -1,8 +1,8 @@
 import ChatmsgEntityModel from "./chatmsg-entity.model";
-import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
-import FriendModel from "@app/models/friend.model";
-import {GroupAdminModel} from "@app/models/group-admin.model";
-import {GroupModel} from "@app/models/group.model";
+import AlarmItemInterface from "../interfaces/alarm-item.interface";
+import FriendModel from "./friend.model";
+import {GroupAdminModel} from "./group-admin.model";
+import {GroupModel} from "./group.model";
 
 // 普通消息action
 type ActionType = (chat: ChatmsgEntityModel, messageContainer: HTMLDivElement) => void;

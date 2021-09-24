@@ -1,4 +1,6 @@
-export class FriendRequestModel {
+import {BaseEntity} from "typeorm";
+
+export class FriendRequestModel extends BaseEntity {
   reqDesc: string;
   reqTime: string;
   reqUserAvatar: string;

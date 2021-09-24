@@ -12,6 +12,6 @@ const SignupModelColumn = {
   code: "code",
   user_psw: "user_psw",
   confirm_password: "confirm_password",
-};
+}
 
-export {SignupModel, SignupModelColumn};
+export {SignupModel, SignupModelColumn}

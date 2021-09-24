@@ -1,9 +1,18 @@
-export class GroupMemberModel {
-  g_id: string;
-  groupUserId: string;
-  isAdmin: string;
-  mute: string;
-  nickname: string;
+import {BaseEntity} from "typeorm";
+
+export class GroupMemberModel extends BaseEntity {
+  allowPrivateChat: string;
+  banTime: number;
+  clusterName: string;
+  groupId: string;
+  groupOwner: string;
+  groupOwnerName: string;
+  identity: string;
+  isAdmin: number = 0;
+  showNickname: string;
+  status: number;
+  stopTalk: number;
+  updateAvatarTimestamp: number;
   userAvatarFileName: string;
-  user_uid: string;
+  userUid: number;
 }

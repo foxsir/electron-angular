@@ -1,4 +1,7 @@
-export class GroupAdminModel {
+import {BaseEntity} from "typeorm";
+
+export class GroupAdminModel extends BaseEntity {
+  gid: string; // 仅仅本地存在
   userUid: number; // 非必须 管理员id
   userMail:	string; // 非必须 管理员账户
   nickname:	string; // 非必须 管理员昵称

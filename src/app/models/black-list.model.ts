@@ -1,4 +1,6 @@
-export default class BlackListModel {
+import {BaseEntity} from "typeorm";
+
+export default class BlackListModel extends BaseEntity {
   balance: string;
   googleSecret: string;
   latestLoginAddres: string;

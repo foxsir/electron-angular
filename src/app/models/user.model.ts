@@ -1,4 +1,8 @@
-export class UserModel {
+import UserLevelModel from "@app/models/user-level.model";
+import {BaseEntity} from "typeorm";
+
+export class UserModel extends BaseEntity {
+  id: number;
   userUid: number; //用户id
   userMail: string; //账号
   nickname: string; //昵称
@@ -7,27 +11,7 @@ export class UserModel {
   userPhone: string; //手机号
   balance: number; //余额
   //用户等级
-  userLevel: {
-    id:number; //
-    level:string; //
-    levelName:string; //
-    addGroup:string; //
-    sendRedpacket:string; //
-    addFriend:string; //
-    createGroup:string; //
-    addFriendSuper:string; //
-    addGroupSuper:string; //
-    addPersonSuper:string; //
-    groupDelMsg:string; //
-    seeYunMsg:string; //
-    msgTab:string; //
-    friendTab:string; //
-    circleTab:string; //
-    walletTab:string; //
-    collectionTab:string; //
-    findTab:string; //
-  };
-  id: number; //
+  userLevel: string | UserLevelModel;
   level: string; //
   levelName: string; //
   addGroup: string; //

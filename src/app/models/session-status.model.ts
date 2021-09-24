@@ -4,4 +4,4 @@ export default class SessionStatusModel {
   top: boolean;
   userId: number;
   userType: number; // 0好友 1群组
-};
+}

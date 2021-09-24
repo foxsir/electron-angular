@@ -1,4 +1,6 @@
-export class GroupModel {
+import {BaseEntity} from "typeorm";
+
+export class GroupModel extends BaseEntity {
   allowPrivateChat: number; // 开启隐私 0未开启 1开启
   avatar: string; // 群头像
   avatarIncludeCnt: number; //头像拼接人数(无用)

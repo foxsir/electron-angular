@@ -1,10 +1,12 @@
-import {MsgType} from "../config/rbchat-config";
-
 /**
  * 聊天消息体模型
  */
-export default class ChatmsgEntityModel {
+import {BaseEntity} from "typeorm";
+
+export default class ChatmsgEntityModel extends BaseEntity {
   //======================================================== 核心数据字段 START
+  // chatting id
+  dataId: string;
   /** 消息发起者的uid（用于功能链接中使用） */
   uid: string = null;
 
@@ -18,12 +20,12 @@ export default class ChatmsgEntityModel {
    * */
   text: string = null;
   /** 消息类型 */
-  msgType: number = MsgType.TYPE_TEXT;
+  msgType: number = 0;
   /** 消息所对应的原始协议包指纹，目前只在发出的消息对象中有意义 */
   fingerPrintOfProtocal: string = null;
 
   /** true表示是发出的消息，否则表示收到的消息 */
-  isOutgoing: boolean = false;
+  isOutgoing: boolean = true;
   //======================================================== 核心数据字段 END
 
   //======================================================== 专用于BBS/群聊消息的核心数据字段 START

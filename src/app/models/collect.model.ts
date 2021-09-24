@@ -6,4 +6,4 @@ export default class CollectModel {
   nickname: string;
   type: number;
   userId: number;
-};
+}

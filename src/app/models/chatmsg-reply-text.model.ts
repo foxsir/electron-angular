@@ -1,5 +1,3 @@
-import {MsgType} from "../config/rbchat-config";
-
 /**
  * 回复消息的结构
  */

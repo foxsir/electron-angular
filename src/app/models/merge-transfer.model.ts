@@ -6,5 +6,5 @@ export default class MergeTransferModel {
     sendNicName: string;
     text: string;
     type: string; // 消息类型
-  }[]
+  }[];
 }

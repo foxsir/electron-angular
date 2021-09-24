@@ -1,5 +1,3 @@
-import {ProtocalModel} from "./protocal.model";
-
 export class RoamLastMsgModel {
   chatType: string;
   lastMsg: string; // ProtocalModel
