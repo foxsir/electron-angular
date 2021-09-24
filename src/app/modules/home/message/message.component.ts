@@ -153,6 +153,7 @@ export class MessageComponent implements OnInit, AfterViewInit {
     this.cacheService.getTop().then((map) => {
       if(map) {
         this.topMap = map;
+        console.dir(this.topMap);
       }
       this.topMapOfArray = new Array(...this.topMap.keys());
       this.cacheService.cacheUpdate$.subscribe(data => {
@@ -360,6 +361,7 @@ export class MessageComponent implements OnInit, AfterViewInit {
         // 缓存群管理员列表
         if (this.currentChat.metadata.chatType === 'group') {
           this.cacheService.cacheGroupAdmins(this.currentChat.alarmItem.dataId).then();
+          this.cacheService.cacheGroupMembers(this.currentChat.alarmItem.dataId).then();
         }
       });
     } else {
@@ -378,6 +380,10 @@ export class MessageComponent implements OnInit, AfterViewInit {
     span.style.left = "0px";
     span.style.transform = `translate3d(${e.pageX}px, ${e.pageY}px, 0px)`;
     return e.defaultPrevented;
+  }
+
+  keepOrder() {
+    return 1;
   }
 
 }
