@@ -117,24 +117,30 @@ export class CacheService extends DatabaseService {
   ): Promise<boolean> {
     return new Promise((resolve, reject) => {
       const cache: Map<string, ChatmsgEntityModel> = new Map();
+      let lastTime = 0;
       if(messages !== null) {
         if(messages.hasOwnProperty("length")) {
           messages = messages as ChatmsgEntityModel[];
           messages.forEach(msg => {
             cache.set(msg.fingerPrintOfProtocal, msg);
           });
-          alarmData.alarmItem.msgContent = messages.slice(-1)[0]?.text;
+          const lastItem = messages.slice(-1)[0];
+          if(lastItem && lastItem[0]) {
+            alarmData.alarmItem.msgContent = messages.slice(-1)[0]?.text;
+            lastTime = lastItem.date;
+          }
         } else {
           messages  = messages as ChatmsgEntityModel;
           cache.set(messages.fingerPrintOfProtocal, messages);
           alarmData.alarmItem.msgContent = messages.text;
+          lastTime = messages.date;
         }
       }
       const chatting: Partial<ChattingModel> = {
         ...alarmData.alarmItem,
         ...alarmData.metadata,
       };
-      chatting.date = new Date().getTime();
+      chatting.date = alarmData.alarmItem.date || lastTime;
 
       this.saveData<ChattingModel>({model: "chatting", data: chatting, update: {dataId: chatting.dataId}}).then();
       cache.forEach((msg) => {
@@ -218,6 +224,10 @@ export class CacheService extends DatabaseService {
     return new Promise<boolean>((resolve) => {
       this.deleteData<ChatmsgEntityModel>({model: "chatmsgEntity", query: {dataId: alarmData.alarmItem.dataId}}).then(() => {
         this.getChattingList().then(list => {
+          list.set(alarmData.alarmItem.dataId, {
+            alarmData: alarmData,
+            message: new Map<string, ChatmsgEntityModel>()
+          })
           this.cacheSource.next({alarmDataMap: list});
           resolve(true);
         });
@@ -346,6 +356,10 @@ export class CacheService extends DatabaseService {
             const n = entries.next();
             if(n.value) {
               loop(n.value[1]);
+            } else {
+              this.getChattingList().then(list => {
+                this.cacheSource.next({alarmDataMap: list});
+              });
             }
           });
         };
