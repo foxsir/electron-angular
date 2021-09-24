@@ -137,7 +137,7 @@ export class CreateGroupComponent implements OnInit {
         alarmItem: {
           alarmMessageType: 0,
           dataId: returnValue.g_id,
-          date: new Date(returnValue.create_time).getTime().toString(),
+          date: new Date(returnValue.create_time).getTime(),
           msgContent: "",
           title: returnValue.g_name,
           avatar: returnValue.avatar,

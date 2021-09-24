@@ -124,7 +124,7 @@ export class SearchWidgetComponent implements OnInit {
             alarmItem: {
                 alarmMessageType: item.chatType == 'friend' ? 0 : 1, // 0单聊 1临时聊天/陌生人聊天 2群聊
                 dataId: item.dataId,
-                date: "",
+                date: new Date().getTime(),
                 msgContent: "",
                 title: item.title,
                 avatar: item.avatar,

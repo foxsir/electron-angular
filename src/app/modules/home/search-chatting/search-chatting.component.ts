@@ -50,15 +50,15 @@ export class SearchChattingComponent implements OnInit {
         this.avatarMap.set(my.userUid.toString(), my.userAvatarFileName);
       });
       this.cacheService.getCacheFriends().then((friendMap) => {
-        friendMap.forEach(f => {
-          this.avatarMap.set(f.friendUserUid.toString(), f.userAvatarFileName);
-        })
+        friendMap.forEach(friend => {
+          this.avatarMap.set(friend.friendUserUid.toString(), friend.userAvatarFileName);
+        });
       });
     } else {
       this.cacheService.getGroupMembers(this.chatting.alarmItem.dataId).then((memberMap) => {
-        memberMap.forEach(f => {
-          this.avatarMap.set(f.groupUserId.toString(), f.userAvatarFileName);
-        })
+        memberMap.forEach(member => {
+          this.avatarMap.set(member.userUid.toString(), member.userAvatarFileName);
+        });
       });
     }
   }

@@ -40,7 +40,7 @@
           <p mat-menu-item
              *ngFor="let member of memberMap | keyvalue"
              (click)="appendAtMark(member.value)" (keydown.enter)="appendAtMark(member.value)">
-            @{{member.value.nickname}}</p>
+            @{{member.value.showNickname}}</p>
         </mat-card-content>
       </mat-card>
     </mat-menu>

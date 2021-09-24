@@ -139,7 +139,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
                   ossFilePath: res.url,
                   fileMd5: CommonTools.md5([filename, res.url].join("-")),
                   fileLength: 100
-              };              
+              };
               this.doSend(res.url, MsgType.TYPE_IMAGE, true);
           });
       });
@@ -163,7 +163,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
     this.elementService.atMember$.subscribe((friendId) => {
       const member: GroupMemberModel[] = [];
       this.memberMap.forEach(m => {
-        if(m.user_uid.toString() === friendId.toString()) {
+        if(m.userUid.toString() === friendId.toString()) {
           member.push(m);
         }
       });
@@ -323,19 +323,21 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
           // this.cacheService.chatMsgEntityMap.delete(replaceEntity.fingerPrintOfProtocal);
         }
 
-        this.tempList.push({
-          chatMsgEntity: chatMsgEntity,
-          emitToUI: emitToUI,
-          msgBody: res.msgBody
-        });
-        this.pushCache();
-
-        // this.cacheService.putChattingCache(this.currentChat, chatMsgEntity).then(() => {
-        //   if(emitToUI) {
-        //     this.sendMessage.emit({chat: chatMsgEntity, dataContent: res.msgBody});
-        //   }
-        //   // this.clearTextArea();
+        // this.tempList.push({
+        //   chatMsgEntity: chatMsgEntity,
+        //   emitToUI: emitToUI,
+        //   msgBody: res.msgBody
         // });
+        // this.pushCache();
+
+        this.cacheService.putChattingCache(this.currentChat, chatMsgEntity).then(() => {
+          if(emitToUI) {
+            this.sendMessage.emit({chat: chatMsgEntity, dataContent: res.msgBody});
+          }
+          if(this.tempList.length > 0) {
+            this.pushCache();
+          }
+        });
       }
     });
   }
@@ -347,16 +349,12 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
   private pushCache() {
     const data = this.tempList.shift();
     this.cacheService.putChattingCache(this.currentChat, data.chatMsgEntity).then(() => {
-      this.cacheService.getChattingCache(this.currentChat).then((res) => {
-        if(res.get(data.chatMsgEntity.fingerPrintOfProtocal)) {
-          if(data.emitToUI) {
-            this.sendMessage.emit({chat: data.chatMsgEntity, dataContent: data.msgBody});
-          }
-          if(this.tempList.length > 0) {
-            this.pushCache();
-          }
-        }
-      });
+      if(data.emitToUI) {
+        this.sendMessage.emit({chat: data.chatMsgEntity, dataContent: data.msgBody});
+      }
+      if(this.tempList.length > 0) {
+        this.pushCache();
+      }
     });
   }
 
@@ -394,12 +392,21 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
         }
         // chatMsgEntity.isOutgoing = false;
 
-        this.tempList.push({
-          chatMsgEntity: chatMsgEntity,
-          emitToUI: emitToUI,
-          msgBody: res.msgBody
+        this.cacheService.putChattingCache(this.currentChat, chatMsgEntity).then(() => {
+          if(emitToUI) {
+            this.sendMessage.emit({chat: chatMsgEntity, dataContent: res.msgBody});
+          }
+          if(this.tempList.length > 0) {
+            this.pushCache();
+          }
         });
-        this.pushCache();
+
+        // this.tempList.push({
+        //   chatMsgEntity: chatMsgEntity,
+        //   emitToUI: emitToUI,
+        //   msgBody: res.msgBody
+        // });
+        // this.pushCache();
         // this.cacheService.putChattingCache(this.currentChat, chatMsgEntity).then(() => {
         //   if(emitToUI) {
         //     this.sendMessage.emit({chat: chatMsgEntity, dataContent: res.msgBody});
@@ -595,7 +602,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
    */
   private getATMark(member: GroupMemberModel): HTMLImageElement {
     const sp = document.createElement('span');
-    const text = `@${member.nickname}`;
+    const text = `@${member.showNickname}`;
     sp.innerText = text;
     sp.style.visibility = 'hidden';
     sp.style.fontSize = '14px';
@@ -609,9 +616,9 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
     const src = ['data:image/svg+xml;base64,', Base64.encode(svg)].join("");
     const img = document.createElement("img");
     img.src = src;
-    img.id = CommonTools.fingerPrint();
-    img.setAttribute("user-id", member.user_uid);
-    img.setAttribute("user-nickname", member.nickname);
+    img.id = CommonTools.uuid();
+    img.setAttribute("user-id", member.userUid.toString());
+    img.setAttribute("user-nickname", member.showNickname);
     img.className = "at-mark-for-input";
     img.style.width = width + "px";
     return img;

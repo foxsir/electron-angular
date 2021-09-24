@@ -4,6 +4,7 @@ import {RestService} from "@services/rest/rest.service";
 import NewHttpResponseInterface from "@app/interfaces/new-http-response.interface";
 import appConfigInterface from "@app/interfaces/app-config.interface";
 import {WindowService} from "@services/window/window.service";
+import {DatabaseService} from "@services/database/database.service";
 
 @Component({
   selector: 'app-index',

@@ -118,44 +118,54 @@ export class MessageEntityService {
     // 来的数据时，msgType使用的是String类型）！
     msgType = parseInt(msgType, 10);
 
+    let chatMsgEntityObj = null;
+
     switch (msgType) {
       case MsgType.TYPE_IMAGE:
-        return this.createChatMsgEntity_TO_IMAGE(msg, time, fingerPrint, xu_isRead_type);
+        chatMsgEntityObj = this.createChatMsgEntity_TO_IMAGE(msg, time, fingerPrint, xu_isRead_type);
+        break;
       case MsgType.TYPE_VOICE:
-        return this.createChatMsgEntity_TO_VOICE(msg, time, fingerPrint, xu_isRead_type);
+        chatMsgEntityObj = this.createChatMsgEntity_TO_VOICE(msg, time, fingerPrint, xu_isRead_type);
+        break;
       case MsgType.TYPE_FILE: {
         // 文件消息的内容体是FileMeta对象的JSON形式
         fm = JSON.parse(msg);
-        return this.createChatMsgEntity_TO_FILE(
+        chatMsgEntityObj = this.createChatMsgEntity_TO_FILE(
           fm != null ? fm.fileName : ""
           , fm != null ? fm.fileMd5 : ""
           , fm != null ? fm.fileLength : 0
           , time
           , fingerPrint, xu_isRead_type);
+        break;
       }
       case MsgType.TYPE_GIFT$SEND:
-        return this.createChatMsgEntity_TO_GIFT$FOR$SEND(msg, time, fingerPrint, xu_isRead_type);
+        chatMsgEntityObj = this.createChatMsgEntity_TO_GIFT$FOR$SEND(msg, time, fingerPrint, xu_isRead_type);
+        break;
       case MsgType.TYPE_GIFT$GET:
-        return this.createChatMsgEntity_TO_GIFT$FOR$GET(msg, time, fingerPrint, xu_isRead_type);
+        chatMsgEntityObj = this.createChatMsgEntity_TO_GIFT$FOR$GET(msg, time, fingerPrint, xu_isRead_type);
+        break;
       case MsgType.TYPE_SYSTEAM$INFO:
-        return this.createSystemMsgEntity_TEXT(msg, time, fingerPrint, xu_isRead_type);
+        chatMsgEntityObj = this.createSystemMsgEntity_TEXT(msg, time, fingerPrint, xu_isRead_type);
+        break;
       case MsgType.TYPE_SHORTVIDEO: {
         // 短视频消息的内容体是FileMeta对象的JSON形式
-        return this.createChatMsgEntity_TO_SHORTVIDEO(msg, time, fingerPrint, xu_isRead_type);
+        chatMsgEntityObj = this.createChatMsgEntity_TO_SHORTVIDEO(msg, time, fingerPrint, xu_isRead_type);
+        break;
       }
       case MsgType.TYPE_CONTACT: {
         // 名片消息的内容体是ContactMeta对象的JSON形式
         const cm = JSON.parse(msg);
-        return this.createChatMsgEntity_TO_CONTACT(
+        chatMsgEntityObj = this.createChatMsgEntity_TO_CONTACT(
           cm.uid
           , cm.nickName
           , time
           , fingerPrint, xu_isRead_type);
+        break;
       }
       case MsgType.TYPE_LOCATION: {
         // 位置消息的内容体是LocationMeta对象的JSON形式
         const lm = JSON.parse(msg);
-        return this.createChatMsgEntity_TO_LOCATION(
+        chatMsgEntityObj = this.createChatMsgEntity_TO_LOCATION(
           lm != null ? lm.locationTitle : "位置"
           , lm.locationContent
           , lm !== null ? lm.longitude : 0
@@ -163,19 +173,23 @@ export class MessageEntityService {
           , time
           , fingerPrint, xu_isRead_type
         );
+        break;
       }
       //111 新增了自己发的红包
       case MsgType.TYPE_REDBAG:
-        return this.createChatMsgEntity_TO_REDBAG(this.imService.getLoginInfo().loginUserId, "我", msg, time, fingerPrint);
+        chatMsgEntityObj = this.createChatMsgEntity_TO_REDBAG(this.imService.getLoginInfo().loginUserId, "我", msg, time, fingerPrint);
+        break;
 
       //111 新增了自己发的红包
       case MsgType.TYPE_GETREDBAG:
-        return this.createChatMsgEntity_TO_GETREDBAG(this.imService.getLoginInfo().loginUserId, "我", msg, time, fingerPrint);
+        chatMsgEntityObj = this.createChatMsgEntity_TO_GETREDBAG(this.imService.getLoginInfo().loginUserId, "我", msg, time, fingerPrint);
+        break;
 
       //111 新增了 @
       case MsgType.TYPE_AITE:
         const txt = JSON.parse(msg).content;
-        return this.createChatMsgEntity_TO_TEXT(txt, time, fingerPrint, xu_isRead_type);
+        chatMsgEntityObj = this.createChatMsgEntity_TO_TEXT(txt, time, fingerPrint, xu_isRead_type);
+        break;
 
       //111 新增了踢人
       case MsgType.TYPE_TIREN:
@@ -185,18 +199,24 @@ export class MessageEntityService {
           msg,
           msgType
         };
-        return this.createChatMsgEntity_TO_TEXT(jimsg, time, fingerPrint, xu_isRead_type);
+        chatMsgEntityObj = this.createChatMsgEntity_TO_TEXT(jimsg, time, fingerPrint, xu_isRead_type);
+        break;
       case MsgType.TYPE_QUOTE: {
         // 回复类型
-        return this.createChatMsgEntity_COME_QUOTE(this.imService.getLoginInfo().loginUserId, "我", msg, time, fingerPrint);
+        chatMsgEntityObj = this.createChatMsgEntity_COME_QUOTE(this.imService.getLoginInfo().loginUserId, "我", msg, time, fingerPrint);
+        break;
       }
       case MsgType.TYPE_TRANSFER: {
         // 合并转发
-        return this.createChatMsgEntity_COME_TRANSFER(this.imService.getLoginInfo().loginUserId, "我", msg, time, fingerPrint);
+        chatMsgEntityObj = this.createChatMsgEntity_COME_TRANSFER(this.imService.getLoginInfo().loginUserId, "我", msg, time, fingerPrint);
+        break;
       }
       default:
-        return this.createChatMsgEntity_TO_TEXT(msg, time, fingerPrint, xu_isRead_type);
+        chatMsgEntityObj = this.createChatMsgEntity_TO_TEXT(msg, time, fingerPrint, xu_isRead_type);
+        break;
     }
+    chatMsgEntityObj.isOutgoing = false;
+    return chatMsgEntityObj;
   }
 
   createChatMsgEntity_TO_TEXT(message, time, fingerPrint, xu_isRead_type = null) {

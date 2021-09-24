@@ -10,10 +10,11 @@ import {WindowService} from "@services/window/window.service";
 import {CacheService} from "@services/cache/cache.service";
 import {UserModel} from "@app/models/user.model";
 import LocalUserinfoModel from "@app/models/local-userinfo.model";
+import {SessionService} from "@services/session/session.service";
 
 interface Login {
   login: boolean;
-  userId: number,
+  userId: number;
   token: string;
 }
 
@@ -31,6 +32,7 @@ export class LoginComponent implements OnInit {
     private localUserService: LocalUserService,
     private windowService: WindowService,
     private cacheService: CacheService,
+    private sessionService: SessionService,
   ) {
   }
 
@@ -40,51 +42,8 @@ export class LoginComponent implements OnInit {
   public onSubmit() {
     if (this.loginForm.form.valid) {
       const value = this.loginForm.form.value;
-      this.restService.submitLoginToServer(value.account, value.password).subscribe((res: NewHttpResponseInterface<Login>) => {
-        if (res.status === 200) {
-          const userInfo = res.data;
-          this.localUserService.update(userInfo);
-          this.router.navigate(["/home"]).then(() => {
-            this.snackBarService.openMessage("登录成功");
-            this.windowService.normalWindow();
-
-            this.cacheService.cacheMyInfo(userInfo.userId).then(() => {
-              // 使用缓存中的头像
-              this.cacheService.getMyInfo().then((myInfo: UserModel) => {
-                this.updateLocalUserInfo(myInfo);
-                // if(data.userAvatarFileName.length > 0) {
-                //   this.myAvatar = this.dom.bypassSecurityTrustResourceUrl(data.userAvatarFileName);
-                // }
-              });
-            });
-
-          });
-        } else {
-          this.snackBarService.openMessage("你输入的账号或密码不正确，请重新输入");
-        }
-      });
+      this.sessionService.login(value.account, value.password);
     }
-  }
-
-  updateLocalUserInfo(data: UserModel) {
-    const local: Partial<LocalUserinfoModel> = {
-      latest_login_ip: data.latestLoginIp,
-      latest_login_time: null,
-      login: true,
-      maxFriend: data.maxFriend,
-      nickname: data.nickname,
-      online: data.online,
-      userAvatarFileName: data.userAvatarFileName,
-      userDesc: data.whatSUp,
-      userType: data.userType,
-      user_mail: data.userMail,
-      user_phone: data.userPhone,
-      user_sex: data.userSex,
-      whatsUp: data.whatSUp,
-    };
-    this.localUserService.update( Object.assign(local, this.localUserService.localUserInfo) );
-
-    console.dir(this.localUserService.localUserInfo);
   }
 
 }

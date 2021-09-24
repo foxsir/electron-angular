@@ -62,7 +62,7 @@ export class GroupChattingSettingComponent implements OnInit {
     public group_top_view_mode = "view"; /*view 或者 edit*/
 
     constructor(private dom: DomSanitizer, private restService: RestService, private dialogService: DialogService) {
-        
+
     }
 
     ngOnInit(): void {
@@ -190,7 +190,7 @@ export class GroupChattingSettingComponent implements OnInit {
         this.restService.updateGroupBaseById(data).subscribe(res => {
             this.group_top_view_mode = 'view';
             this.setting_data.gtopContent = this.setting_data.gtopContentTemp;
-        });  
+        });
     }
 
     /*修改发言间隔*/

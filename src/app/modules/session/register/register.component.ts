@@ -24,6 +24,8 @@ import appConfigInterface from "@app/interfaces/app-config.interface";
 import {UserModel} from "@app/models/user.model";
 import {CacheService} from "@services/cache/cache.service";
 import LocalUserinfoModel from "@app/models/local-userinfo.model";
+import {SessionService} from "@services/session/session.service";
+import {SignupModel} from "@app/models/signup.model";
 
 @Component({
   selector: 'app-register',
@@ -64,6 +66,7 @@ export class RegisterComponent implements OnInit {
     public signupForm: SignupForm,
     public signupFormMobile: SignupMobileForm,
     private cacheService: CacheService,
+    private sessionService: SessionService,
   ) {
     this.checkRegisterType();
   }
@@ -151,7 +154,7 @@ export class RegisterComponent implements OnInit {
 
   public onSubmit() {
     if (this.step2Form.valid) {
-      let data = {
+      let data: SignupModel = {
         ...this.form.form.value,
         ...this.step2Form.value,
         user_sex: this.userSex,
@@ -159,29 +162,7 @@ export class RegisterComponent implements OnInit {
       if(this.avatarUrl && this.avatarUrl.pathname) {
         data = Object.assign(data, {userAvatarFileName: this.avatarUrl.pathname});
       }
-
-      this.restService.submitRegisterToServer(data).subscribe((res: NewHttpResponseInterface<RegisterResponseModel>) => {
-        if (res.status === 200) {
-          const userInfo = res.data;
-
-          this.localUserService.update(userInfo);
-          this.router.navigate(["/home"]).then(() => {
-            this.snackBarService.openMessage("注册成功");
-            this.windowService.normalWindow();
-            this.cacheService.cacheMyInfo(userInfo.userId).then(() => {
-              // 使用缓存中的头像
-              this.cacheService.getMyInfo().then((myInfo: UserModel) => {
-                this.updateLocalUserInfo(myInfo);
-                // if(data.userAvatarFileName.length > 0) {
-                //   this.myAvatar = this.dom.bypassSecurityTrustResourceUrl(data.userAvatarFileName);
-                // }
-              });
-            });
-          });
-        } else {
-          this.snackBarService.openMessage(res.msg);
-        }
-      });
+      this.sessionService.register(data);
     } else {
       this.step2Form.markAllAsTouched();
     }

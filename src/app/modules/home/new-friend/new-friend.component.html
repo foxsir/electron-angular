@@ -11,7 +11,7 @@
           <span>{{item.reqDesc}}</span>
         </div>
         <mat-action-list>
-          <div fxLayout="row" fxLayoutGap="8px" *ngIf="item.agree === undefined">
+          <div fxLayout="row" fxLayoutGap="8px" *ngIf="item.agree === null">
             <button mat-button (click)="refuse(item)" color="warn">拒绝</button>
             <button mat-button (click)="agree(item)" color="primary">同意</button>
           </div>

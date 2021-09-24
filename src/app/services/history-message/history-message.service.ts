@@ -18,6 +18,7 @@ class QueryFriend {
 
 class QueryGroup {
   gid: string;
+  userId: number;
   from: string = "";
   to: string = "";
   page: number = 0;
@@ -89,6 +90,7 @@ export class HistoryMessageService {
     params.page = 0;
     params.pageSize = size || params.pageSize;
     params.gid = alarmItem.alarmItem.dataId;
+    params.userId = this.localUserService.localUserInfo.userId;
 
     if(position === 'top') {
       // to 以为fingerPrintOfProtocal为基点拉去旧消息

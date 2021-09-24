@@ -121,7 +121,7 @@ export class MyFriendsComponent implements OnInit {
       alarmItem: {
         alarmMessageType: 0, // 0单聊 1临时聊天/陌生人聊天 2群聊
         dataId: item.friendUserUid.toString(),
-        date: "",
+        date: new Date().getTime(),
         msgContent: "",
         title: item.nickname,
         avatar: item.userAvatarFileName,

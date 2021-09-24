@@ -78,7 +78,7 @@ export class AlarmsProviderService {
    * @param time java时间戳长整数（形如：1280977330748），本参数小于或等于0于，将自动取当前系统时间戳
    * @returns
    */
-  createATempChatMsgAlarm(messageContentType, messageContent, beyondNickName, beyondUid, time): ChattingModel {
+  createATempChatMsgAlarm(messageContentType, messageContent, beyondNickName, beyondUid, time): Partial<ChattingModel> {
 
     // 新的AlarmMessageDto对象
     // amd.alarmMessageType = AlarmMessageType.tempChatMessage;
@@ -142,7 +142,7 @@ export class AlarmsProviderService {
    * @param time java时间戳长整数（形如：1280977330748），本参数小于或等于0于，将自动取当前系统时间戳
    * @returns
    */
-  createChatMessageAlarm(messageContentType, messageContent, friendNickName, friendUid, time): ChattingModel {
+  createChatMessageAlarm(messageContentType, messageContent, friendNickName, friendUid, time): Partial<ChattingModel> {
 
     //111 处理合并转发的bug
     // let msg = messageContent;
@@ -216,21 +216,20 @@ export class AlarmsProviderService {
 
   /**
    * 新建一个“群组聊天消息”的alarm对象.
-   *
    * @param messageContentType
    * @param messageContent
    * @param toGname
+   * @param toGid
    * @param fromUserNickName
    * @param time
-   * @returns
    */
-  createAGroupChatMsgAlarm(messageContentType, messageContent, toGname, toGid, fromUserNickName, time): ChattingModel {
+  createAGroupChatMsgAlarm(messageContentType, messageContent, toGname, toGid, fromUserNickName, time): Partial<ChattingModel> {
     //111 为了显示撤回。转发等带有json的样式而处理
     // let msg = messageContent,
     // messageContent = msg;
     //-----
     // 新的AlarmMessageDto对象
-    const amd: ChattingModel = {
+    return {
       alarmMessageType: AlarmMessageType.groupChatMessage,
       title: toGname,
       //原版
@@ -242,8 +241,6 @@ export class AlarmsProviderService {
       dataId: toGid,
       avatar: null,
     };
-
-    return amd;
   }
 
 }

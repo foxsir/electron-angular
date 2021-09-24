@@ -131,7 +131,7 @@ export class ContextMenuService {
       action: (chatting: AlarmItemInterface) => {
         this.dialogService.confirm({title: '清除历史消息'}).then((ok) => {
           if(ok) {
-            this.cacheService.clearChattingCache(chatting).then();
+            this.cacheService.clearChattingCache(chatting).then(() => {});
           }
         });
       }
@@ -139,7 +139,7 @@ export class ContextMenuService {
     setBackList: {
       label: "拉入黑名单",
       visibility: (filterData: MenuFilterData): boolean => {
-        return true;
+        return filterData.alarmItem.metadata.chatType === 'friend';
       },
       action: (chatting: AlarmItemInterface) => {
         alert("拉入黑名单");
@@ -637,7 +637,7 @@ export class ContextMenuService {
     let admins: unknown = null;
     let friends: unknown = null;
     let groups: unknown = null;
-    await this.cacheService.getCacheGroupAdmins().then(data => {
+    await this.cacheService.getCacheGroupAdmins(alarmItem.alarmItem.dataId).then(data => {
       admins = data;
     });
     await this.cacheService.getCacheFriends().then(data => {

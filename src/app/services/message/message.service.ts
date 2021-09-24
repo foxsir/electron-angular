@@ -248,8 +248,6 @@ export class MessageService {
           p.QoS = true;
           this.imService.sendData(p);
           sucess = true;
-          //    111
-          // resolve, reject
 
           resolve({
             success: sucess,

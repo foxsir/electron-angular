@@ -98,7 +98,7 @@ export class GroupInfoDialogComponent implements OnInit {
      */
     confirmDismissGroup(ok) {
         const result = {
-            ok: ok,            
+            ok: ok,
         };
         this.dialogRef.close(result);
     }

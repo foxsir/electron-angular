@@ -131,6 +131,7 @@ export class IndexComponent implements OnInit {
     this.cacheService.cacheMyInfo().then(() => {
       // 使用缓存中的头像
       this.cacheService.getMyInfo().then((data: UserModel) => {
+        console.dir(data);
         if(data.userAvatarFileName.length > 0) {
           this.myAvatar = this.dom.bypassSecurityTrustResourceUrl(data.userAvatarFileName);
         }

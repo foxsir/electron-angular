@@ -26,12 +26,14 @@ export class CurrentChattingChangeService {
     return new Promise((resolve) => {
       this.router.navigate(['/home/message']).then(() => {
         currentChatting.metadata.unread = 0;
-        this.cacheService.chatMsgEntityMap.clear();
-        this.cacheService.chatMsgEntityMapTemp.clear();
-        this.cacheService.setChattingBadges(currentChatting, 0);
-        this.currentChatting = currentChatting;
-        this.currentChattingSource.next(currentChatting);
-        this.quoteMessageService.setQuoteMessage(null);
+        if(!this.currentChatting || this.currentChatting.alarmItem.dataId !== currentChatting.alarmItem.dataId) {
+          this.cacheService.chatMsgEntityMap.clear();
+          this.cacheService.chatMsgEntityMapTemp.clear();
+          this.cacheService.setChattingBadges(currentChatting, 0);
+          this.currentChatting = currentChatting;
+          this.currentChattingSource.next(currentChatting);
+          this.quoteMessageService.setQuoteMessage(null);
+        }
         resolve(true);
       });
     });

@@ -159,15 +159,15 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
   }
 
   ngAfterContentInit() {
-    if(this.currentChattingChangeService.currentChatting) {
-      this.currentChat = this.currentChattingChangeService.currentChatting;
-      this.cacheService.getChattingCache(this.currentChat).then(data => {
-        if(!!data) {
-          this.cacheService.chatMsgEntityMapTemp = data;
-          this.loadMessage(true);
-        }
-      });
-    }
+    // if(this.currentChattingChangeService.currentChatting) {
+    //   this.currentChat = this.currentChattingChangeService.currentChatting;
+    //   this.cacheService.getChattingCache(this.currentChat).then(data => {
+    //     if(!!data) {
+    //       this.cacheService.chatMsgEntityMapTemp = data;
+    //       this.loadMessage(true);
+    //     }
+    //   });
+    // }
 
     // 获取缓存
     this.currentChattingChangeService.currentChatting$.subscribe(currentChat => {
@@ -425,33 +425,6 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
         this.cacheService.putChattingCache(this.currentChat, chat).then(() => {
           this.cacheService.chatMsgEntityMap.set(chat.fingerPrintOfProtocal, chat);
         });
-      } else {
-        let reTry = 10;
-        const rt = setInterval(() => {
-          if(reTry === 0) {
-            clearInterval(rt);
-          }
-          if(data && data.get(fingerPrint)) {
-            const chat = data.get(fingerPrint);
-            chat.isOutgoing = true;
-            this.cacheService.putChattingCache(this.currentChat, chat).then(() => {
-              this.cacheService.chatMsgEntityMap.set(chat.fingerPrintOfProtocal, chat);
-            });
-            clearInterval(rt);
-          }
-          this.cacheService.getChattingCache(this.currentChat).then(reData => {
-            if(reData && reData.get(fingerPrint)) {
-              const chat: ChatmsgEntityModel = reData.get(fingerPrint);
-              chat.isOutgoing = true;
-              this.cacheService.putChattingCache(this.currentChat, chat).then(() => {
-                this.cacheService.chatMsgEntityMap.set(chat.fingerPrintOfProtocal, chat);
-                clearInterval(rt);
-              });
-            }
-          });
-
-          reTry = reTry -1;
-        }, 1000);
       }
     });
   }
@@ -632,8 +605,6 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
         // 从缓存获取消息
         this.loadingMessage = false;
         const last = new Array(...this.cacheService.chatMsgEntityMapTemp.entries()).reverse().splice(0, 30);
-        console.dir("last")
-        console.dir(last)
         const appendAfter = new Map();
         last.reverse().forEach(keyvalue => {
           this.cacheService.chatMsgEntityMapTemp.delete(keyvalue[0]);
@@ -641,11 +612,9 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
         });
         this.cacheService.chatMsgEntityMap = new Map([...appendAfter, ...this.cacheService.chatMsgEntityMap]);
 
-        if(last.splice(-1) && last.splice(-1)[0]) {
-          setTimeout(() => {
-            const fp = last.splice(-1)[0][0];
-            document.getElementById(fp)?.scrollIntoView();
-          });
+        if(last.length > 0 && last.splice(-1)[0]) {
+          const fp = last.splice(-1)[0][0];
+          document.getElementById(fp)?.scrollIntoView();
         }
 
         if(goBottom) {
