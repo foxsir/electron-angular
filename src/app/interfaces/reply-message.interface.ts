@@ -16,4 +16,4 @@ export interface ReplyMessageChildMessage {
   sendNicName: string;
   text: string;
   type: number;
-};
+}
