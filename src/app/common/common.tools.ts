@@ -19,9 +19,9 @@ export default class CommonTools {
   }
 
   /**
-   * 创建消息指纹
+   * 创建uuid
    */
-  public static fingerPrint(): string {
+  public static uuid(): string {
     return uuid.v1();
   }
 
