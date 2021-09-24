@@ -5,6 +5,7 @@ import * as fs from 'fs';
 import WindowEventListen from "./windowEventListen";
 import defaultOptions from "./DefaultOptions";
 import * as md5 from "blueimp-md5";
+import Database from "./Database";
 
 // Initialize remote module
 require('@electron/remote/main').initialize();
@@ -46,9 +47,9 @@ function createWindow(): BrowserWindow {
     frame: false,
     webPreferences: {
       nodeIntegration: true,
-      // allowRunningInsecureContent: (serve) ? true : false,
-      // contextIsolation: false,  // false if you want to run e2e test with Spectron
-      // enableRemoteModule : true, // true if you want to run e2e test with Spectron or use remote module in renderer context (ie. Angular)
+      allowRunningInsecureContent: (serve) ? true : false,
+      contextIsolation: false,  // false if you want to run e2e test with Spectron
+      enableRemoteModule : true, // true if you want to run e2e test with Spectron or use remote module in renderer context (ie. Angular)
       preload: path.resolve(__dirname, 'agora-renderer.js')
     },
   });
@@ -139,6 +140,8 @@ try {
   // Added 400 ms to fix the black background issue while using transparent window. More detais at https://github.com/electron/electron/issues/15947
   app.on('ready', () => setTimeout(() => {
     createWindow();
+    // 初始化数据库
+    new Database().init().then();
 
     wel.setWindows(windows)
   }, 400));
