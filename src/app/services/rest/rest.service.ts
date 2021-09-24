@@ -308,8 +308,20 @@ export class RestService {
         return this.restServer(MyProcessorConst.PROCESSOR_LOGIC, JobDispatchConst.LOGIC_SNS, 8, JSON.stringify(post_data));
     }
 
+    /**
+     * 解散群聊
+     * @param post_data
+     */
     jieSangGroup(post_data: any) {
         return this.restServer(1016, 24, 26, JSON.stringify(post_data));
+    }
+
+    /**
+     * 退出群聊
+     * @param post_data
+     */
+    exitGroup(post_data: any) {
+        return this.restServer(1016, 24, 23, JSON.stringify(post_data));
     }
 
     changeGroupNotice(post_data: any) {

@@ -465,4 +465,53 @@ export class GroupInfoComponent implements OnInit {
         });
     }
 
+    /*
+     * 退出本群
+     */
+    exitGroup() {
+        this.dialogService.confirm({ title: "退出本群", text: "确定退出本群吗？" }).then((ok) => {
+            if (ok == false) {
+                return;
+            }
+
+            console.log('确认退出...');
+            var post_data = {
+                del_opr_nickname: this.userinfo.nickname,
+                gid: this.currentChat.alarmItem.dataId,
+                members: [
+                    [this.currentChat.alarmItem.dataId, this.userinfo.userId, this.userinfo.nickname]
+                ],
+                del_opr_uid: this.userinfo.userId,
+            };
+
+            this.restService.exitGroup(post_data).subscribe(res => {
+                if (res.success == false) {
+                    return;
+                }
+                console.log('退出成功，发送通知消息...');
+
+                var imdata = {
+                    bridge: false,
+                    dataContent: {
+                        "nickName": this.userinfo.nickname,
+                        "uh": this.userinfo.userAvatarFileName, "f": this.userinfo.userId,
+                        "t": this.currentChat.alarmItem.dataId,
+                        "m": this.userinfo.nickname + "已退出本群",
+                        "cy": 2, "ty": 90, "sync": "0"
+                    },
+                    fp: '', from: this.userinfo.userId, to: this.currentChat.alarmItem.dataId,
+                    QoS: true, sm: -1, type: 2, typeu: 50,
+                    recvTime: 0, "sync": "0"
+                };
+                this.messageService.sendCustomerMessage(imdata).then(res => {
+                    if (res.success === true) {
+                        this.dialogService.alert({ title: '退出成功！', text: '退出成功！' }).then((ok) => {
+                        });
+                    }
+                });
+
+            });
+        });
+    }
+
 }
