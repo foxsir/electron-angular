@@ -58,7 +58,6 @@ export class SessionService {
     });
   }
 
-
   register(signup: SignupModel) {
     this.restService.submitRegisterToServer(signup).subscribe((res: NewHttpResponseInterface<RegisterResponseModel>) => {
       if (res.status === 200) {
