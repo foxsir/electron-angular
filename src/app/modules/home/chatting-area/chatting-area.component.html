@@ -80,7 +80,7 @@
                 </mat-icon>
               </button>
               <!--点击按钮：语音聊天-->
-              <button mat-icon-button (click)="openEndDrawer('voice', true);">
+              <button [fxShow]="currentChat.metadata.chatType === 'friend'" mat-icon-button (click)="openEndDrawer('voice', true);">
                 <mat-icon class="hover-icon">
                   <img class="icon" [src]="voiceIcon" alt="">
                   <img class="icon-active" [src]="voiceActiveIcon" alt="">
