@@ -159,6 +159,8 @@ export class IndexComponent implements OnInit {
     this.messageDistributeService.MT07_OF_ADD_FRIEND_REQUEST_INFO_SERVER$TO$B$.subscribe(() => {
       this.cacheService.cacheNewFriends();
     });
+
+    this.listenNetStatus();
   }
 
   //#################################################################### 【1】初始化方面代码 START
@@ -580,6 +582,17 @@ export class IndexComponent implements OnInit {
         this.miniUiService.switchAddressList();
       }
     });
+  }
+
+  /**
+   * 监听网络断开
+   */
+  listenNetStatus() {
+    const updateOnlineStatus = () => {
+      this.leftMenuNet.isOnline = navigator.onLine;
+    };
+    window.addEventListener('online', updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
   }
 
 }
