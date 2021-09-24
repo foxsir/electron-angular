@@ -27,12 +27,14 @@ export class QrCodeComponent implements OnInit {
   ) {
   }
 
-  ngOnInit(): void {
-    this.cacheService.getMyInfo().then((data) => {
-      this.myInfo = data;
-      this.avatar = this.fileService.getFileUrl([DirectoryType.OSS_PORTRAIT, data.userAvatarFileName].join("/"));
-    });
-  }
+    ngOnInit(): void {
+        this.cacheService.getMyInfo().then((data) => {
+            this.myInfo = data;
+            //this.avatar = this.fileService.getFileUrl([DirectoryType.OSS_PORTRAIT, data.userAvatarFileName].join("/"));
+            this.avatar = data.userAvatarFileName;
+            console.log('头像：', this.avatar);
+        });
+    }
 
   copy(qrcode: QrcodeComponent) {
     this.elementService.copyImageToClipboard(qrcode.qrcElement.nativeElement.firstChild);
