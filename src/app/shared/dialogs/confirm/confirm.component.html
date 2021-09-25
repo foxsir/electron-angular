@@ -1,14 +1,16 @@
-<div fxLayout="column" fxLayoutAlign="stretch space-between" fxFlexFill>
-  <div fxFlex>
+<div fxLayout="column" fxLayoutAlign="stretch space-between">
+  <div>
     <div mat-dialog-title>{{data.title || '确定执行这个操作吗？'}}</div>
     <ng-template [ngIf]="data.text">
-      <div *ngIf="data.text.indexOf('http') !== 0">{{data.text || '确定执行这个操作吗？'}}</div>
-      <div *ngIf="data.text.indexOf('http') === 0">
-        <img [src]="data.text"/>
+      <div *ngIf="!image">{{data.text || '确定执行这个操作吗？'}}</div>
+      <div *ngIf="image !== null">
+        <div class="mat-card mat-elevation-z0">
+          <img [src]="image" class="mat-card-image" alt="" />
+        </div>
       </div>
     </ng-template>
   </div>
-  <div fxFlex fxLayoutAlign="end space-between">
+  <div fxLayoutAlign="end space-between">
     <mat-dialog-actions>
       <button mat-button (click)="cancel()" cdkFocusInitial color="primary">{{data.cancel || '取消'}}</button>
       <button mat-button (click)="confirm()" cdkFocusInitial color="primary">{{data.confirm || '确定'}}</button>

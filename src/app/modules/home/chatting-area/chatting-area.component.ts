@@ -51,6 +51,8 @@ import {HistoryMessageService} from "@services/history-message/history-message.s
 import {ServerForwardService} from "@services/server-forward/server-forward.service";
 import {SoundService} from "@services/sound/sound.service";
 import {MessageService} from "@services/message/message.service";
+import CommonTools from "@app/common/common.tools";
+import DirectoryType from "@services/file/config/DirectoryType";
 
 @Component({
   selector: 'app-chatting-area',

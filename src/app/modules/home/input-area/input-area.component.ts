@@ -37,7 +37,6 @@ import {MatMenu, MatMenuTrigger} from "@angular/material/menu";
 import {MatButton} from "@angular/material/button";
 import {Base64} from "js-base64";
 import {RestService} from "@services/rest/rest.service";
-import HttpResponseInterface from "@app/interfaces/http-response.interface";
 import {GroupMemberModel} from "@app/models/group-member.model";
 import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 import {CurrentChattingChangeService} from "@services/current-chatting-change/current-chatting-change.service";
@@ -46,9 +45,11 @@ import {DialogService} from "@services/dialog/dialog.service";
 import {SelectFriendContactComponent} from "@modules/user-dialogs/select-friend-contact/select-friend-contact.component";
 import {LocalUserService} from "@services/local-user/local-user.service";
 import {ForwardMessageService} from "@services/forward-message/forward-message.service";
-import { RedPocketComponent } from "@modules/user-dialogs/red-pocket/red-pocket.component";
-import { RedPacketInterface } from "@app/interfaces/red-packet.interface";
+import {RedPocketComponent} from "@modules/user-dialogs/red-pocket/red-pocket.component";
+import {RedPacketInterface} from "@app/interfaces/red-packet.interface";
 import DirectoryType from "@services/file/config/DirectoryType";
+
+const { ipcRenderer } = window.require('electron');
 
 @Component({
   selector: 'app-input-area',
@@ -113,7 +114,8 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
     private dialogService: DialogService,
     private localUserService: LocalUserService,
     private forwardMessageService: ForwardMessageService,
-  ) { }
+  ) {
+  }
 
   ngOnInit(): void {
     // 订阅回复消息
@@ -123,42 +125,24 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
 
     this.chattingChange();
     this.subscribeAtMember();
-
-      let ipcRender = window['ipcRenderer'];
-      ipcRender.on('screenshot-finished', (event, base64) => {
-          //console.log('screenshot finished, input-area.component. base 64: ', base64);
-
-          var base64Data = base64.replace(/^data:image\/\w+;base64,/, "");
-          let buffer = new Buffer(base64Data, 'base64');
-          let filename = new Date().getTime() + ".png";
-
-          this.fileService.upload(buffer, filename, DirectoryType.OSS_IMAGE).then(res => {
-              console.log('剪贴板图片地址：', res);
-              //const message = {
-              //    fileName: filename,
-              //    ossFilePath: res.url,
-              //    fileMd5: CommonTools.md5([filename, res.url].join("-")),
-              //    fileLength: 100
-              //};
-              //this.doSend(res.url, MsgType.TYPE_IMAGE, true);
-
-              this.dialogService.confirm({ title: "发送图片", text: res.url, width: '500', height: '600' }).then((ok) => {
-                  if (ok) {
-                      const message = {
-                          fileName: filename,
-                          ossFilePath: res.url,
-                          fileMd5: CommonTools.md5([filename, res.url].join("-")),
-                          fileLength: 100
-                      };
-                      this.doSend(res.url, MsgType.TYPE_IMAGE, true);
-                  }
-              });
-          });
+    ipcRenderer.on('screenshot-finished', (event, base64) => {
+      const base64Data = base64.replace(/^data:image\/\w+;base64,/, "");
+      const buffer = new Buffer(base64Data, 'base64');
+      const filename = new Date().getTime() + ".png";
+      this.fileService.upload(buffer, filename, DirectoryType.OSS_IMAGE).then(res => {
+        console.log('剪贴板图片地址：', res);
+        this.dialogService.confirm({title: "发送图片", text: res.url, height: '200px'}).then((ok) => {
+          if (ok) {
+            this.doSend(res.url, MsgType.TYPE_IMAGE, true);
+          }
+        });
       });
+    });
   }
 
   ngAfterViewInit() {
     this.subscribeForwardMessage();
+    this.autofocus();
   }
 
 
@@ -166,9 +150,9 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
     if(this.forwardMessageService.message) {
       return this.doSend(this.forwardMessageService.message.text, this.forwardMessageService.message.msgType,true);
     }
-    this.forwardMessageService.forward$.subscribe((msg) => {
-      return this.doSend(this.forwardMessageService.message.text, this.forwardMessageService.message.msgType,true);
-    });
+    this.forwardMessageService.forward$.subscribe((msg) => this.doSend(
+      this.forwardMessageService.message.text, this.forwardMessageService.message.msgType,true
+    ));
   }
 
   private subscribeAtMember() {
@@ -460,6 +444,10 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
     this.quoteMessageService.setQuoteMessage(null);
   }
 
+  autofocus() {
+    this.textarea.nativeElement.focus();
+  }
+
   private static getEmojiMap(): Set<{ key: string; value: string }> {
     const set = new Set<{ key: string; value: string }>();
     for (const emojiMapKey in EmojiMap) {
@@ -545,7 +533,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
       } else {
         if(pre) {
           const sp = document.createElement("span");
-          sp.innerHTML = pre.nodeValue || pre.outerHTML
+          sp.innerHTML = pre.nodeValue || pre.outerHTML;
           tempDiv.append(sp);
         }
       }
@@ -665,7 +653,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
   }
 
     sendRedpocket() {
-        var data = {
+        const data = {
             dialog_type: 'start_red_pocket',
             toUserId: this.currentChat.alarmItem.dataId,
             chatType: this.currentChat.metadata.chatType,
@@ -714,8 +702,65 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
   }
 
   startScreenShot() {
-      let winstartScreenShot = window['startScreenShot'];
+      const winstartScreenShot = window["startScreenShot"];
       winstartScreenShot();
+  }
+
+  pasteContent(e: ClipboardEvent) {
+    // cancel paste
+    e.preventDefault();
+
+    // get text representation of clipboard
+    const text = e.clipboardData.getData('text/plain');
+
+    // insert text manually
+    if(text && text.length > 0) {
+      document.execCommand("insertHTML", false, text);
+    } else {
+      this.pasteImage(e);
+    }
+  }
+
+  pasteImage(e: ClipboardEvent) {
+    this.retrieveImageFromClipboardAsFile(e, (file) => {
+      CommonTools.getBlobUrlFromFile(file).then(url => {
+        this.dialogService.confirm({ title: "发送图片", text: url, height: "200px"}).then((ok) => {
+          if (ok) {
+            const filename = [CommonTools.md5(CommonTools.uuid()), file.type.split("/")[1]].join(".");
+            this.fileService.upload(file, filename, DirectoryType.OSS_IMAGE).then(res => {
+              this.doSend(res.url, MsgType.TYPE_IMAGE, true);
+            });
+          }
+        });
+      });
+    });
+  }
+
+  retrieveImageFromClipboardAsFile(pasteEvent, callback) {
+    if(pasteEvent.clipboardData == false){
+      if(typeof(callback) == "function"){
+        callback(undefined);
+      }
+    }
+
+    const items = pasteEvent.clipboardData.items;
+
+    if(items === undefined){
+      if(typeof(callback) == "function"){
+        callback(undefined);
+      }
+    }
+
+    for (let i = 0; i < items.length; i++) {
+      // Skip content if not image
+      if (items[i].type.indexOf("image") === -1) continue;
+      // Retrieve image on clipboard as blob
+      const file = items[i].getAsFile();
+
+      if(typeof(callback) == "function"){
+        callback(file);
+      }
+    }
   }
 
 }
