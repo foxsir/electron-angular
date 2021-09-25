@@ -34,12 +34,20 @@ export default class CommonTools {
 
   public static getBlobUrlFromFile(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
+      CommonTools.getBlobFromFile(file).then(blob => {
+        resolve(window.URL.createObjectURL(blob));
+      });
+    });
+  }
+
+  public static getBlobFromFile(file: File): Promise<Blob> {
+    return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.addEventListener('load', (event) =>  {
         const blob = new Blob([event.target.result], {
           type: file.type,
         });
-        resolve(window.URL.createObjectURL(blob));
+        resolve(blob);
       });
 
       reader.readAsArrayBuffer(file);
