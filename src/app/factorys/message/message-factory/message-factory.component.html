@@ -24,7 +24,7 @@
 
 <app-message-video *ngIf="chatMsg.msgType ===  msgType.TYPE_SHORTVIDEO" [chatMsg]="chatMsg"></app-message-video>
 
-<app-message-voice *ngIf="chatMsg.msgType ===  msgType.TYPE_VOICE" [chatMsg]="chatMsg"></app-message-voice>
+<app-message-voice *ngIf="chatMsg.msgType ===  msgType.TYPE_VOICE" [chatMsg]="chatMsg" [wrapDiv]="wrapDiv"></app-message-voice>
 
 <app-message-no-talk *ngIf="chatMsg.msgType ===  msgType.TYPE_NOTALK" [chatMsg]="chatMsg"></app-message-no-talk>
 
