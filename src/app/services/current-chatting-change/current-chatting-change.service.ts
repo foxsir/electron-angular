@@ -24,18 +24,24 @@ export class CurrentChattingChangeService {
 
   switchCurrentChatting(currentChatting: AlarmItemInterface): Promise<boolean> {
     return new Promise((resolve) => {
-      this.router.navigate(['/home/message']).then(() => {
-        currentChatting.metadata.unread = 0;
-        if(!this.currentChatting || this.currentChatting.alarmItem.dataId !== currentChatting.alarmItem.dataId) {
-          this.cacheService.chatMsgEntityMap.clear();
-          this.cacheService.chatMsgEntityMapTemp.clear();
-          this.cacheService.setChattingBadges(currentChatting, 0);
-          this.currentChatting = currentChatting;
-          this.currentChattingSource.next(currentChatting);
-          this.quoteMessageService.setQuoteMessage(null);
-        }
+      if(currentChatting !== null) {
+        this.router.navigate(['/home/message']).then(() => {
+          currentChatting.metadata.unread = 0;
+          if(!this.currentChatting || this.currentChatting.alarmItem.dataId !== currentChatting.alarmItem.dataId) {
+            this.cacheService.chatMsgEntityMap.clear();
+            this.cacheService.chatMsgEntityMapTemp.clear();
+            this.cacheService.setChattingBadges(currentChatting, 0);
+            this.currentChatting = currentChatting;
+            this.currentChattingSource.next(currentChatting);
+            this.quoteMessageService.setQuoteMessage(null);
+          }
+          resolve(true);
+        });
+      } else {
+        this.currentChatting = currentChatting;
+        this.currentChattingSource.next(currentChatting);
         resolve(true);
-      });
+      }
     });
   }
 }

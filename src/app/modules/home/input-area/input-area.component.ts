@@ -193,8 +193,10 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
   private chattingChange() {
     this.getGroupMembers(this.currentChat);
     this.currentChattingChangeService.currentChatting$.subscribe((currentChat) => {
-      this.getGroupMembers(currentChat);
-      this.messageText = "";
+      if(currentChat) {
+        this.getGroupMembers(currentChat);
+        this.messageText = "";
+      }
     });
   }
 

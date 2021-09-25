@@ -37,8 +37,10 @@ export class SearchChattingComponent implements OnInit {
     this.loadImageAndFile();
 
     this.currentChattingChangeService.currentChatting$.subscribe(chatting => {
-      this.chatting = chatting;
-      this.loadImageAndFile();
+      if(chatting) {
+        this.chatting = chatting;
+        this.loadImageAndFile();
+      }
     });
 
     this.loadAvatar();

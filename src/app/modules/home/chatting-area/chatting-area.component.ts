@@ -159,27 +159,27 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
   }
 
   ngAfterContentInit() {
-    // if(this.currentChattingChangeService.currentChatting) {
-    //   this.currentChat = this.currentChattingChangeService.currentChatting;
-    //   this.cacheService.getChattingCache(this.currentChat).then(data => {
-    //     if(!!data) {
-    //       this.cacheService.chatMsgEntityMapTemp = data;
-    //       this.loadMessage(true);
-    //     }
-    //   });
-    // }
+    if(this.currentChattingChangeService.currentChatting) {
+      this.currentChat = this.currentChattingChangeService.currentChatting;
+      this.cacheService.getChattingCache(this.currentChat).then(data => {
+        if(!!data) {
+          this.cacheService.chatMsgEntityMapTemp = data;
+          this.loadMessage(true);
+        }
+      });
+    }
 
     // 获取缓存
     this.currentChattingChangeService.currentChatting$.subscribe(currentChat => {
       this.searching = false;
-      this.scrollToBottom();
       // === 为刷新聊天列表，只更新数据
-      if (this.currentChat !== currentChat) {
+      this.currentChat = currentChat;
+      if (currentChat && this.currentChat !== currentChat) {
+        this.scrollToBottom();
         // 切换会话清空列表
         this.cacheService.chatMsgEntityMapTemp.clear();
         this.cacheService.chatMsgEntityMap.clear();
 
-        this.currentChat = currentChat;
         this.openEndDrawer('setting', false);
         this.cacheService.getChattingCache(this.currentChat).then(data => {
           if(!!data) {
@@ -555,7 +555,6 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
    * 监听聊天区域滚动
    */
   chattingAreaOnScroll() {
-    // const container = this.chattingContainer.nativeElement;
     const container = document.getElementById("chatting-panel");
     if(container.onscroll === null) {
       container.addEventListener('scroll', () => {
