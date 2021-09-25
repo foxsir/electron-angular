@@ -1,4 +1,13 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {
+  AfterContentInit,
+  AfterViewChecked,
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import {AlarmsProviderService} from "@services/alarms-provider/alarms-provider.service";
 import RBChatUtils from "@app/libs/rbchat-utils";
 import {AlarmMessageType, ChatModeType, MsgType, RBChatConfig, UserProtocalsType} from "@app/config/rbchat-config";
@@ -182,8 +191,9 @@ export class MessageComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.listenMiniUI();
+    setTimeout(() => this.listenMiniUI);
   }
+
 
   listenMiniUI() {
     this.chattingPanel.open().then();
