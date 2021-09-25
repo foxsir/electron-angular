@@ -173,8 +173,8 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
     this.currentChattingChangeService.currentChatting$.subscribe(currentChat => {
       this.searching = false;
       // === 为刷新聊天列表，只更新数据
-      this.currentChat = currentChat;
       if (currentChat && this.currentChat !== currentChat) {
+        this.currentChat = currentChat;
         this.scrollToBottom();
         // 切换会话清空列表
         this.cacheService.chatMsgEntityMapTemp.clear();
@@ -195,6 +195,8 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
             this.currentChatSubtitle = null;
           }
         });
+      } else {
+        this.currentChat = currentChat;
       }
     });
   }
