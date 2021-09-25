@@ -1,5 +1,4 @@
-import {Injectable, OnInit} from '@angular/core';
-import * as localforage from "localforage";
+import {Injectable} from '@angular/core';
 import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 import {MessageRoamService} from "@services/message-roam/message-roam.service";
@@ -165,9 +164,8 @@ export class CacheService extends DatabaseService {
    * @param badges
    */
   setChattingBadges(alarmData: AlarmItemInterface, badges: number) {
-    localforage.getItem(this.dataKeys.alarmDataMap).then((data: Map<string, any>) => {
+    this.getChattingList().then((data: AlarmDataMap) => {
       const check = data.get(alarmData.alarmItem.dataId.toString());
-      const alreadyMessageMap = !check ? new Map() : check.message;
       if(check) {
         if(badges > 0) {
           check.alarmData.metadata.unread = check.alarmData.metadata.unread || 0;
@@ -179,13 +177,9 @@ export class CacheService extends DatabaseService {
             }
           });
         }
-        const map = new Map();
-        map.set(alarmData.alarmItem.dataId.toString(), {
-          alarmData: alarmData,
-          message: alreadyMessageMap,
-        });
-        localforage.setItem(this.dataKeys.alarmDataMap, new Map([...data, ...map])).then((newCache) => {
-          // this.cacheSource.next({alarmDataMap: newCache});
+
+        this.putChattingCache(alarmData).then(() => {
+          this.cacheSource.next({alarmDataMap: data});
         });
       }
     });
@@ -197,23 +191,15 @@ export class CacheService extends DatabaseService {
    * @param messages
    */
   deleteMessageCache(alarmData: AlarmItemInterface, messages: ChatmsgEntityModel[] = null): Promise<any> {
-    return localforage.getItem(this.dataKeys.alarmDataMap).then((data: Map<string, any>) => {
-      const check = data.get(alarmData.alarmItem.dataId.toString());
-      const alreadyMessageMap: Map<string, ChatmsgEntityModel> = !check ? new Map() : check.message;
-      if(check) {
-        messages.forEach(m => {
-          alreadyMessageMap.delete(m.fingerPrintOfProtocal);
+    return new Promise((resolve) => {
+      this.getChattingList().then(list => {
+        messages.forEach(msg => {
+          this.deleteData<ChatmsgEntityModel>({model: 'chatmsgEntity', query: {fingerPrintOfProtocal: msg.fingerPrintOfProtocal}}).then();
         });
-        const map = new Map();
-        map.set(alarmData.alarmItem.dataId.toString(), {
-          alarmData: alarmData,
-          message: alreadyMessageMap,
-        });
-        return localforage.setItem(this.dataKeys.alarmDataMap, new Map([...data, ...map])).then((newCache) => {
-          this.cacheSource.next({alarmDataMap: newCache});
-        });
-      }
-    });
+        this.cacheSource.next({alarmDataMap: list});
+        resolve(true);
+      });
+    })
   }
 
   /**
@@ -508,7 +494,11 @@ export class CacheService extends DatabaseService {
    * 清空缓存
    */
   clearAllCache() {
-    return localforage.clear();
+    this.dropDB().then(() => {
+      const localUserInfo = this.localUserService.localUserInfo;
+      this.connectionDB(localUserInfo.userId.toString()).then(() => {
+      });
+    });
   }
 
   /**
