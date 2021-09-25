@@ -76,6 +76,7 @@ export default class Database {
     this.onQueryData();
     this.onDeleteData();
     this.onCloseDB();
+    this.onDropDB();
   }
 
   onConnectionDB() {
@@ -161,6 +162,18 @@ export default class Database {
     ipcMain.on('closeDB', async (event, msg) => {
       if(this.connection) {
         await this.connection.close();
+      }
+    });
+  }
+
+  onDropDB() {
+    ipcMain.on('dropDB', async (event, msg: {uuid: string}) => {
+      if(this.connection) {
+        console.dir(this.connection.name);
+        await this.connection.dropDatabase().then(() => {
+          console.dir(this.connection.name);
+          event.sender.send('dropDB-reply', {status: 200, uuid: msg.uuid});
+        });
       }
     });
   }

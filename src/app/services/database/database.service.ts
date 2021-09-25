@@ -43,6 +43,9 @@ export class DatabaseService {
   private deleteDataSource = new Subject<any>();
   private deleteDataUpdate$ = this.deleteDataSource.asObservable();
 
+  private dropDBSource = new Subject<any>();
+  private dropDBUpdate$ = this.dropDBSource.asObservable();
+
   constructor() {
     if(this.isConnected !== true) {
       this.listenReply();
@@ -85,6 +88,10 @@ export class DatabaseService {
 
     ipcRenderer.on('deleteData-reply', (event, data) => {
       this.deleteDataSource.next(data);
+    });
+
+    ipcRenderer.on('dropDB-reply', (event, data) => {
+      this.dropDBSource.next(data);
     });
   }
 
@@ -131,6 +138,23 @@ export class DatabaseService {
 
       const subscribe = this.deleteDataUpdate$.subscribe((res: IpcResponseInterface<T>) => {
         if(res.uuid === data.uuid) {
+          resolve(res);
+          subscribe.unsubscribe();
+        }
+      });
+    });
+  }
+
+  /**
+   * 删除当前用户数据库（缓存）
+   */
+  dropDB() {
+    return new Promise((resolve) => {
+      const uuid = CommonTools.uuid();
+      ipcRenderer.send('dropDB', {uuid: uuid});
+
+      const subscribe = this.dropDBUpdate$.subscribe((res: IpcResponseInterface<{uuid: string}>) => {
+        if(res.uuid === uuid) {
           resolve(res);
           subscribe.unsubscribe();
         }
