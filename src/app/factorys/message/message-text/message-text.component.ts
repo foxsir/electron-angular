@@ -21,6 +21,8 @@ export class MessageTextComponent implements OnInit {
   public replyContentText: string = null;
   public replyContentData: ReplyContentType = null;
 
+  public content = "";
+
   public messageType = {
     [0]: '普通文字',
     [1]: '图片',
@@ -45,7 +47,7 @@ export class MessageTextComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.chatMsg.text = this.showEmoji(this.chatMsg.text as string);
+    this.content = this.showEmoji(this.chatMsg.text as string);
     // const chat = this.quoteMessageService.checkMessageIsPureText(this.chatMsg.text as string);
     // if (chat === true) {
     //   this.chatMsg.text = this.showEmoji(this.chatMsg.text as string);
