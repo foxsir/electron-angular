@@ -4,7 +4,7 @@
       <div fxLayout="row">
         <div fxFlex="0 0 calc(240px - 60px)">
           <input type="text" (keydown.escape)="cancelSearch()" [(ngModel)]="search"
-                 (keyup)="txtSearchChange($event)"
+                 (keyup.enter)="txtSearchChange($event)"
                  (ngModelChange)="searchContent()" nz-input placeholder="搜索"/>
         </div>
       </div>
