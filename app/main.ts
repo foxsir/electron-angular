@@ -13,13 +13,13 @@ require('@electron/remote/main').initialize();
 // 生成设备id文件，每次启动自动生成文件
 const os = require('os');
 const DeviceID = md5([os.hostname(), os.arch(), os.platform()].join(""));
-const DeviceIDContent = `export default class DeviceID {\n  public static id = "${DeviceID}";\n}`;
-fs.writeFile("src/app/DeviceID.ts", DeviceIDContent, (err) => {
-  console.dir(err)
-});
+// const DeviceIDContent = `export default class DeviceID {\n  public static id = "${DeviceID}";\n}`;
+
+process.env.DeviceID = DeviceID;
+
 
 // 如果使用 Electron 9.x 及以上版本，需要将 allowRendererProcessReuse 设为 false
-app.allowRendererProcessReuse = false
+// app.allowRendererProcessReuse = false;
 
 const args = process.argv.slice(1),
   serve = args.some(val => val === '--serve');
@@ -133,66 +133,70 @@ function registerGlobalShortcut() {
   })
 }
 
-try {
-  // This method will be called when Electron has finished
-  // initialization and is ready to create browser windows.
-  // Some APIs can only be used after this event occurs.
-  // Added 400 ms to fix the black background issue while using transparent window. More detais at https://github.com/electron/electron/issues/15947
-  app.on('ready', () => setTimeout(() => {
-    createWindow();
-    // 初始化数据库
-    new Database().init().then();
-
-    wel.setWindows(windows)
-  }, 400));
-
-  // Quit when all windows are closed.
-  app.on('window-all-closed', () => {
-    // On OS X it is common for applications and their menu bar
-    // to stay active until the user quits explicitly with Cmd + Q
-    if (process.platform !== 'darwin') {
-      app.quit();
-    }
-  });
-
-  app.on('activate', () => {
-    // On OS X it's common to re-create a window in the app when the
-    // dock icon is clicked and there are no other windows open.
-    if (windows.size === 0) {
+function runApp() {
+  try {
+    // This method will be called when Electron has finished
+    // initialization and is ready to create browser windows.
+    // Some APIs can only be used after this event occurs.
+    // Added 400 ms to fix the black background issue while using transparent window. More detais at https://github.com/electron/electron/issues/15947
+    app.on('ready', () => {
       createWindow();
-    } else {
-      // windows[0].show();
-      app.show();
-    }
-  });
+      // 初始化数据库
+      new Database().init().then();
 
-  // 使用单例模式打开多个窗口
-  const gotTheLock = app.requestSingleInstanceLock()
-  if (!gotTheLock) {
-    app.quit()
-  } else {
-    app.on('second-instance', (event, commandLine, workingDirectory) => {
-      // 当运行第二个实例时,将会聚焦到myWindow这个窗口
-      createWindow();
-    })
-  }
-
-    ipcMain.on("start-screen-capture", (event, message) => {
-        console.log('start-screen-capture...');
-
-        const exec = require("child_process").exec;
-        exec(path.resolve(__dirname, 'screen-capture/screencapture.exe'), (error, stdout, stderr) => {
-            console.log('screen shot finished: ', JSON.stringify(error, stdout, stderr));
-
-            let nativeImage = clipboard.readImage();
-            if (!nativeImage.isEmpty()) {
-                let base64 = nativeImage.toDataURL();
-                event.sender.send('screenshot-finished', base64);
-            }
-        });
+      wel.setWindows(windows);
     });
 
-} catch (e) {
-  // Catch Error
-  // throw e;
+    // Quit when all windows are closed.
+    app.on('window-all-closed', () => {
+      // On OS X it is common for applications and their menu bar
+      // to stay active until the user quits explicitly with Cmd + Q
+      if (process.platform !== 'darwin') {
+        app.quit();
+      }
+    });
+
+    app.on('activate', () => {
+      // On OS X it's common to re-create a window in the app when the
+      // dock icon is clicked and there are no other windows open.
+      if (windows.size === 0) {
+        createWindow();
+      } else {
+        // windows[0].show();
+        app.show();
+      }
+    });
+
+    // 使用单例模式打开多个窗口
+    const gotTheLock = app.requestSingleInstanceLock()
+    if (!gotTheLock) {
+      app.quit()
+    } else {
+      app.on('second-instance', (event, commandLine, workingDirectory) => {
+        // 当运行第二个实例时,将会聚焦到myWindow这个窗口
+        createWindow();
+      })
+    }
+
+    ipcMain.on("start-screen-capture", (event, message) => {
+      console.log('start-screen-capture...');
+
+      const exec = require("child_process").exec;
+      exec(path.resolve(__dirname, 'screen-capture/screencapture.exe'), (error, stdout, stderr) => {
+        console.log('screen shot finished: ', JSON.stringify(error, stdout, stderr));
+
+        let nativeImage = clipboard.readImage();
+        if (!nativeImage.isEmpty()) {
+          let base64 = nativeImage.toDataURL();
+          event.sender.send('screenshot-finished', base64);
+        }
+      });
+    });
+
+  } catch (e) {
+    // Catch Error
+    // throw e;
+  }
 }
+
+runApp();

@@ -48,7 +48,6 @@ import {
   verifyCode,
 } from "@app/config/post-api";
 import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
-import DeviceID from "@app/DeviceID";
 
 @Injectable({
   providedIn: 'root'
@@ -98,7 +97,7 @@ export class RestService {
       loginName: loginNameStr,
       loginPsw: loginPswStr,
       // deviceInfo: this.deviceInfo,
-      deviceId: DeviceID.id,
+      deviceId: process.env.DeviceID,
       osType: 2
     };
 

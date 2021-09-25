@@ -64,7 +64,6 @@ export default class Database {
         this.connection = connection;
         resolve(true);
       }).catch(error => {
-        console.log(error)
         resolve(false);
       });
     });
@@ -169,9 +168,7 @@ export default class Database {
   onDropDB() {
     ipcMain.on('dropDB', async (event, msg: {uuid: string}) => {
       if(this.connection) {
-        console.dir(this.connection.name);
         await this.connection.dropDatabase().then(() => {
-          console.dir(this.connection.name);
           event.sender.send('dropDB-reply', {status: 200, uuid: msg.uuid});
         });
       }
