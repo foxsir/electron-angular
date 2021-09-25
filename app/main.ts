@@ -18,8 +18,8 @@ const DeviceID = md5([os.hostname(), os.arch(), os.platform()].join(""));
 process.env.DeviceID = DeviceID;
 
 
-// 如果使用 Electron 9.x 及以上版本，需要将 allowRendererProcessReuse 设为 false
-// app.allowRendererProcessReuse = false;
+// 声网：如果使用 Electron 9.x 及以上版本，需要将 allowRendererProcessReuse 设为 false
+app.allowRendererProcessReuse = false;
 
 const args = process.argv.slice(1),
   serve = args.some(val => val === '--serve');
