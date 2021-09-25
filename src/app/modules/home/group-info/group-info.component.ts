@@ -250,7 +250,7 @@ export class GroupInfoComponent implements OnInit {
             this.group_notice_view_mode = 'view';
             this.setting_data.gnotice = this.setting_data.gnotice_temp;
 
-            this.dialogService.confirm({ title: '通知确认', text: '群名称公告成功，是否通知全部群成员？' }).then((ok) => {
+            this.dialogService.confirm({ title: '通知确认', text: '群公告修改成功，是否通知全部群成员？' }).then((ok) => {
                 if (ok) {
                     console.log('确认通知...');
 
@@ -318,29 +318,29 @@ export class GroupInfoComponent implements OnInit {
                 return;
             }
 
-            if (column == 'group_name') {
-                this.dialogService.confirm({ title: '通知确认', text: '群名称已修改成功，是否通知全部群成员？' }).then((ok) => {
-                    if (ok) {
-                        console.log('确认通知...');
+            //if (column == 'group_name') {
+            //    this.dialogService.confirm({ title: '通知确认', text: '群名称已修改成功，是否通知全部群成员？' }).then((ok) => {
+            //        if (ok) {
+            //            console.log('确认通知...');
 
-                        var imdata = {
-                            bridge: false,
-                            dataContent: {
-                                changedByUid: this.userinfo.userId,
-                                nnewGroupName: res.new_name,
-                                notificationContent: this.userinfo.nickname + '修改群名为：' + res.new_name,
-                                gid: this.currentChat.alarmItem.dataId,
-                            },
-                            fp: '', from: 0, qoS: true, sm: -1, sync: 0, type: 2, typeu: 51,
-                        };
-                        this.messageService.sendCustomerMessage(imdata).then(res => {
-                            if (res.success === true) {
+            //            var imdata = {
+            //                bridge: false,
+            //                dataContent: {
+            //                    changedByUid: this.userinfo.userId,
+            //                    nnewGroupName: res.new_name,
+            //                    notificationContent: this.userinfo.nickname + '修改群名为：' + res.new_name,
+            //                    gid: this.currentChat.alarmItem.dataId,
+            //                },
+            //                fp: '', from: 0, qoS: true, sm: -1, sync: 0, type: 2, typeu: 51,
+            //            };
+            //            this.messageService.sendCustomerMessage(imdata).then(res => {
+            //                if (res.success === true) {
 
-                            }
-                        });
-                    }
-                });
-            }
+            //                }
+            //            });
+            //        }
+            //    });
+            //}
         });
     }
 
