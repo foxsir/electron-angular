@@ -326,7 +326,7 @@ export class GroupInfoComponent implements OnInit {
             toUserId: this.currentChat.alarmItem.dataId,
             chatType: this.currentChat.metadata.chatType,
             group_name: this.currentChat.alarmItem.title,
-            txt_value: '',
+            txt_value: this.currentChat.alarmItem.title,
         };
 
         this.dialogService.openDialog(GroupInfoDialogComponent, { data: data }).then((res: any) => {
