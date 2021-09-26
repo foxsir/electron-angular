@@ -116,7 +116,7 @@ export class CacheService extends DatabaseService {
   ): Promise<boolean> {
     return new Promise((resolve, reject) => {
       const cache: Map<string, ChatmsgEntityModel> = new Map();
-      let lastTime = 0;
+      let lastTime = null;
       if(messages !== null) {
         if(messages.hasOwnProperty("length")) {
           messages = messages as ChatmsgEntityModel[];
@@ -139,7 +139,7 @@ export class CacheService extends DatabaseService {
         ...alarmData.alarmItem,
         ...alarmData.metadata,
       };
-      chatting.date = alarmData.alarmItem.date || lastTime;
+      chatting.date = lastTime || alarmData.alarmItem.date;
 
       this.saveData<ChattingModel>({model: "chatting", data: chatting, update: {dataId: chatting.dataId}}).then();
       cache.forEach((msg) => {
