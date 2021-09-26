@@ -111,6 +111,9 @@ export class GroupInfoComponent implements OnInit {
     loadGroupAdminList() {
         /* 获取群管理员列表 */
         this.restService.getGroupAdminList(this.currentChat.alarmItem.dataId).subscribe(res => {
+            if (res.status !== 200)
+                return;
+
             console.log('群信息弹出框获取群管理员：', res);
             this.group_admin_list = res.data;
             for (let item of this.group_admin_list) {
@@ -120,11 +123,17 @@ export class GroupInfoComponent implements OnInit {
     }
 
     initGroupData() {
-        console.log('currentChat（group-info-component）: ', this.currentChat);
+        console.log('currentChat ngOnInit（群聊设置页面）: ', this.currentChat);
+        if (this.currentChat.metadata.chatType === 'friend') {
+            return;
+        }
 
         /*获取群基本信息*/
         this.restService.getGroupBaseById(this.currentChat.alarmItem.dataId).subscribe((res: NewHttpResponseInterface<GroupInfoModel>) => {
             console.log('getGroupBaseById result: ', res);
+            if (res.status !== 200)
+                return;
+
             if(res.status === 200 && res.data) {
               this.groupData = res.data;
               this.setting_data.gmute = this.groupData.gmute === 1;
@@ -138,6 +147,9 @@ export class GroupInfoComponent implements OnInit {
         /* 获取群成员列表 */
         this.restService.submitGetGroupMembersListFromServer(this.currentChat.alarmItem.dataId).subscribe(res => {
             console.log('群信息弹出框获取群成员：', res);
+            if (res.status !== 200)
+                return;
+
             this.group_member_list = res.data.list;
             for (let item of this.group_member_list) {
                 item.show = true;
@@ -149,6 +161,9 @@ export class GroupInfoComponent implements OnInit {
         /* 个人的在群状态 */
         this.userinfo = this.localUserService.localUserInfo;
         this.restService.getUserClusterVo(this.userinfo.userId.toString(), this.currentChat.alarmItem.dataId).subscribe(res => {
+            if (res.status !== 200)
+                return;
+
             this.user_clu_info = res.data;
             if (this.user_clu_info.groupOwner == this.userinfo.userId.toString()) {
                 this.user_role = 'owner';
@@ -165,11 +180,17 @@ export class GroupInfoComponent implements OnInit {
 
         /* 查看免打扰状态 */
         this.restService.noDisturbDetail(this.userinfo.userId.toString(), this.currentChat.alarmItem.dataId).subscribe(res => {
+            if (res.status !== 200)
+                return;
+
             this.setting_data.no_disturb = parseInt(res.data) == 1;
         });
 
         /* 查看置顶状态 */
         this.restService.topDetail(this.userinfo.userId.toString(), this.currentChat.alarmItem.dataId).subscribe(res => {
+            if (res.status !== 200)
+                return;
+
             this.setting_data.top_chat = parseInt(res.data) == 1;
         });
     }
@@ -308,7 +329,7 @@ export class GroupInfoComponent implements OnInit {
             toUserId: this.currentChat.alarmItem.dataId,
             chatType: this.currentChat.metadata.chatType,
             group_name: this.currentChat.alarmItem.title,
-            txt_value: '',
+            txt_value: column == 'group_name' ? this.currentChat.alarmItem.title : '',
         };
 
         this.dialogService.openDialog(GroupInfoDialogComponent, { data: data }).then((res: any) => {
@@ -316,6 +337,11 @@ export class GroupInfoComponent implements OnInit {
 
             if (res.ok == false) {
                 return;
+            }
+
+            if (column == 'group_name') {
+                this.currentChat.alarmItem.title = res.new_name;
+                this.cacheService.putChattingCache(this.currentChat).then(() => {});
             }
 
             //if (column == 'group_name') {
