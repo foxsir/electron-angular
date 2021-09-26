@@ -123,7 +123,10 @@ export class GroupInfoComponent implements OnInit {
     }
 
     initGroupData() {
-        console.log('currentChat（group-info-component）: ', this.currentChat);
+        console.log('currentChat ngOnInit（群聊设置页面）: ', this.currentChat);
+        if (this.currentChat.metadata.chatType === 'friend') {
+            return;
+        }
 
         /*获取群基本信息*/
         this.restService.getGroupBaseById(this.currentChat.alarmItem.dataId).subscribe((res: NewHttpResponseInterface<GroupInfoModel>) => {

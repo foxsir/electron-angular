@@ -57,7 +57,10 @@ export class ChattingSettingComponent implements OnInit {
     }
 
     initData() {
-        console.log('currentChat ngOnInit: ', this.currentChat);
+        console.log('currentChat ngOnInit（私聊设置页面）: ', this.currentChat);
+        if (this.currentChat.metadata.chatType === 'group') {
+            return;
+        }
 
         this.restService.getUserBaseById(this.currentChat.alarmItem.dataId).subscribe(res => {
             console.log('getUserBaseById result: ', res);
