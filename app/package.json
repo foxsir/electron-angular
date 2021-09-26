@@ -5,7 +5,7 @@
   "private": true,
   "dependencies": {
     "@electron/remote": "1.2.0",
-    "agora-electron-sdk": "^3.4.2",
+    "agora-electron-sdk": "^3.5.0-rc.3-build.907",
     "blueimp-md5": "2.18.0",
     "iconv-lite": "^0.6.2",
     "reflect-metadata": "0.1.13",
