@@ -77,7 +77,7 @@ export class SearchWidgetComponent implements OnInit {
    * 文本框搜索
    * @param event
    */
-  txtSearchChange(event: KeyboardEvent) {
+  txtSearchChange() {
     this.find_friends = [];
     this.find_messages = [];
     console.log('回车确认：', this.search, this.alarmItemList);
