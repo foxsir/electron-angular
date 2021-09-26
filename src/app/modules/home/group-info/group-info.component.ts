@@ -318,6 +318,11 @@ export class GroupInfoComponent implements OnInit {
                 return;
             }
 
+            if (column == 'group_name') {
+                this.currentChat.alarmItem.title = res.new_name;
+                this.cacheService.putChattingCache(this.currentChat).then(() => {});
+            }
+
             //if (column == 'group_name') {
             //    this.dialogService.confirm({ title: '通知确认', text: '群名称已修改成功，是否通知全部群成员？' }).then((ok) => {
             //        if (ok) {
