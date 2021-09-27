@@ -329,7 +329,6 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
         this.cacheService.generateAlarmItem(dataId.toString(), chatType, dataContent.m, dataContent.ty).then(alarm => {
           chatMsgEntity.xu_isRead_type = true;
           chatMsgEntity.isOutgoing = true;
-          alert(dataId)
           this.cacheService.putChattingCache(alarm, chatMsgEntity).then(() => {
             if(this.currentChat && this.currentChat.alarmItem.dataId === alarm.alarmItem.dataId) {
               this.pushMessageToPanel({chat: chatMsgEntity, dataContent: dataContent}, 'incept');
