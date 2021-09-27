@@ -26,8 +26,8 @@ export class DialogService {
     confirm(data: Partial<{ title: string; text: string; confirm: string; cancel: string, width: string, height: string }>): Promise<boolean> {
         return new Promise((resolve, reject) => {
             this.openDialog(ConfirmComponent, {
-                width: data.width == undefined ? '354px' : data.width + 'px',
-                height: data.height == undefined ? '190px' : data.height + 'px',
+                width: data.width === undefined ? '354px' : data.width + 'px',
+                height: data.height === undefined ? '150px' : data.height + 'px',
                 data: data
             }).then((res: boolean) => {
                 resolve(res);
