@@ -28,6 +28,8 @@ import {FriendAddWay} from "@app/config/friend-add-way";
 import {MessageService} from "@services/message/message.service";
 import CommonTools from "@app/common/common.tools";
 import FileMetaInterface from "@app/interfaces/file-meta.interface";
+import {GroupMemberModel} from "@app/models/group-member.model";
+import {GroupModel} from "@app/models/group.model";
 
 @Injectable({
   providedIn: 'root'
@@ -172,12 +174,22 @@ export class ContextMenuService {
       label: "撤回",
       visibility: (filterData: MenuFilterData): boolean => {
         const time = new Date().getTime();
+        const localUserInfo: LocalUserinfoModel = RBChatUtils.getAuthedLocalUserInfoFromCookie();
         if(filterData.alarmItem.metadata.chatType === 'friend') {
           if(time - filterData.chat.date > 2000 * 60) {
             return false;
           }
+        } else {
+          const my = filterData.members.get(localUserInfo.userId.toString());
+          // 检查是否是群主/管理员
+          let isAdmin = false;
+          if(my) {
+            isAdmin = my.groupOwner.toString() === localUserInfo.userId.toString() || my.isAdmin === 1;
+            if(isAdmin) {
+              return isAdmin;
+            }
+          }
         }
-        const localUserInfo: LocalUserinfoModel = RBChatUtils.getAuthedLocalUserInfoFromCookie();
         return filterData.chat.uid.toString() === localUserInfo.userId.toString();
       },
       action: (chat: ChatmsgEntityModel, messageContainer: HTMLDivElement) => {
@@ -439,23 +451,25 @@ export class ContextMenuService {
           return noSelf && !isFriend;
         },
         action: (alarmItem, chat) => {
-          this.dialogService.confirm({title: "添加好友"}).then(() => {
-            this.cacheService.getCacheFriends().then(data => {
-              if(data[chat.uid]) {
-                this.snackBarService.openMessage("已经是好友");
-              } else {
-                this.messageService.addFriend(FriendAddWay.group, {
-                  friendUserUid: Number(chat.uid),
-                  desc: "来自群"
-                }).then(res => {
-                  if(res.success) {
-                    this.snackBarService.openMessage("已经发送请求");
-                  } else {
-                    this.snackBarService.openMessage("请稍后重试");
-                  }
-                });
-              }
-            });
+          this.dialogService.confirm({title: "添加好友"}).then((ok) => {
+            if(ok) {
+              this.cacheService.getCacheFriends().then(data => {
+                if(data[chat.uid]) {
+                  this.snackBarService.openMessage("已经是好友");
+                } else {
+                  this.messageService.addFriend(FriendAddWay.group, {
+                    friendUserUid: Number(chat.uid),
+                    desc: "来自群"
+                  }).then(res => {
+                    if(res.success) {
+                      this.snackBarService.openMessage("已经发送请求");
+                    } else {
+                      this.snackBarService.openMessage("请稍后重试");
+                    }
+                  });
+                }
+              });
+            }
           });
         }
       },
@@ -606,13 +620,25 @@ export class ContextMenuService {
    * @param chat
    * @param chatOwner
    */
-  getContextMenuForMessage(chat: ChatmsgEntityModel, chatOwner: any = null) {
+  async getContextMenuForMessage(chat: ChatmsgEntityModel, chatOwner: any = null) {
     // chat.msgType
+    const currentChatting = this.currentChattingChangeService.currentChatting;
+    let admins = new Map();
+    let members: Map<number, GroupMemberModel> = new Map();
+    if(currentChatting.metadata.chatType === 'group') {
+      this.cacheService.getCacheGroupAdmins(currentChatting.alarmItem.dataId).then((as) => {
+        admins = as;
+      });
+      await this.cacheService.getGroupMembers(currentChatting.alarmItem.dataId).then(data => {
+        members = data;
+      });
+    }
+
     const filterData = {
-      admins: null,
+      admins: admins,
       friends: null,
-      groups: null,
-      alarmItem: this.currentChattingChangeService.currentChatting,
+      members: members,
+      alarmItem: currentChatting,
       chat: chat
     };
     if(this.contextMenuForMessage[chat.msgType]) {
@@ -638,14 +664,14 @@ export class ContextMenuService {
   async getContextMenuForAvatar(alarmItem: AlarmItemInterface, chat: ChatmsgEntityModel) {
     let admins: unknown = null;
     let friends: unknown = null;
-    let groups: unknown = null;
+    let groups: Map<string, GroupModel> = new Map();
     await this.cacheService.getCacheGroupAdmins(alarmItem.alarmItem.dataId).then(data => {
       admins = data;
     });
     await this.cacheService.getCacheFriends().then(data => {
       friends = data;
     });
-    // 获取群信息/成员列表
+    // 获取群信息
     await this.cacheService.getCacheGroups().then(data => {
       groups = data;
     });
