@@ -26,13 +26,20 @@ export class ServerForwardService {
     console.dir("撤回消息");
     const dataContent: ProtocalModelDataContent = JSON.parse(res.dataContent);
     const msg = JSON.parse(dataContent.m);
-    console.log(res);
     const chatType = dataContent.cy === 0 ? 'friend' : 'group';
-    this.cacheService.generateAlarmItem(msg.senderId, chatType, msg.msg, dataContent.ty).then(alarm => {
+
+    let sendId: string;
+    if(chatType === 'group') {
+      sendId = dataContent.t;
+    } else {
+      sendId = msg.sendId;
+    }
+
+    this.cacheService.generateAlarmItem(sendId, chatType, msg.msg, dataContent.ty).then(alarm => {
       this.cacheService.getChattingCache(alarm).then(caches => {
         const chat = caches.get(msg.uuid);
-        chat.text = msg.msg;
         if(chat) {
+          chat.text = msg.msg;
           chat.msgType = MsgType.TYPE_BACK;
           this.cacheService.putChattingCache(alarm, chat).then(() => {
             if(this.cacheService.chatMsgEntityMap.get(chat.fingerPrintOfProtocal)) {
