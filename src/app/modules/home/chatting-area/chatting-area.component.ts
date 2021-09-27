@@ -303,6 +303,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
     this.messageDistributeService.MT03_OF_CHATTING_MESSAGE$.subscribe((res: ProtocalModel) => {
       const dataContent: ProtocalModelDataContent = JSON.parse(res.dataContent);
       const func = this.serverForwardService.functions[dataContent.ty];
+      console.dir(dataContent);
       if(func) {
         func(res);
       } else if (dataContent.ty == 120) {
@@ -380,7 +381,12 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
    */
   private subscribeOfGroupChatMsgServerToB() {
     this.messageDistributeService.MT45_OF_GROUP$CHAT$MSG_SERVER$TO$B$.subscribe((res: ProtocalModel) => {
-      const dataContentList: ProtocalModelDataContent[] = JSON.parse(res.dataContent);
+      let dataContentList: ProtocalModelDataContent[] | ProtocalModelDataContent = JSON.parse(res.dataContent);
+      if(dataContentList.hasOwnProperty("length")) {
+        dataContentList = dataContentList as ProtocalModelDataContent[];
+      } else {
+        dataContentList = [dataContentList as ProtocalModelDataContent];
+      }
       dataContentList.forEach(dataContent => {
         const func = this.serverForwardService.functions[dataContent.ty];
         if(func) {
@@ -460,8 +466,8 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
    * @param span
    * @param chat
    */
-  contextMenuForMessage(e: MouseEvent, menu: MatMenuTrigger, span: HTMLSpanElement, chat: ChatmsgEntityModel) {
-    this.contextMenu = this.contextMenuService.getContextMenuForMessage(chat);
+  async contextMenuForMessage(e: MouseEvent, menu: MatMenuTrigger, span: HTMLSpanElement, chat: ChatmsgEntityModel) {
+    this.contextMenu = await this.contextMenuService.getContextMenuForMessage(chat);
     if(this.contextMenu.length > 0) {
       menu.openMenu();
       span.style.position = "fixed";
