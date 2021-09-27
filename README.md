@@ -30,6 +30,9 @@ step 3
 
 ## 安装
 
+> 首次安装务必删除 /目录 和 app 目录下
+> yarn.lock 文件 在安装
+
 ```shell
 cd caomei-desktop-angular
 yarn
