@@ -213,9 +213,12 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
   }
 
   pushMessageToPanel(data: {chat: ChatmsgEntityModel; dataContent: ProtocalModelDataContent}, type: 'send' | 'incept' = 'send') {
-    const chatActive = this.currentChat.alarmItem.dataId.toString() === data.dataContent.t.toString();;
+    let chatActive: boolean;
     if(type === 'incept') {
+      chatActive = this.currentChat.alarmItem.dataId.toString() === data.dataContent.f.toString();
       this.messageService.alreadyRead(this.currentChat.alarmItem.dataId, this.currentChat.metadata.chatType);
+    } else {
+      chatActive = this.currentChat.alarmItem.dataId.toString() === data.dataContent.t.toString();
     }
     if(!data.dataContent) {
       if(this.cacheService.chatMsgEntityMap.size > 0) {
@@ -316,10 +319,17 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
         );
         // fromUid, nickName, msg, time, msgType, fp = null
         const chatType = Number(dataContent.cy) === ChatModeType.CHAT_TYPE_FRIEND$CHAT ? 'friend' : 'group';
-        const dataId = chatType === 'friend' ? res.to : dataContent.t;
-        this.cacheService.generateAlarmItem(dataId, chatType, dataContent.m, dataContent.ty).then(alarm => {
+        let dataId = chatType === 'friend' ? res.from : dataContent.f;
+
+        // 如果消息来自自己，则为不同终端同步消息
+        if(dataId.toString() === this.localUserService.localUserInfo.userId.toString()) {
+          dataId = res.to;
+        }
+
+        this.cacheService.generateAlarmItem(dataId.toString(), chatType, dataContent.m, dataContent.ty).then(alarm => {
           chatMsgEntity.xu_isRead_type = true;
           chatMsgEntity.isOutgoing = true;
+          alert(dataId)
           this.cacheService.putChattingCache(alarm, chatMsgEntity).then(() => {
             if(this.currentChat && this.currentChat.alarmItem.dataId === alarm.alarmItem.dataId) {
               this.pushMessageToPanel({chat: chatMsgEntity, dataContent: dataContent}, 'incept');
@@ -382,7 +392,6 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
           );
           const chatType = Number(dataContent.cy) === ChatModeType.CHAT_TYPE_FRIEND$CHAT ? 'friend' : 'group';
           const dataId = chatType === 'friend' ? res.to : dataContent.t;
-
           this.cacheService.generateAlarmItem(dataId, chatType, dataContent.m, dataContent.ty).then(alarm => {
             chatMsgEntity.xu_isRead_type = true;
             chatMsgEntity.isOutgoing = true;
