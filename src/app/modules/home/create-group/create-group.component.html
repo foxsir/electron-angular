@@ -44,7 +44,7 @@
         <mat-selection-list class="friend-item-list" #friendSelect disableRipple color="primary">
           <mat-list-option *ngFor="let friend of friendList" [value]="friend">
             <mat-icon mat-list-icon class="friend-avatar">
-              <img [src]="friend.base64Avatar || friend.userAvatarFileName" alt="">
+              <img [src]="friend.userAvatarFileName" alt="">
             </mat-icon>
             <div mat-line>{{friend.nickname}}</div>
             <div mat-line *ngIf="!!friend.isOnline === true" style="color: #0091FF;">[在线]</div>
