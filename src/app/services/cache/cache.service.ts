@@ -17,7 +17,7 @@ import {UserModel} from "@app/models/user.model";
 import CommonTools from "@app/common/common.tools";
 import {MessageService} from "@services/message/message.service";
 import {HistoryMessageService} from "@services/history-message/history-message.service";
-import {ChatModeType} from "@app/config/rbchat-config";
+import {ChatModeType, MsgType} from "@app/config/rbchat-config";
 import {HttpService} from "@services/http/http.service";
 import {_HTTP_SERVER_URL} from "@app/config/post-api";
 import {SoundService} from "@services/sound/sound.service";
@@ -649,7 +649,9 @@ export class CacheService extends DatabaseService {
    * @param text
    * @param msgType
    */
-  public async generateAlarmItem(dataId: string, chatType: 'friend' | 'group', text: string, msgType: number): Promise<AlarmItemInterface> {
+  public async generateAlarmItem(
+    dataId: string, chatType: 'friend' | 'group', text: string = null, msgType: number = MsgType.TYPE_TEXT
+  ): Promise<AlarmItemInterface> {
     const friends = await this.getCacheFriends().then(res => res);
     const groups = await this.getCacheGroups().then(res => res);
 
