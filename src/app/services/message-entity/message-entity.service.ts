@@ -96,7 +96,9 @@ export class MessageEntityService {
       case MsgType.TYPE_TRANSFER: {
         // 合并转发
         return this.createChatMsgEntity_COME_TRANSFER(fromUid, nickName, msg, time, fp, xu_isRead_type);
-      }default:
+      } case MsgType.TYPE_VOICE_CALL: {
+        return this.createChatMsgEntity_COME_VOICE_CALL(fromUid, nickName, msg, time, fp, xu_isRead_type);
+      } default:
         return this.createChatMsgEntity_COME_TEXT(fromUid, nickName, msg, time, fp, xu_isRead_type);
     }
   }
@@ -405,6 +407,20 @@ export class MessageEntityService {
     chatMsgEntityObj.text = fileName;
     chatMsgEntityObj.fingerPrintOfProtocal = fingerPrint;
     chatMsgEntityObj.msgType = MsgType.TYPE_VOICE;
+    chatMsgEntityObj.xu_isRead_type = xu_isRead_type;  //111 新增已读类型
+
+    return chatMsgEntityObj;
+  }
+
+  createChatMsgEntity_COME_VOICE_CALL(fromUid, nickName, fileName, time, fingerPrint, xu_isRead_type = null) {
+    const chatMsgEntityObj = new ChatmsgEntityModel();
+    chatMsgEntityObj.uid = fromUid;
+    chatMsgEntityObj.name = nickName;
+    chatMsgEntityObj.date = time <= 0 ? RBChatUtils.getCurrentUTCTimestamp() : time;
+    // 当是图片消息时，message里存放的就是语音留言所存放于服务端的文件名
+    chatMsgEntityObj.text = fileName;
+    chatMsgEntityObj.fingerPrintOfProtocal = fingerPrint;
+    chatMsgEntityObj.msgType = MsgType.TYPE_VOICE_CALL;
     chatMsgEntityObj.xu_isRead_type = xu_isRead_type;  //111 新增已读类型
 
     return chatMsgEntityObj;
