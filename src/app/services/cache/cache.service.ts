@@ -581,7 +581,10 @@ export class CacheService extends DatabaseService {
                 //   checkLocalLastMsg = true;
                 // }
                 chatMsgEntity.isOutgoing = true;
-                entityList.unshift(chatMsgEntity);
+                console.dir(dataContent.showMsg);
+                if(dataContent.showMsg) {
+                  entityList.unshift(chatMsgEntity);
+                }
               });
               this.putChattingCache(alarmItem, entityList).then(() => {
                 // if(checkLocalLastMsg === false && entityList.length > 0) {
@@ -616,11 +619,14 @@ export class CacheService extends DatabaseService {
                     msgJson.from, dataContent.nickName, dataContent.m, msgJson.recvTime, dataContent.ty, msgJson.fp
                   );
                 }
+                // 如果没拉取到最后一条，则继续拉去
                 // if(localLastMsgFP === chatMsgEntity.fingerPrintOfProtocal) {
                 //   checkLocalLastMsg = true;
                 // }
                 chatMsgEntity.isOutgoing = true;
-                entityList.unshift(chatMsgEntity);
+                if(dataContent.showMsg) {
+                  entityList.unshift(chatMsgEntity);
+                }
               });
               this.putChattingCache(alarmItem, entityList).then((newCache) => {
                 // if(checkLocalLastMsg === false && entityList.length > 0) {
