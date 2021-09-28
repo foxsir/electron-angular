@@ -2,6 +2,9 @@ import {BaseEntity} from "typeorm";
 
 export default class FriendModel extends BaseEntity {
   friendUserUid: number;
+  /**
+   * @deprecated
+   */
   isOnline: number; // 0 or 1
   nickname: string;
   userAvatarFileName: string;
