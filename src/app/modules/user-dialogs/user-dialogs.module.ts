@@ -31,6 +31,7 @@ import { SelectFriendContactComponent } from './select-friend-contact/select-fri
 import {NgformlyModule} from "../../shared/formly/ngformly.module";
 import { RedBagComponent } from './red-bag/red-bag.component';
 import { MyFriendGroupComponent } from './my-friend-group/my-friend-group.component';
+import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 
 
 @NgModule({
@@ -72,7 +73,8 @@ import { MyFriendGroupComponent } from './my-friend-group/my-friend-group.compon
     MatInputModule,
     MatListModule,
     ReactiveFormsModule,
-    NgformlyModule
+    NgformlyModule,
+    MatProgressSpinnerModule
   ]
 })
 export class UserDialogsModule { }
