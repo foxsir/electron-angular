@@ -2,16 +2,20 @@ import {Component, Input, OnInit} from '@angular/core';
 import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 
 @Component({
-  selector: 'app-message-voice-call',
-  templateUrl: './message-voice-call.component.html',
-  styleUrls: ['./message-voice-call.component.scss']
+    selector: 'app-message-voice-call',
+    templateUrl: './message-voice-call.component.html',
+    styleUrls: ['./message-voice-call.component.scss']
 })
 export class MessageVoiceCallComponent implements OnInit {
-  @Input() chatMsg: ChatmsgEntityModel;
+    @Input() chatMsg: ChatmsgEntityModel;
+    public msg_data = {
+        duration: '',
+    };
 
-  constructor() { }
+    constructor() { }
 
-  ngOnInit(): void {
-  }
-
+    ngOnInit(): void {
+        console.log('语音消息：', this.chatMsg);
+        this.msg_data = JSON.parse(this.chatMsg.text);
+    }
 }

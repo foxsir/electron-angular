@@ -217,6 +217,8 @@ export class ChattingVoiceComponent implements OnInit {
 
     /* 挂断语音：被动（对方挂断语音，通知对方） */
     endVoiceCallback() {
+        console.log('关闭语音...');
+
         this.leaveChannel('');
         this.view_mode = "default";
         this.drawer.close();
