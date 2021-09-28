@@ -130,3 +130,9 @@ img {
     border-bottom: solid #CCCCCC 1px;
   }
 }
+
+.padding-less-dialog {
+  .mat-dialog-container {
+    padding: 0;
+  }
+}
