@@ -78,7 +78,10 @@ export class ContextMenuService {
         return filterData.alarmItem.metadata.chatType === 'friend';
       },
       action: (chatting: AlarmItemInterface) => {
-        return this.dialogService.openDialog(UserInfoComponent, {data: {userId: Number(chatting.alarmItem.dataId)}});
+        return this.dialogService.openDialog(UserInfoComponent, {
+          data: {userId: Number(chatting.alarmItem.dataId)},
+          panelClass: "padding-less-dialog",
+        });
       }
     },
     closeSound: {
@@ -359,7 +362,8 @@ export class ContextMenuService {
         },
         action: (alarmItem, chat) => {
           this.dialogService.openDialog(UserInfoComponent, {
-            data: {userId: chat.uid}
+            data: {userId: chat.uid},
+            panelClass: "padding-less-dialog",
           }).then();
         }
       },
