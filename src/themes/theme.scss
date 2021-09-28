@@ -1,0 +1,9 @@
+.mat-primary.text {
+  color: mat-color(map-get($theme, primary));
+}
+.mat-warn.text {
+  color: mat-color(map-get($theme, warn));
+}
+.mat-accent.text {
+  color: mat-color(map-get($theme, accent));
+}
