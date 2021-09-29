@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import ChattingModel from "@app/models/chatting.model";
 import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 import { MatDrawer } from "@angular/material/sidenav";
@@ -30,6 +30,7 @@ import GroupInfoModel from "@app/models/group-info.model";
 export class GroupInfoComponent implements OnInit {
     @Input() currentChat: AlarmItemInterface; // 测试群ID：0000000642
     @Input() drawer: MatDrawer;
+    @ViewChild('groupConfig') private groupConfig: MatDrawer;
 
     public closeIcon = this.dom.bypassSecurityTrustResourceUrl(closeIcon);
     public closeActiveIcon = this.dom.bypassSecurityTrustResourceUrl(closeActiveIcon);
@@ -100,6 +101,7 @@ export class GroupInfoComponent implements OnInit {
             console.log('会话切换...');
             this.currentChat = currentChat;
             this.view_mode = 'switch_default';
+            this.groupConfig.close().then();
             this.initGroupData();
         });
     }
