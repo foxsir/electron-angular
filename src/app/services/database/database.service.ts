@@ -28,7 +28,7 @@ interface DeleteParams<T> {
 @Injectable({
   providedIn: 'root'
 })
-export class DatabaseService {
+export abstract class DatabaseService {
   private isConnected = false;
 
   private connectedSource = new Subject<any>();
