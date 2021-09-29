@@ -17,7 +17,7 @@ export default class FriendModel extends BaseEntity {
   isOnline: number = 0; // 是否在线 0否 1是(已废弃)
 
   @Column({nullable: true})
-  userUid:  number = 0;; //  用户id
+  userUid:  number = 0; //  用户id
 
   @Column({nullable: true})
   nickname:  string; //  好友昵称
