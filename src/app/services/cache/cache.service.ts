@@ -654,6 +654,15 @@ export class CacheService extends DatabaseService {
   ): Promise<AlarmItemInterface> {
     const friends = await this.getCacheFriends().then(res => res);
     const groups = await this.getCacheGroups().then(res => res);
+    if(!text) {
+      await this.queryData<ChattingModel>({
+        model: 'chatting', query: {dataId: dataId}
+      }).then((cache: IpcResponseInterface<ChattingModel>)  => {
+        if(cache.status === 200) {
+          text = cache.data[0].msgContent;
+        }
+      });
+    }
 
     return new Promise((resolve, reject) => {
       let title = "聊天";
