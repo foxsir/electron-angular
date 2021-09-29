@@ -21,7 +21,6 @@ import {MatDividerModule} from "@angular/material/divider";
 import {MatButtonModule} from "@angular/material/button";
 import { MessageMergeMultipleComponent } from './message-merge-multiple/message-merge-multiple.component';
 import { MessageVoiceCallComponent } from './message-voice-call/message-voice-call.component';
-import { MessageAiteComponent } from './message-aite/message-aite.component';
 import { MessageQuoteComponent } from './message-quote/message-quote.component';
 
 @NgModule({
@@ -44,7 +43,6 @@ import { MessageQuoteComponent } from './message-quote/message-quote.component';
     MessageBackComponent,
     MessageMergeMultipleComponent,
     MessageVoiceCallComponent,
-    MessageAiteComponent,
     MessageQuoteComponent
   ],
   exports: [
