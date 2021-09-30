@@ -260,7 +260,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
   ) {
     // sendStatus
     if (!messageText || messageText.trim().length === 0) {
-      return;
+      return false;
     }
     if (!this.imService.isLogined()) {
       return this.imService.checkLogined();
@@ -275,9 +275,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
       messageType = MsgType.TYPE_QUOTE;
     }
     messageText = this.parseReplyMessage(messageText);
-
     this.clearTextArea();
-
     if(this.currentChat.metadata.chatType === 'friend') {
       this.sendFriendMessage(messageType, messageText, emitToUI, replaceEntity);
     } else if (this.currentChat.metadata.chatType === 'group') {
@@ -314,28 +312,25 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
         //111 新增指纹码 he 消息类型msgType
         // debugger
         const chatMsgEntity = this.messageEntityService.prepareSendedMessage(
-          message, 0, res.fingerPrint, messageType
+          message, new Date().getTime(), res.fingerPrint, messageType
         );
         if (replaceEntity) {
           replaceEntity.fingerPrintOfProtocal = chatMsgEntity.fingerPrintOfProtocal;
           // this.cacheService.chatMsgEntityMap.delete(replaceEntity.fingerPrintOfProtocal);
         }
 
-        // this.tempList.push({
-        //   chatMsgEntity: chatMsgEntity,
-        //   emitToUI: emitToUI,
-        //   msgBody: res.msgBody
-        // });
-        // this.pushCache();
-
-        this.cacheService.putChattingCache(this.currentChat, chatMsgEntity).then(() => {
-          if(emitToUI) {
-            this.sendMessage.emit({chat: chatMsgEntity, dataContent: res.msgBody});
-          }
-          if(this.tempList.length > 0) {
-            this.pushCache();
-          }
+        this.tempList.push({
+          chatMsgEntity: chatMsgEntity,
+          emitToUI: emitToUI,
+          msgBody: res.msgBody
         });
+        this.pushCache();
+
+        // this.cacheService.putChattingCache(this.currentChat, chatMsgEntity).then(() => {
+        //   if(emitToUI) {
+        //     this.sendMessage.emit({chat: chatMsgEntity, dataContent: res.msgBody});
+        //   }
+        // });
       }
     });
   }
@@ -394,17 +389,14 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
           if(emitToUI) {
             this.sendMessage.emit({chat: chatMsgEntity, dataContent: res.msgBody});
           }
-          if(this.tempList.length > 0) {
-            this.pushCache();
-          }
         });
 
-        // this.tempList.push({
-        //   chatMsgEntity: chatMsgEntity,
-        //   emitToUI: emitToUI,
-        //   msgBody: res.msgBody
-        // });
-        // this.pushCache();
+        this.tempList.push({
+          chatMsgEntity: chatMsgEntity,
+          emitToUI: emitToUI,
+          msgBody: res.msgBody
+        });
+        this.pushCache();
         // this.cacheService.putChattingCache(this.currentChat, chatMsgEntity).then(() => {
         //   if(emitToUI) {
         //     this.sendMessage.emit({chat: chatMsgEntity, dataContent: res.msgBody});

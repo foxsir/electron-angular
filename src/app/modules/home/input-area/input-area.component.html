@@ -44,8 +44,8 @@
         </mat-card-content>
       </mat-card>
     </mat-menu>
-    <div contenteditable="true" (paste)="pasteContent($event)" class="message-textarea" #textarea (keydown.enter)="false"
-         (keyup)="textareaChange()" (keydown)="textareaKeydown($event)" (keyup.enter)="doSend();"></div>
+    <div contenteditable="true" (paste)="pasteContent($event)" class="message-textarea" #textarea
+         (keyup)="textareaChange()" (keydown)="textareaKeydown($event)" (keydown.enter)="doSend();"></div>
     <div class="message-text-placeholder" (selectstart)="false" (click)="textarea.focus()" [fxShow]="showPlaceholder">
       {{messageTextPlaceholder}}
     </div>
