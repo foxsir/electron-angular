@@ -9,10 +9,10 @@
         </span>
       </mat-card-content>
       <mat-card-content>
-        <div fxLayout="column" fxLayoutGap="32px">
-          <div fxFlex="100" *ngFor="let menu of leftMenu">
+        <div fxLayout="column">
+          <div fxFlex="100" *ngFor="let menu of leftMenu" style="margin-top:6px; margin-bottom: 22px;">
             <div style="cursor: pointer" [routerLink]="menu.router" (click)="switchRouter(menu)">
-              <div fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="6px">
+              <div fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="3px">
                 <div>
                   <mat-icon style="width: 30px" [matBadge]="massageBadges.message" matBadgeColor="warn"
                             matBadgePosition="above after" matBadgeSize="small"
@@ -50,7 +50,7 @@
   </div>
   <div fxFlex="calc(100% - 74px)">
     <mat-drawer-container fxFlexFill autosize>
-      <mat-drawer #drawer mode="over" style="width: 260px" disableClose>
+      <mat-drawer #drawer mode="over" style="width:260px" disableClose>
         <app-account-panel [accountDrawer]="drawer"></app-account-panel>
       </mat-drawer>
 

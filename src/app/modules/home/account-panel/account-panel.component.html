@@ -34,10 +34,10 @@
         </mat-card>
       </div>
       <div fxFlex class="account-panel-body">
-        <div fxLayout="column" fxLayoutGap="20px" class="user-setting-menu">
+        <div fxLayout="column" fxLayoutGap="3px" class="user-setting-menu">
           <div fxFlex="100" *ngFor="let menu of userSettingMenu" class="user-setting-menu-item">
             <button mat-button fxFlex="100" style="text-align: start" tabindex="-1" (click)="menu.action()">
-              <mat-icon mat-list-icon class="hover-icon" style="margin-right: 20px;">
+              <mat-icon mat-list-icon class="hover-icon" style="margin-right: 15px;">
                 <img [src]="menu.icon" alt="" class="icon">
                 <img [src]="menu.iconActive" alt="" class="icon-active">
               </mat-icon>

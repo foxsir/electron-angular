@@ -1,0 +1,40 @@
+.myGroup{
+  padding: 20px 0 16px 0;
+}
+::ng-deep {
+  .myGroup {
+
+    mat-card-title {
+      padding-left: 16px
+    }
+
+    .mat-list-base {
+      padding-top: 10px;
+    }
+
+    .mat-list-base .mat-list-item .mat-line:nth-child(n+2) {
+      font-size: 12px;
+      padding-top: 2px;
+    }
+
+    .mat-list-base .mat-list-item.mat-list-item-with-avatar .mat-list-item-content .mat-list-text, .mat-list-base .mat-list-item.mat-list-option .mat-list-item-content .mat-list-text, .mat-list-base .mat-list-option.mat-list-item-with-avatar .mat-list-item-content .mat-list-text, .mat-list-base .mat-list-option.mat-list-option .mat-list-item-content .mat-list-text {
+      padding-left: 10px;
+    }
+
+    .mat-divider {
+      border: 0;
+    }
+
+    .mat-list-base .mat-list-item .mat-list-item-content .mat-ripple {
+      border: 0;
+    }
+
+    .mat-list-base .mat-list-item.mat-2-line, .mat-list-base .mat-list-option.mat-2-line {
+      height: 56px;
+    }
+
+    .mat-list-base .mat-list-item .mat-list-item-content, .mat-list-base .mat-list-option .mat-list-item-content {
+      padding: 0 16px 0 16px;
+    }
+  }
+}

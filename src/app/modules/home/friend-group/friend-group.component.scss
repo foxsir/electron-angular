@@ -1,3 +1,74 @@
 .rotate {
   transform: rotate(90deg);
 }
+.persons span{ margin-right: 10px;}
+.persons img{ margin-top: 1px;}
+
+.friendGroup{
+  padding: 20px 0 16px 0;
+}
+::ng-deep {
+  .friendGroup {
+    mat-card-title{
+      padding:0 16px 0 16px
+    }
+    .mat-card-content .mat-elevation-z0{
+      padding-top: 0;
+    }
+
+    .mat-button, .mat-icon-button, .mat-stroked-button, .mat-flat-button{
+      width: 74px;
+      height: 32px;
+      line-height:32px;
+      right: 16px;
+      top: -5px;
+      position: relative;
+    }
+    .mat-expansion-panel-header{
+      padding: 0 16px 0 16px;
+      height:40px;
+      font-size: 14px;
+    }
+
+    .mat-expansion-panel-header-title, .mat-expansion-panel-header-description{
+      margin-right: 0px;
+    }
+
+    .mat-list-base {
+      padding-top: 10px;
+    }
+
+    .mat-list-base .mat-list-item .mat-line:nth-child{
+      font-size: 12px;
+      padding-top: 2px;
+      border-radius: 0;
+    }
+
+    .mat-list-base .mat-list-item.mat-list-item-with-avatar .mat-list-item-content .mat-list-text, .mat-list-base .mat-list-item.mat-list-option .mat-list-item-content .mat-list-text, .mat-list-base .mat-list-option.mat-list-item-with-avatar .mat-list-item-content .mat-list-text, .mat-list-base .mat-list-option.mat-list-option .mat-list-item-content .mat-list-text {
+      padding-left: 10px;
+    }
+
+    .mat-divider{
+      border: 0;
+    }
+
+    .mat-list-base .mat-list-item .mat-list-item-content .mat-ripple {
+      border: 0;
+    }
+    .mat-list-base .mat-list-item.mat-2-line, .mat-list-base .mat-list-option.mat-2-line{
+      height: 56px;
+    }
+    .mat-list-base .mat-list-item .mat-list-item-content, .mat-list-base .mat-list-option .mat-list-item-content {
+      padding: 0 16px 0 16px;
+    }
+    .mat-expansion-panel-body{
+      padding: 0 16px 0 10px;
+    }
+    .mat-list-base .mat-list-item .mat-list-item-content, .mat-list-base .mat-list-option .mat-list-item-content{
+      padding:0;
+    }
+    .mat-list-base .mat-list-item .mat-line:nth-child(n+2){
+      font-size:12px
+    }
+  }
+}

@@ -1,14 +1,13 @@
-<mat-card class="mat-elevation-z0">
+<mat-card class="mat-elevation-z0 myFriendArea">
   <mat-card-content>
     <mat-card-title>我的好友</mat-card-title>
   </mat-card-content>
   <mat-card-content>
     <mat-list *ngFor="let friend of frienddata">
-      <div style="margin-bottom:15px;">{{friend.char}}</div>
-      <mat-divider inset style="margin-bottom: 5px;"></mat-divider>
-      <mat-list-item class="hover-item" *ngFor="let item of friend.list | keyvalue" (click)="switchChatting(item.value)"
-                     style="padding-top:10px;">
-        <img src="{{item.value.userAvatarFileName}}" mat-list-icon style="width:44px;height:44px;"/>
+      <div style="margin:5px 16px 5px 16px;">{{friend.char}}</div>
+      <mat-divider inset style="margin:0 0 15px 16px;"></mat-divider>
+      <mat-list-item class="hover-item" *ngFor="let item of friend.list | keyvalue" (click)="switchChatting(item.value)">
+        <img src="{{item.value.userAvatarFileName}}" mat-list-icon style="width:40px;height:40px;"/>
         <div mat-line>{{item.value.nickname}}</div>
         <div mat-line>
           <span *ngIf="item.value.onlineStatus === true" style="color:#68aee5;">[在线]</span>

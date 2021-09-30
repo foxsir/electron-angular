@@ -1,11 +1,11 @@
-<mat-card class="mat-elevation-z0">
+<mat-card class="mat-elevation-z0 blackList">
   <mat-card-content>
     <mat-card-title>黑名单</mat-card-title>
   </mat-card-content>
   <mat-card-content>
     <mat-list>
-      <mat-list-item *ngFor="let item of blacklist" style="padding-top:10px;">
-        <img src="{{item.userAvatarFileName}}" mat-list-icon style="width:44px;height:44px;"/>
+      <mat-list-item *ngFor="let item of blacklist" style="padding-top:5px;">
+        <img src="{{item.userAvatarFileName}}" mat-list-icon style="width:40px;height:40px;"/>
         <div mat-line>{{item.nickname}}</div>
         <mat-divider></mat-divider>
         <mat-action-list>

@@ -1,0 +1,20 @@
+.blackList{
+  padding: 20px 0 16px 0;
+}
+
+::ng-deep {
+  .blackList {
+    mat-card-title {
+      padding: 0 16px 0 16px
+    }
+
+    .mat-list,.mat-list-base{
+      padding-top: 8px;
+    }
+    .mat-list-base .mat-list-item .mat-list-icon, .mat-list-base .mat-list-option .mat-list-icon{
+      padding: 0;
+    }
+    .mat-divider,.mat-divider-horizontal{border: 0}
+
+  }
+}

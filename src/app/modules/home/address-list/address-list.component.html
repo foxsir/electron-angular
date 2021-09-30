@@ -1,16 +1,20 @@
-<mat-drawer-container autosize>
+<mat-drawer-container autosize class="addressList">
   <mat-drawer #addressListPanel [mode]="drawerMode" [opened]="isMiniUI === false">
-    <div fxFlex="260px" fxLayout="column" fxLayoutGap="14px" class="friend-item-list border1px right">
+    <div fxFlex="260px" fxLayout="column" fxLayoutGap="0" class="friend-item-list border1px right">
       <div class="search-widget">
         <app-search-widget></app-search-widget>
       </div>
       <div id="left-menu-list">
-        <mat-list role="list" fxLayoutGap="2px">
+        <mat-list role="list" fxLayoutGap="0" style="padding-top: 0;">
           <mat-list-item *ngFor="let menu of leftMenuList" [routerLink]="menu.router">
             <mat-icon mat-list-icon>
               <img [src]="menu.icon" alt="">
             </mat-icon>
             <div mat-line>{{menu.label}}</div>
+            <mat-icon class="hover-icon">
+              <img [src]="rightArrowIcon" class="icon" alt="">
+              <img [src]="rightArrowActiveIcon" class="icon-active" alt="">
+            </mat-icon>
           </mat-list-item>
         </mat-list>
       </div>

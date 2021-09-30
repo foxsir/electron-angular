@@ -14,6 +14,7 @@
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
+    height: 23px;
   }
 
   .chatting-hint {
@@ -27,22 +28,24 @@
 
   .chatting-action-button {
   }
-
+.timev{font-size: 14px;text-align: right;color:#888; float: right;margin-right: 10px;}
   .message-badges {
-    height: 16px;
+    height: 14px;
     border-radius: 8px;
     margin-right: 10px;
-    padding: 0 8px;
+    padding: 1px 5px;
     background: #0091FF;
     font-size: 10px;
     color: white;
     text-align: center;
-    line-height: 16px;
+    line-height: 14px;
     overflow: hidden;
+    font-weight: 150;
+    float: right;
   }
 
   .mat-card {
-    padding: 16px 20px;
+    padding: 9px 30px 8px 21px;
   }
 
   .mat-card:hover {

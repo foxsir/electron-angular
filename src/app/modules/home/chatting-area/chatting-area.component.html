@@ -149,7 +149,7 @@
                           </mat-menu>
                         </div>
                         <div fxFlex>
-                          <div *ngIf="currentChat.metadata.chatType === 'group'"
+                          <div class="groupName" *ngIf="currentChat.metadata.chatType === 'group'"
                                [fxLayoutAlign]="chat.value.uid.toString() === localUserInfo.userId.toString() ? 'end end' : 'start'">
                             {{chat.value.name}}
                           </div>
