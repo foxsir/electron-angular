@@ -106,6 +106,11 @@ export class MessageComponent implements OnInit, AfterViewInit {
     public topMap: Map<string, boolean> = new Map();
     public topMapOfArray: string[] = [];
 
+    public group_tab_data = {
+        visible: false,
+        list: []
+    };
+
     constructor(
         private alarmsProviderService: AlarmsProviderService,
         private groupsProviderService: GroupsProviderService,
@@ -148,6 +153,31 @@ export class MessageComponent implements OnInit, AfterViewInit {
         this.subscribeSENSITIVEWordUpdate(); // 敏感词
     }
 
+    initData() {
+        console.log('显示消息组件数据打印：', this.currentChat);
+
+        //如果是群聊，加载群页签数据
+        if (this.currentChat != undefined && this.currentChat.alarmItem.chatType == 'group') {
+            this.restService.getGroupBaseById(this.currentChat.alarmItem.dataId).subscribe(res => {
+                if (parseInt(res.data.tabSwitch) == 1) {
+                    /*获取群页签列表*/
+                    this.restService.getUserGroupTab(this.currentChat.alarmItem.dataId).subscribe(res => {
+                        this.group_tab_data = {
+                            visible: true,
+                            list: res.data
+                        };
+                    });
+                }
+            });
+        }
+        else {
+            this.group_tab_data = {
+                visible: false,
+                list: []
+            };
+        }
+    }
+
     ngOnInit(): void {
         this.cacheService.getMute().then((map) => {
             if (map) {
@@ -186,8 +216,11 @@ export class MessageComponent implements OnInit, AfterViewInit {
 
         this.currentChattingChangeService.currentChatting$.subscribe((alarm: AlarmItemInterface) => {
             this.currentChat = alarm;
+            this.initData();
         });
         this.currentChat = this.currentChattingChangeService.currentChatting;
+
+        this.initData();
     }
 
     ngAfterViewInit() {
