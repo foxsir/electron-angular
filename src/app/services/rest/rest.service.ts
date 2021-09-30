@@ -1155,7 +1155,7 @@ export class RestService {
    * @param data
    */
   updateFriendRemark(data: {id: string; toUserId: string; remark: string}): Observable<any> {
-    return this.http.get(getGroupAdminInfo, data);
+    return this.http.postForm(updRemark, data);
   }
 
   /**
