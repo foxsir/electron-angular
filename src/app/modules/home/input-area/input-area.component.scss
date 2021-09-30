@@ -1,5 +1,5 @@
 .message-textarea-container {
-  background: #f0f0f0;
+  background: #FFF;
   position: relative;
 
   .message-textarea {
@@ -9,7 +9,7 @@
     max-height: 150px;
     overflow-y: scroll;
     overflow-x: hidden;
-    margin: 10px;
+    margin: 0 10px 13px 10px;
     font-size: 14px;
     outline: none;
     z-index: 10;
@@ -25,7 +25,7 @@
 
   .message-text-placeholder {
     height: 20px;
-    margin: 10px;
+    margin: 0 10px 13px 10px;
     position: absolute;
     font-size: 14px;
     color: #CCCCCC;
@@ -36,9 +36,7 @@
 }
 
 
-.mat-icon-button {
-  margin-top: 8px;
-}
+
 
 ::ng-deep {
   img.at-mark-for-input {
