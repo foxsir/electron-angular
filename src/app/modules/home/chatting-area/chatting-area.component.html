@@ -117,7 +117,7 @@
                 </div>
                 <div fxFlex="100">
                   <cdk-virtual-scroll-viewport #virtualScrollViewport appendOnly fxFill itemSize="50">
-                    <div fxLayout="row" *cdkVirtualFor="let chat of cacheService.chatMsgEntityList"
+                    <div fxLayout="row" *ngFor="let chat of cacheService.chatMsgEntityList"
                          (click)="selectMessage ? collectMessage(chat, msgCheckbox) : false"
                          [fxLayoutAlign]="chat.uid.toString() === localUserInfo.userId.toString() ? 'space-between' : 'start'"
                          [ngClass]="{'self-message': chat.uid.toString() === localUserInfo.userId.toString()}">
