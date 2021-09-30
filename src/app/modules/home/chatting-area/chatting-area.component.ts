@@ -53,6 +53,7 @@ import {SoundService} from "@services/sound/sound.service";
 import {MessageService} from "@services/message/message.service";
 import CommonTools from "@app/common/common.tools";
 import DirectoryType from "@services/file/config/DirectoryType";
+import {CdkVirtualScrollViewport} from "@angular/cdk/scrolling";
 
 @Component({
   selector: 'app-chatting-area',
@@ -63,6 +64,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
   @ViewChild("chattingContainer") chattingContainer: ElementRef;
   @ViewChild('appChattingVoice') appChattingVoice: ChattingVoiceComponent;
   @ViewChild('chattingAreaDrawer') private chattingAreaDrawer: MatDrawer;
+  @ViewChild('virtualScrollViewport') virtualScrollViewport: CdkVirtualScrollViewport;
 
   public currentChat: AlarmItemInterface;
 
@@ -152,6 +154,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
         const data = cache.alarmDataMap.get(this.currentChat.alarmItem.dataId);
         if(data && data.message && data.message.size === 0) {
           this.cacheService.chatMsgEntityMap.clear();
+          this.cacheService.chatMsgEntityList = [];
         }
       }
     });
@@ -223,22 +226,26 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
     if(!data.dataContent) {
       if(this.cacheService.chatMsgEntityMap.size > 0) {
         this.cacheService.chatMsgEntityMap.set(data.chat.fingerPrintOfProtocal, data.chat);
+        this.cacheService.chatMsgEntityList = new Array(...this.cacheService.chatMsgEntityMap).flatMap(t => t[1]);
         this.scrollToBottom();
       }
     } else {
       if(data.dataContent.cy === ChatModeType.CHAT_TYPE_FRIEND$CHAT) { // 单聊
         if(this.currentChat && chatActive) {
           this.cacheService.chatMsgEntityMap.set(data.chat.fingerPrintOfProtocal, data.chat);
+          this.cacheService.chatMsgEntityList = new Array(...this.cacheService.chatMsgEntityMap).flatMap(t => t[1]);
           this.scrollToBottom();
         }
       } else if(data.dataContent.cy === ChatModeType.CHAT_TYPE_GUEST$CHAT) { // 临时聊天/陌生人聊天
         if(this.currentChat && chatActive) {
           this.cacheService.chatMsgEntityMap.set(data.chat.fingerPrintOfProtocal, data.chat);
+          this.cacheService.chatMsgEntityList = new Array(...this.cacheService.chatMsgEntityMap).flatMap(t => t[1]);
           this.scrollToBottom();
         }
       } else if(data.dataContent.cy === ChatModeType.CHAT_TYPE_GROUP$CHAT) { // 是群
         if(this.currentChat && this.currentChat.alarmItem.dataId.toString() === data.dataContent.t.toString()) {
           this.cacheService.chatMsgEntityMap.set(data.chat.fingerPrintOfProtocal, data.chat);
+          this.cacheService.chatMsgEntityList = new Array(...this.cacheService.chatMsgEntityMap).flatMap(t => t[1]);
           this.scrollToBottom();
         }
       }
@@ -421,6 +428,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
         chat.isOutgoing = true;
         this.cacheService.putChattingCache(this.currentChat, chat).then(() => {
           this.cacheService.chatMsgEntityMap.set(chat.fingerPrintOfProtocal, chat);
+          this.cacheService.chatMsgEntityList = new Array(...this.cacheService.chatMsgEntityMap).flatMap(t => t[1]);
         });
       }
     });
@@ -439,24 +447,30 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
    * @param behavior
    */
   scrollToBottom(behavior: "auto" | "smooth" = "smooth") {
-    const sb = () => {
-      this.chattingContainer.nativeElement.scrollTo({
-        top: this.chattingContainer.nativeElement.scrollHeight,
-        behavior: behavior
-      });
-    };
-    setTimeout(() => {
-      this.chattingAreaOnScroll();
-      if(this.chattingContainer) {
-        const images = this.chattingContainer.nativeElement.querySelectorAll("img");
-        images.forEach(img => {
-          img.onload = () => {
-            setTimeout(() => sb());
-          };
+    if(this.virtualScrollViewport) {
+      const sb = () => {
+        this.virtualScrollViewport.scrollTo({
+          bottom: 0,
+          behavior: behavior,
         });
-        sb();
-      }
-    });
+      };
+      setTimeout(() => {
+        this.chattingAreaOnScroll();
+        if(this.chattingContainer) {
+          const images = this.chattingContainer.nativeElement.querySelectorAll("img");
+          images.forEach(img => {
+            img.onload = () => {
+              setTimeout(() => {
+                sb();
+              });
+            };
+          });
+          setTimeout(() => {
+            sb();
+          });
+        }
+      });
+    }
   }
 
   /**
@@ -573,17 +587,28 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
    * 监听聊天区域滚动
    */
   chattingAreaOnScroll() {
-    const container = document.getElementById("chatting-panel");
-    if(container.onscroll === null) {
-      container.addEventListener('scroll', () => {
-        const bottom = container.scrollHeight - container.offsetHeight - container.scrollTop;
-        this.showDownArrow = bottom > 200;
+    this.virtualScrollViewport.scrolledIndexChange.subscribe((index) => {
+      if(index === 0) {
+        this.loadMessage();
+      }
+      this.showDownArrow = this.virtualScrollViewport.measureScrollOffset('bottom') > 10;
+    });
+    // this.virtualScrollViewport.getOffsetToRenderedContentStart().subscribe((e) => {
+    //   // this.showDownArrow = false;
+    //   console.dir(e);
+    // });
 
-        if(container.scrollTop === 0 && this.loadingMessage === false) {
-          this.loadMessage();
-        }
-      });
-    }
+    // const container = document.getElementById("chatting-panel");
+    // if(container.onscroll === null) {
+    //   container.addEventListener('scroll', () => {
+    //     const bottom = container.scrollHeight - container.offsetHeight - container.scrollTop;
+    //     this.showDownArrow = bottom > 200;
+    //
+    //     if(container.scrollTop === 0 && this.loadingMessage === false) {
+    //
+    //     }
+    //   });
+    // }
   }
 
   /**
@@ -593,6 +618,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
    * @private
    */
   private loadMessage(goBottom: boolean = false) {
+    const loadNumber = 30;
     if(this.loadingMessage) {
       return false;
     } {
@@ -600,17 +626,23 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
       if(this.cacheService.chatMsgEntityMapTemp.size > 0) {
         // 从缓存获取消息
         this.loadingMessage = false;
-        const last = new Array(...this.cacheService.chatMsgEntityMapTemp.entries()).reverse().splice(0, 30);
+        const last = new Array(...this.cacheService.chatMsgEntityMapTemp.entries()).reverse().splice(0, loadNumber);
         const appendAfter = new Map();
         last.reverse().forEach(keyvalue => {
           this.cacheService.chatMsgEntityMapTemp.delete(keyvalue[0]);
           appendAfter.set(keyvalue[0], keyvalue[1]);
         });
+        const topOffset = this.virtualScrollViewport.measureScrollOffset("bottom");
         this.cacheService.chatMsgEntityMap = new Map([...appendAfter, ...this.cacheService.chatMsgEntityMap]);
+        this.cacheService.chatMsgEntityList = new Array(...this.cacheService.chatMsgEntityMap).flatMap(t => t[1]);
 
-        if(last.length > 0 && last.splice(-1)[0]) {
-          const fp = last.splice(-1)[0][0];
-          document.getElementById(fp)?.scrollIntoView();
+        if(last.length > 0) {
+          // this.virtualScrollViewport.scrollToIndex(toIndex + 2, "smooth");
+          setTimeout(() => {
+            this.virtualScrollViewport.scrollTo({
+              bottom: topOffset
+            });
+          }, 100);
         }
 
         if(goBottom) {
@@ -624,7 +656,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
         const localFirstMsgFP = localLastMsg[0].fingerPrintOfProtocal;
 
         this.historyMessageService.getFriendMessage(
-          this.currentChat, {start: localFirstMsgFP}, 0, 'top', 30
+          this.currentChat, {start: localFirstMsgFP}, 0, 'top', loadNumber
         ).subscribe(res => {
           if(res.status === 200 && res.data.list.length) {
             const msgMap: Map<string, ChatmsgEntityModel> = new Map();
@@ -642,10 +674,14 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
               }
             });
             this.loadingMessage = false;
+            const topOffset = this.virtualScrollViewport.measureScrollOffset("bottom");
             this.cacheService.chatMsgEntityMap = new Map([...msgMap, ...this.cacheService.chatMsgEntityMap]);
+            this.cacheService.chatMsgEntityList = new Array(...this.cacheService.chatMsgEntityMap).flatMap(t => t[1]);
             setTimeout(() => {
-              document.getElementById(localFirstMsgFP).scrollIntoView();
-            });
+              this.virtualScrollViewport.scrollTo({
+                bottom: topOffset
+              });
+            }, 100);
             if(goBottom) {
               this.scrollToBottom("auto");
             }
