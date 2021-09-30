@@ -1,7 +1,7 @@
 <mat-drawer-container fxFill autosize class="container">
   <mat-drawer #chattingAreaDrawer mode="side" position="end">
     <div fxFlex="280px" *ngIf="drawerContent.setting">
-      <mat-card class="mat-elevation-z0" fxFlex="calc(100% - 30px)" *ngIf="currentChat">
+      <mat-card class="mat-elevation-z0 newWin" fxFlex="calc(100% - 30px)" *ngIf="currentChat">
         <!--判断是单聊还是群聊-->
         <!--单聊-->
         <app-chatting-setting [drawer]="chattingAreaDrawer"
