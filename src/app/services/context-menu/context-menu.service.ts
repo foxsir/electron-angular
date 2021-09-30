@@ -628,7 +628,7 @@ export class ContextMenuService {
     // chat.msgType
     const currentChatting = this.currentChattingChangeService.currentChatting;
     let admins = new Map();
-    let members: Map<number, GroupMemberModel> = new Map();
+    let members: Map<string, GroupMemberModel> = new Map();
     if(currentChatting.metadata.chatType === 'group') {
       this.cacheService.getCacheGroupAdmins(currentChatting.alarmItem.dataId).then((as) => {
         admins = as;

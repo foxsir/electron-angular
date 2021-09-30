@@ -849,17 +849,13 @@ export class CacheService extends DatabaseService {
    * 获取群成员Map
    * @param gid
    */
-  getGroupMembers(gid: string): Promise<Map<number, GroupMemberModel>> {
-    return new Promise<Map<number, GroupMemberModel>>((resolve) => {
+  getGroupMembers(gid: string): Promise<Map<string, GroupMemberModel>> {
+    return new Promise<Map<string, GroupMemberModel>>((resolve) => {
       this.queryData<GroupMemberModel>({
         model: 'groupMember', query: {groupId: gid}
       }).then((res: IpcResponseInterface<GroupMemberModel>) => {
         if(res.status === 200) {
           const map = new Map();
-          console.dir("groupMember");
-          console.dir(res.data.length);
-          console.dir(res.data);
-          console.dir("groupMember");
           res.data.forEach(member => {
             map.set(member.userUid, member);
           });

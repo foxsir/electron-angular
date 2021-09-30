@@ -54,6 +54,7 @@ import {MessageService} from "@services/message/message.service";
 import CommonTools from "@app/common/common.tools";
 import DirectoryType from "@services/file/config/DirectoryType";
 import {CdkVirtualScrollViewport} from "@angular/cdk/scrolling";
+import {GroupMemberModel} from "@app/models/group-member.model";
 
 @Component({
   selector: 'app-chatting-area',
@@ -114,6 +115,8 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
   public showDownArrow: boolean = false;
   public loadingMessage: boolean = false;
 
+  public groupMembers: Map<string, GroupMemberModel> = new Map();
+
   constructor(
     public cacheService: CacheService, // 模版中要用
     private avatarService: AvatarService,
@@ -166,6 +169,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
   ngAfterContentInit() {
     if(this.currentChattingChangeService.currentChatting) {
       this.currentChat = this.currentChattingChangeService.currentChatting;
+      this.getGroupMembers();
       this.cacheService.getChattingCache(this.currentChat).then(data => {
         if(!!data) {
           this.cacheService.chatMsgEntityMapTemp = data;
@@ -180,6 +184,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
       // === 为刷新聊天列表，只更新数据
       if (currentChat && this.currentChat !== currentChat) {
         this.currentChat = currentChat;
+        this.getGroupMembers();
         this.scrollToBottom();
         // 切换会话清空列表
         this.cacheService.chatMsgEntityMapTemp.clear();
@@ -204,6 +209,17 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
         this.currentChat = currentChat;
       }
     });
+  }
+
+  /**
+   * 获取群成员
+   */
+  getGroupMembers() {
+    if(this.currentChat.metadata.chatType === 'group') {
+      this.cacheService.getGroupMembers(this.currentChat.alarmItem.dataId).then(ms => {
+        this.groupMembers = ms;
+      });
+    }
   }
 
   /**

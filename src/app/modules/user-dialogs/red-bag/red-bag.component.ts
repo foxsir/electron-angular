@@ -86,7 +86,7 @@ export class RedBagComponent implements OnInit {
       });
     } else {
       this.cacheService.getGroupMembers(this.currentChatting.alarmItem.dataId).then(member => {
-        const user = member.get(Number(this.data.uid));
+        const user = member.get(this.data.uid);
         if(user) {
           this.nickName = user.showNickname;
           this.avatar = this.dom.bypassSecurityTrustResourceUrl(user.userAvatarFileName);
