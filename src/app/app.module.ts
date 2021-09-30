@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import {LOCALE_ID, NgModule} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { CoreModule } from './core/core.module';
@@ -18,10 +18,22 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {MatSnackBarModule} from "@angular/material/snack-bar";
 import { NzMessageModule } from 'ng-zorro-antd/message';
 import {MatDialogModule} from "@angular/material/dialog";
-import {MAT_FORM_FIELD_DEFAULT_OPTIONS} from "@angular/material/form-field";
+import {MAT_DATE_FORMATS, MatDateFormats} from "@angular/material/core";
 
 // AoT requires an exported function for factories
 const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>  new TranslateHttpLoader(http, './assets/i18n/', '.json');
+
+const MY_FORMATS: MatDateFormats = {
+  parse: {
+    dateInput: 'LL',
+  },
+  display: {
+    dateInput: 'YYYY-MM-DD',
+    monthYearLabel: 'YYYY',
+    dateA11yLabel: 'LL',
+    monthYearA11yLabel: 'YYYY',
+  },
+};
 
 @NgModule({
   declarations: [AppComponent],
@@ -36,8 +48,8 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>  new Transl
     AppRoutingModule,
     ReactiveFormsModule,
     MatDialogModule,
-      NgformlyModule,
-      NgxQRCodeModule,
+    NgformlyModule,
+    NgxQRCodeModule,
     NzMessageModule,
     TranslateModule.forRoot({
       loader: {
@@ -49,6 +61,8 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>  new Transl
   ],
   providers: [
     // {provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {floatLabel: 'never'}}
+    { provide: LOCALE_ID, useValue: 'zh-Hans' },
+    // { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
   ],
   bootstrap: [AppComponent]
 })

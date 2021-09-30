@@ -92,7 +92,7 @@ export class TransmitMessageComponent implements OnInit {
             this.cacheService.getCacheFriends().then(list => {
               const fm: FriendModel = list.get(friend.friendUserUid.toString());
               alarmData.alarmItem.avatar = fm.userAvatarFileName;
-              this.cacheService.putChattingCache(alarmData, chatMsgEntity).then(() => {
+                this.cacheService.putChattingCache(alarmData, chatMsgEntity).then(() => {
                 this.currentChattingChangeService.switchCurrentChatting(alarmData).then(() => {
                   this.dialogRef.close(true);
                 });

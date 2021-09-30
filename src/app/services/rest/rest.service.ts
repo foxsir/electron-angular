@@ -45,7 +45,7 @@ import {
   updRemark,
   UpGroupCustomerService,
   UpUserGroupTab,
-  verifyCode,
+  verifyCode, GetFriendInfo,
 } from "@app/config/post-api";
 import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 
@@ -304,7 +304,7 @@ export class RestService {
     }
 
     changeGroupName(post_data: any) {
-        return this.restServer(MyProcessorConst.PROCESSOR_LOGIC, JobDispatchConst.LOGIC_SNS, 8, JSON.stringify(post_data));
+        return this.restServer(1016, 24, 8, JSON.stringify(post_data));
     }
 
     /**
@@ -1242,6 +1242,17 @@ export class RestService {
       ...password
     };
     return this.http.post(UpdatePassword, data);
+  }
+
+  /**
+   * 获取好友信息
+   * @param friendId
+   */
+  getFriendInfo(friendId: number) {
+    return this.http.get(GetFriendInfo, {
+      friendId: friendId,
+      userId: this.localUserService.localUserInfo.userId
+    });
   }
 
 }

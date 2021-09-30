@@ -3,6 +3,7 @@ import AlarmItemInterface from "../interfaces/alarm-item.interface";
 import FriendModel from "./friend.model";
 import {GroupAdminModel} from "./group-admin.model";
 import {GroupModel} from "./group.model";
+import {GroupMemberModel} from "@app/models/group-member.model";
 
 // 普通消息action
 type ActionType = (chat: ChatmsgEntityModel, messageContainer: HTMLDivElement) => void;
@@ -24,6 +25,7 @@ export interface MenuFilterData {
   admins: GroupAdminModel[] | any;
   friends: FriendModel[] | any;
   groups: GroupModel[] | any;
+  members: GroupMemberModel[] | any;
   alarmItem: AlarmItemInterface;
   chat: ChatmsgEntityModel;
 }

@@ -177,6 +177,9 @@ export const GetGroupHistory = _HTTP_SERVER_URL + "/v1/chat/group-his";
 // 群成员
 export const GetGroupMember = _HTTP_SERVER_URL + "/api/groupBase/memberList";
 
+// 好友信息
+export const GetFriendInfo = _HTTP_SERVER_URL + "/api/friend/info";
+
 //
 //  //封装请求函数
 // const xuAjaxMobule = function () {

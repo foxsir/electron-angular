@@ -66,6 +66,9 @@ export class MessageService {
       case MsgType.TYPE_VOICE:
         messageContentForShow = "[语音]";
         break;
+      case MsgType.TYPE_VOICE_CALL:
+        messageContentForShow = "[语音通话]";
+        break;
       case MsgType.TYPE_GIFT$SEND:
         messageContentForShow = "[收到礼物]";
         break;

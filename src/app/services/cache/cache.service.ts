@@ -17,7 +17,7 @@ import {UserModel} from "@app/models/user.model";
 import CommonTools from "@app/common/common.tools";
 import {MessageService} from "@services/message/message.service";
 import {HistoryMessageService} from "@services/history-message/history-message.service";
-import {ChatModeType} from "@app/config/rbchat-config";
+import {ChatModeType, MsgType} from "@app/config/rbchat-config";
 import {HttpService} from "@services/http/http.service";
 import {_HTTP_SERVER_URL} from "@app/config/post-api";
 import {SoundService} from "@services/sound/sound.service";
@@ -116,7 +116,7 @@ export class CacheService extends DatabaseService {
   ): Promise<boolean> {
     return new Promise((resolve, reject) => {
       const cache: Map<string, ChatmsgEntityModel> = new Map();
-      let lastTime = 0;
+      let lastTime = null;
       if(messages !== null) {
         if(messages.hasOwnProperty("length")) {
           messages = messages as ChatmsgEntityModel[];
@@ -139,7 +139,7 @@ export class CacheService extends DatabaseService {
         ...alarmData.alarmItem,
         ...alarmData.metadata,
       };
-      chatting.date = alarmData.alarmItem.date || lastTime;
+      chatting.date = lastTime || alarmData.alarmItem.date;
 
       this.saveData<ChattingModel>({model: "chatting", data: chatting, update: {dataId: chatting.dataId}}).then();
       cache.forEach((msg) => {
@@ -581,7 +581,10 @@ export class CacheService extends DatabaseService {
                 //   checkLocalLastMsg = true;
                 // }
                 chatMsgEntity.isOutgoing = true;
-                entityList.unshift(chatMsgEntity);
+                console.dir(dataContent.showMsg);
+                if(dataContent.showMsg) {
+                  entityList.unshift(chatMsgEntity);
+                }
               });
               this.putChattingCache(alarmItem, entityList).then(() => {
                 // if(checkLocalLastMsg === false && entityList.length > 0) {
@@ -616,11 +619,14 @@ export class CacheService extends DatabaseService {
                     msgJson.from, dataContent.nickName, dataContent.m, msgJson.recvTime, dataContent.ty, msgJson.fp
                   );
                 }
+                // 如果没拉取到最后一条，则继续拉去
                 // if(localLastMsgFP === chatMsgEntity.fingerPrintOfProtocal) {
                 //   checkLocalLastMsg = true;
                 // }
                 chatMsgEntity.isOutgoing = true;
-                entityList.unshift(chatMsgEntity);
+                if(dataContent.showMsg) {
+                  entityList.unshift(chatMsgEntity);
+                }
               });
               this.putChattingCache(alarmItem, entityList).then((newCache) => {
                 // if(checkLocalLastMsg === false && entityList.length > 0) {
@@ -643,9 +649,20 @@ export class CacheService extends DatabaseService {
    * @param text
    * @param msgType
    */
-  public async generateAlarmItem(dataId: string, chatType: 'friend' | 'group', text: string, msgType: number): Promise<AlarmItemInterface> {
+  public async generateAlarmItem(
+    dataId: string, chatType: 'friend' | 'group', text: string = null, msgType: number = MsgType.TYPE_TEXT
+  ): Promise<AlarmItemInterface> {
     const friends = await this.getCacheFriends().then(res => res);
     const groups = await this.getCacheGroups().then(res => res);
+    if(!text) {
+      await this.queryData<ChattingModel>({
+        model: 'chatting', query: {dataId: dataId}
+      }).then((cache: IpcResponseInterface<ChattingModel>)  => {
+        if(cache.status === 200) {
+          text = cache.data[0].msgContent;
+        }
+      });
+    }
 
     return new Promise((resolve, reject) => {
       let title = "聊天";

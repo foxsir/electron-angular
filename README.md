@@ -8,7 +8,30 @@ UI框架：使用https://material.angular.io 12
 
 布局框架：https://github.com/angular/flex-layout
 
+# 本地必须安装
+
+step 1 nodejs v15.2.0
+https://nodejs.org/download/release/_v15.2.0_/
+
+step 2
+npm install -g @angular/cli
+
+step 3
+修改平台 platform 值为 win32 或者 darwin
+
+```json
+"agora_electron": {
+    "electron_version": "12.0.0",
+    "platform": "darwin",
+    "prebuilt": true,
+    "arch": "ia32"
+}
+```
+
 ## 安装
+
+> 首次安装务必删除 /目录 和 app 目录下
+> yarn.lock 文件 在安装
 
 ```shell
 cd caomei-desktop-angular

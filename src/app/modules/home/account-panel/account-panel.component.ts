@@ -148,12 +148,16 @@ export class AccountPanelComponent implements OnInit {
   }
 
   logout() {
-    this.router.navigate(['/']).then(() => {
-      localStorage.removeItem(RBChatUtils.COOKIE_KEY_AUTHED_LOCAL_USER_INFO_ID);
-      this.cacheService.reset();
-      this.windowService.loginWindow();
-      // 关闭数据库链接
-      this.databaseService.disconnectDB();
+    this.dialogService.confirm({title: '退出登录', text: "确定要退出当前账号吗？"}).then(ok => {
+      if(ok) {
+        this.router.navigate(['/']).then(() => {
+          localStorage.removeItem(RBChatUtils.COOKIE_KEY_AUTHED_LOCAL_USER_INFO_ID);
+          this.cacheService.reset();
+          this.windowService.loginWindow();
+          // 关闭数据库链接
+          this.databaseService.disconnectDB();
+        });
+      }
     });
   }
 

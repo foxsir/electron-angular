@@ -1,20 +1,65 @@
 <div class="user-info-container">
   <ng-template [ngIf]="data">
     <div *ngIf="user">
-      <mat-card-header>
-        <img [src]="userAvatar" mat-card-avatar alt="">
-        <mat-card-title>{{user.nickname}}</mat-card-title>
-        <mat-card-subtitle>{{user.whatSUp || '暂无介绍'}}</mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-content>
-        <div>通讯号：{{user.userCornet}}</div>
-      </mat-card-content>
+      <div fxLayout="column" fxLayoutGap="10px">
+        <mat-card class="mat-elevation-z0">
+          <mat-card-header>
+            <img [src]="user.userAvatarFileName" mat-card-avatar alt="">
+            <mat-card-title>{{user.nickname}}</mat-card-title>
+            <mat-card-subtitle [fxShow]="onlineStatus === '[离线]'">{{onlineStatus}}</mat-card-subtitle>
+            <mat-card-subtitle [fxShow]="onlineStatus === '[在线]'" class="mat-primary text">{{onlineStatus}}</mat-card-subtitle>
+          </mat-card-header>
+        </mat-card>
+
+        <mat-card class="mat-elevation-z0">
+          <mat-card-content>
+            <div fxLayout="column" fxLayoutGap="10px">
+              <mat-card-title>备注</mat-card-title>
+              <div>{{friendRemark}}</div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="mat-elevation-z0">
+          <div fxLayout="column" fxLayoutGap="10px">
+            <mat-card-title>最近登录IP</mat-card-title>
+            <div>{{user.latestLoginAddres}} {{user.latestLoginIp}}</div>
+          </div>
+        </mat-card>
+
+        <mat-card class="mat-elevation-z0">
+          <div fxLayout="column" fxLayoutGap="10px">
+            <mat-card-title>基本信息</mat-card-title>
+            <div>个人账号：{{user.userMail}}</div>
+            <div>最近登录：{{userInfo.latestLoginTime | date}}</div>
+          </div>
+        </mat-card>
+
+        <mat-card class="mat-elevation-z0">
+          <div fxLayout="column" fxLayoutGap="10px">
+            <mat-card-title>个性签名</mat-card-title>
+            <div>{{user.whatSUp || '此人很懒，什么都没留下'}}</div>
+          </div>
+        </mat-card>
+
+        <mat-card class="mat-elevation-z0">
+          <div fxLayout="row" fxLayoutAlign="space-between center" style="cursor:pointer;" (click)="sendMessage()">
+            <div class="mat-primary text">发送信息</div>
+            <div fxLayoutAlign="end center">
+              <mat-icon class="hover-icon icon14">
+                <img class="icon" [src]="arrowRight" alt="">
+                <img class="icon-active" [src]="arrowRight" alt="">
+              </mat-icon>
+            </div>
+          </div>
+        </mat-card>
+      </div>
     </div>
-    <div *ngIf="!user">
+    <div *ngIf="!user && loading === false">
       获取用户信息失败
     </div>
-    <mat-dialog-actions fxLayoutAlign="end">
-      <button mat-button color="primary" (click)="close()">关闭</button>
-    </mat-dialog-actions>
+    <div *ngIf="loading" fxFill fxLayoutAlign="center center">
+      <mat-spinner [diameter]="40" [strokeWidth]="4" mode="indeterminate"></mat-spinner>
+    </div>
   </ng-template>
 </div>

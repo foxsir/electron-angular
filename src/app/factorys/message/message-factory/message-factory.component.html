@@ -28,8 +28,6 @@
 
 <app-message-no-talk *ngIf="chatMsg.msgType ===  msgType.TYPE_NOTALK" [chatMsg]="chatMsg"></app-message-no-talk>
 
-<app-message-aite *ngIf="chatMsg.msgType ===  msgType.TYPE_AITE" [chatMsg]="chatMsg"></app-message-aite>
-
 <app-message-back *ngIf="chatMsg.msgType ===  msgType.TYPE_BACK" [chatMsg]="chatMsg"></app-message-back>
 
 <app-message-voice-call *ngIf="chatMsg.msgType ===  msgType.TYPE_VOICE_CALL" [chatMsg]="chatMsg"></app-message-voice-call>

@@ -54,3 +54,7 @@ Thumbs.db
 /caomei-desktop-angular.csproj
 /.vs/caomei-desktop-angular/v14/.suo
 /.vs/config/applicationhost.config
+
+yarn.lock
+yarn-error.log
+file-tree.md

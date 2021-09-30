@@ -16,6 +16,7 @@ import { DialogService } from "@services/dialog/dialog.service";
 import { LocalUserService } from "@services/local-user/local-user.service";
 import callAccept from "@app/assets/icons/call_accept.svg";
 import callHangup from "@app/assets/icons/call_hangup.svg";
+import { CurrentChattingChangeService } from "@services/current-chatting-change/current-chatting-change.service";
 
 @Component({
     selector: 'app-chatting-voice',
@@ -49,15 +50,24 @@ export class ChattingVoiceComponent implements OnInit {
         private dialogService: DialogService,
         private messageService: MessageService,
         private localUserService: LocalUserService,
+        private currentChattingChangeService: CurrentChattingChangeService,
     ) {
+        this.currentChattingChangeService.currentChatting$.subscribe(currentChat => {
+            console.log('会话切换...');
+            this.currentChat = currentChat;
+            this.view_mode = 'default';
+            this.initGroupData();
+        });
+    }
 
+    initGroupData() {
+        console.log('语音聊天 初始化: ', this.currentChat, this.currentChat.alarmItem.dataId);
+        this.chatUserid = this.currentChat.alarmItem.dataId;
+        this.localUserInfo = this.localUserService.localUserInfo;
     }
 
     ngOnInit(): void {
-        console.log('语音聊天 初始化: ', this.currentChat, this.currentChat.alarmItem.dataId);
-        this.chatUserid = this.currentChat.alarmItem.dataId;
-
-        this.localUserInfo = this.localUserService.localUserInfo;
+        this.initGroupData();
     }
 
     /* 向好友发起语音请求 */
@@ -217,6 +227,8 @@ export class ChattingVoiceComponent implements OnInit {
 
     /* 挂断语音：被动（对方挂断语音，通知对方） */
     endVoiceCallback() {
+        console.log('关闭语音...');
+
         this.leaveChannel('');
         this.view_mode = "default";
         this.drawer.close();
