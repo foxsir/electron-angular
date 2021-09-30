@@ -136,11 +136,9 @@
                           </div>
                           <!--[fxLayoutAlign]="chat.uid === localUserInfo.userId ? 'end' : 'start'"-->
                           <div [fxLayout]="chat.uid.toString() === localUserInfo.userId.toString() ? 'row-reverse' : 'row'" fxLayoutGap="10px">
-                            <div fxFlex="40px" *ngIf="currentChat.metadata.chatType === 'group'">
-                              {{chat.userAvatarFileNameForBBSCome}}
+                            <div fxFlex="40px" *ngIf="currentChat.metadata.chatType === 'group'" class="group-avatar">
                               <img (contextmenu)="contextMenuForAvatar($event, createPlanMenuTriggerAvatar, avatarSpan, chat)"
                                    src="https://material.angular.io/assets/img/examples/shiba2.jpg" mat-card-avatar alt="">
-                              {{chat.userAvatarFileNameForBBSCome}}
                               <!--增加头像上的右键功能-->
                               <span #createPlanMenuTriggerAvatar="matMenuTrigger" #avatarSpan [matMenuTriggerFor]="contextmenuForAvatar"></span>
                               <mat-menu #contextmenuForAvatar="matMenu">

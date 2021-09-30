@@ -497,10 +497,10 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
     this.contextMenu = await this.contextMenuService.getContextMenuForMessage(chat);
     if(this.contextMenu.length > 0) {
       menu.openMenu();
-      span.style.position = "fixed";
+      span.style.position = "absolute";
       span.style.top = "0px";
       span.style.left = "0px";
-      span.style.transform = `translate3d(${e.pageX}px, ${e.pageY}px, 0px)`;
+      span.style.transform = `translate3d(${e.offsetX}px, ${e.offsetY}px, 0px)`;
       return e.defaultPrevented;
     }
   }
@@ -516,10 +516,10 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
     this.contextMenuAvatar = await this.contextMenuService.getContextMenuForAvatar(this.currentChat, chat);
     if(this.contextMenuAvatar.length > 0) {
       menu.openMenu();
-      span.style.position = "fixed";
+      span.style.position = "absolute";
       span.style.top = "0px";
       span.style.left = "0px";
-      span.style.transform = `translate3d(${e.pageX}px, ${e.pageY}px, 0px)`;
+      span.style.transform = `translate3d(${e.offsetX}px, ${e.offsetY}px, 0px)`;
       return e.defaultPrevented;
     }
   }
@@ -606,22 +606,6 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
       }
       this.showDownArrow = this.virtualScrollViewport.measureScrollOffset('bottom') > 10;
     });
-    // this.virtualScrollViewport.getOffsetToRenderedContentStart().subscribe((e) => {
-    //   // this.showDownArrow = false;
-    //   console.dir(e);
-    // });
-
-    // const container = document.getElementById("chatting-panel");
-    // if(container.onscroll === null) {
-    //   container.addEventListener('scroll', () => {
-    //     const bottom = container.scrollHeight - container.offsetHeight - container.scrollTop;
-    //     this.showDownArrow = bottom > 200;
-    //
-    //     if(container.scrollTop === 0 && this.loadingMessage === false) {
-    //
-    //     }
-    //   });
-    // }
   }
 
   /**
