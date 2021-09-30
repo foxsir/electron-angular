@@ -24,3 +24,45 @@
     vertical-align: text-top;
   }
 }
+#left-menu-list .hover-icon > img{width: 10px; height: 14px; margin-top:4px;}
+.friend-item-list{
+  background: #FFF;
+}
+
+::ng-deep {
+  .addressList {
+    h3 {
+      font-weight: normal;
+    }
+
+    .mat-drawer-container {
+      background-color: #FFF
+    }
+
+    #left-menu-list .mat-list-item {
+      height: 50px
+    }
+
+    .mat-list-base {
+      padding-top: 0;
+    }
+
+    .mat-list-base .mat-list-item {
+      font-size: 14px;
+    }
+
+    .friend-item-list .mat-list-base .mat-list-item.mat-list-item-with-avatar .mat-list-item-content .mat-list-text, .mat-list-base .mat-list-item.mat-list-option .mat-list-item-content .mat-list-text, .mat-list-base .mat-list-option.mat-list-item-with-avatar .mat-list-item-content .mat-list-text, .mat-list-base .mat-list-option.mat-list-option .mat-list-item-content .mat-list-text {
+      padding-left: 10px
+    }
+
+    .mat-card-title {
+      font-size: 15px;
+      color: #383838;
+    }
+
+    .mat-card-actions, .mat-card-subtitle, .mat-card-content {
+      display: block;
+      margin-bottom: 1px;
+    }
+  }
+}

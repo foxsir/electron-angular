@@ -12,6 +12,7 @@ import arrowRightIcon from "@app/assets/icons/arrow-right.svg";
 import { RestService } from "@services/rest/rest.service";
 import { DemoDialogComponent } from "@modules/setting-dialogs/demo-dialog/demo-dialog.component";
 import { DialogService } from "@services/dialog/dialog.service";
+import { CurrentChattingChangeService } from "@services/current-chatting-change/current-chatting-change.service";
 
 @Component({
     selector: 'app-group-chatting-setting',
@@ -61,11 +62,20 @@ export class GroupChattingSettingComponent implements OnInit {
 
     public group_top_view_mode = "view"; /*view 或者 edit*/
 
-    constructor(private dom: DomSanitizer, private restService: RestService, private dialogService: DialogService) {
-
+    constructor(
+        private dom: DomSanitizer,
+        private restService: RestService,
+        private dialogService: DialogService,
+        private currentChattingChangeService: CurrentChattingChangeService,
+    ) {
+        this.currentChattingChangeService.currentChatting$.subscribe(currentChat => {
+            console.log('会话切换...');
+            this.currentChat = currentChat;
+            this.initGroupData();
+        });
     }
 
-    ngOnInit(): void {
+    initGroupData() {
         console.log('currentChat: ', this.currentChat);
 
         /*获取群基本信息*/
@@ -103,6 +113,10 @@ export class GroupChattingSettingComponent implements OnInit {
             this.groupTabList = res.data;
             console.log('群页签数据：', this.groupTabList);
         });
+    }
+
+    ngOnInit(): void {
+        this.initGroupData();
     }
 
     bySwitch(key) {

@@ -66,9 +66,15 @@
     </div>
   </mat-drawer>
 
-  <div fxLayout="row" id="message-root-container">
-    <div fxFlex="calc(100% - 260px)">
-      <router-outlet></router-outlet>
+    <div fxLayout="row" id="message-root-container">
+        <div fxFlex="calc(100% - 260px)">
+            <router-outlet></router-outlet>
+            <div>
+                <div *ngFor="let item of group_tab_data.list">
+                    <label>{{item.name}}</label>
+                </div>
+            </div>
+            <!--<router-outlet></router-outlet>-->
+        </div>
     </div>
-  </div>
 </mat-drawer-container>

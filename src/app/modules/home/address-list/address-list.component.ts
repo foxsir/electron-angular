@@ -12,6 +12,8 @@ import groupChattingIcon from "@app/assets/icons/group-chatting-circle.svg";
 import myFriend from "@app/assets/icons/my-friend.svg";
 import {MatDrawer} from "@angular/material/sidenav";
 import {MiniUiService} from "@services/mini-ui/mini-ui.service";
+import rightArrowIcon from "@app/assets/icons/rightarr.svg";
+import rightArrowActiveIcon from "@app/assets/icons/rightarr.svg";
 // import image end
 
 @Component({
@@ -25,6 +27,8 @@ export class AddressListComponent implements OnInit, AfterViewInit {
 
   public drawerMode: 'side' | 'over' = 'side';
   public isMiniUI: boolean = false;
+  public rightArrowIcon = this.dom.bypassSecurityTrustResourceUrl(rightArrowIcon);
+  public rightArrowActiveIcon = this.dom.bypassSecurityTrustResourceUrl(rightArrowActiveIcon);
 
   leftMenuList = [
     {

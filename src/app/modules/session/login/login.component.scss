@@ -3,3 +3,17 @@
   border-radius: 4px;
   font-size: 20px;
 }
+
+.mat-progress-bar::after{
+
+}
+
+::ng-deep {
+  .mat-progress-bar{border-radius: 4px;}
+  form{ margin-top: 11px;}
+  .mat-form-field-appearance-legacy .mat-form-field-underline {background-color:#CCC;}
+  .mat-form-field-appearance-legacy .mat-form-field-wrapper {padding-bottom:12px;}
+  .login-button{margin-top: 12px;}
+  .mat-form-field-subscript-wrapper{ display: none}
+  .login-button .mat-button-wrapper{ font-size:18px;letter-spacing: 2px}
+}

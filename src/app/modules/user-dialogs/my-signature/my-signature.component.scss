@@ -10,7 +10,6 @@
 
     .txtcom{
         border:none;
-        outline:none;
         border-bottom:1px solid #dddddd;
     }
 
@@ -24,4 +23,7 @@
         padding-right:0px;
         margin-left:20px;
     }
+  .txtcom{border-radius: 0;padding-left: 5px; line-height: 30px;outline:none;}
+  .txtcom:focus{outline:none;}
+  .txtcom::-webkit-input-placeholder {color: #ccc; letter-spacing: 1px;font-size: 15px; font-weight: 100;color: #CCC}
 }

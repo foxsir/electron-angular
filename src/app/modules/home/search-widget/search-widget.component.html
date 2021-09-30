@@ -2,12 +2,16 @@
   <div fxLayout="row" fxFlex="0 0 calc(100% - 40px)" fxLayoutGap="10px">
     <div fxFlex="auto" fxLayoutAlign="center center">
       <div fxLayout="row">
-        <div fxFlex="0 0 calc(240px - 60px)">
+        <div fxFlex="0 0 calc(239px - 60px)">
           <input type="text" (keydown.escape)="cancelSearch()" [(ngModel)]="search"
                  (keyup.enter)="txtSearchChange()"
                  (ngModelChange)="searchContent()" nz-input placeholder="搜索"/>
         </div>
       </div>
+      <div class="cancelSearchv"><mat-icon class="hover-icon icon14" (click)="cancelSearch()">
+        <img [src]="closeIcon" class="icon" alt="">
+        <img [src]="closeActiveIcon" class="icon-active" alt="">
+      </mat-icon></div>
     </div>
     <div fxFlex="40px" fxLayoutAlign="center center">
       <div>
@@ -25,26 +29,14 @@
   </div>
   <div class="search-area" *ngIf="showResource">
     <div fxLayout="column">
-      <div fxFlex>
-        <div fxLayoutAlign="end">
-          <div fxFlex="60px" fxLayoutAlign="center">
-            <button mat-icon-button>
-              <mat-icon class="hover-icon icon14" (click)="cancelSearch()">
-                <img [src]="closeIcon" class="icon" alt="">
-                <img [src]="closeActiveIcon" class="icon-active" alt="">
-              </mat-icon>
-            </button>
-          </div>
-        </div>
-      </div>
+
       <div fxFlex>
         <mat-card class="mat-elevation-z0">
           <mat-card-content>
             <mat-list>
-              <div style="margin-bottom:15px;">联系人与对话</div>
-              <mat-list-item class="hover-item" *ngFor="let item of find_friends" (click)="switchChatting(item)"
-                             style="padding-top:10px;">
-                <img src="{{item.avatar}}" mat-list-icon style="width:44px;height:44px;"/>
+              <div class="listtit">联系人与对话</div>
+              <mat-list-item class="hover-item" *ngFor="let item of find_friends" (click)="switchChatting(item)">
+                <img src="{{item.avatar}}" mat-list-icon style="width:40px;height:40px;"/>
                 <div mat-line>{{item.title}}</div>
                 <div mat-line>
                   <span>{{item.msgContent}}</span>
@@ -53,10 +45,9 @@
             </mat-list>
 
             <mat-list>
-              <div style="margin-bottom:15px;">消息</div>
-              <mat-list-item class="hover-item" *ngFor="let item of find_messages" (click)="switchChatting(item)"
-                             style="padding-top:10px;">
-                <img src="{{item.avatar}}" mat-list-icon style="width:44px;height:44px;"/>
+              <div class="listtit">消息</div>
+              <mat-list-item class="hover-item" *ngFor="let item of find_messages" (click)="switchChatting(item)">
+                <img src="{{item.avatar}}" mat-list-icon style="width:40px;height:40px;"/>
                 <div mat-line>{{item.title}}</div>
                 <div mat-line>
                   <span>{{item.msgContent}}</span>

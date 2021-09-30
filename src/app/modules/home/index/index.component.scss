@@ -1,5 +1,7 @@
 #left-toolbar {
   background: #F6F7F9;
+  border-radius: 0;
+  border-top: 30px solid #F1F1F1
 }
 .user-avatar {
   img {
@@ -16,4 +18,8 @@
 .left-icon {
   width: 30px;
   height: 30px;
+}
+
+
+::ng-deep {
 }

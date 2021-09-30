@@ -355,15 +355,28 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
         }
     });
 
-      this.messageDistributeService.MT17_OF_VIDEO$VOICE$REQUEST_REQUESTING$FROM$A$.subscribe(res => {
-          const dataContent: ProtocalModelDataContent = JSON.parse(res.dataContent);
-          console.log('订阅单聊消息：（17）', res, dataContent);
+    this.messageDistributeService.MT17_OF_VIDEO$VOICE$REQUEST_REQUESTING$FROM$A$.subscribe(res => {
+        const dataContent: ProtocalModelDataContent = JSON.parse(res.dataContent);
+        console.log('订阅单聊消息：（17）', res, dataContent, this.currentChat);
 
-          if (res.type == 2 && res.typeu == 17) {
-              this.openEndDrawer('voice', true);
-              this.appChattingVoice.openPanel(res, dataContent);
-          }
-      });
+        if (res.type == 2 && res.typeu == 17) {
+            if (this.currentChat == undefined || parseInt(res.from) != parseInt(this.currentChat.alarmItem.dataId)) {
+                this.cacheService.generateAlarmItem(res.from, 'friend', null, MsgType.TYPE_VOICE_CALL).then(alarm => {
+                    this.cacheService.putChattingCache(alarm).then(() => {
+                        this.currentChattingChangeService.switchCurrentChatting(alarm).then(() => {
+                            console.log("聊天会话切换完成...");
+                            this.openEndDrawer('voice', true);
+                            this.appChattingVoice.openPanel(res, dataContent);
+                        });
+                    });
+                });
+            }
+            else {
+                this.openEndDrawer('voice', true);
+                this.appChattingVoice.openPanel(res, dataContent);
+            }
+        }
+    });
   }
 
   /**

@@ -1,9 +1,7 @@
 .account-panel-container {
   background: #F1F1F1;
-
   .account-panel-header {
     background: white;
-
     .account-panel-title {
       .title {
         margin: 0;
@@ -33,7 +31,7 @@
 }
 
 .user-setting-menu {
-  margin-top: 20px;
+  margin-top: 12px;
   .user-setting-menu-item:hover {
     .icon {
       position: absolute;
@@ -45,5 +43,16 @@
       left: 0;
       visibility: visible;
     }
+  }
+}
+::ng-deep {
+  h3 {font-weight: normal;}
+  .account-panel-header .mat-card{ padding: 16px 14px 16px 21px}
+  .mat-drawer-container{background-color: #FFF}
+  .small-title{margin-bottom: 15px}
+
+  element.style {text-align: start;flex: 1 1 100%;box-sizing: border-box;max-width: 100%}
+  .mat-button, .mat-icon-button, .mat-stroked-button, .mat-flat-button{
+    border-radius:0px;
   }
 }

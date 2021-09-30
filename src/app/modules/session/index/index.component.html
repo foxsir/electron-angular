@@ -13,7 +13,7 @@
                   <div fxLayout="column">
                     <div fxFlex>
                       <div fxFlex="90px">
-                        <h2 (click)="selectedChange(0)" style="margin: 0 0 10px 0">账号登录</h2>
+                        <h2 [ngClass]="{gray: selectedTab === 1}" (click)="selectedChange(0)" style="margin: 0 0 10px 0">账号登录</h2>
                       </div>
                     </div>
                     <div fxLayout="row">
@@ -29,7 +29,7 @@
                   <div fxLayout="column">
                     <div fxFlex>
                       <div fxFlex="90px">
-                        <h2 (click)="selectedChange(1)" style="margin: 0 0 10px 0">立即注册</h2>
+                        <h2 [ngClass]="{gray: selectedTab === 0}" (click)="selectedChange(1)" style="margin: 0 0 10px 0">立即注册</h2>
                       </div>
                     </div>
                     <div fxLayout="row">

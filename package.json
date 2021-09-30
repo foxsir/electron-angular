@@ -131,7 +131,7 @@
   },
   "agora_electron": {
     "electron_version": "11.0.0",
-    "platform": "darwin",
+    "platform": "win32",
     "prebuilt": true,
     "arch": "ia32"
   },
