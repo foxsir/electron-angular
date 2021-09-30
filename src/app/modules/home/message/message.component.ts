@@ -224,7 +224,7 @@ export class MessageComponent implements OnInit, AfterViewInit {
     }
 
     ngAfterViewInit() {
-        setTimeout(() => this.listenMiniUI);
+      setTimeout(() => this.listenMiniUI());
     }
 
 

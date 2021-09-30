@@ -78,7 +78,7 @@ export class AddressListComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.listenMiniUI();
+    setTimeout(() => this.listenMiniUI());
   }
 
   listenMiniUI() {
