@@ -9,68 +9,93 @@ export default class WindowEventListen {
     this.listen();
   }
 
-  private getFocusedWindow(): BrowserWindow {
-    let window: BrowserWindow;
-    this.windows.forEach(win => {
-      if (win.isFocused()) {
-        window = win;
+  private getFocusedWindow(): Promise<BrowserWindow> {
+    return new Promise<Electron.BrowserWindow>((resolve) => {
+      let window: BrowserWindow;
+      this.windows.forEach(win => {
+        if (win.isFocused()) {
+          window = win;
+        }
+      });
+      if(window && window.setSize) {
+        resolve(window)
+      } else {
+        setTimeout(() => {
+          return this.getFocusedWindow();
+        }, 100);
       }
     });
-    return window;
   }
 
   private listen() {
     ipcMain.on("fullScreen", (event, arg) => {
-      this.getFocusedWindow().setFullScreen(true);
+      this.getFocusedWindow().then(win => {
+        win.setFullScreen(true);
+      });
     });
 
     ipcMain.on("maximizeWindow", (event, arg) => {
-      if(this.getFocusedWindow().isResizable()) {
-        if(this.getFocusedWindow().isMaximized()) {
-          this.getFocusedWindow().unmaximize();
-        } else {
-          this.getFocusedWindow().maximize();
+      this.getFocusedWindow().then(win => {
+        if(win.isResizable()) {
+          if(win.isMaximized()) {
+            win.unmaximize();
+          } else {
+            win.maximize();
+          }
         }
-      }
-      this.getFocusedWindow().setResizable(true);
+        win.setResizable(true);
+      });
     });
 
     ipcMain.on("unmaximizeWindow", (event, arg) => {
-      this.getFocusedWindow().unmaximize();
-      this.getFocusedWindow().setResizable(true);
+      this.getFocusedWindow().then(win => {
+        win.unmaximize();
+        win.setResizable(true);
+      });
     });
 
     ipcMain.on("minimizeWindow", (event, arg) => {
-      this.getFocusedWindow().minimize();
+      this.getFocusedWindow().then(win => {
+        win.minimize();
+      });
     });
 
     ipcMain.on("restoreWindow", (event, arg) => {
-      this.getFocusedWindow().restore();
-      this.getFocusedWindow().setResizable(true);
+      this.getFocusedWindow().then(win => {
+        win.restore();
+        win.setResizable(true);
+      });
     });
 
     ipcMain.on("loginWindow", (event, arg) => {
-      this.getFocusedWindow().setSize(defaultOptions.size.width, defaultOptions.size.height);
-      this.getFocusedWindow().setResizable(false);
-      this.getFocusedWindow().center();
+      this.getFocusedWindow().then(win => {
+        win.setSize(defaultOptions.size.width, defaultOptions.size.height);
+        win.setResizable(false);
+        win.center();
+      });
     });
 
     ipcMain.on("normalWindow", (event, arg) => {
-      this.getFocusedWindow().setSize(800, 600);
-      this.getFocusedWindow().setResizable(true);
-      this.getFocusedWindow().center();
+      this.getFocusedWindow().then(win => {
+        win.setSize(800, 600);
+        win.setResizable(true);
+        win.center();
+      });
     });
 
     ipcMain.on("closeWindow", (event, arg) => {
-      let win = this.getFocusedWindow();
-      this.windows.delete(win);
-      win.destroy();
-      win = null;
+      this.getFocusedWindow().then(win => {
+        this.windows.delete(win);
+        win.destroy();
+        win = null;
+      });
     });
 
     ipcMain.on("openDevTools", (event, arg) => {
-      this.getFocusedWindow().webContents.openDevTools();
-      this.getFocusedWindow().setResizable(true);
+      this.getFocusedWindow().then(win => {
+        win.webContents.openDevTools();
+        win.setResizable(true);
+      });
     });
 
     ipcMain.on("openUrl", (event, arg) => {
