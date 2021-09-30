@@ -21,7 +21,9 @@ export default class WindowEventListen {
         resolve(window)
       } else {
         setTimeout(() => {
-          return this.getFocusedWindow();
+          return this.getFocusedWindow().then(win => {
+            resolve(win);
+          });
         }, 100);
       }
     });
