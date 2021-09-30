@@ -58,6 +58,7 @@ export class CacheService extends DatabaseService {
   // 给ChattingAreaComponent组件使用
   public chatMsgEntityMapTemp: Map<string, ChatmsgEntityModel> = new Map();
   public chatMsgEntityMap: Map<string, ChatmsgEntityModel> = new Map();
+  public chatMsgEntityList: ChatmsgEntityModel[] = [];
 
   private dataKeys = {
     alarmDataMap: "alarmDataMap",
@@ -581,7 +582,6 @@ export class CacheService extends DatabaseService {
                 //   checkLocalLastMsg = true;
                 // }
                 chatMsgEntity.isOutgoing = true;
-                console.dir(dataContent.showMsg);
                 if(dataContent.showMsg) {
                   entityList.unshift(chatMsgEntity);
                 }
@@ -953,6 +953,10 @@ export class CacheService extends DatabaseService {
 
   reset() {
     this.initDataKey = false;
+  }
+
+  putMsgEntityMap(msg: ChatmsgEntityModel) {
+    this.chatMsgEntityMap.set(msg.fingerPrintOfProtocal, msg);
   }
 
 }
