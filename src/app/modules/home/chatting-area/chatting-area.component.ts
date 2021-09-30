@@ -645,7 +645,10 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
           this.cacheService.chatMsgEntityMapTemp.delete(keyvalue[0]);
           appendAfter.set(keyvalue[0], keyvalue[1]);
         });
-        const topOffset = this.virtualScrollViewport.measureScrollOffset("bottom");
+        let topOffset = 0;
+        if(this.virtualScrollViewport) {
+          topOffset = this.virtualScrollViewport.measureScrollOffset("bottom");
+        }
         this.cacheService.chatMsgEntityMap = new Map([...appendAfter, ...this.cacheService.chatMsgEntityMap]);
         this.cacheService.chatMsgEntityList = new Array(...this.cacheService.chatMsgEntityMap).flatMap(t => t[1]);
 
@@ -687,7 +690,10 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
               }
             });
             this.loadingMessage = false;
-            const topOffset = this.virtualScrollViewport.measureScrollOffset("bottom");
+            let topOffset = 0;
+            if(this.virtualScrollViewport) {
+              topOffset = this.virtualScrollViewport.measureScrollOffset("bottom");
+            }
             this.cacheService.chatMsgEntityMap = new Map([...msgMap, ...this.cacheService.chatMsgEntityMap]);
             this.cacheService.chatMsgEntityList = new Array(...this.cacheService.chatMsgEntityMap).flatMap(t => t[1]);
             setTimeout(() => {
