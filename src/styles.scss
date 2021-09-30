@@ -124,12 +124,26 @@ img {
     border-left: solid #CCCCCC 1px;
   }
   &.right {
-    border-right: solid #CCCCCC 1px;
+    border-right:0;
   }
   &.bottom {
     border-bottom: solid #CCCCCC 1px;
   }
 }
+
+h2 {
+  display: block;
+  font-size: 1.35em;
+  margin-block-start: 0.83em;
+  margin-block-end: 0.83em;
+  margin-inline-start: 0;
+  margin-inline-end: 0;
+  font-weight:bold;
+  letter-spacing: 1px;
+  line-height: 33px;
+}
+
+
 
 .padding-less-dialog {
   .mat-dialog-container {
