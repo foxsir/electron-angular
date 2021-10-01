@@ -214,9 +214,7 @@ export class GroupInfoComponent implements OnInit {
             };
             data[key] = this.setting_data[key] == true ? 1 : 0,
 
-            this.restService.updateGroupBaseById(data).subscribe(res => {
-
-            });
+            this.restService.updateGroupBaseById(data).subscribe();
         }
     }
 
@@ -487,7 +485,11 @@ export class GroupInfoComponent implements OnInit {
                         if (res.success == false) {
                             return;
                         }
-                        this.dialogService.alert({ title: '邀请成功！', text: '' }).then((ok) => {});
+                        this.dialogService.alert({ title: '邀请成功！'}).then(() => {
+                          setTimeout(() => {
+                            return this.cacheService.cacheGroupMembers(this.currentChat.alarmItem.dataId).then();
+                          }, 1000);
+                        });
                     });
                 });
             }
@@ -502,13 +504,13 @@ export class GroupInfoComponent implements OnInit {
             if (ok == false) {
                 return;
             }
-
+            const alarmItem = this.currentChat.alarmItem;
             console.log('确认退出...');
             var post_data = {
                 del_opr_nickname: this.userinfo.nickname,
-                gid: this.currentChat.alarmItem.dataId,
+                gid: alarmItem.dataId,
                 members: [
-                    [this.currentChat.alarmItem.dataId, this.userinfo.userId, this.userinfo.nickname]
+                    [alarmItem.dataId, this.userinfo.userId, this.userinfo.nickname]
                 ],
                 del_opr_uid: this.userinfo.userId,
             };
@@ -524,17 +526,22 @@ export class GroupInfoComponent implements OnInit {
                     dataContent: {
                         "nickName": this.userinfo.nickname,
                         "uh": this.userinfo.userAvatarFileName, "f": this.userinfo.userId,
-                        "t": this.currentChat.alarmItem.dataId,
+                        "t": alarmItem.dataId,
                         "m": this.userinfo.nickname + "已退出本群",
                         "cy": 2, "ty": 90, "sync": "0"
                     },
-                    fp: '', from: this.userinfo.userId, to: this.currentChat.alarmItem.dataId,
+                    fp: '', from: this.userinfo.userId, to: alarmItem.dataId,
                     QoS: true, sm: -1, type: 2, typeu: 50,
                     recvTime: 0, "sync": "0"
                 };
-                this.messageService.sendCustomerMessage(imdata).then(res => {
-                    if (res.success === true) {
-                        this.dialogService.alert({ title: '退出成功！', text: '退出成功！' }).then((ok) => {
+                this.messageService.sendCustomerMessage(imdata).then(res2 => {
+                    if (res2.success === true) {
+                        this.dialogService.alert({ title: '退出成功！'}).then((done) => {
+                          this.cacheService.deleteData<ChattingModel>({model: "chatting", query: {dataId: alarmItem.dataId}}).then(() => {
+                            this.cacheService.deleteChattingCache(alarmItem.dataId).then(() => {
+                              return this.currentChattingChangeService.switchCurrentChatting(null);
+                            });
+                          });
                         });
                     }
                 });
