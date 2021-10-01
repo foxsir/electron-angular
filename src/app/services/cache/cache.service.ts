@@ -420,9 +420,9 @@ export class CacheService extends DatabaseService {
     return new Promise(resolve => {
       this.restService.getGroupAdminList(gid).subscribe((res: NewHttpResponseInterface<GroupAdminModel[]>) => {
         if(res.status === 200) {
-          const groupAdminMap = new Map<number, GroupAdminModel>();
+          const groupAdminMap = new Map<string, GroupAdminModel>();
           res.data.forEach(admin => {
-            groupAdminMap.set(admin.userUid, admin);
+            groupAdminMap.set(admin.userUid.toString(), admin);
             this.saveData<GroupAdminModel>({
               model: "groupAdmin", data: admin, update: {gid: gid, userUid: admin.userUid}
             }).then();
@@ -857,7 +857,7 @@ export class CacheService extends DatabaseService {
         if(res.status === 200) {
           const map = new Map();
           res.data.forEach(member => {
-            map.set(member.userUid, member);
+            map.set(member.userUid.toString(), member);
           });
           resolve(map);
         }
