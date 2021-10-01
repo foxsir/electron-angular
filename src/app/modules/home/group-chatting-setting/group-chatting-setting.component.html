@@ -6,12 +6,12 @@
         <mat-card class="mat-elevation-z0" fxLayoutAlign="stretch center" fxFlex="100" style="padding: 11px 16px;">
             <mat-card-content fxFlex="100">
                 <div fxLayout="row">
-                    <div fxFlex="130px" fxLayoutAlign="space-between center">
+                    <div fxFlex="130px" fxLayoutAlign="left">
                         <mat-icon (click)="back()" class="hover-icon">
                             <img [src]="backspaceIcon" alt="" class="icon">
                             <img [src]="backspaceActiveIcon" alt="" class="icon-active">
                         </mat-icon>
-                        <span>{{view_title_object[view_mode]}}</span>
+                        <span style="margin-left: 10px">{{view_title_object[view_mode]}}</span>
                     </div>
                     <div fxFlex fxLayoutAlign="end center">
                         <mat-icon (click)="drawer.close()" class="hover-icon icon14">
@@ -23,17 +23,17 @@
             </mat-card-content>
         </mat-card>
     </div>
-    <div class="split-item"></div>
+    <div class="split-item" style="width:200px"></div>
     <div fxFlex>
         <mat-card class="mat-elevation-z0" *ngIf="view_mode == 'switch_default'">
             <mat-card-content>
                 <!--群基本信息编辑-->
-                <div  fxLayout="column" fxLayoutGap="10px">
-                    <div fxFlex fxLayoutAlign="space-between center">
+                <div  fxLayout="column">
+                    <div fxFlex fxLayoutAlign="space-between center" class="group-pointer groupFirst">
                         <span class="privacy-item-text">启用专属客服</span>
                         <nz-switch [(ngModel)]="setting_data.customerServiceSwitch" (ngModelChange)="bySwitch('customerServiceSwitch')" nzSize="small"></nz-switch>
                     </div>
-                    <div fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="changeView('customer_service')">
+                    <div fxFlex fxLayoutAlign="space-between center" class="group-pointer groupLast" (click)="changeView('customer_service')">
                         <span class="privacy-item-text">客服</span>
                         <mat-icon class="mat-icon-cus" style="text-align:right;">
                             <img [src]="arrowRightIcon" alt="" class="icon">
@@ -42,11 +42,11 @@
 
                     <div class="split-item"></div>
 
-                    <div fxFlex fxLayoutAlign="space-between center">
+                    <div fxFlex fxLayoutAlign="space-between center" class="group-pointer groupFirst">
                         <span class="privacy-item-text">启用群页签</span>
                         <nz-switch [(ngModel)]="setting_data.tabSwitch" (ngModelChange)="bySwitch('tabSwitch')" nzSize="small"></nz-switch>
                     </div>
-                    <div fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="changeView('group_tab')">
+                    <div fxFlex fxLayoutAlign="space-between center" class="group-pointer groupLast" (click)="changeView('group_tab')">
                         <span class="privacy-item-text">群页签设置</span>
                         <mat-icon class="mat-icon-cus" style="text-align:right;">
                             <img [src]="arrowRightIcon" alt="" class="icon">
@@ -55,11 +55,11 @@
 
                     <div class="split-item"></div>
 
-                    <div fxFlex fxLayoutAlign="space-between center">
+                    <div fxFlex fxLayoutAlign="space-between center" class="group-pointer groupFirst">
                         <span class="privacy-item-text">启用群上屏编辑</span>
                         <nz-switch [(ngModel)]="setting_data.topContentSwitch" (ngModelChange)="bySwitch('topContentSwitch')" nzSize="small"></nz-switch>
                     </div>
-                    <div fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="changeView('group_top')">
+                    <div fxFlex fxLayoutAlign="space-between center" class="group-pointer groupLast" (click)="changeView('group_top')">
                         <span class="privacy-item-text">群上屏编辑</span>
                         <mat-icon class="mat-icon-cus" style="text-align:right;">
                             <img [src]="arrowRightIcon" alt="" class="icon">
@@ -68,7 +68,7 @@
 
                     <div class="split-item"></div>
 
-                    <div fxFlex fxLayoutAlign="space-between center">
+                    <div fxFlex fxLayoutAlign="space-between center" class="group-pointer groupFirst">
                         <span class="privacy-item-text">允许普通成员接受禁言通知</span>
                         <nz-switch [(ngModel)]="setting_data.silenceNotice" (ngModelChange)="bySwitch('silenceNotice')" nzSize="small"></nz-switch>
                     </div>
@@ -76,18 +76,18 @@
                         <span class="privacy-item-text">允许普通成员接受撤回通知</span>
                         <nz-switch [(ngModel)]="setting_data.revocationNotice" (ngModelChange)="bySwitch('revocationNotice')" nzSize="small"></nz-switch>
                     </div>
-                    <div fxFlex fxLayoutAlign="space-between center">
+                    <div fxFlex fxLayoutAlign="space-between center" class="group-pointer groupLast">
                         <span class="privacy-item-text">允许普通成员接受退群通知</span>
                         <nz-switch [(ngModel)]="setting_data.kickNotice" (ngModelChange)="bySwitch('kickNotice')" nzSize="small"></nz-switch>
                     </div>
 
                     <div class="split-item"></div>
 
-                    <div fxFlex fxLayoutAlign="space-between center">
+                    <div fxFlex fxLayoutAlign="space-between center" class="group-pointer groupFirst">
                         <span class="privacy-item-text">发言间隔</span>
                         <nz-switch [(ngModel)]="setting_data.talkIntervalSwitch" (ngModelChange)="bySwitch('talkIntervalSwitch')" nzSize="small"></nz-switch>
                     </div>
-                    <div fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="changetalkInterval()">
+                    <div fxFlex fxLayoutAlign="space-between center" class="group-pointer groupLast" (click)="changetalkInterval()">
                         <span class="privacy-item-text">普通成员发言间隔</span>
                         <mat-icon class="mat-icon-cus" style="text-align:right;">
                             <img [src]="arrowRightIcon" alt="" class="icon">
@@ -99,14 +99,14 @@
 
 
         <!--群客服配置-->
-        <mat-card class="mat-elevation-z0" *ngIf="view_mode == 'customer_service'" style="padding:0px;">
+        <mat-card class="mat-elevation-z0 kefu" *ngIf="view_mode == 'customer_service'" style="padding:0px;">
             <mat-card-content>
                 <div  fxLayout="column" fxLayoutGap="10px">
                     <mat-list>
                         <mat-list-item *ngFor="let item of customerServiceList" class="list-box">
-                            <img src="{{item.avatar}}" mat-list-icon style="width:44px;height:44px;" />
+                            <img src="{{item.avatar}}" mat-list-icon style="width:40px;height:40px;" />
                             <div mat-line>{{item.nickname}}</div>
-                            <mat-divider></mat-divider>
+                            <mat-divider style="border:0"></mat-divider>
                             <mat-action-list>
                                 <nz-switch [(ngModel)]="item.status_switch" (ngModelChange)="bySwitchCustomer(item)" nzSize="small"></nz-switch>
                             </mat-action-list>
@@ -118,15 +118,15 @@
 
 
         <!--群页签配置-->
-        <mat-card class="mat-elevation-z0" *ngIf="view_mode == 'group_tab'" style="padding:0px;">
+        <mat-card class="mat-elevation-z0 qyq" *ngIf="view_mode == 'group_tab'" style="padding:0px;">
             <mat-card-content>
                 <div  fxLayout="column" fxLayoutGap="10px">
                     <mat-list>
                         <mat-list-item *ngFor="let item of groupTabList" class="list-box">
-                            <img src="{{item.imgUrl}}" mat-list-icon style="width:44px;height:44px;" />
+                            <img src="{{item.imgUrl}}" mat-list-icon style="width:40px;height:40px;" />
                             <div mat-line>{{item.name}}</div>
-                            <div mat-line>{{item.addressUrl}}</div>
-                            <mat-divider></mat-divider>
+                            <div mat-line style="color:#CCC">{{item.addressUrl}}</div>
+                            <mat-divider style="border:0"></mat-divider>
                             <mat-action-list>
                                 <nz-switch [(ngModel)]="item.status_switch" (ngModelChange)="bySwitchGroupTab(item)" nzSize="small"></nz-switch>
                             </mat-action-list>
@@ -137,11 +137,11 @@
         </mat-card>
 
         <!--群上屏编辑-->
-        <mat-card class="mat-elevation-z0" *ngIf="view_mode == 'group_top'" style="padding:0px;">
+        <mat-card class="mat-elevation-z0 qsp" *ngIf="view_mode == 'group_top'" style="padding:0px; height:100%;">
             <mat-card-content>
                 <div *ngIf="view_mode == 'group_top'" fxLayout="column" fxLayoutGap="10px">
-                    <div *ngIf="group_top_view_mode == 'view'">
-                        <div>
+                    <div *ngIf="group_top_view_mode == 'view'" class="qsp0">
+                        <div style="height:calc(100% - 25px);">
                             <p>{{setting_data.gtopContent}}</p>
                         </div>
                         <div style="text-align:right;">
@@ -149,7 +149,7 @@
                         </div>
                     </div>
                     <div *ngIf="group_top_view_mode == 'edit'" class="edit-group-top">
-                        <div class="martop1">
+                        <div class="martop1" style="height:calc(100% - 25px);">
                             <textarea type="text" nz-input [(ngModel)]="setting_data.gtopContentTemp" class="txtcom" placeholder="请输入群上屏信息"></textarea>
                         </div>
                         <div class="martop2">

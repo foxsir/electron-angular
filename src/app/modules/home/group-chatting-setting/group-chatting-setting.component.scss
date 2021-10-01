@@ -1,21 +1,27 @@
 .privacy-item-text {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 400;
   color: #383838;
-  line-height: 22px;
+  line-height: 32px;
 }
 
 .mat-icon-cus{
-    img{
+    .icon{
         width:12px;
         height:12px;
         position:relative;
-        top:5px;
+        top:0px;
     }
 }
 
 .group-pointer{
     cursor:pointer;
+}
+.groupFirst{
+  padding-top: 15px;
+}
+.groupLast{
+  padding-bottom:15px;
 }
 
 .split-item{
@@ -26,32 +32,36 @@
 }
 
 .edit-group-top{
-    .martop1{
-        margin-top:20px;
-    }
+  padding:10px 20px 10px 20px; font-size: 12px; line-height: 18px;
+  color: #686868;
+  height:calc(100vh - 126px);
+  .martop1{
+    margin:0 0 0 0;
+  }
 
-    .martop2{
-        margin-top:25px;
-        text-align:right;
-    }
+  .martop2{
+    margin:0 0 0 0;
+    text-align:right;
+  }
 
-    .txtcom{
-        /*border:none;
-        outline:none;
-        border-bottom:1px solid #dddddd;*/
-        height:300px;
-    }
+  .txtcom{
+    padding:0 0 0 0; font-size: 12px; line-height: 18px;
+    color: #686868;
+    border: none;
+    height:100%;
+    font-family: PingFangSC;
+  }
 
-    .btncancel{
-        padding-left:0px;
-        padding-right:0px;
-    }
+  .btncancel{
+    padding-left:0px;
+    padding-right:0px;
+  }
 
-    .btnsave{
-        padding-left:0px;
-        padding-right:0px;
-        margin-left:20px;
-    }
+  .btnsave{
+    padding-left:0px;
+    padding-right:0px;
+    margin-left:20px;
+  }
 }
 
 .list-box{
@@ -59,4 +69,54 @@
         padding-left:0px;
         padding-right:0px;
     }
+}
+.qsp0{
+  padding:10px 20px 10px 20px; font-size: 12px; line-height: 18px;
+  color: #686868;
+  height:calc(100vh - 126px);
+  font-family: PingFangSC;
+  p{
+    margin:0; padding: 0;
+  }
+}
+
+::ng-deep {
+  .kefu {
+    .mat-card-content .mat-list .mat-list-item {
+      font-size: 14px;
+    }
+    .mat-list-base .mat-list-item .mat-list-item-content, .mat-list-base .mat-list-option .mat-list-item-content{
+      padding:0 16px 0 10px;
+    }
+    .mat-list-text{
+      padding-left:10px;
+      position: relative;
+      left:-10px;
+    }
+  }
+  .qyq {
+    .mat-card-content .mat-list .mat-list-item {
+      font-size: 14px;
+    }
+    .mat-list-base .mat-list-item .mat-list-item-content, .mat-list-base .mat-list-option .mat-list-item-content{
+      padding:0 16px 0 10px;
+    }
+    .mat-list-text{
+      padding-left:10px;
+      position: relative;
+      left:-10px;
+    }
+  }
+  .qsp0{
+    .btnsave,.ant-btn,.ant-btn-link{
+      padding: 0;
+      width: 30px;
+    }
+  }
+  .edit-group-top{
+    .btnsave,.ant-btn,.ant-btn-link{
+      padding: 0;
+      width: 30px;
+    }
+  }
 }
