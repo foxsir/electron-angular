@@ -17,6 +17,7 @@ import {RoamLastMsgModel} from "./roam-last-msg.model";
 import SessionStatusModel from "./session-status.model";
 import MuteModel from "./mute.model";
 import TopModel from "./top.model";
+import AtMeModel from "./at-me.model";
 
 const ModelMap: Map<string, typeof BaseEntity> = new Map();
 
@@ -37,5 +38,6 @@ ModelMap.set("roamLastMsg", RoamLastMsgModel);
 ModelMap.set("sessionStatus", SessionStatusModel);
 ModelMap.set("mute", MuteModel);
 ModelMap.set("top", TopModel);
+ModelMap.set("atMe", AtMeModel);
 
 export default ModelMap;

@@ -1,6 +1,7 @@
-import {Column, PrimaryGeneratedColumn} from "typeorm";
+import {BaseEntity, Column, Entity, PrimaryGeneratedColumn} from "typeorm";
 
-export default class AtMeModel {
+@Entity()
+export default class AtMeModel extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
