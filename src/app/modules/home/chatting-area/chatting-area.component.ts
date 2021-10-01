@@ -457,8 +457,34 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
         chat.isOutgoing = true;
         this.cacheService.putChattingCache(this.currentChat, chat).then(() => {
           this.cacheService.chatMsgEntityMap.set(chat.fingerPrintOfProtocal, chat);
-          this.cacheService.chatMsgEntityList = new Array(...this.cacheService.chatMsgEntityMap).flatMap(t => t[1]);
         });
+      } else {
+        let reTry = 20;
+        const rt = setInterval(() => {
+          if(reTry === 0) {
+            clearInterval(rt);
+          }
+          if(data && data.get(fingerPrint)) {
+            const chat = data.get(fingerPrint);
+            chat.isOutgoing = true;
+            this.cacheService.putChattingCache(this.currentChat, chat).then(() => {
+              this.cacheService.chatMsgEntityMap.set(chat.fingerPrintOfProtocal, chat);
+            });
+            clearInterval(rt);
+          }
+          this.cacheService.getChattingCache(this.currentChat).then(reData => {
+            if(reData && reData.get(fingerPrint)) {
+              const chat: ChatmsgEntityModel = reData.get(fingerPrint);
+              chat.isOutgoing = true;
+              this.cacheService.putChattingCache(this.currentChat, chat).then(() => {
+                this.cacheService.chatMsgEntityMap.set(chat.fingerPrintOfProtocal, chat);
+                clearInterval(rt);
+              });
+            }
+          });
+
+          reTry = reTry -1;
+        }, 1000);
       }
     });
   }

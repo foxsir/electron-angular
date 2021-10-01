@@ -153,12 +153,13 @@
                                    [fxLayoutAlign]="chat.uid.toString() === localUserInfo.userId.toString() ? 'end end' : 'start'">
                                 {{chat.name}}
                               </div>
-                              <div fxLayout="row" fxLayoutGap="5px">
+                              <div fxLayout="row" fxLayoutGap="5px" [fxLayoutAlign]="chat.uid.toString() === localUserInfo.userId.toString() ? 'end' : 'start'">
                                 <div fxLayoutAlign="center center" [fxShow]="chat.isOutgoing === false && chat.uid.toString() === localUserInfo.userId.toString()">
                                   <mat-spinner [diameter]="20" [strokeWidth]="3" mode="indeterminate"></mat-spinner>
                                 </div>
-                                <div fxFlex class="message-entity-item" #wrapDiv fxLayout="row" (contextmenu)="contextMenuForMessage($event, createPlanMenuTrigger, span, chat)">
-                                  <div class="message-entity" #messageContainer>
+                                <div class="message-entity-item" #wrapDiv fxLayout="row" (contextmenu)="contextMenuForMessage($event, createPlanMenuTrigger, span, chat)">
+                                  <div class="message-entity"
+                                       #messageContainer>
                                     <app-message-factory [chatMsg]="chat" [wrapDiv]="wrapDiv"></app-message-factory>
                                   </div>
                                   <span #createPlanMenuTrigger="matMenuTrigger" #span [matMenuTriggerFor]="contextmenu"></span>
