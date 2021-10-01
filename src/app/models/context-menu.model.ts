@@ -22,10 +22,10 @@ type ActionVisibilityForChatting = (filterData: Partial<MenuFilterData>) => bool
 type ActionCollectType = () => void;
 
 export interface MenuFilterData {
-  admins: GroupAdminModel[] | any;
-  friends: FriendModel[] | any;
-  groups: GroupModel[] | any;
-  members: GroupMemberModel[] | any;
+  admins?: Map<string, GroupAdminModel>;
+  friends?: Map<string, FriendModel>;
+  groups?: Map<string, GroupModel>;
+  members: Map<string, GroupMemberModel>;
   alarmItem: AlarmItemInterface;
   chat: ChatmsgEntityModel;
 }
