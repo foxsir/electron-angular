@@ -394,6 +394,7 @@ export class ContextMenuService {
                 0).subscribe((res: NewHttpResponseInterface<any>) => {
                 if(res.status === 200) {
                   this.snackBarService.openMessage(res.msg);
+                  this.cacheService.cacheGroupAdmins(alarmItem.alarmItem.dataId).then();
                 } else {
                   this.snackBarService.openMessage(res.msg);
                 }
@@ -431,12 +432,17 @@ export class ContextMenuService {
         action: (alarmItem, chat) => {
           this.dialogService.confirm({title: "从本群主中删除"}).then((ok) => {
             if(ok) {
-              const userId = this.localUserService.localUserInfo.userId;
+              const userId = Number(chat.uid);
               this.restService.removeGroupMembers(alarmItem.alarmItem.dataId, userId.toString(), [
                 [alarmItem.alarmItem.dataId, chat.uid, chat.name]
               ]).subscribe((res: HttpResponseInterface) => {
                 if(res.success === true) {
                   this.snackBarService.openMessage('删除成功');
+                  this.cacheService.deleteData<GroupMemberModel>({model: 'groupMember', query: {userUid: userId}}).then(del => {
+                    if(del.status === 200) {
+                      this.cacheService.cacheGroupMembers(alarmItem.alarmItem.dataId).then();
+                    }
+                  });
                 } else {
                   this.snackBarService.openMessage('删除失败');
                 }
@@ -494,6 +500,7 @@ export class ContextMenuService {
                 1).subscribe((res: NewHttpResponseInterface<any>) => {
                 if(res.status === 200) {
                   this.snackBarService.openMessage(res.msg);
+                  this.cacheService.cacheGroupAdmins(alarmItem.alarmItem.dataId).then();
                 } else {
                   this.snackBarService.openMessage(res.msg);
                 }
