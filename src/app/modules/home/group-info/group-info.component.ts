@@ -104,6 +104,12 @@ export class GroupInfoComponent implements OnInit {
             this.groupConfig.close().then();
             this.initGroupData();
         });
+
+        this.cacheService.cacheUpdate$.subscribe(res => {
+          if(res.groupMemberMap || res.groupAdminMap) {
+            this.initGroupData();
+          }
+        });
     }
 
     ngOnInit(): void {
@@ -112,16 +118,12 @@ export class GroupInfoComponent implements OnInit {
 
     loadGroupAdminList() {
         /* 获取群管理员列表 */
-        this.restService.getGroupAdminList(this.currentChat.alarmItem.dataId).subscribe(res => {
-            if (res.status !== 200)
-                return;
-
-            console.log('群信息弹出框获取群管理员：', res);
-            this.group_admin_list = res.data;
-            for (let item of this.group_admin_list) {
-                item.show = true;
-            }
+      this.cacheService.getCacheGroupAdmins(this.currentChat.alarmItem.dataId).then(members => {
+        this.group_admin_list = [];
+        members.forEach(member => {
+          this.group_admin_list.push(member);
         });
+      });
     }
 
     initGroupData() {
@@ -147,15 +149,11 @@ export class GroupInfoComponent implements OnInit {
         });
 
         /* 获取群成员列表 */
-        this.restService.submitGetGroupMembersListFromServer(this.currentChat.alarmItem.dataId).subscribe(res => {
-            console.log('群信息弹出框获取群成员：', res);
-            if (res.status !== 200)
-                return;
-
-            this.group_member_list = res.data.list;
-            for (let item of this.group_member_list) {
-                item.show = true;
-            }
+        this.cacheService.getGroupMembers(this.currentChat.alarmItem.dataId).then(members => {
+          this.group_member_list = [];
+          members.forEach(member => {
+            this.group_member_list.push(member);
+          });
         });
 
         this.loadGroupAdminList();
