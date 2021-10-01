@@ -158,8 +158,7 @@
                                   <mat-spinner [diameter]="20" [strokeWidth]="3" mode="indeterminate"></mat-spinner>
                                 </div>
                                 <div class="message-entity-item" #wrapDiv fxLayout="row" (contextmenu)="contextMenuForMessage($event, createPlanMenuTrigger, span, chat)">
-                                  <div class="message-entity"
-                                       #messageContainer>
+                                  <div class="message-entity" #messageContainer>
                                     <app-message-factory [chatMsg]="chat" [wrapDiv]="wrapDiv"></app-message-factory>
                                   </div>
                                   <span #createPlanMenuTrigger="matMenuTrigger" #span [matMenuTriggerFor]="contextmenu"></span>
