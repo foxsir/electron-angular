@@ -407,9 +407,9 @@ export class ContextMenuService {
         visibility: (filterData: MenuFilterData): boolean => {
           const localUserInfo: LocalUserinfoModel = RBChatUtils.getAuthedLocalUserInfoFromCookie();
           const noSelf = filterData.chat.uid.toString() !== localUserInfo.userId.toString();
-          const isFriend = filterData.friends[filterData.chat.uid];
+          const isFriend = filterData.friends.get(filterData.chat.uid.toString());
           // 不能设置自己 and 必需是好友
-          return noSelf && isFriend;
+          return noSelf && !!isFriend;
         },
         action: (alarmItem, chat) => {
           this.dialogService.openDialog(SetRemarkComponent, {
@@ -421,11 +421,11 @@ export class ContextMenuService {
         label: "从本群主中删除",
         visibility: (filterData: MenuFilterData): boolean => {
           const localUserInfo: LocalUserinfoModel = RBChatUtils.getAuthedLocalUserInfoFromCookie();
-          const caches = filterData.admins[filterData.alarmItem.alarmItem.dataId];
+          const admin = filterData.admins.get(filterData.alarmItem.alarmItem.dataId.toString());
           const chatUid = filterData.chat.uid.toString();
-          const group = filterData.groups[filterData.alarmItem.alarmItem.dataId];
-          const owner = group && group.gownerUserUid.toString() === localUserInfo.userId;
-          const manager = caches && caches[filterData.chat.uid] === chatUid;
+          const group = filterData.groups.get(filterData.alarmItem.alarmItem.dataId);
+          const owner = group && group.gownerUserUid.toString() === localUserInfo.userId.toString();
+          const manager = admin && admin.userUid.toString() === chatUid.toString();
           return owner || manager; // 是管理员或者群主
         },
         action: (alarmItem, chat) => {
@@ -481,9 +481,9 @@ export class ContextMenuService {
         label: "设置管理员",
         visibility: (filterData: MenuFilterData): boolean => {
           const localUserInfo: LocalUserinfoModel = RBChatUtils.getAuthedLocalUserInfoFromCookie();
-          const group = filterData.groups[filterData.alarmItem.alarmItem.dataId];
+          const group = filterData.groups.get(filterData.alarmItem.alarmItem.dataId.toString());
           // 是群主
-          return group && group.gownerUserUid.toString() === localUserInfo.userId;
+          return group && group.gownerUserUid.toString() === localUserInfo.userId.toString();
         },
         action: (alarmItem, chat) => {
           this.dialogService.confirm({title: "设置管理员"}).then((ok) => {
@@ -638,7 +638,7 @@ export class ContextMenuService {
       });
     }
 
-    const filterData = {
+    const filterData: Partial<MenuFilterData> = {
       admins: admins,
       friends: null,
       members: members,
@@ -666,10 +666,10 @@ export class ContextMenuService {
    * @param chat
    */
   async getContextMenuForAvatar(alarmItem: AlarmItemInterface, chat: ChatmsgEntityModel) {
-    let admins: unknown = null;
-    let friends: unknown = null;
+    let admins;
+    let friends;
     let groups: Map<string, GroupModel> = new Map();
-    await this.cacheService.getCacheGroupAdmins(alarmItem.alarmItem.dataId).then(data => {
+    await this.cacheService.getCacheGroupAdmins(alarmItem.alarmItem.dataId).then((data) => {
       admins = data;
     });
     await this.cacheService.getCacheFriends().then(data => {
@@ -680,7 +680,7 @@ export class ContextMenuService {
       groups = data;
     });
 
-    const filterData = {
+    const filterData: Partial<MenuFilterData> = {
       admins: admins,
       friends: friends,
       groups: groups,
