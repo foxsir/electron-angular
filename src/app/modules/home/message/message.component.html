@@ -1,6 +1,6 @@
 <mat-drawer-container autosize>
   <mat-drawer #chattingPanel [mode]="drawerMode" [opened]="isMiniUI === false">
-    <div fxFlex="260px" fxLayout="column" class="border1px right">
+    <div fxFlex="300px" fxLayout="column" class="border1px right">
       <div class="search-widget">
         <app-search-widget></app-search-widget>
       </div>
@@ -19,7 +19,7 @@
                 <div fxFlex="40px">
                   <img [src]="alarm.value.alarmData.alarmItem.avatar" mat-card-avatar alt="">
                 </div>
-                <div fxFlex="calc(100% - 110px)">
+                <div fxFlex="calc(100% - 120px)">
                   <div fxLayout="column">
                     <div fxFlex="100">
                       <mat-card-subtitle>{{alarm.value.alarmData.alarmItem.title}}</mat-card-subtitle>
@@ -29,12 +29,10 @@
                     </div>
                   </div>
                 </div>
-                <div fxFlex="70px" fxLayoutAlign="center">
+                <div fxFlex="80px" fxLayoutAlign="center">
                   <div fxLayout="column" fxFlex="100">
-                    <div fxFlex="100" fxLayout="row">
-                      <!--<div style="font-size: 12px;">{{formatDate(alarm.value.alarmData.alarmItem.date, 'M-d h:m')}}</div>-->
-                        <div *ngIf="checkToday(alarm.value.alarmData.alarmItem.date) == true" style="font-size: 12px;">{{alarm.value.alarmData.alarmItem.date | date: 'shortTime'}}</div>
-                        <div *ngIf="checkToday(alarm.value.alarmData.alarmItem.date) == false" style="font-size: 12px;">{{alarm.value.alarmData.alarmItem.date | date: 'M-d'}}</div>
+                    <div fxFlex="100" fxLayout="row" fxFlexAlign="end">
+                        <div class="last-message-time">{{alarm.value.alarmData.alarmItem.date | shortDate}}</div>
                     </div>
                     <div fxFlex="100" fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="end">
                       <div fxFlex="50">

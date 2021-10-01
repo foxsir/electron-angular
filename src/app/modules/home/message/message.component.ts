@@ -427,15 +427,4 @@ export class MessageComponent implements OnInit, AfterViewInit {
         return 1;
     }
 
-    checkToday(timestamp) {
-        let date = new Date(parseInt(timestamp));
-        let now = new Date();
-        if (date.getDate() == now.getDate() && date.getMonth() == now.getMonth()) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-
 }
