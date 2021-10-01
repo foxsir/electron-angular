@@ -138,7 +138,7 @@
                           <div [fxLayout]="chat.uid.toString() === localUserInfo.userId.toString() ? 'row-reverse' : 'row'" fxLayoutGap="10px">
                             <div fxFlex="40px" *ngIf="currentChat.metadata.chatType === 'group'" class="group-avatar">
                               <img (contextmenu)="contextMenuForAvatar($event, createPlanMenuTriggerAvatar, avatarSpan, chat)"
-                                   [src]="groupMembers.get(chat.uid)?.userAvatarFileName" mat-card-avatar alt="">
+                                   [src]="chat.uh" mat-card-avatar alt="">
                               <!--增加头像上的右键功能-->
                               <span #createPlanMenuTriggerAvatar="matMenuTrigger" #avatarSpan [matMenuTriggerFor]="contextmenuForAvatar"></span>
                               <mat-menu #contextmenuForAvatar="matMenu">

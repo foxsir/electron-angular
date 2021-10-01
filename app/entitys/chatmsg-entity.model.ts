@@ -98,7 +98,9 @@ export default class ChatmsgEntityModel extends BaseEntity {
   @Column({nullable: true})
   xu_isRead_type: boolean = false;
 
-
+  // 用户头像
+  @Column({nullable: true})
+  uh: string = "";
 }
 
 

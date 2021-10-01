@@ -577,6 +577,7 @@ export class CacheService extends DatabaseService {
                   chatMsgEntity = this.messageEntityService.prepareRecievedMessage(
                     msgJson.from, alarmItem.alarmItem.title, dataContent.m, msgJson.recvTime, dataContent.ty, msgJson.fp
                   );
+                  chatMsgEntity.uh = dataContent.uh;
                 }
                 // if(localLastMsgFP === chatMsgEntity.fingerPrintOfProtocal) {
                 //   checkLocalLastMsg = true;
@@ -618,6 +619,7 @@ export class CacheService extends DatabaseService {
                   chatMsgEntity = this.messageEntityService.prepareRecievedMessage(
                     msgJson.from, dataContent.nickName, dataContent.m, msgJson.recvTime, dataContent.ty, msgJson.fp
                   );
+                  chatMsgEntity.uh = dataContent.uh;
                 }
                 // 如果没拉取到最后一条，则继续拉去
                 // if(localLastMsgFP === chatMsgEntity.fingerPrintOfProtocal) {

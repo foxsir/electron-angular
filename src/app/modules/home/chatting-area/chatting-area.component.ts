@@ -341,6 +341,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
         const chatMsgEntity = this.messageEntityService.prepareRecievedMessage(
           res.from, dataContent.nickName, dataContent.m, (new Date()).getTime(), dataContent.ty, res.fp
         );
+        chatMsgEntity.uh = dataContent.uh;
         // fromUid, nickName, msg, time, msgType, fp = null
         const chatType = Number(dataContent.cy) === ChatModeType.CHAT_TYPE_FRIEND$CHAT ? 'friend' : 'group';
         let dataId = chatType === 'friend' ? res.from : dataContent.f;
@@ -408,6 +409,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
       const chatMsgEntity = this.messageEntityService.prepareRecievedMessage(
         res.from, dataContent.nickName, dataContent.m, (new Date()).getTime(), dataContent.ty, res.fp
       );
+      chatMsgEntity.uh = dataContent.uh;
     });
   }
 
@@ -431,6 +433,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
           const chatMsgEntity = this.messageEntityService.prepareRecievedMessage(
             dataContent.f, dataContent.nickName, dataContent.m, res.recvTime, dataContent.ty, res.fp
           );
+          chatMsgEntity.uh = dataContent.uh;
           const chatType = Number(dataContent.cy) === ChatModeType.CHAT_TYPE_FRIEND$CHAT ? 'friend' : 'group';
           const dataId = chatType === 'friend' ? res.to : dataContent.t;
           this.cacheService.generateAlarmItem(dataId, chatType, dataContent.m, dataContent.ty).then(alarm => {

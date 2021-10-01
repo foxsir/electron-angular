@@ -21,6 +21,7 @@ export class MessageQuoteComponent implements OnInit {
     nickName: string;
     userAvatar: string;
     uid: string;
+    uh: string;
   }; // 名片
   public contactEntity: ChatmsgEntityModel;
 
@@ -46,6 +47,7 @@ export class MessageQuoteComponent implements OnInit {
       this.contactEntity = this.messageEntityService.prepareRecievedMessage(
           this.contactMsg.uid, this.contactMsg.nickName, this.replyMsg.reply, null, MsgType.TYPE_CONTACT
       );
+      this.contactEntity.uh = this.contactMsg.uh;
     }
 
     this.parseMsgToJSON();

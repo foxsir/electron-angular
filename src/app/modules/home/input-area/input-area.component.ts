@@ -314,6 +314,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
         const chatMsgEntity = this.messageEntityService.prepareSendedMessage(
           message, new Date().getTime(), res.fingerPrint, messageType
         );
+        chatMsgEntity.uh = this.localUserService.localUserInfo.userAvatarFileName;
         if (replaceEntity) {
           replaceEntity.fingerPrintOfProtocal = chatMsgEntity.fingerPrintOfProtocal;
           // this.cacheService.chatMsgEntityMap.delete(replaceEntity.fingerPrintOfProtocal);
@@ -379,6 +380,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
         const chatMsgEntity = this.messageEntityService.prepareSendedMessage(
           message, 0, res.fingerPrint, messageType
         );
+        chatMsgEntity.uh = this.localUserService.localUserInfo.userAvatarFileName;
         if (replaceEntity) {
           replaceEntity.fingerPrintOfProtocal = chatMsgEntity.fingerPrintOfProtocal;
         }

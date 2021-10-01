@@ -43,4 +43,7 @@ export default class ChatmsgEntityModel extends BaseEntity {
   //======================================================== 专用于BBS/群聊消息的核心数据字段 START
 
   xu_isRead_type: boolean = false;
+
+  // 用户头像
+  uh: string = "";
 }
