@@ -123,7 +123,7 @@ export class ContextMenuService {
       action: (chatting: AlarmItemInterface) => {
         this.dialogService.confirm({title: '删除会话'}).then((ok) => {
           if(ok) {
-            this.cacheService.deleteChattingCache(chatting).then(() => {
+            this.cacheService.deleteChattingCache(chatting.alarmItem.dataId).then(() => {
               return this.currentChattingChangeService.switchCurrentChatting(null);
             });
           }
