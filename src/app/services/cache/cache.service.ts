@@ -224,13 +224,13 @@ export class CacheService extends DatabaseService {
 
   /**
    * 删除会话消息
-   * @param alarmData
+   * @param dataId
    */
-  deleteChattingCache(alarmData: AlarmItemInterface): Promise<boolean> {
+  deleteChattingCache(dataId: string): Promise<boolean> {
     return new Promise<boolean>((resolve) => {
-      this.deleteData<ChattingModel>({model: "chatting", query: {dataId: alarmData.alarmItem.dataId}}).then(() => {
+      this.deleteData<ChattingModel>({model: "chatting", query: {dataId: dataId}}).then(() => {
         this.getChattingList().then(list => {
-          list.delete(alarmData.alarmItem.dataId);
+          list.delete(dataId);
           this.cacheSource.next({alarmDataMap: list});
           resolve(true);
         });
