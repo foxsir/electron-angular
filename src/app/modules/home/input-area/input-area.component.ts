@@ -363,8 +363,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
     emitToUI: boolean = true,
     replaceEntity: ChatmsgEntityModel = null
   ) {
-    // this.messageService.atGroupMember(this.currentChat, messageText, this.atTargetMember).then();
-    this.messageService.sendGroupMessage(messageType, this.currentChat.alarmItem.dataId, messageText).then(res => {
+    this.messageService.sendGroupMessage(messageType, this.currentChat.alarmItem.dataId, messageText, this.atTargetMember).then(res => {
       if(res.success === true) {
         const friendUid = this.currentChat.alarmItem.dataId;
         const ree = this.rosterProviderService.getFriendInfoByUid(friendUid);
@@ -553,6 +552,20 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
     document.execCommand("insertHTML", false, this.getATMark(member).outerHTML + " ");
     this.showPlaceholder = false;
     this.textarea.nativeElement.blur();
+    this.textareaChange();
+    this.menuTrigger.closeMenu();
+  }
+
+  /**
+   * @所有人
+   */
+  public appendAtMarkAll() {
+    this.textarea.nativeElement.focus();
+    document.execCommand("delete");
+    document.execCommand("insertHTML", false, this.getATMark([]).outerHTML + " ");
+    this.showPlaceholder = false;
+    this.textarea.nativeElement.blur();
+    this.textareaChange();
     this.menuTrigger.closeMenu();
   }
 
@@ -594,9 +607,19 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
    * 生成@name图片标签
    * @param member
    */
-  private getATMark(member: GroupMemberModel): HTMLImageElement {
+  private getATMark(member: GroupMemberModel | []): HTMLImageElement {
+    let showNickname: string;
+    let userUid: string;
+    if(member.hasOwnProperty("length")) {
+      showNickname = '所有人';
+      userUid = "ALL";
+    } else {
+      member = member as GroupMemberModel;
+      showNickname = member.showNickname;
+      userUid = member.userUid.toString();
+    }
     const sp = document.createElement('span');
-    const text = `@${member.showNickname}`;
+    const text = `@${showNickname}`;
     sp.innerText = text;
     sp.style.visibility = 'hidden';
     sp.style.fontSize = '14px';
@@ -611,8 +634,8 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
     const img = document.createElement("img");
     img.src = src;
     img.id = CommonTools.uuid();
-    img.setAttribute("user-id", member.userUid.toString());
-    img.setAttribute("user-nickname", member.showNickname);
+    img.setAttribute("user-id", userUid);
+    img.setAttribute("user-nickname", showNickname);
     img.className = "at-mark-for-input";
     img.style.width = width + "px";
     return img;
