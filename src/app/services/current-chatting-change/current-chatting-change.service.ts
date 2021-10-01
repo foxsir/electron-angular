@@ -29,6 +29,7 @@ export class CurrentChattingChangeService {
           currentChatting.metadata.unread = 0;
           if(!this.currentChatting || this.currentChatting.alarmItem.dataId !== currentChatting.alarmItem.dataId) {
             this.cacheService.chatMsgEntityMap.clear();
+            this.cacheService.chatMsgEntityList = [];
             this.cacheService.chatMsgEntityMapTemp.clear();
             this.cacheService.setChattingBadges(currentChatting, 0);
             this.currentChatting = currentChatting;
