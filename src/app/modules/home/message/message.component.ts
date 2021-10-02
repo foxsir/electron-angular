@@ -161,13 +161,13 @@ export class MessageComponent implements OnInit, AfterViewInit {
 
         //如果是群聊，加载群页签数据
         if (this.currentChat != undefined && this.currentChat.alarmItem.chatType == 'group') {
-            this.restService.getGroupBaseById(this.currentChat.alarmItem.dataId).subscribe(res => {
-                if (parseInt(res.data.tabSwitch) == 1) {
+            this.restService.getGroupBaseById(this.currentChat.alarmItem.dataId).subscribe(group_data => {
+                if (parseInt(group_data.data.tabSwitch) == 1) {
                     /*获取群页签列表*/
-                    this.restService.getUserGroupTab(this.currentChat.alarmItem.dataId).subscribe(res => {
+                    this.restService.getUserGroupTab(this.currentChat.alarmItem.dataId).subscribe(tab_data => {
                         this.group_tab_data = {
                             visible: true,
-                            list: res.data
+                            list: tab_data.data
                         };
                     });
                 }
