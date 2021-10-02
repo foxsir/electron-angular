@@ -31,6 +31,7 @@ import IpcResponseInterface from "@app/interfaces/ipc-response.interface";
 import ChattingModel from "@app/models/chatting.model";
 import MuteModel from "@app/models/mute.model";
 import TopModel from "@app/models/top.model";
+import AtMeModel from "@app/models/at-me.model";
 
 export type AlarmDataMap = Map<string, {alarmData: AlarmItemInterface; message?: Map<string, ChatmsgEntityModel>}>;
 
@@ -45,6 +46,7 @@ interface CacheItem {
   topMap: Map<string, boolean>;
   blackListMap: Map<string, BlackListModel>;
   newFriendMap: Map<number, FriendRequestModel>;
+  atMe: boolean;
 }
 
 @Injectable({
@@ -71,6 +73,7 @@ export class CacheService extends DatabaseService {
     topMap: "topMap",
     blackListMap: "blackListMap",
     newFriendMap: "newFriendMap",
+    atMe: "atMe",
   };
 
   // 防止多次初始化
@@ -955,6 +958,31 @@ export class CacheService extends DatabaseService {
 
   putMsgEntityMap(msg: ChatmsgEntityModel) {
     this.chatMsgEntityMap.set(msg.fingerPrintOfProtocal, msg);
+  }
+
+  putAtMessage(dataId: string, msg: ChatmsgEntityModel) {
+    const data: Partial<AtMeModel> = {
+      dataId: dataId,
+      fingerPrintOfProtocal: msg.fingerPrintOfProtocal,
+      date: msg.date
+    };
+    this.saveData<AtMeModel>({model: 'atMe', data: data, update: {fingerPrintOfProtocal: msg.fingerPrintOfProtocal}}).then(() => {
+      this.cacheSource.next({atMe: true});
+    });
+  }
+
+  clearAt(dataId: string) {
+    this.deleteData<AtMeModel>({model: 'atMe', query: {dataId: dataId}}).then(() => {
+      this.cacheSource.next({atMe: true});
+    });
+  }
+
+  getAtMessage(dataId: string): Promise<AtMeModel[]> {
+    return new Promise<AtMeModel[]>((resolve) => {
+      this.queryData<AtMeModel>({model: 'atMe', query: {dataId: dataId}}).then((res) => {
+        resolve(res.data);
+      });
+    });
   }
 
 }
