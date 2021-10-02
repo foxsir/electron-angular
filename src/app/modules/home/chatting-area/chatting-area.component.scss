@@ -23,6 +23,11 @@
   .group-tags-container {
     overflow: hidden;
   }
+  .at-me-sheet {
+    background: #d9d9d9;
+    font-size: 12px;
+    user-select: none;
+  }
 }
 #chatting-panel {
   overflow-y: scroll;

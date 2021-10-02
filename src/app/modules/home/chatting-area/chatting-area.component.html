@@ -123,6 +123,9 @@
               </mat-icon>
             </button>
           </div>
+          <div fxFlex="20px" *ngIf="atMsg" class="at-me-sheet mat-primary text hover-item">
+            <div fxFlexFill fxLayoutAlign="center center" (click)="gotoAt()">有人@我</div>
+          </div>
           <div fxFlex id="chatting-panel" #chattingContainer>
             <mat-card class="mat-elevation-z0 transparent" fxFlex="100">
               <mat-card-content fxFlex="100">

@@ -58,6 +58,7 @@ import {GroupMemberModel} from "@app/models/group-member.model";
 import NewHttpResponseInterface from "@app/interfaces/new-http-response.interface";
 import {GroupModel} from "@app/models/group.model";
 import GroupTabModel from "@app/models/group-tab.model";
+import AtMeModel from "@app/models/at-me.model";
 
 @Component({
   selector: 'app-chatting-area',
@@ -130,6 +131,9 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
     list: []
   };
 
+  // @我的消息
+  public atMsg: AtMeModel;
+
   constructor(
     public cacheService: CacheService, // 模版中要用
     private avatarService: AvatarService,
@@ -173,6 +177,10 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
           this.cacheService.chatMsgEntityList = [];
         }
       }
+
+      if(cache.atMe) {
+        this.showAtSheet();
+      }
     });
   }
 
@@ -182,6 +190,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
   ngAfterContentInit() {
     if(this.currentChattingChangeService.currentChatting) {
       this.currentChat = this.currentChattingChangeService.currentChatting;
+      this.showAtSheet();
       this.loadTabData();
       this.getGroupMembers();
       this.cacheService.getChattingCache(this.currentChat).then(data => {
@@ -198,6 +207,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
       // === 为刷新聊天列表，只更新数据
       if (currentChat && this.currentChat !== currentChat) {
         this.currentChat = currentChat;
+        this.showAtSheet();
         this.loadTabData();
         this.getGroupMembers();
         this.scrollToBottom();
@@ -796,6 +806,41 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
         visible: false,
         list: []
       };
+    }
+  }
+
+  /**
+   * 显示at提示
+   */
+  showAtSheet() {
+    if(this.currentChat) {
+      this.cacheService.getAtMessage(this.currentChat.alarmItem.dataId).then((at) => {
+        if(at.length > 0) {
+          this.atMsg = at[0];
+        } else {
+          this.atMsg = null;
+        }
+      });
+    }
+  }
+
+  /**
+   * 定位到@，并清除@消息
+   */
+  gotoAt() {
+    if(this.cacheService.chatMsgEntityMap.get(this.atMsg.fingerPrintOfProtocal)) {
+      let index = -1;
+      this.cacheService.chatMsgEntityList.forEach(msg => {
+        index += 1;
+        if(msg.fingerPrintOfProtocal === this.atMsg.fingerPrintOfProtocal) {
+          this.virtualScrollViewport.scrollToIndex(index + 2, 'smooth');
+          this.cacheService.clearAt(this.currentChat.alarmItem.dataId);
+          this.atMsg = null;
+        }
+      });
+    } else {
+      this.loadMessage(false);
+      this.gotoAt();
     }
   }
 
