@@ -328,7 +328,7 @@ export class GroupInfoComponent implements OnInit {
             toUserId: this.currentChat.alarmItem.dataId,
             chatType: this.currentChat.metadata.chatType,
             group_name: this.currentChat.alarmItem.title,
-            txt_value: column == 'group_name' ? this.currentChat.alarmItem.title : '',
+            txt_value: column == 'group_name' ? this.currentChat.alarmItem.title : this.user_clu_info.showNickname,
         };
 
         this.dialogService.openDialog(GroupInfoDialogComponent, { data: data }).then((res: any) => {
@@ -341,6 +341,9 @@ export class GroupInfoComponent implements OnInit {
             if (column == 'group_name') {
                 this.currentChat.alarmItem.title = res.new_name;
                 this.cacheService.putChattingCache(this.currentChat).then(() => {});
+            }
+            else if (column == 'group_nickname') {
+                this.user_clu_info.showNickname = res.new_name;
             }
 
             //if (column == 'group_name') {

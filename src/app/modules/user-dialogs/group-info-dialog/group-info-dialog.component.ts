@@ -86,7 +86,8 @@ export class GroupInfoDialogComponent implements OnInit {
             var post_data_2 = { groupId: this.data.toUserId, nicknameInGroup: this.data.txt_value };
             this.restService.updateNicknameInGroup(post_data_2).subscribe(res => {
                 const result = {
-                    ok: res.ok
+                    ok: res.ok,
+                    new_name: post_data_2.nicknameInGroup
                 };
                 this.dialogRef.close(result);
             });
