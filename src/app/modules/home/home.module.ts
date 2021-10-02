@@ -57,6 +57,8 @@ import {MatExpansionModule} from "@angular/material/expansion";
 import {MatProgressBarModule} from "@angular/material/progress-bar";
 import {ScrollingModule} from "@angular/cdk/scrolling";
 import {SharedModule} from "../../shared/shared.module";
+import { GroupTabsComponent } from './group-tabs/group-tabs.component';
+import {MatTabsModule} from "@angular/material/tabs";
 
 @NgModule({
   declarations: [
@@ -80,7 +82,8 @@ import {SharedModule} from "../../shared/shared.module";
     SearchFriendComponent,
     SearchWidgetComponent,
     ChattingAreaComponent,
-    MyFriendsComponent
+    MyFriendsComponent,
+    GroupTabsComponent
   ],
   imports: [
     CommonModule,
@@ -115,6 +118,7 @@ import {SharedModule} from "../../shared/shared.module";
     MatProgressBarModule,
     ScrollingModule,
     SharedModule,
+    MatTabsModule,
   ],
   providers: [{provide: LOCALE_ID, useValue: 'zh-Hans' }]
 })

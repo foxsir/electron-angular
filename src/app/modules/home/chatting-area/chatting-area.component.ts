@@ -55,6 +55,9 @@ import CommonTools from "@app/common/common.tools";
 import DirectoryType from "@services/file/config/DirectoryType";
 import {CdkVirtualScrollViewport} from "@angular/cdk/scrolling";
 import {GroupMemberModel} from "@app/models/group-member.model";
+import NewHttpResponseInterface from "@app/interfaces/new-http-response.interface";
+import {GroupModel} from "@app/models/group.model";
+import GroupTabModel from "@app/models/group-tab.model";
 
 @Component({
   selector: 'app-chatting-area',
@@ -96,6 +99,9 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
   // 是否正在搜索
   public searching = false;
 
+  //  显示group tabs
+  public showGroupTabs = false;
+
   // 引用回复消息
   public quoteMessage: ChatmsgEntityModel = null;
   public quoteMessageText: {
@@ -116,6 +122,13 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
   public loadingMessage: boolean = false;
 
   public groupMembers: Map<string, GroupMemberModel> = new Map();
+
+  // 需要显示的tab链接
+  public tabLink: string;
+  public group_tab_data: {visible: boolean; list: GroupTabModel[]} = {
+    visible: false,
+    list: []
+  };
 
   constructor(
     public cacheService: CacheService, // 模版中要用
@@ -169,6 +182,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
   ngAfterContentInit() {
     if(this.currentChattingChangeService.currentChatting) {
       this.currentChat = this.currentChattingChangeService.currentChatting;
+      this.loadTabData();
       this.getGroupMembers();
       this.cacheService.getChattingCache(this.currentChat).then(data => {
         if(!!data) {
@@ -184,6 +198,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
       // === 为刷新聊天列表，只更新数据
       if (currentChat && this.currentChat !== currentChat) {
         this.currentChat = currentChat;
+        this.loadTabData();
         this.getGroupMembers();
         this.scrollToBottom();
         // 切换会话清空列表
@@ -650,7 +665,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
       if(index === 0) {
         this.loadMessage();
       }
-      this.showDownArrow = this.virtualScrollViewport.measureScrollOffset('bottom') > 10;
+      this.showDownArrow = this.virtualScrollViewport.measureScrollOffset('bottom') > 100;
     });
   }
 
@@ -756,6 +771,31 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
   saveAtMsg(ty: number, dataId: string, chatMsgEntity: ChatmsgEntityModel) {
     if(ty === MsgType.TYPE_AITE) {
       this.cacheService.putAtMessage(dataId, chatMsgEntity);
+    }
+  }
+
+  loadTabData() {
+    console.log('显示消息组件数据打印：', this.currentChat);
+    //如果是群聊，加载群页签数据
+    if (this.currentChat && this.currentChat.alarmItem.chatType === 'group') {
+      this.restService.getGroupBaseById(this.currentChat.alarmItem.dataId).subscribe((group_data: NewHttpResponseInterface<GroupModel>) => {
+        if (group_data.data.tabSwitch === 1 || true) {
+          /*获取群页签列表*/
+          this.restService.getUserGroupTab(this.currentChat.alarmItem.dataId).subscribe(
+            (tab_data: NewHttpResponseInterface<GroupTabModel[]>
+            ) => {
+            this.group_tab_data = {
+              visible: true,
+              list: tab_data.data
+            };
+          });
+        }
+      });
+    } else {
+      this.group_tab_data = {
+        visible: false,
+        list: []
+      };
     }
   }
 

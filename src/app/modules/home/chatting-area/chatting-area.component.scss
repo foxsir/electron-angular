@@ -20,6 +20,9 @@
     bottom: 100px;
     z-index: 999;
   }
+  .group-tags-container {
+    overflow: hidden;
+  }
 }
 #chatting-panel {
   overflow-y: scroll;
