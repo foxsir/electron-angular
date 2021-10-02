@@ -118,12 +118,13 @@ export class GroupInfoComponent implements OnInit {
 
     loadGroupAdminList() {
         /* 获取群管理员列表 */
-      this.cacheService.getCacheGroupAdmins(this.currentChat.alarmItem.dataId).then(members => {
-        this.group_admin_list = [];
-        members.forEach(member => {
-          this.group_admin_list.push(member);
+        this.cacheService.getCacheGroupAdmins(this.currentChat.alarmItem.dataId).then(members => {
+            this.group_admin_list = [];
+            members.forEach(member => {
+                this.group_admin_list.push(member);
+            });
+            console.log('群管理员列表 01：', members);
         });
-      });
     }
 
     initGroupData() {
@@ -388,9 +389,20 @@ export class GroupInfoComponent implements OnInit {
                 return;
             }
 
-            this.restService.updateGroupAdmin(this.currentChat.alarmItem.dataId, [res.item.userUid], 1).subscribe(res => {
-                this.loadGroupAdminList();
-            });
+
+            if (choose_type == 'add_group_admin') {
+                this.restService.updateGroupAdmin(this.currentChat.alarmItem.dataId, [res.item.userUid], 1).subscribe(res => {
+                    setTimeout(() => {
+                        this.cacheService.cacheGroupAdmins(this.currentChat.alarmItem.dataId).then(members => {
+                            this.loadGroupAdminList();
+                            console.log('更新管理员缓存，并重新加载');
+                        });
+                    }, 1000);
+                });
+            }
+            else if (choose_type == 'transfer') {
+
+            }
         });
     }
 
