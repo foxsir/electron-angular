@@ -25,7 +25,12 @@
                       <mat-card-subtitle>{{alarm.value.alarmData.alarmItem.title}}</mat-card-subtitle>
                     </div>
                     <div fxFlex="100">
-                      <div class="chatting-hint">{{alarm.value.alarmData.alarmItem.msgContent}}</div>
+                      <div class="chatting-hint">
+                        <span class="have-at" *ngIf="atMap.get(alarm.value.alarmData.alarmItem.dataId) > 0">
+                          有人@我
+                        </span>
+                        {{alarm.value.alarmData.alarmItem.msgContent}}
+                      </div>
                     </div>
                   </div>
                 </div>

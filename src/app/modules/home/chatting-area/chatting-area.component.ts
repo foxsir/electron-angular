@@ -436,6 +436,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
           chatMsgEntity.uh = dataContent.uh;
           const chatType = Number(dataContent.cy) === ChatModeType.CHAT_TYPE_FRIEND$CHAT ? 'friend' : 'group';
           const dataId = chatType === 'friend' ? res.to : dataContent.t;
+          this.saveAtMsg(dataContent.ty, dataId, chatMsgEntity);
           this.cacheService.generateAlarmItem(dataId, chatType, dataContent.m, dataContent.ty).then(alarm => {
             chatMsgEntity.xu_isRead_type = true;
             chatMsgEntity.isOutgoing = true;
@@ -749,6 +750,12 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
       } else {
         this.loadingMessage = false;
       }
+    }
+  }
+
+  saveAtMsg(ty: number, dataId: string, chatMsgEntity: ChatmsgEntityModel) {
+    if(ty === MsgType.TYPE_AITE) {
+      this.cacheService.putAtMessage(dataId, chatMsgEntity);
     }
   }
 

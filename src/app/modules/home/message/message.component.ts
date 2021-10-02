@@ -111,6 +111,8 @@ export class MessageComponent implements OnInit, AfterViewInit {
         list: []
     };
 
+    public atMap: Map<string, number> = new Map();
+
     constructor(
         private alarmsProviderService: AlarmsProviderService,
         private groupsProviderService: GroupsProviderService,
@@ -151,6 +153,7 @@ export class MessageComponent implements OnInit, AfterViewInit {
         this.subscribeGroupMemberWasRemoved();
         this.subscribeGroupMemberQuit();
         this.subscribeSENSITIVEWordUpdate(); // 敏感词
+        this.subscribeAtMe();
     }
 
     initData() {
@@ -206,10 +209,11 @@ export class MessageComponent implements OnInit, AfterViewInit {
 
         this.cacheService.getChattingList().then(res => {
             if (res) {
-                const aMap = new Map();
-                res.forEach(item => aMap.set(item.alarmData.alarmItem.dataId, { alarmData: item.alarmData }));
-                this.alarmItemList = aMap;
-                console.log('聊天会话：', res);
+              const aMap = new Map();
+              res.forEach(item => aMap.set(item.alarmData.alarmItem.dataId, { alarmData: item.alarmData }));
+              this.alarmItemList = aMap;
+              this.getAtMeMessage();
+              console.log('聊天会话：', res);
             }
             this.cacheService.syncChattingList(res).then(list => { });
         });
@@ -422,6 +426,23 @@ export class MessageComponent implements OnInit, AfterViewInit {
         span.style.transform = `translate3d(${e.pageX}px, ${e.pageY}px, 0px)`;
         return e.defaultPrevented;
     }
+
+  subscribeAtMe() {
+    this.cacheService.cacheUpdate$.subscribe(data => {
+      if(data.atMe) {
+        this.getAtMeMessage();
+      }
+    });
+  }
+
+  getAtMeMessage() {
+    this.alarmItemList.forEach(chatting => {
+      const dataId = chatting.alarmData.alarmItem.dataId;
+      this.cacheService.getAtMessage(dataId).then(ats => {
+        this.atMap.set(dataId, ats.length);
+      });
+    });
+  }
 
     keepOrder() {
         return 1;
