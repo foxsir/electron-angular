@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { RedBagComponent } from './red-bag.component';
+import {RedBagComponent} from './red-bag.component';
 
 describe('RedBagComponent', () => {
   let component: RedBagComponent;
@@ -8,9 +8,9 @@ describe('RedBagComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ RedBagComponent ]
+      declarations: [RedBagComponent]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {

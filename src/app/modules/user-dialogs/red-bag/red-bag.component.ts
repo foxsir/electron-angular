@@ -8,10 +8,6 @@ import redBagOpenIcon from "@app/assets/icons/red-bag-open.svg";
 import {CurrentChattingChangeService} from "@services/current-chatting-change/current-chatting-change.service";
 import {AvatarService} from "@services/avatar/avatar.service";
 import {CacheService} from "@services/cache/cache.service";
-import {UserModel} from "@app/models/user.model";
-import FriendModel from "@app/models/friend.model";
-import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
-import {GroupMemberModel} from "@app/models/group-member.model";
 import {RedPacketResponseInterface} from "@app/interfaces/red-packet-response.interface";
 import {HttpService} from "@services/http/http.service";
 import {robRedPacket} from "@app/config/post-api";
@@ -57,7 +53,8 @@ export class RedBagComponent implements OnInit {
     private snackBarService: SnackBarService,
     private messageService: MessageService,
     private messageEntityService: MessageEntityService,
-  ) { }
+  ) {
+  }
 
   ngOnInit(): void {
     this.dialogRef.addPanelClass("red-bag-dialog");
@@ -71,15 +68,15 @@ export class RedBagComponent implements OnInit {
 
   initInfo() {
     this.cacheService.getMyInfo().then(info => {
-      if(this.data.uid.toString() === info.userUid.toString()) {
+      if (this.data.uid.toString() === info.userUid.toString()) {
         this.nickName = info.nickname;
         this.avatar = this.dom.bypassSecurityTrustResourceUrl(info.userAvatarFileName);
       }
     });
-    if(this.currentChatting.metadata.chatType === 'friend') {
+    if (this.currentChatting.metadata.chatType === 'friend') {
       this.cacheService.getCacheFriends().then(friend => {
         const user = friend.get(this.data.uid);
-        if(user) {
+        if (user) {
           this.nickName = user.nickname;
           this.avatar = this.dom.bypassSecurityTrustResourceUrl(user.userAvatarFileName);
         }
@@ -87,7 +84,7 @@ export class RedBagComponent implements OnInit {
     } else {
       this.cacheService.getGroupMembers(this.currentChatting.alarmItem.dataId).then(member => {
         const user = member.get(this.data.uid);
-        if(user) {
+        if (user) {
           this.nickName = user.showNickname;
           this.avatar = this.dom.bypassSecurityTrustResourceUrl(user.userAvatarFileName);
         }
@@ -101,10 +98,10 @@ export class RedBagComponent implements OnInit {
       userId: this.localUserService.localUserInfo.userId
     };
 
-    if(this.data.uid.toString() === data.userId.toString()) {
+    if (this.data.uid.toString() === data.userId.toString()) {
       this.selfOpen = true;
       this.httpService.postForm(robRedPacket, data).subscribe((res: NewHttpResponseInterface<MyRedPacketInterface>) => {
-        if(res.status === 200) {
+        if (res.status === 200) {
           this.openedRedBag = true;
           this.dialogRef.addPanelClass("open-red-bag");
           this.myRedPacket = res.data;
@@ -115,7 +112,7 @@ export class RedBagComponent implements OnInit {
     } else {
       this.selfOpen = false;
       this.httpService.postForm(robRedPacket, data).subscribe((res: NewHttpResponseInterface<FriendRedPacketInterface>) => {
-        if(res.status === 200) {
+        if (res.status === 200) {
           this.openedRedBag = true;
           this.dialogRef.addPanelClass("open-red-bag-dialog");
           this.friendRedPacket = res.data;
