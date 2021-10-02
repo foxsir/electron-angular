@@ -774,29 +774,30 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
     }
   }
 
-  loadTabData() {
-    console.log('显示消息组件数据打印：', this.currentChat);
-    //如果是群聊，加载群页签数据
-    if (this.currentChat && this.currentChat.alarmItem.chatType === 'group') {
-      this.restService.getGroupBaseById(this.currentChat.alarmItem.dataId).subscribe((group_data: NewHttpResponseInterface<GroupModel>) => {
-        if (group_data.data.tabSwitch === 1 || true) {
-          /*获取群页签列表*/
-          this.restService.getUserGroupTab(this.currentChat.alarmItem.dataId).subscribe(
-            (tab_data: NewHttpResponseInterface<GroupTabModel[]>
-            ) => {
-            this.group_tab_data = {
-              visible: true,
-              list: tab_data.data
-            };
-          });
+    loadTabData() {
+        console.log('显示消息组件数据打印：', this.currentChat);
+
+        this.group_tab_data = {
+            visible: false,
+            list: []
+        };
+
+        //如果是群聊，加载群页签数据
+        if (this.currentChat && this.currentChat.alarmItem.chatType === 'group') {
+            this.restService.getGroupBaseById(this.currentChat.alarmItem.dataId).subscribe((group_data: NewHttpResponseInterface<GroupModel>) => {
+                if (group_data.data.tabSwitch === 1) {
+                    /*获取群页签列表*/
+                    this.restService.getUserGroupTab(this.currentChat.alarmItem.dataId).subscribe(
+                        (tab_data: NewHttpResponseInterface<GroupTabModel[]>
+                        ) => {
+                            this.group_tab_data = {
+                                visible: true,
+                                list: tab_data.data
+                            };
+                        });
+                }
+            });
         }
-      });
-    } else {
-      this.group_tab_data = {
-        visible: false,
-        list: []
-      };
     }
-  }
 
 }
