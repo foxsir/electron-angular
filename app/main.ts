@@ -46,6 +46,7 @@ function createWindow(): BrowserWindow {
     minHeight: defaultOptions.size.height,
     frame: false,
     webPreferences: {
+      webviewTag: true, // 启用webview
       nodeIntegration: true,
       allowRunningInsecureContent: (serve) ? true : false,
       contextIsolation: false,  // false if you want to run e2e test with Spectron
