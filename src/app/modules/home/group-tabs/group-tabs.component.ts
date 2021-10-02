@@ -1,17 +1,23 @@
 import {AfterContentChecked, Component, Input, OnInit} from '@angular/core';
 
 @Component({
-  selector: 'app-group-tabs',
-  templateUrl: './group-tabs.component.html',
-  styleUrls: ['./group-tabs.component.scss']
+    selector: 'app-group-tabs',
+    templateUrl: './group-tabs.component.html',
+    styleUrls: ['./group-tabs.component.scss']
 })
 export class GroupTabsComponent implements OnInit {
-  @Input() tabLink: string;
+    @Input() tabLink: string;
 
-  constructor(
-  ) { }
+    constructor(
+    ) { }
 
-  ngOnInit(): void {
-  }
+    ngOnInit(): void {
+    }
+
+    newwindow(event) {
+        console.log('event: ', event);
+        this.tabLink = event.url.replace('http://', '').replace('https://', '');
+        event.preventDefault();
+    }
 
 }
