@@ -32,6 +32,7 @@ import {NgformlyModule} from "../../shared/formly/ngformly.module";
 import { RedBagComponent } from './red-bag/red-bag.component';
 import { MyFriendGroupComponent } from './my-friend-group/my-friend-group.component';
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
+import {NzInputNumberModule} from "ng-zorro-antd/input-number";
 
 
 @NgModule({
@@ -54,27 +55,28 @@ import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
     exports: [
         PrivacySettingComponent
     ],
-  imports: [
-    CommonModule,
-    MatDialogModule,
-    MatButtonModule,
-    MatCardModule,
-    FlexLayoutModule,
-    TitleBarModule,
-    MatIconModule,
-    FormsModule,
-    NzSwitchModule,
-    NzSelectModule,
-    NzInputModule,
-    NzButtonModule,
-    NzListModule,
-    MatRadioModule,
-    NgxQRCodeModule,
-    MatInputModule,
-    MatListModule,
-    ReactiveFormsModule,
-    NgformlyModule,
-    MatProgressSpinnerModule
-  ]
+    imports: [
+        CommonModule,
+        MatDialogModule,
+        MatButtonModule,
+        MatCardModule,
+        FlexLayoutModule,
+        TitleBarModule,
+        MatIconModule,
+        FormsModule,
+        NzSwitchModule,
+        NzSelectModule,
+        NzInputModule,
+        NzButtonModule,
+        NzListModule,
+        MatRadioModule,
+        NgxQRCodeModule,
+        MatInputModule,
+        MatListModule,
+        ReactiveFormsModule,
+        NgformlyModule,
+        MatProgressSpinnerModule,
+        NzInputNumberModule
+    ]
 })
 export class UserDialogsModule { }

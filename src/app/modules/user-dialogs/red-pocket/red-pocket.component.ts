@@ -16,6 +16,9 @@ export class RedPocketComponent implements OnInit {
 
   public defaultGreetings = "恭喜发财，大吉大利";
 
+  public requirePayPassword = false;
+  public payPassword: string = "";
+
   constructor(
     public dialogRef: MatDialogRef<RedPocketComponent, Partial<RedPacketInterface>>, // 必需
     @Inject(MAT_DIALOG_DATA) public data: any, // 必需
@@ -30,6 +33,7 @@ export class RedPocketComponent implements OnInit {
     /*是否设置支付密码*/
     this.restService.checkPayKeyIsExist().subscribe((res: NewHttpResponseInterface<number>) => {
       console.log('是否设置支付密码：', res.data);
+      this.requirePayPassword = res.data === 1;
     });
     console.log('红包弹出框初始化 data：', this.data);
   }
@@ -71,8 +75,16 @@ export class RedPocketComponent implements OnInit {
       toUserId: this.data.toUserId,
       word: '', // 口令
       type: 1,
+      payKey: this.payPassword,
       ok: false,
     };
+
+    if(this.requirePayPassword) {
+      if(this.payPassword.length === 0) {
+        this.snackBarService.openMessage("请输入支付密码");
+        return false;
+      }
+    }
 
     this.restService.sentRedPacket(data).subscribe((res: NewHttpResponseInterface<RedPacketResponseInterface>) => {
       if (res.status === 200) {
@@ -80,8 +92,8 @@ export class RedPocketComponent implements OnInit {
         data.ok = true;
         this.dialogRef.close(data);
       } else {
-        this.dialogRef.close(null);
-        this.snackBarService.openMessage("红包发送失败");
+        // this.dialogRef.close(null);
+        this.snackBarService.openMessage(String(res.data));
       }
     });
   }

@@ -5,19 +5,20 @@
     </div>
     <div class="input-box" *ngIf="data.chatType === 'group'">
       <span style="flex:1;font-size:14px;">红包个数</span>
-      <input type="text" nz-input [(ngModel)]="data.count" placeholder="填写个数" class="txt-com-short"/>
+      <input type="number" min="1" nz-input [(ngModel)]="data.count" placeholder="填写个数" class="txt-com-short"/>
       <span style="font-size:14px;">个</span>
     </div>
     <div class="input-box">
       <span style="flex:1;font-size:14px;">金额</span>
-      <input type="text" nz-input [(ngModel)]="data.money" placeholder="0.00" class="txt-com-short"/>
+      <nz-input-number [(ngModel)]="data.money" placeholder="0.00" [nzMin]="1" [nzMax]="200" [nzStep]="1" class="txt-com-short"></nz-input-number>
       <span style="font-size:14px;">元</span>
     </div>
     <div class="input-box">
       <input type="text" nz-input [(ngModel)]="data.greetings" [placeholder]="defaultGreetings" class="txt-com"/>
     </div>
     <div style="margin-top:20px;">
-      <button mat-flat-button color="primary" class="register-button" fxFlex="100" (click)="showInputPassword()">塞进红包
+      <button mat-flat-button color="primary" [disabled]="!data.money || !data.count" class="register-button" fxFlex="100" (click)="showInputPassword()">
+        塞进红包
       </button>
     </div>
     <div fxFlex>
@@ -30,9 +31,16 @@
 
 <div *ngIf="data.dialog_type === 'input_password'" class="red-pocket-container" style="background-color:white;">
   <div fxLayout="column" fxLayoutGap="20px">
-    <div fxFlex><label>输入支付密码</label></div>
+    <div fxFlex *ngIf="requirePayPassword" fxLayout="row" fxLayoutGap="4px">
+      <div fxFlex="80px">
+        <span>支付密码</span>
+      </div>
+      <div fxFlex>
+        <input type="password" nz-input [(ngModel)]="payPassword" placeholder="支付密码" class="txt-com"/>
+      </div>
+    </div>
     <div fxFlex>
-      <span>金额：{{data.money}}</span>
+      <span>金额：{{data.money}} 元</span>
     </div>
     <div fxFlex>
 
