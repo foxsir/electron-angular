@@ -981,7 +981,7 @@ export class CacheService extends DatabaseService {
 
   getAtMessage(dataId: string): Promise<AtMeModel[]> {
     return new Promise<AtMeModel[]>((resolve) => {
-      this.queryData<AtMeModel>({model: 'atMe', query: {dataId: dataId}}).then((res) => {
+      this.queryData<AtMeModel>({model: 'atMe', query: {dataId: dataId}, orderBy: ['date', "ASC"]}).then((res) => {
         resolve(res.data);
       });
     });
