@@ -1,8 +1,8 @@
-<div *ngIf="data.hasOwnProperty('one')">
+<div *ngIf="data.hasOwnProperty('one')" class="demo-dialog-container">
     <div fxLayout="column" fxLayoutGap="20px">
         <div fxFlex><label>编辑联系人备注</label></div>
         <div fxFlex>
-            <input type="text" nz-input [(ngModel)]="data.remark" class="txtcom" placeholder="请输入备注" />
+            <input type="text" nz-input [(ngModel)]="data.remark" class="txt-border-none" placeholder="请输入备注" />
         </div>
         <div fxFlex>
             <div fxLayout="row" fxLayoutAlign="end" fxLayoutGap="10">
