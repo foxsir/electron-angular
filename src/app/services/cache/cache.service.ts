@@ -39,13 +39,13 @@ interface CacheItem {
   alarmDataMap: AlarmDataMap;
   friendMap: Map<string, FriendModel>;
   groupMap: Map<string, GroupModel>;
-  groupAdminMap: Map<string, Map<number, GroupAdminModel>>;
-  groupMemberMap: Map<number, GroupMemberModel>;
+  groupAdminMap: Map<string, Map<string, GroupAdminModel>>;
+  groupMemberMap: Map<string, GroupMemberModel>;
   myInfo: UserModel;
   muteMap: Map<string, boolean>;
   topMap: Map<string, boolean>;
   blackListMap: Map<string, BlackListModel>;
-  newFriendMap: Map<number, FriendRequestModel>;
+  newFriendMap: Map<string, FriendRequestModel>;
   atMe: boolean;
 }
 
@@ -203,7 +203,7 @@ export class CacheService extends DatabaseService {
         this.cacheSource.next({alarmDataMap: list});
         resolve(true);
       });
-    })
+    });
   }
 
   /**
@@ -217,7 +217,7 @@ export class CacheService extends DatabaseService {
           list.set(alarmData.alarmItem.dataId, {
             alarmData: alarmData,
             message: new Map<string, ChatmsgEntityModel>()
-          })
+          });
           this.cacheSource.next({alarmDataMap: list});
           resolve(true);
         });
@@ -419,21 +419,23 @@ export class CacheService extends DatabaseService {
   /**
    * 获取并缓存群管理员Map
    */
-  cacheGroupAdmins(gid: string): Promise<Map<string, Map<number, GroupAdminModel>>> {
+  cacheGroupAdmins(gid: string): Promise<Map<string, Map<string, GroupAdminModel>>> {
     return new Promise(resolve => {
       this.restService.getGroupAdminList(gid).subscribe((res: NewHttpResponseInterface<GroupAdminModel[]>) => {
         if(res.status === 200) {
-          const groupAdminMap = new Map<string, GroupAdminModel>();
-          res.data.forEach(admin => {
-            groupAdminMap.set(admin.userUid.toString(), admin);
-            admin.gid = gid;
-            this.saveData<GroupAdminModel>({
-              model: "groupAdmin", data: admin, update: {gid: gid, userUid: admin.userUid}
-            }).then();
+          this.deleteData<GroupAdminModel>({model: 'groupAdmin', query: {gid: gid}}).then(() => {
+            const groupAdminMap = new Map<string, GroupAdminModel>();
+            res.data.forEach(admin => {
+              groupAdminMap.set(admin.userUid.toString(), admin);
+              admin.gid = gid;
+              this.saveData<GroupAdminModel>({
+                model: "groupAdmin", data: admin, update: {gid: gid, userUid: admin.userUid}
+              }).then();
+            });
+            const newData = new Map<string, Map<string, GroupAdminModel>>();
+            this.cacheSource.next({groupAdminMap: newData});
+            resolve(newData);
           });
-          const newData = new Map<string, Map<number, GroupAdminModel>>();
-          this.cacheSource.next({groupAdminMap: newData});
-          resolve(newData);
         }
       });
     });
@@ -449,7 +451,7 @@ export class CacheService extends DatabaseService {
         if(res.status === 200) {
           const map = new Map();
           res.data.forEach(admin => {
-            map.set(admin.userUid, admin);
+            map.set(admin.userUid.toString(), admin);
           });
           resolve(map);
         }
@@ -722,7 +724,7 @@ export class CacheService extends DatabaseService {
         });
         this.getTop().then(tops => {
           this.cacheSource.next({topMap: tops});
-        })
+        });
         this.getMute().then(mutes => {
           this.cacheSource.next({muteMap: mutes});
         });
@@ -832,19 +834,19 @@ export class CacheService extends DatabaseService {
    * 缓存群成员
    * @param gid
    */
-  cacheGroupMembers(gid: string): Promise<Map<number, GroupMemberModel>> {
+  cacheGroupMembers(gid: string): Promise<Map<string, GroupMemberModel>> {
     return new Promise(resolve => {
       this.restService.submitGetGroupMembersListFromServer(gid).subscribe((res: NewHttpResponseInterface<{list: GroupMemberModel[]}>) => {
         if(res.status === 200) {
-          const groupMemberMap = new Map<number, GroupMemberModel>();
-          res.data.list.forEach(member => {
-            groupMemberMap.set(Number(member.userUid), member);
-            this.saveData<GroupMemberModel>({
-              model: "groupMember", data: member, update: {groupId: gid, userUid: member.userUid}
-            }).then();
-          });
-          this.cacheSource.next({groupMemberMap: groupMemberMap});
-          setTimeout(() => {
+          this.deleteData<GroupMemberModel>({model: 'groupMember', query: {groupId: gid}}).then(() => {
+            const groupMemberMap = new Map<string, GroupMemberModel>();
+            res.data.list.forEach(member => {
+              groupMemberMap.set(member.userUid.toString(), member);
+              this.saveData<GroupMemberModel>({
+                model: "groupMember", data: member, update: {groupId: gid, userUid: member.userUid}
+              }).then();
+            });
+            this.cacheSource.next({groupMemberMap: groupMemberMap});
             resolve(groupMemberMap);
           });
         }
@@ -911,9 +913,9 @@ export class CacheService extends DatabaseService {
   cacheNewFriends() {
     this.restService.getNewFriend().subscribe((res: NewHttpResponseInterface<FriendRequestModel[]>) => {
       if(res.status === 200) {
-        const map = new Map<number, FriendRequestModel>();
+        const map = new Map<string, FriendRequestModel>();
         res.data.forEach(item => {
-          map.set(item.reqUserId, item);
+          map.set(item.reqUserId.toString(), item);
           item.agree = null;
           this.saveData<FriendRequestModel>({model: 'friendRequest', data: item}).then();
           this.cacheSource.next({newFriendMap: map})
@@ -940,8 +942,8 @@ export class CacheService extends DatabaseService {
   /**
    * 获取好友请求缓存
    */
-  getNewFriendMap(): Promise<Map<number, FriendRequestModel>> {
-    return new Promise<Map<number, FriendRequestModel>>((resolve) => {
+  getNewFriendMap(): Promise<Map<string, FriendRequestModel>> {
+    return new Promise<Map<string, FriendRequestModel>>((resolve) => {
       this.queryData<FriendRequestModel>({
         model: 'friendRequest', query: {}
       }).then((res: IpcResponseInterface<FriendRequestModel>) => {
