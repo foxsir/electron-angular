@@ -3,7 +3,7 @@
     <div mat-dialog-title>禁言用户 "{{data.chat.name}}"</div>
   </div>
   <div fxFlex>
-    <mat-radio-group [value]="durationTime" color="primary" fxLayoutGap="8px">
+    <mat-radio-group [value]="durationTime" [(ngModel)]="durationTime" color="primary" fxLayoutGap="8px">
       <mat-radio-button *ngFor="let item of timeList" [value]="item.time">{{item.label}}</mat-radio-button>
     </mat-radio-group>
   </div>
