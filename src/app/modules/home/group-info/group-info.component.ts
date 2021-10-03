@@ -377,12 +377,13 @@ export class GroupInfoComponent implements OnInit {
      * 选择群成员 / 群管理员
      * @param choose_type: transfer, add_group_admin
      */
-    chooseGroupPeople(choose_type) {
+    chooseGroupPeople(choose_type,popup_title) {
         var data = {
             dialog_type: 'choose_group_member',
             toUserId: this.currentChat.alarmItem.dataId,
             chatType: this.currentChat.metadata.chatType,
             count: '',
+            popup_title: popup_title
         };
 
         this.dialogService.openDialog(GroupInfoDialogComponent, { data: data }).then((res: any) => {
@@ -404,7 +405,9 @@ export class GroupInfoComponent implements OnInit {
                 });
             }
             else if (choose_type == 'transfer') {
-
+                this.restService.submitTransferGroupToServer(this.userinfo.userId.toString(), res.item.userUid, res.item.showNickname, this.currentChat.alarmItem.dataId).subscribe(res => {
+                    this.user_role = 'common';
+                });
             }
         });
     }
@@ -427,7 +430,12 @@ export class GroupInfoComponent implements OnInit {
                 return;
             }
             this.restService.updateGroupAdmin(this.currentChat.alarmItem.dataId, res.selectfriends, 0).subscribe(res => {
-                this.loadGroupAdminList();
+                setTimeout(() => {
+                    this.cacheService.cacheGroupAdmins(this.currentChat.alarmItem.dataId).then(members => {
+                        this.loadGroupAdminList();
+                        console.log('更新管理员缓存，并重新加载');
+                    });
+                }, 1000);
             });
         });
     }
