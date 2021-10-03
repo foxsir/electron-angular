@@ -73,7 +73,7 @@ export class ContextMenuService {
       }
     },
     viewUser: {
-      label: "查看个人消息",
+      label: "查看个人信息",
       visibility: (filterData: MenuFilterData): boolean => {
         return filterData.alarmItem.metadata.chatType === 'friend';
       },
