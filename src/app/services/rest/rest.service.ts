@@ -45,7 +45,7 @@ import {
   updRemark,
   UpGroupCustomerService,
   UpUserGroupTab,
-  verifyCode, GetFriendInfo,
+  verifyCode, GetFriendInfo, getGroupSilenceById, deleteGroupSilenceById,
 } from "@app/config/post-api";
 import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 
@@ -1201,11 +1201,11 @@ export class RestService {
   }
 
   /**
-   * 解除禁烟
+   * 解除禁言
    * @param data
    */
   deleteGroupSilenceById(data: {clusterId: string; userId: string; adminId: string}) {
-    return this.http.post(addGroupSilence, data);
+    return this.http.post(deleteGroupSilenceById, data);
   }
 
   /**
@@ -1213,7 +1213,7 @@ export class RestService {
    * @param data
    */
   getGroupSilenceById(data: {clusterId: string}) {
-    return this.http.post(addGroupSilence, data);
+    return this.http.get(getGroupSilenceById, data);
   }
 
   /**
