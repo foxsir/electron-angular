@@ -126,10 +126,12 @@ export class GroupChattingSettingComponent implements OnInit {
         var data = {
             gid: this.currentChat.alarmItem.dataId
         };
-        data[key] = this.setting_data[key] == true ? 1 : 0,
+        data[key] = this.setting_data[key] == true ? 1 : 0;
 
         this.restService.updateGroupBaseById(data).subscribe(res => {
-
+          this.currentChattingChangeService.switchCurrentChatting(
+            this.currentChat
+          ).then();
         });
     }
 
@@ -166,6 +168,9 @@ export class GroupChattingSettingComponent implements OnInit {
 
         this.restService.UpUserGroupTab(data).subscribe(res => {
             item.status = data.status;
+          this.currentChattingChangeService.switchCurrentChatting(
+            this.currentChat
+          ).then();
         });
     }
 
