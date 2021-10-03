@@ -59,6 +59,7 @@ import NewHttpResponseInterface from "@app/interfaces/new-http-response.interfac
 import {GroupModel} from "@app/models/group.model";
 import GroupTabModel from "@app/models/group-tab.model";
 import AtMeModel from "@app/models/at-me.model";
+import SilenceUserModel from "@app/models/silence-user.model";
 
 @Component({
   selector: 'app-chatting-area',
@@ -192,6 +193,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
       this.currentChat = this.currentChattingChangeService.currentChatting;
       this.showAtSheet();
       this.loadTabData();
+      this.getSilenceUsers();
       this.getGroupMembers();
       this.cacheService.getChattingCache(this.currentChat).then(data => {
         if(!!data) {
@@ -205,10 +207,11 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
     this.currentChattingChangeService.currentChatting$.subscribe(currentChat => {
       this.searching = false;
       // === 为刷新聊天列表，只更新数据
+      this.loadTabData();
       if (currentChat && this.currentChat !== currentChat) {
         this.currentChat = currentChat;
         this.showAtSheet();
-        this.loadTabData();
+        this.getSilenceUsers();
         this.getGroupMembers();
         this.scrollToBottom();
         // 切换会话清空列表
@@ -809,6 +812,15 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
             });
         }
     }
+
+  /**
+   * 临时缓存禁言Map
+   */
+  getSilenceUsers() {
+    if (this.currentChat && this.currentChat.alarmItem.chatType === 'group') {
+      this.cacheService.cacheGroupSilence(this.currentChat.alarmItem.dataId).then();
+    }
+  }
 
   /**
    * 显示at提示

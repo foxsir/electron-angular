@@ -36,6 +36,8 @@ export class CurrentChattingChangeService {
             this.currentChattingSource.next(currentChatting);
             this.quoteMessageService.setQuoteMessage(null);
           }
+          this.currentChatting = currentChatting;
+          this.currentChattingSource.next(currentChatting);
           resolve(true);
         });
       } else {
