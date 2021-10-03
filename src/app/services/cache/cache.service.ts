@@ -962,6 +962,11 @@ export class CacheService extends DatabaseService {
     this.chatMsgEntityMap.set(msg.fingerPrintOfProtocal, msg);
   }
 
+  /**
+   * 保存@消息
+   * @param dataId
+   * @param msg
+   */
   putAtMessage(dataId: string, msg: ChatmsgEntityModel) {
     const data: Partial<AtMeModel> = {
       dataId: dataId,
@@ -973,12 +978,20 @@ export class CacheService extends DatabaseService {
     });
   }
 
+  /**
+   * 清除指定会话@消息
+   * @param dataId
+   */
   clearAt(dataId: string) {
     this.deleteData<AtMeModel>({model: 'atMe', query: {dataId: dataId}}).then(() => {
       this.cacheSource.next({atMe: true});
     });
   }
 
+  /**
+   * 获取@消息
+   * @param dataId
+   */
   getAtMessage(dataId: string): Promise<AtMeModel[]> {
     return new Promise<AtMeModel[]>((resolve) => {
       this.queryData<AtMeModel>({model: 'atMe', query: {dataId: dataId}, orderBy: ['date', "ASC"]}).then((res) => {
