@@ -84,7 +84,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
   // 引用回复消息
   public quoteMessage: ChatmsgEntityModel = null;
 
-  public memberMap: Map<number, GroupMemberModel> = new Map();
+  public memberMap: Map<string, GroupMemberModel> = new Map();
 
   private atTargetMember: string[] = [];
 
