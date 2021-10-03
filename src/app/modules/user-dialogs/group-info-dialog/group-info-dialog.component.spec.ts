@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {GroupInfoDialogComponent} from "./group-info-dialog.component";
 
-import { GroupInfoDialogComponent } from './red-pocket.component';
 
 describe('GroupInfoDialogComponent', () => {
     let component: GroupInfoDialogComponent;
