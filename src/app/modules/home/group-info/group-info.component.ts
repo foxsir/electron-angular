@@ -98,11 +98,13 @@ export class GroupInfoComponent implements OnInit {
         private currentChattingChangeService: CurrentChattingChangeService,
     ) {
         this.currentChattingChangeService.currentChatting$.subscribe(currentChat => {
+          if(this.currentChat.alarmItem.dataId !== currentChat.alarmItem.dataId) {
             console.log('会话切换...');
             this.currentChat = currentChat;
             this.view_mode = 'switch_default';
             this.groupConfig.close().then();
             this.initGroupData();
+          }
         });
 
         this.cacheService.cacheUpdate$.subscribe(res => {
