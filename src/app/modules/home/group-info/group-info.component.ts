@@ -430,7 +430,12 @@ export class GroupInfoComponent implements OnInit {
                 return;
             }
             this.restService.updateGroupAdmin(this.currentChat.alarmItem.dataId, res.selectfriends, 0).subscribe(res => {
-                this.loadGroupAdminList();
+                setTimeout(() => {
+                    this.cacheService.cacheGroupAdmins(this.currentChat.alarmItem.dataId).then(members => {
+                        this.loadGroupAdminList();
+                        console.log('更新管理员缓存，并重新加载');
+                    });
+                }, 1000);
             });
         });
     }
