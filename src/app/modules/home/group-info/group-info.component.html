@@ -133,7 +133,7 @@
 
             <div *ngIf="user_role != 'common' || setting_data.allowPrivateChat == true  || setting_data.invite == true" class="split-item"></div>
 
-            <div *ngIf="user_role == 'owner'" fxFlex fxLayoutAlign="space-between center" class="group-pointer groupFirst" (click)="chooseGroupPeople('transfer')">
+            <div *ngIf="user_role == 'owner'" fxFlex fxLayoutAlign="space-between center" class="group-pointer groupFirst" (click)="chooseGroupPeople('transfer','转让本群')">
               <span class="privacy-item-text" style="color:#0b8eee;">转让本群</span>
               <mat-icon class="mat-icon-cus" style="text-align:right;">
                 <img [src]="arrowRightIcon" alt="" class="icon">
@@ -229,7 +229,7 @@
         <mat-card-content>
           <div fxLayout="column" fxLayoutGap="10px">
             <div style="margin-top:20px;"></div>
-            <div fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="chooseGroupPeople('add_group_admin')">
+            <div fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="chooseGroupPeople('add_group_admin','添加管理员')">
               <span class="privacy-item-text">添加管理员</span>
               <mat-icon class="mat-icon-cus" style="text-align:right;">
                 <img [src]="arrowRightIcon" alt="" class="icon">

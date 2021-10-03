@@ -377,12 +377,13 @@ export class GroupInfoComponent implements OnInit {
      * 选择群成员 / 群管理员
      * @param choose_type: transfer, add_group_admin
      */
-    chooseGroupPeople(choose_type) {
+    chooseGroupPeople(choose_type,popup_title) {
         var data = {
             dialog_type: 'choose_group_member',
             toUserId: this.currentChat.alarmItem.dataId,
             chatType: this.currentChat.metadata.chatType,
             count: '',
+            popup_title: popup_title
         };
 
         this.dialogService.openDialog(GroupInfoDialogComponent, { data: data }).then((res: any) => {

@@ -51,7 +51,7 @@
 <!--选择群成员-->
 <div *ngIf="data.dialog_type === 'choose_group_member'" class="group-info-dialog-container">
     <div fxLayout="column" fxLayoutGap="20px">
-        <div fxFlex><label>添加管理员</label></div>
+        <div fxFlex><label>{{data.popup_title}}</label></div>
         <div fxFlex>
             <input type="text" nz-input [(ngModel)]="search_keywords" class="txt-border-none" placeholder="搜索..." 
                    (keyup)="txtSearchChange($event)"/>
