@@ -77,6 +77,9 @@ export class GroupChattingSettingComponent implements OnInit {
 
     initGroupData() {
         console.log('currentChat: ', this.currentChat);
+        if (this.currentChat.metadata.chatType === 'friend') {
+            return;
+        }
 
         /*获取群基本信息*/
         this.restService.getGroupBaseById(this.currentChat.alarmItem.dataId).subscribe(res => {
