@@ -404,7 +404,9 @@ export class GroupInfoComponent implements OnInit {
                 });
             }
             else if (choose_type == 'transfer') {
-
+                this.restService.submitTransferGroupToServer(this.userinfo.userId.toString(), res.item.userUid, res.item.showNickname, this.currentChat.alarmItem.dataId).subscribe(res => {
+                    this.user_role = 'common';
+                });
             }
         });
     }
