@@ -159,6 +159,8 @@ export class MessageComponent implements OnInit, AfterViewInit {
             this.cacheService.cacheUpdate$.subscribe(data => {
                 if (data.muteMap) {
                     this.muteMap = data.muteMap;
+                } else if(data.alarmDataMap) {
+                  this.alarmItemList = data.alarmDataMap;
                 }
             });
         });
