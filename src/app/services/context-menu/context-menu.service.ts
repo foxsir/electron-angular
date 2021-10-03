@@ -381,9 +381,8 @@ export class ContextMenuService {
         label: "删除管理员",
         visibility: (filterData: MenuFilterData): boolean => {
           const localUserInfo: LocalUserinfoModel = RBChatUtils.getAuthedLocalUserInfoFromCookie();
-          const group = filterData.groups[filterData.alarmItem.alarmItem.dataId];
-          // 检查是否是群主
-          return group && group.gownerUserUid.toString() === localUserInfo.userId;
+          const admin = filterData.admins.get(filterData.chat.uid.toString());
+          return !!admin;
         },
         action: (alarmItem, chat) => {
           this.dialogService.confirm({title: "删除管理员"}).then((ok) => {
@@ -487,9 +486,9 @@ export class ContextMenuService {
         label: "设置管理员",
         visibility: (filterData: MenuFilterData): boolean => {
           const localUserInfo: LocalUserinfoModel = RBChatUtils.getAuthedLocalUserInfoFromCookie();
-          const group = filterData.groups.get(filterData.alarmItem.alarmItem.dataId.toString());
-          // 是群主
-          return group && group.gownerUserUid.toString() === localUserInfo.userId.toString();
+          const admin = filterData.admins.get(filterData.chat.uid.toString());
+          // 是管理员
+          return !admin;
         },
         action: (alarmItem, chat) => {
           this.dialogService.confirm({title: "设置管理员"}).then((ok) => {
