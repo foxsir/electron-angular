@@ -455,7 +455,7 @@ export class ContextMenuService {
         visibility: (filterData: MenuFilterData): boolean => {
           const localUserInfo: LocalUserinfoModel = RBChatUtils.getAuthedLocalUserInfoFromCookie();
           const noSelf = filterData.chat.uid.toString() !== localUserInfo.userId.toString();
-          const isFriend = filterData.friends[filterData.chat.uid];
+          const isFriend = filterData.friends.get(filterData.chat.uid.toString());
           // 不能是自己 and 必需不是好友
           return noSelf && !isFriend;
         },
@@ -512,29 +512,35 @@ export class ContextMenuService {
         label: "禁言",
         visibility: (filterData: MenuFilterData): boolean => {
           const localUserInfo: LocalUserinfoModel = RBChatUtils.getAuthedLocalUserInfoFromCookie();
-          const caches = filterData.admins[filterData.alarmItem.alarmItem.dataId];
+          const admin = filterData.admins.get(localUserInfo.userId.toString());
           const chatUid = filterData.chat.uid.toString();
-          const group = filterData.groups[filterData.alarmItem.alarmItem.dataId];
-          const owner = group && group.gownerUserUid.toString() === localUserInfo.userId;
-          const manager = caches && caches[filterData.chat.uid] === chatUid;
-          return owner || manager; // 是管理员或者群主
+          const group = filterData.groups.get(filterData.alarmItem.alarmItem.dataId);
+          const owner = group && group.gownerUserUid.toString() === localUserInfo.userId.toString();
+          const manager = admin && admin.userUid.toString() === localUserInfo.userId.toString();
+          const silence = this.cacheService.getGroupSilence().get(chatUid);
+          const isSilence = silence && silence.banTime > CommonTools.getTime();
+          return (owner || manager) && !isSilence; // 是管理员或者群主
         },
         action: (alarmItem, chat) => {
           this.dialogService.openDialog(UserSilenceComponent, {
             data: {alarmItem: alarmItem, chat: chat}
-          }).then();
+          }).then(() => {
+            this.cacheService.cacheGroupSilence(alarmItem.alarmItem.dataId).then();
+          });
         }
       },
       {
         label: "移除禁言",
         visibility: (filterData: MenuFilterData): boolean => {
           const localUserInfo: LocalUserinfoModel = RBChatUtils.getAuthedLocalUserInfoFromCookie();
-          const caches = filterData.admins[filterData.alarmItem.alarmItem.dataId];
+          const admin = filterData.admins.get(localUserInfo.userId.toString());
           const chatUid = filterData.chat.uid.toString();
-          const group = filterData.groups[filterData.alarmItem.alarmItem.dataId];
-          const owner = group && group.gownerUserUid.toString() === localUserInfo.userId;
-          const manager = caches && caches[filterData.chat.uid] === chatUid;
-          return owner || manager; // 是管理员或者群主
+          const group = filterData.groups.get(filterData.alarmItem.alarmItem.dataId);
+          const owner = group && group.gownerUserUid.toString() === localUserInfo.userId.toString();
+          const manager = admin && admin.userUid.toString() === localUserInfo.userId.toString();
+          const silence = this.cacheService.getGroupSilence().get(chatUid);
+          const isSilence = silence && silence.banTime > CommonTools.getTime();
+          return (owner || manager) && !!isSilence; // 是管理员或者群主
         },
         action: (alarmItem, chat) => {
           this.dialogService.confirm({title: "移除禁言"}).then((ok) => {
@@ -547,6 +553,7 @@ export class ContextMenuService {
               };
               this.restService.deleteGroupSilenceById(data).subscribe((res: NewHttpResponseInterface<any>) => {
                 if(res.status === 200) {
+                  this.cacheService.cacheGroupSilence(alarmItem.alarmItem.dataId).then();
                   this.snackBarService.openMessage(res.msg);
                 } else {
                   this.snackBarService.openMessage(res.msg);
