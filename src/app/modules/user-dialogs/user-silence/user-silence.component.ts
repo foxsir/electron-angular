@@ -45,6 +45,7 @@ export class UserSilenceComponent implements OnInit {
     };
     this.restService.addGroupSilence(data).subscribe((res: NewHttpResponseInterface<any>) => {
       if(res.status === 200) {
+        this.dialogRef.close();
         this.snackBarService.openMessage("已经禁言");
       }
     });
