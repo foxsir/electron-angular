@@ -6,6 +6,7 @@ import {RedPacketInterface} from "@app/interfaces/red-packet.interface";
 import NewHttpResponseInterface from "@app/interfaces/new-http-response.interface";
 import {RedPacketResponseInterface} from "@app/interfaces/red-packet-response.interface";
 import {SnackBarService} from "@services/snack-bar/snack-bar.service";
+import CommonTools from "@app/common/common.tools";
 
 @Component({
   selector: 'app-red-pocket',
@@ -35,6 +36,7 @@ export class RedPocketComponent implements OnInit {
       console.log('是否设置支付密码：', res.data);
       this.requirePayPassword = res.data === 1;
     });
+    this.data.count = 1; // 设置默认红包个数
     console.log('红包弹出框初始化 data：', this.data);
   }
 
@@ -84,6 +86,7 @@ export class RedPocketComponent implements OnInit {
         this.snackBarService.openMessage("请输入支付密码");
         return false;
       }
+      this.data.payKey = CommonTools.md5(this.data.payKey);
     }
 
     this.restService.sentRedPacket(data).subscribe((res: NewHttpResponseInterface<RedPacketResponseInterface>) => {

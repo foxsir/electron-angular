@@ -7,6 +7,7 @@ export interface RedPacketInterface {
   toUserId: string;
   word: string;
   type: number;
+  payKey: string;
   ok: boolean;
   res: RedPacketResponseInterface;
 }
