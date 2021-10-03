@@ -31,14 +31,8 @@ export const updateUserBaseById = _HTTP_SERVER_URL + "/api/user/updateUserBaseBy
 //修改我的群昵称
 export const updateNicknameInGroup = _HTTP_SERVER_URL + "/api/groupBase/updateNicknameInGroup";
 
-//新增个人群禁言
-export const addGroupSlience = _HTTP_SERVER_URL +"/api/groupSlience/addGroupSlience";
-
 //GET查询用户在群信息  包括禁言 是否是管理员 身份 是否在群内
 export const getUserClusterVo = _HTTP_SERVER_URL +"/api/groupBase/getUserClusterVo";
-
-//解除个人群禁言
-export const deleteGroupSlienceById = _HTTP_SERVER_URL +"/api/groupSlience/deleteGroupSlienceById";
 
 //新增用户消息收藏
 export const addMissuCollect = _HTTP_SERVER_URL +"/api/missuCollect/addMissuCollect";
