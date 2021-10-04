@@ -254,21 +254,49 @@ const UserProtocalsType = {
   MT50_OF_GROUP$SYSCMD_SOMEONEB$REMOVED_FROM$SERVER: 50,
   /** 群聊系统指令：群名被修改的系统通知（由Server发出，所有除修改者外的群员接收） */
   MT51_OF_GROUP$SYSCMD_GROUP$NAME$CHANGED_FROM$SERVER: 51,
-  /** 更新群管理员 */
+  /** 群管理员变更发送的指令 */
   UPDATE_GROUP_ADMIN: 74,
 
 
-  //    111 新增主动进群
+  //    111 新增主动进群 群聊系统指令  用户加群传给服务器的
   MT53_OF_GROUP$_JOIN: 53,
 
   //    ji 新增踢人
-  MT53_OF_GROUP$_del: 57,
+  MT53_OF_GROUP$_del: 78,
 
   // 敏感词更新
   SENSITIVE_WORD_UPDATE: 76,
 
   // 被拉黑
   PULLED_BLACK_LIST: 61,
+
+  // 个人禁言的通知指令(发给被禁言人)
+  GROUP_SILENCE: 57,
+
+  // 全体禁言的通知
+  GROUP_ALL_SILENCE: 58,
+
+  // 删除好友的通知
+  DELETE_FRIEND: 60,
+
+  // // 更新探索发现发送的指令
+  // UPDATE_DISCOVERY: 71,
+  // UPDATE_DISCOVERY_APP: 71,
+
+  // 用户个人信息更新的指令
+  USER_INFO_UPDATE: 73,
+
+  // 更新群基本信息的指令
+  GROUP_INFO_UPDATE: 75,
+
+  // 用户上线/下线时发送的指令
+  USER_ONLINE_STATUS_CHANGE: 77,
+
+  // 踢人时通知客户端删除消息的指令
+  DELETE_FRIEND_FOR_TIREN: 78,
+
+  // 群聊/世界频道聊天消息：由服务端转发给所有在线接收人B的【步骤2/2】
+  GROUP_DIRECTIVE_FOR_SYSTEM: 100
 };
 
 // 聊天模式类型常量对象定义，请勿修改各常量值！
@@ -321,7 +349,7 @@ const MsgType = {
   /**  111 新增聊天消息类型之：@ */
   TYPE_AITE: 15,
   /**  ji 新增聊天消息类型之：踢人 */
-  TYPE_TIREN: 57,
+  TYPE_TIREN: 78,
   /**  消息已读 */
   TYPE_READED: 56,
 
@@ -332,7 +360,7 @@ const MsgType = {
   TYPE_VOICE_CALL: 21,
 
   /** 回复类型 */
-  TYPE_QUOTE: 19,
+  TYPE_QUOTE: 19
 };
 
 
