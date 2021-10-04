@@ -38,6 +38,7 @@ export class ChattingSettingComponent implements OnInit {
         nickname: '',
         remark: '',
         latestLoginTime: 0,
+        registerTime: '',
     };
 
     private dialogConfig = {
@@ -85,6 +86,7 @@ export class ChattingSettingComponent implements OnInit {
         this.restService.getFriendInfo(parseInt(this.currentChat.alarmItem.dataId)).subscribe(res => {
             if (res.status === 200) {
                 this.setting_data.latestLoginTime = res.data.latestLoginTime;
+                this.setting_data.registerTime = res.data.registerTime;
             }
         });
     }
