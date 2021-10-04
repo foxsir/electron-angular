@@ -8,5 +8,6 @@ export default interface AlarmItemInterface {
     chatType: string; // "friend" | "group"
     unread?: number; // 未读消息数
     sound?: boolean; // 声音通知
+    allSilence?: boolean; // 全体禁言
   };
 }
