@@ -1,0 +1,7 @@
+<div fxLayout="row" style="width: 300px;" fxLayoutAlign="center center" fxLayoutGap="4px">
+  <div fxFlex="80px">禁言时间：</div>
+  <div [fxHide]="!days">{{days}}天</div>
+  <div [fxHide]="!hours">{{hours}}小时</div>
+  <div [fxHide]="!minutes">{{minutes}}分钟</div>
+  <div [fxHide]="!seconds">{{seconds}}秒</div>
+</div>
