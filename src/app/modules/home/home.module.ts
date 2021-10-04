@@ -59,6 +59,7 @@ import {ScrollingModule} from "@angular/cdk/scrolling";
 import {SharedModule} from "../../shared/shared.module";
 import { GroupTabsComponent } from './group-tabs/group-tabs.component';
 import {MatTabsModule} from "@angular/material/tabs";
+import {CountDownModule} from "../../factorys/count-down/count-down.module";
 
 @NgModule({
   declarations: [
@@ -119,6 +120,7 @@ import {MatTabsModule} from "@angular/material/tabs";
     ScrollingModule,
     SharedModule,
     MatTabsModule,
+    CountDownModule,
   ],
   providers: [{provide: LOCALE_ID, useValue: 'zh-Hans' }]
 })

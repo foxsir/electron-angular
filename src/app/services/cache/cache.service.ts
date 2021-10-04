@@ -32,6 +32,7 @@ import ChattingModel from "@app/models/chatting.model";
 import MuteModel from "@app/models/mute.model";
 import TopModel from "@app/models/top.model";
 import AtMeModel from "@app/models/at-me.model";
+import SilenceUserModel from "@app/models/silence-user.model";
 
 export type AlarmDataMap = Map<string, {alarmData: AlarmItemInterface; message?: Map<string, ChatmsgEntityModel>}>;
 
@@ -57,10 +58,16 @@ export class CacheService extends DatabaseService {
   private cacheSource = new Subject<Partial<CacheItem>>();
   public cacheUpdate$ = this.cacheSource.asObservable();
 
+  private groupSilenceSource = new Subject<Map<string, SilenceUserModel>>();
+  public groupSilence$ = this.groupSilenceSource.asObservable();
+
   // 给ChattingAreaComponent组件使用
   public chatMsgEntityMapTemp: Map<string, ChatmsgEntityModel> = new Map();
   public chatMsgEntityMap: Map<string, ChatmsgEntityModel> = new Map();
   public chatMsgEntityList: ChatmsgEntityModel[] = [];
+
+  // 当前群禁言用户列表
+  private groupSilenceMap: Map<string, SilenceUserModel> = new Map();
 
   private dataKeys = {
     alarmDataMap: "alarmDataMap",
@@ -1000,6 +1007,25 @@ export class CacheService extends DatabaseService {
         resolve(res.data);
       });
     });
+  }
+
+  cacheGroupSilence(clusterId: string): Promise<Map<string, SilenceUserModel>> {
+    return new Promise<Map<string, SilenceUserModel>>((resolve) => {
+      this.restService.getGroupSilenceById({clusterId: clusterId}).subscribe((res: NewHttpResponseInterface<SilenceUserModel[]>) => {
+        this.groupSilenceMap = new Map();
+        if(res.status === 200) {
+          res.data.forEach((item) => {
+            this.groupSilenceMap.set(item.userUid.toString(), item);
+          });
+          this.groupSilenceSource.next(this.groupSilenceMap);
+          resolve(this.groupSilenceMap);
+        }
+      });
+    });
+  }
+
+  getGroupSilence(): Map<string, SilenceUserModel> {
+    return this.groupSilenceMap;
   }
 
 }

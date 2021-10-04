@@ -48,6 +48,7 @@ import {ForwardMessageService} from "@services/forward-message/forward-message.s
 import {RedPocketComponent} from "@modules/user-dialogs/red-pocket/red-pocket.component";
 import {RedPacketInterface} from "@app/interfaces/red-packet.interface";
 import DirectoryType from "@services/file/config/DirectoryType";
+import SilenceUserModel from "@app/models/silence-user.model";
 
 const { ipcRenderer } = window.require('electron');
 

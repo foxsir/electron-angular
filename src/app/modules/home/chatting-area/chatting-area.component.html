@@ -234,8 +234,13 @@
               </div>
             </div>
           </div>
-          <div fxLayout="row" (click)="cancelSelectMessage()">
+          <div fxLayout="row" class="input-area-container" (click)="cancelSelectMessage()">
             <!--文字输入区域-->
+            <div class="silence-overlay" *ngIf="mySilence">
+              <div fxFill fxLayoutAlign="center center">
+                <app-silence-count-down (silenceDone)="silenceDone($event)" [timestamp]="mySilence.banTime"></app-silence-count-down>
+              </div>
+            </div>
             <app-input-area fxFlex="100" (sendMessage)="pushMessageToPanel($event)" [currentChat]="currentChat"></app-input-area>
           </div>
         </div>

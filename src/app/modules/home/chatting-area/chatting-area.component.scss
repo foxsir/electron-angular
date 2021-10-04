@@ -126,5 +126,17 @@
     border-radius: 4px;
     object-fit: cover;
   }
+}
 
+.input-area-container {
+  position: relative;
+
+  .silence-overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgb(0 0 0 / 1%);
+    z-index: 99999;
+    font-weight: 500;
+  }
 }

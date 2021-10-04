@@ -192,6 +192,9 @@ export class ContextMenuService {
               return isAdmin;
             }
           }
+          if(time - filterData.chat.date > 2000 * 60) {
+            return false;
+          }
         }
         return filterData.chat.uid.toString() === localUserInfo.userId.toString();
       },
@@ -487,8 +490,10 @@ export class ContextMenuService {
         visibility: (filterData: MenuFilterData): boolean => {
           const localUserInfo: LocalUserinfoModel = RBChatUtils.getAuthedLocalUserInfoFromCookie();
           const admin = filterData.admins.get(filterData.chat.uid.toString());
+          const group = filterData.groups.get(filterData.alarmItem.alarmItem.dataId);
+          const owner = group && group.gownerUserUid.toString() === localUserInfo.userId.toString();
           // 是管理员
-          return !admin;
+          return owner && !admin;
         },
         action: (alarmItem, chat) => {
           this.dialogService.confirm({title: "设置管理员"}).then((ok) => {

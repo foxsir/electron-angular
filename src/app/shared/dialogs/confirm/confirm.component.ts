@@ -18,8 +18,10 @@ export class ConfirmComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    if(this.data.text.includes('blob') === true || this.data.text.includes('http') === true) {
-      this.image = this.dom.bypassSecurityTrustResourceUrl(this.data.text);
+    if(this.data.text) {
+      if(this.data.text.includes('blob') === true || this.data.text.includes('http') === true) {
+        this.image = this.dom.bypassSecurityTrustResourceUrl(this.data.text);
+      }
     }
   }
 

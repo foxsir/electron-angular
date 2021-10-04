@@ -135,6 +135,8 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
   // @我的消息
   public atMsg: AtMeModel;
 
+  public mySilence: SilenceUserModel;
+
   constructor(
     public cacheService: CacheService, // 模版中要用
     private avatarService: AvatarService,
@@ -159,6 +161,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
     this.subscribeOfGroupChatMsgToServer();
     this.subscribeOfGroupChatMsgServerToB();
     this.subscribeChattingMessage();
+    this.subscribeGroupSilence();
 
     // 选择消息
     this.elementService.selectMessage$.subscribe((directive) => {
@@ -182,6 +185,10 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
       if(cache.atMe) {
         this.showAtSheet();
       }
+    });
+
+    this.cacheService.groupSilence$.subscribe((map) => {
+      this.mySilence = map.get(this.localUserService.localUserInfo.userId.toString());
     });
   }
 
@@ -817,7 +824,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
    * 临时缓存禁言Map
    */
   getSilenceUsers() {
-    if (this.currentChat && this.currentChat.alarmItem.chatType === 'group') {
+    if (this.currentChat) {
       this.cacheService.cacheGroupSilence(this.currentChat.alarmItem.dataId).then();
     }
   }
@@ -855,6 +862,24 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
       this.loadMessage(false);
       this.gotoAt();
     }
+  }
+
+  /**
+   * 订阅服务端发来的禁言消息
+   */
+  subscribeGroupSilence() {
+    this.messageDistributeService.GROUP_SILENCE$.subscribe(() => {
+      this.cacheService.cacheGroupSilence(this.currentChat.alarmItem.dataId).then();
+    });
+  }
+
+  /**
+   * 结束禁言倒计时
+   * @param event
+   */
+  silenceDone(event: boolean) {
+    this.mySilence = null;
+    this.cacheService.cacheGroupSilence(this.currentChat.alarmItem.dataId).then();
   }
 
 }

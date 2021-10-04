@@ -29,7 +29,7 @@ export default class CommonTools {
    * 获取时间戳
    */
   public static getTime(): number {
-    return (new Date()).getTime();
+    return (new Date()).getTime() / 1000;
   }
 
   public static getBlobUrlFromFile(file: File): Promise<string> {

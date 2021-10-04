@@ -17,11 +17,14 @@ export class UserSilenceComponent implements OnInit {
   public durationTime: number = 1000*60;
 
   public timeList = [
-    {label: '1分钟', time: 1000*60},
-    {label: '2分钟', time: 2000*60},
-    {label: '3分钟', time: 3000*60},
-    {label: '4分钟', time: 4000*60},
-    {label: '5分钟', time: 5000*60},
+    {label: '5分钟', time: 1000*60},
+    {label: '30分钟', time: 1000*60*30},
+    {label: '1小时', time: 1000*60*60},
+    {label: '12小时', time: 1000*60*60*12},
+    {label: '1天', time: 1000*60*60*24},
+    {label: '7天', time: 1000*60*60*24*7},
+    {label: '30天', time: 1000*60*60*24*30},
+    {label: '60天', time: 1000*60*60*24*60},
   ];
 
   constructor(
