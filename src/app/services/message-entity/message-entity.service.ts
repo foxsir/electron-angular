@@ -101,6 +101,8 @@ export class MessageEntityService {
         return this.createChatMsgEntity_COME_TRANSFER(fromUid, nickName, msg, time, fp, xu_isRead_type);
       } case MsgType.TYPE_VOICE_CALL: {
         return this.createChatMsgEntity_COME_VOICE_CALL(fromUid, nickName, msg, time, fp, xu_isRead_type);
+      } case MsgType.TYPE_NOTALK: {
+        return this.createChatMsgEntity_COME_MESSAGE(fromUid, nickName, msg, time, fp, MsgType.TYPE_NOTALK);
       } default:
         return this.createChatMsgEntity_COME_TEXT(fromUid, nickName, msg, time, fp, xu_isRead_type);
     }
@@ -321,6 +323,20 @@ export class MessageEntityService {
     chatMsgEntityObj.fingerPrintOfProtocal = fingerPrint;
     chatMsgEntityObj.msgType = MsgType.TYPE_TEXT;
     chatMsgEntityObj.xu_isRead_type = xu_isRead_type;  //111 新增已读类型
+
+    return chatMsgEntityObj;
+  }
+
+  createChatMsgEntity_COME_MESSAGE(fromUid, nickName, message, time, fingerPrint, msgType: number) {
+    // debugger
+    const chatMsgEntityObj = new ChatmsgEntityModel();
+    chatMsgEntityObj.uid = fromUid;
+    chatMsgEntityObj.name = nickName;
+    chatMsgEntityObj.date = time <= 0 ? RBChatUtils.getCurrentUTCTimestamp() : time;
+    chatMsgEntityObj.text = message;
+    chatMsgEntityObj.fingerPrintOfProtocal = fingerPrint;
+    chatMsgEntityObj.msgType = msgType;
+    chatMsgEntityObj.xu_isRead_type = true;  //111 新增已读类型
 
     return chatMsgEntityObj;
   }
