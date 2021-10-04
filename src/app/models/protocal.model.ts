@@ -13,7 +13,8 @@ export class ProtocalModelDataContent {
   nickName: string; //
   showMsg: boolean; //
   sync: string; //
-  uh: string; // "http://strawberry-im.oss-cn-shenzhen.aliyuncs.com/user_portrait/400340.jpg"
+  uh: string; // "http://strawberry-im.oss-cn-shenzhen.aliyuncs.com/user_portrait/400340.jpg",
+  isBanned: boolean; // 全体禁言
 }
 
 export class ProtocalModel {
