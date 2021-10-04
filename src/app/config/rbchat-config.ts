@@ -273,9 +273,6 @@ const UserProtocalsType = {
   // 个人禁言的通知指令(发给被禁言人)
   GROUP_SILENCE: 57,
 
-  // 全体禁言的通知
-  GROUP_ALL_SILENCE: 58,
-
   // 删除好友的通知
   DELETE_FRIEND: 60,
 
