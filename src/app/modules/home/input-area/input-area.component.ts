@@ -716,6 +716,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
       showMsg: false, //
       sync: "0", //
       uh: "",
+      isBanned: false,
     };
   }
 
