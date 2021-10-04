@@ -241,6 +241,11 @@
                 <app-silence-count-down (silenceDone)="silenceDone($event)" [timestamp]="mySilence.banTime"></app-silence-count-down>
               </div>
             </div>
+            <div class="silence-overlay" *ngIf="currentChat && currentChat.metadata.allSilence">
+              <div fxFill fxLayoutAlign="center center">
+                全体禁言
+              </div>
+            </div>
             <app-input-area fxFlex="100" (sendMessage)="pushMessageToPanel($event)" [currentChat]="currentChat"></app-input-area>
           </div>
         </div>

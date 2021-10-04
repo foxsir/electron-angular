@@ -825,6 +825,11 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
    */
   getSilenceUsers() {
     if (this.currentChat) {
+      this.restService.getGroupBaseById(this.currentChat.alarmItem.dataId).subscribe((res: NewHttpResponseInterface<GroupModel>) => {
+        if(res.status === 200) {
+          this.currentChat.metadata.allSilence = res.data.gmute === 1;
+        }
+      });
       this.cacheService.cacheGroupSilence(this.currentChat.alarmItem.dataId).then();
     }
   }
@@ -869,7 +874,25 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
    */
   subscribeGroupSilence() {
     this.messageDistributeService.GROUP_SILENCE$.subscribe(() => {
-      this.cacheService.cacheGroupSilence(this.currentChat.alarmItem.dataId).then();
+      if(this.currentChat) {
+        this.cacheService.cacheGroupSilence(this.currentChat.alarmItem.dataId).then();
+      }
+    });
+    this.messageDistributeService.MT45_OF_GROUP$CHAT$MSG_SERVER$TO$B$.subscribe((res) => {
+      const dataContent: ProtocalModelDataContent[] = JSON.parse(res.dataContent);
+      if(dataContent.length) {
+        const data = dataContent[0];
+        const msg = JSON.parse(data.m);
+        if(data.ty === MsgType.TYPE_NOTALK) {
+          this.cacheService.generateAlarmItem(data.t, 'group').then(alarm => {
+            alarm.metadata.allSilence = msg.isBanned;
+            this.currentChat.metadata.allSilence = msg.isBanned; // 修改当前会话
+            this.cacheService.putChattingCache(alarm).then(() => {
+              console.log("save group allSilence", msg.isBanned);
+            });
+          });
+        }
+      }
     });
   }
 
