@@ -137,6 +137,9 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
 
   public mySilence: SilenceUserModel;
 
+  public isAdmin: boolean = false;
+  public isOwner: boolean = false;
+
   constructor(
     public cacheService: CacheService, // 模版中要用
     private avatarService: AvatarService,
@@ -828,6 +831,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
       this.restService.getGroupBaseById(this.currentChat.alarmItem.dataId).subscribe((res: NewHttpResponseInterface<GroupModel>) => {
         if(res.status === 200) {
           this.currentChat.metadata.allSilence = res.data.gmute === 1;
+          this.checkAdminAndOwner();
         }
       });
       this.cacheService.cacheGroupSilence(this.currentChat.alarmItem.dataId).then();
@@ -886,7 +890,10 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
         if(data.ty === MsgType.TYPE_NOTALK) {
           this.cacheService.generateAlarmItem(data.t, 'group').then(alarm => {
             alarm.metadata.allSilence = msg.isBanned;
-            this.currentChat.metadata.allSilence = msg.isBanned; // 修改当前会话
+            if(this.currentChat) {
+              this.checkAdminAndOwner();
+              this.currentChat.metadata.allSilence = msg.isBanned; // 修改当前会话
+            }
             this.cacheService.putChattingCache(alarm).then(() => {
               console.log("save group allSilence", msg.isBanned);
             });
@@ -903,6 +910,24 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
   silenceDone(event: boolean) {
     this.mySilence = null;
     this.cacheService.cacheGroupSilence(this.currentChat.alarmItem.dataId).then();
+  }
+
+  checkAdminAndOwner() {
+    if(this.currentChat) {
+      const info = this.localUserService.localUserInfo;
+      this.cacheService.getCacheGroupAdmins(this.currentChat.alarmItem.dataId).then(admins => {
+        if(admins.get(info.userId.toString())) {
+          this.isAdmin = true;
+        }
+      });
+
+      this.cacheService.getCacheGroups().then(groups => {
+        const group = groups.get(this.currentChat.alarmItem.dataId);
+        if(group) {
+          this.isOwner = group.gownerUserUid.toString() === info.userId.toString();
+        }
+      });
+    }
   }
 
 }

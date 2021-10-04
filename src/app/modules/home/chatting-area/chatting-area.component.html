@@ -241,7 +241,7 @@
                 <app-silence-count-down (silenceDone)="silenceDone($event)" [timestamp]="mySilence.banTime"></app-silence-count-down>
               </div>
             </div>
-            <div class="silence-overlay" *ngIf="currentChat && currentChat.metadata.allSilence">
+            <div class="silence-overlay" *ngIf="currentChat && currentChat.metadata.allSilence && !isAdmin && !isOwner">
               <div fxFill fxLayoutAlign="center center">
                 全体禁言
               </div>
