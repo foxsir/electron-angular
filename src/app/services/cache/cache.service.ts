@@ -452,8 +452,8 @@ export class CacheService extends DatabaseService {
    * 获取群管理
    * @param gid
    */
-  getCacheGroupAdmins(gid: string): Promise<Map<number, GroupAdminModel>> {
-    return new Promise<Map<number, GroupAdminModel>>((resolve) => {
+  getCacheGroupAdmins(gid: string): Promise<Map<string, GroupAdminModel>> {
+    return new Promise<Map<string, GroupAdminModel>>((resolve) => {
       this.queryData<GroupAdminModel>({model: 'groupAdmin', query: {gid: gid}}).then((res: IpcResponseInterface<GroupAdminModel>) => {
         if(res.status === 200) {
           const map = new Map();
