@@ -1,10 +1,10 @@
-<div fxLayout="column" fxLayoutGap="20px">
+<div fxFlex="314px" fxLayout="column" fxLayoutGap="20px">
   <div fxFlex>
-    <div mat-dialog-title>禁言用户 "{{data.chat.name}}"</div>
+    <div mat-dialog-title>选择禁言时间</div>
   </div>
   <div fxFlex>
-    <mat-radio-group [value]="durationTime" [(ngModel)]="durationTime" color="primary" fxLayoutGap="8px">
-      <mat-radio-button *ngFor="let item of timeList" [value]="item.time">{{item.label}}</mat-radio-button>
+    <mat-radio-group [value]="durationTime" [(ngModel)]="durationTime" color="primary" fxLayoutGap="8px" fxLayout="column">
+      <mat-radio-button class="silence-user-radio-item" *ngFor="let item of timeList" [value]="item.time">{{item.label}}</mat-radio-button>
     </mat-radio-group>
   </div>
   <div fxFlex>

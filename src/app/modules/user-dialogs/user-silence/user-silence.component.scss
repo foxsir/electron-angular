@@ -1,0 +1,11 @@
+.silence-user-radio-item {
+  ::ng-deep {
+    label {
+      justify-content: space-between;
+      flex-direction: row-reverse;
+    }
+    label:hover {
+      color: #0091ff;
+    }
+  }
+}
