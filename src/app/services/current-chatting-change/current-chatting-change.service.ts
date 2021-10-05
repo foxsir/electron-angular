@@ -4,6 +4,7 @@ import {Subject} from "rxjs";
 import {CacheService} from "@services/cache/cache.service";
 import {Router} from "@angular/router";
 import {QuoteMessageService} from "@services/quote-message/quote-message.service";
+import {MessageService} from "@services/message/message.service";
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +20,8 @@ export class CurrentChattingChangeService {
   constructor(
     private router: Router,
     private cacheService: CacheService,
-    private quoteMessageService: QuoteMessageService
+    private quoteMessageService: QuoteMessageService,
+    private messageService: MessageService,
   ) { }
 
   switchCurrentChatting(currentChatting: AlarmItemInterface): Promise<boolean> {
@@ -35,6 +37,7 @@ export class CurrentChattingChangeService {
             this.currentChatting = currentChatting;
             this.currentChattingSource.next(currentChatting);
             this.quoteMessageService.setQuoteMessage(null);
+            this.messageService.alreadyRead(currentChatting.alarmItem.dataId, currentChatting.metadata.chatType);
           }
           this.currentChatting = currentChatting;
           this.currentChattingSource.next(currentChatting);
