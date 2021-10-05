@@ -132,7 +132,7 @@ export class AccountPanelComponent implements OnInit {
   }
 
   qrcode() {
-    this.dialogService.openDialog(QrCodeComponent, this.dialogConfig);
+    return this.dialogService.openDialog(QrCodeComponent, this.dialogConfig);
   }
 
   privacySetting() {
@@ -140,11 +140,11 @@ export class AccountPanelComponent implements OnInit {
   }
 
   editSignature() {
-    this.dialogService.openDialog(MySignatureComponent, this.dialogConfig);
+    return this.dialogService.openDialog(MySignatureComponent, this.dialogConfig);
   }
 
   updatePassword() {
-    this.dialogService.openDialog(UpdatePasswordComponent, this.dialogConfig);
+    return this.dialogService.openDialog(UpdatePasswordComponent, this.dialogConfig);
   }
 
   logout() {
@@ -152,10 +152,9 @@ export class AccountPanelComponent implements OnInit {
       if(ok) {
         this.router.navigate(['/']).then(() => {
           localStorage.removeItem(RBChatUtils.COOKIE_KEY_AUTHED_LOCAL_USER_INFO_ID);
-          this.cacheService.reset();
           this.windowService.loginWindow();
           // 关闭数据库链接
-          this.databaseService.disconnectDB();
+          this.cacheService.disconnectDB();
         });
       }
     });
