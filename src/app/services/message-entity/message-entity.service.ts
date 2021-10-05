@@ -62,11 +62,13 @@ export class MessageEntityService {
       case MsgType.TYPE_CONTACT: {
         // 名片消息的内容体是ContactMeta对象的JSON形式
         const cm = JSON.parse(msg);
-        return this.createChatMsgEntity_COME_CONTACT(fromUid, nickName
+        const entity = this.createChatMsgEntity_COME_CONTACT(fromUid, nickName
           , cm.uid
           , cm.nickName
           , time
           , fp, xu_isRead_type);
+        entity.text = msg;
+        return entity;
       }
       case MsgType.TYPE_LOCATION: {
         // 位置消息的内容体是LocationMeta对象的JSON形式
@@ -167,6 +169,7 @@ export class MessageEntityService {
           , cm.nickName
           , time
           , fingerPrint, xu_isRead_type);
+        chatMsgEntityObj.text = msg;
         break;
       }
       case MsgType.TYPE_LOCATION: {
