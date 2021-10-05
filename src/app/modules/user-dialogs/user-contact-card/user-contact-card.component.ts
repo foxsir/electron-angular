@@ -7,6 +7,7 @@ import {AvatarService} from "@services/avatar/avatar.service";
 interface UserContact {
   uid: number;
   nickName: string;
+  userAvatar: string;
 }
 
 @Component({
@@ -27,10 +28,7 @@ export class UserContactCardComponent implements OnInit {
 
   ngOnInit(): void {
     this.userContact = JSON.parse(this.data.text);
-
-    this.avatarService.getAvatar(this.userContact.uid.toString()).then(res => {
-      this.userAvatar = this.dom.bypassSecurityTrustResourceUrl(res);
-    });
+    this.userAvatar = this.dom.bypassSecurityTrustResourceUrl(this.userContact.userAvatar);
   }
 
 }
