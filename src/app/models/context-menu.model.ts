@@ -4,6 +4,7 @@ import FriendModel from "./friend.model";
 import {GroupAdminModel} from "./group-admin.model";
 import {GroupModel} from "./group.model";
 import {GroupMemberModel} from "@app/models/group-member.model";
+import BlackListModel from "@app/models/black-list.model";
 
 // 普通消息action
 type ActionType = (chat: ChatmsgEntityModel, messageContainer: HTMLDivElement) => void;
@@ -26,6 +27,7 @@ export interface MenuFilterData {
   friends?: Map<string, FriendModel>;
   groups?: Map<string, GroupModel>;
   members: Map<string, GroupMemberModel>;
+  blackList: Map<string, BlackListModel>;
   alarmItem: AlarmItemInterface;
   chat: ChatmsgEntityModel;
 }
