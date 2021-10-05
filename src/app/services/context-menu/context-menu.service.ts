@@ -740,7 +740,6 @@ export class ContextMenuService {
     await this.cacheService.getBlackList().then(list => {
       blackList = list;
     });
-    console.dir(blackList)
     const data: Partial<MenuFilterData> = {
       blackList: blackList,
       alarmItem: chatting
