@@ -83,8 +83,8 @@ export class CacheService extends DatabaseService {
     atMe: "atMe",
   };
 
-  // 防止多次初始化
-  private initDataKey = false;
+  // input draft
+  public draftMap: Map<string, string> = new Map<string, string>();
 
   constructor(
     private messageRoamService: MessageRoamService,
@@ -99,21 +99,6 @@ export class CacheService extends DatabaseService {
     private avatarService: AvatarService,
   ) {
     super();
-    this.initDataKeys();
-  }
-
-  initDataKeys(uid: number = null) {
-    if(this.initDataKey === false) {
-      this.initDataKey = true;
-      if(this.localUserService.localUserInfo && this.localUserService.localUserInfo.userId) {
-        const userId = uid ? uid: this.localUserService.localUserInfo.userId;
-        for (const key in this.dataKeys) {
-          if(this.dataKeys.hasOwnProperty(key)) {
-            this.dataKeys[key] = [this.dataKeys[key], CommonTools.md5(userId.toString())].join("-");
-          }
-        }
-      }
-    }
   }
 
   /**
@@ -523,8 +508,6 @@ export class CacheService extends DatabaseService {
    * 缓存个人信息
    */
   cacheMyInfo(userId: number = null): Promise<UserModel> {
-    this.initDataKeys(userId);
-
     return new Promise((resolve, reject) => {
       const localUserInfo = this.localUserService.localUserInfo;
       this.restService.getUserBaseById(localUserInfo.userId.toString()).subscribe((res: NewHttpResponseInterface<UserModel>) => {
@@ -968,10 +951,6 @@ export class CacheService extends DatabaseService {
         resolve(map);
       });
     });
-  }
-
-  reset() {
-    this.initDataKey = false;
   }
 
   putMsgEntityMap(msg: ChatmsgEntityModel) {
