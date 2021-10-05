@@ -8,6 +8,7 @@ import {UserContactCardComponent} from "@modules/user-dialogs/user-contact-card/
 interface UserContact {
   uid: number;
   nickName: string;
+  userAvatar: string;
 }
 
 @Component({
@@ -29,9 +30,7 @@ export class MessageContactComponent implements OnInit {
   ngOnInit(): void {
     this.userContact = JSON.parse(this.chatMsg.text);
 
-    this.avatarService.getAvatar(this.userContact.uid.toString()).then(res => {
-      this.userAvatar = this.dom.bypassSecurityTrustResourceUrl(res);
-    });
+    this.userAvatar = this.dom.bypassSecurityTrustResourceUrl(this.userContact.userAvatar);
   }
 
   showContact() {
