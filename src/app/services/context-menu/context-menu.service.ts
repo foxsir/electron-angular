@@ -170,10 +170,43 @@ export class ContextMenuService {
     setBackList: {
       label: "拉入黑名单",
       visibility: (filterData: MenuFilterData): boolean => {
-        return filterData.alarmItem.metadata.chatType === 'friend';
+        const inBlackList = filterData.blackList && !!filterData.blackList.get(filterData.alarmItem.alarmItem.dataId);
+        return filterData.alarmItem.metadata.chatType === 'friend' && !inBlackList;
       },
       action: (chatting: AlarmItemInterface) => {
-        alert("拉入黑名单");
+        this.dialogService.confirm({text: ['将用户：', chatting.alarmItem.title, '拉入黑名单'].join("")}).then(ok => {
+          if(ok) {
+            const data = {
+              blackUserId: chatting.alarmItem.dataId,
+              type: 1,
+            };
+            this.restService.blackUser(data).subscribe((res: NewHttpResponseInterface<any>) => {
+              this.snackBarService.openMessage(res.msg);
+              this.cacheService.cacheBlackList();
+            });
+          }
+        });
+      }
+    },
+    removeBackList: {
+      label: "移除黑名单",
+      visibility: (filterData: MenuFilterData): boolean => {
+        const inBlackList = filterData.blackList && !!filterData.blackList.get(filterData.alarmItem.alarmItem.dataId);
+        return filterData.alarmItem.metadata.chatType === 'friend' && inBlackList;
+      },
+      action: (chatting: AlarmItemInterface) => {
+        this.dialogService.confirm({text: ['将用户：', chatting.alarmItem.title, '移除黑名单'].join("")}).then(ok => {
+          if(ok) {
+            const data = {
+              blackUserId: chatting.alarmItem.dataId,
+              type: 0,
+            };
+            this.restService.blackUser(data).subscribe((res: NewHttpResponseInterface<any>) => {
+              this.snackBarService.openMessage(res.msg);
+              this.cacheService.cacheBlackList();
+            });
+          }
+        });
       }
     },
   };
@@ -702,8 +735,17 @@ export class ContextMenuService {
    * @param chatting
    * @param chatOwner
    */
-  getContextMenuForChatting(chatting: AlarmItemInterface, chatOwner: any = null) {
-    return this.contextMenuForChatting.filter(item => item.visibility({alarmItem: chatting}));
+  async getContextMenuForChatting(chatting: AlarmItemInterface, chatOwner: any = null) {
+    let blackList;
+    await this.cacheService.getBlackList().then(list => {
+      blackList = list;
+    });
+    console.dir(blackList)
+    const data: Partial<MenuFilterData> = {
+      blackList: blackList,
+      alarmItem: chatting
+    };
+    return this.contextMenuForChatting.filter(item => item.visibility(data));
   }
 
   /**
