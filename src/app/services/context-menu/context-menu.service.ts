@@ -30,6 +30,10 @@ import CommonTools from "@app/common/common.tools";
 import FileMetaInterface from "@app/interfaces/file-meta.interface";
 import {GroupMemberModel} from "@app/models/group-member.model";
 import {GroupModel} from "@app/models/group.model";
+import {ForwardMessageService} from "@services/forward-message/forward-message.service";
+import {SelectFriendContactComponent} from "@modules/user-dialogs/select-friend-contact/select-friend-contact.component";
+import {MessageEntityService} from "@services/message-entity/message-entity.service";
+import FriendModel from "@app/models/friend.model";
 
 @Injectable({
   providedIn: 'root'
@@ -112,7 +116,27 @@ export class ContextMenuService {
         return true;
       },
       action: (chatting: AlarmItemInterface) => {
-        alert(chatting.metadata.unread);
+        this.dialogService.openDialog(SelectFriendContactComponent, {
+          width: '314px',
+          maxHeight: '600px',
+        }).then((friend: FriendModel) => {
+          if(friend) {
+            this.dialogService.confirm({title: "消息提示", text: "确认分享联系信息到当前聊天吗？"}).then((ok) => {
+              if(ok) {
+                const messageText = JSON.stringify({
+                  nickName: friend.nickname,
+                  uid: friend.friendUserUid,
+                  userAvatar: friend.userAvatarFileName,
+                });
+                const chatMsgEntity: ChatmsgEntityModel = this.messageEntityService.prepareSendedMessage(
+                  messageText, new Date().getTime(), null, MsgType.TYPE_CONTACT
+                );
+                // chatMsgEntity.uh = this.localUserService.localUserInfo.userAvatarFileName;
+                this.forwardMessageService.forward(chatting, chatMsgEntity);
+              }
+            });
+          }
+        });
       }
     },
     remove: {
@@ -304,6 +328,8 @@ export class ContextMenuService {
     private restService: RestService,
     private elementService: ElementService,
     private messageService: MessageService,
+    private forwardMessageService: ForwardMessageService,
+    private messageEntityService: MessageEntityService,
   ) {
     this.cacheService.getMute().then((list) => {
       if(list) {
