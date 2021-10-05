@@ -182,6 +182,8 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
         if(data && data.message && data.message.size === 0) {
           this.cacheService.chatMsgEntityMap.clear();
           this.cacheService.chatMsgEntityList = [];
+        } else {
+          this.cacheService.chatMsgEntityList = new Array(...this.cacheService.chatMsgEntityMap).flatMap(t => t[1]);
         }
       }
 
@@ -497,7 +499,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
       if(data && data.get(fingerPrint)) {
         const chat: ChatmsgEntityModel = data.get(fingerPrint);
         chat.isOutgoing = true;
-        this.cacheService.putChattingCache(this.currentChat, chat).then(() => {
+        this.cacheService.putChattingCache(this.currentChat, chat, true).then(() => {
           this.cacheService.chatMsgEntityMap.set(chat.fingerPrintOfProtocal, chat);
         });
       } else {
