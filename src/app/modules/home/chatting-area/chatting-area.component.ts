@@ -275,10 +275,10 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
     let chatActive: boolean;
     if(type === 'incept') {
       chatActive = this.currentChat.alarmItem.dataId.toString() === data.dataContent.f.toString();
-      this.messageService.alreadyRead(this.currentChat.alarmItem.dataId, this.currentChat.metadata.chatType);
     } else {
       chatActive = this.currentChat.alarmItem.dataId.toString() === data.dataContent.t.toString();
     }
+    this.messageService.alreadyRead(this.currentChat.alarmItem.dataId, this.currentChat.metadata.chatType);
     if(!data.dataContent) {
       if(this.cacheService.chatMsgEntityMap.size > 0) {
         this.cacheService.chatMsgEntityMap.set(data.chat.fingerPrintOfProtocal, data.chat);
