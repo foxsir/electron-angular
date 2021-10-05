@@ -69,20 +69,6 @@ export class CacheService extends DatabaseService {
   // 当前群禁言用户列表
   private groupSilenceMap: Map<string, SilenceUserModel> = new Map();
 
-  private dataKeys = {
-    alarmDataMap: "alarmDataMap",
-    friendMap: "friendMap",
-    groupMap: "groupMap",
-    groupAdminMap: "groupAdminMap",
-    groupMemberMap: "groupMemberMap",
-    myInfo: "myInfo",
-    muteMap: "muteMap",
-    topMap: "topMap",
-    blackListMap: "blackListMap",
-    newFriendMap: "newFriendMap",
-    atMe: "atMe",
-  };
-
   // input draft
   public draftMap: Map<string, string> = new Map<string, string>();
 
@@ -282,7 +268,7 @@ export class CacheService extends DatabaseService {
     const groups = await this.getCacheGroups().then(res => res);
 
     return new Promise((resolve, reject) => {
-      this.getAllLastMessage().then((res: Map<string, any>) =>{
+      this.getAllLastMessage().then((res: Map<string, RoamLastMsgModel>) =>{
         console.dir("getAllLastMessage");
         const newMap: Map<string, AlarmItemInterface> = new Map();
 
