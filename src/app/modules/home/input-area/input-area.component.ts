@@ -48,7 +48,6 @@ import {ForwardMessageService} from "@services/forward-message/forward-message.s
 import {RedPocketComponent} from "@modules/user-dialogs/red-pocket/red-pocket.component";
 import {RedPacketInterface} from "@app/interfaces/red-packet.interface";
 import DirectoryType from "@services/file/config/DirectoryType";
-import SilenceUserModel from "@app/models/silence-user.model";
 
 const { ipcRenderer } = window.require('electron');
 
@@ -148,12 +147,12 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
 
 
   private subscribeForwardMessage() {
-    if(this.forwardMessageService.message) {
-      return this.doSend(this.forwardMessageService.message.text, this.forwardMessageService.message.msgType,true);
-    }
-    this.forwardMessageService.forward$.subscribe((msg) => this.doSend(
-      this.forwardMessageService.message.text, this.forwardMessageService.message.msgType,true
-    ));
+    // if(this.forwardMessageService.message) {
+    //   return this.doSend(this.forwardMessageService.message.text, this.forwardMessageService.message.msgType,true);
+    // }
+    this.forwardMessageService.forward$.subscribe((msg) => {
+      this.doSend(msg.text, msg.msgType,true);
+    });
   }
 
   private subscribeAtMember() {
@@ -253,6 +252,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
    * @param emitToUI
    * @param replaceEntity
    */
+
   doSend(
     messageText: string = this.messageText,
     messageType: number = MsgType.TYPE_TEXT,
@@ -321,18 +321,18 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
           // this.cacheService.chatMsgEntityMap.delete(replaceEntity.fingerPrintOfProtocal);
         }
 
-        this.tempList.push({
-          chatMsgEntity: chatMsgEntity,
-          emitToUI: emitToUI,
-          msgBody: res.msgBody
-        });
-        this.pushCache();
-
-        // this.cacheService.putChattingCache(this.currentChat, chatMsgEntity).then(() => {
-        //   if(emitToUI) {
-        //     this.sendMessage.emit({chat: chatMsgEntity, dataContent: res.msgBody});
-        //   }
+        // this.tempList.push({
+        //   chatMsgEntity: chatMsgEntity,
+        //   emitToUI: emitToUI,
+        //   msgBody: res.msgBody
         // });
+        // this.pushCache();
+
+        this.cacheService.putChattingCache(this.currentChat, chatMsgEntity).then(() => {
+          if(emitToUI) {
+            this.sendMessage.emit({chat: chatMsgEntity, dataContent: res.msgBody});
+          }
+        });
       }
     });
   }
@@ -393,17 +393,12 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
           }
         });
 
-        this.tempList.push({
-          chatMsgEntity: chatMsgEntity,
-          emitToUI: emitToUI,
-          msgBody: res.msgBody
-        });
-        this.pushCache();
-        // this.cacheService.putChattingCache(this.currentChat, chatMsgEntity).then(() => {
-        //   if(emitToUI) {
-        //     this.sendMessage.emit({chat: chatMsgEntity, dataContent: res.msgBody});
-        //   }
+        // this.tempList.push({
+        //   chatMsgEntity: chatMsgEntity,
+        //   emitToUI: emitToUI,
+        //   msgBody: res.msgBody
         // });
+        // this.pushCache();
       }
     });
   }
@@ -670,39 +665,39 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
     });
   }
 
-    sendRedpocket() {
-        const data = {
-            dialog_type: 'start_red_pocket',
-            toUserId: this.currentChat.alarmItem.dataId,
-            chatType: this.currentChat.metadata.chatType,
-            count: '',
-        };
+  sendRedpocket() {
+    const data = {
+      dialog_type: 'start_red_pocket',
+      toUserId: this.currentChat.alarmItem.dataId,
+      chatType: this.currentChat.metadata.chatType,
+      count: '',
+    };
 
-        this.dialogService.openDialog(RedPocketComponent, { data: data }).then((res: RedPacketInterface) => {
-            console.log('red pocket dialog result: ', res);
-            if (res && res.ok === true) {
-              const msgContent = JSON.stringify({
-                greetings: res.greetings,
-                isOpen: 0,
-                orderId: res.res.orderId,
-                type: res.type,
-                userId: res.toUserId,
-                word: res.word,
-              });
-              this.messageService.sendMessage(MsgType.TYPE_REDBAG, this.currentChat.alarmItem.dataId, msgContent).then((send) => {
-                const chatMsgEntity = this.messageEntityService.prepareSendedMessage(
-                  send.msgBody.m, 0, send.fingerPrint, send.msgBody.ty
-                );
-                this.tempList.push({
-                  chatMsgEntity: chatMsgEntity,
-                  emitToUI: true,
-                  msgBody: send.msgBody
-                });
-                this.pushCache();
-              });
-            }
+    this.dialogService.openDialog(RedPocketComponent, {data: data}).then((res: RedPacketInterface) => {
+      console.log('red pocket dialog result: ', res);
+      if (res && res.ok === true) {
+        const msgContent = JSON.stringify({
+          greetings: res.greetings,
+          isOpen: 0,
+          orderId: res.res.orderId,
+          type: res.type,
+          userId: res.toUserId,
+          word: res.word,
         });
-    }
+        this.messageService.sendMessage(MsgType.TYPE_REDBAG, this.currentChat.alarmItem.dataId, msgContent).then((send) => {
+          const chatMsgEntity = this.messageEntityService.prepareSendedMessage(
+            send.msgBody.m, 0, send.fingerPrint, send.msgBody.ty
+          );
+          this.tempList.push({
+            chatMsgEntity: chatMsgEntity,
+            emitToUI: true,
+            msgBody: send.msgBody
+          });
+          this.pushCache();
+        });
+      }
+    });
+  }
 
   getDefaultDataContent(msgType: number): ProtocalModelDataContent {
     return {
