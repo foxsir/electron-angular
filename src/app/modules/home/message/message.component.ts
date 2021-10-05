@@ -386,8 +386,8 @@ export class MessageComponent implements OnInit, AfterViewInit {
         }
     }
 
-    contextMenuForChatting(e: MouseEvent, menu: MatMenuTrigger, span: HTMLSpanElement, alarmItem: AlarmItemInterface) {
-        this.contextMenuChatting = this.contextMenuService.getContextMenuForChatting(alarmItem);
+    async contextMenuForChatting(e: MouseEvent, menu: MatMenuTrigger, span: HTMLSpanElement, alarmItem: AlarmItemInterface) {
+        this.contextMenuChatting = await this.contextMenuService.getContextMenuForChatting(alarmItem);
         menu.openMenu();
         span.style.position = "fixed";
         span.style.top = "0px";
