@@ -11,7 +11,7 @@ export class ForwardMessageService {
 
   private forwardSource = new Subject<ChatmsgEntityModel>();
   public forward$ = this.forwardSource.asObservable();
-  message: ChatmsgEntityModel;
+  // message: ChatmsgEntityModel;
 
   constructor(
     private currentChattingChangeService: CurrentChattingChangeService
@@ -19,8 +19,8 @@ export class ForwardMessageService {
 
   public forward(chatting: AlarmItemInterface, msg: ChatmsgEntityModel) {
     this.currentChattingChangeService.switchCurrentChatting(chatting).then(() => {
+      // this.message = msg;
       this.forwardSource.next(msg);
-      this.message = msg;
     });
   }
 
