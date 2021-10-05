@@ -827,7 +827,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
    * 临时缓存禁言Map
    */
   getSilenceUsers() {
-    if (this.currentChat) {
+    if (this.currentChat && this.currentChat.metadata.chatType === 'group') {
       this.restService.getGroupBaseById(this.currentChat.alarmItem.dataId).subscribe((res: NewHttpResponseInterface<GroupModel>) => {
         if(res.status === 200) {
           this.currentChat.metadata.allSilence = res.data.gmute === 1;
