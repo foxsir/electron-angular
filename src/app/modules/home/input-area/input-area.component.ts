@@ -80,7 +80,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
   public messageTextPlaceholder: string = '请输入信息';
   public showPlaceholder: boolean = true;
 
-  private sendChatMap = {};
+  private sendChatMap: Map<string, ChatmsgEntityModel> = new Map();
   // 引用回复消息
   public quoteMessage: ChatmsgEntityModel = null;
 
@@ -188,27 +188,33 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
   }
 
   getImageInfo(file: any) {
-    // CommonTools.getBlobUrlFromFile(file).then(blob => {
-    //   this.sendChatMap[file.uid] = this.messageEntityService.createChatMsgEntity_TO_IMAGE(
-    //     blob, 0, CommonTools.fingerPrint(), 0
-    //   );
-    //   this.sendMessage.emit({
-    //     chat: this.sendChatMap[file.uid],
-    //     dataContent: this.getDefaultDataContent(MsgType.TYPE_IMAGE)
-    //   });
-    // });
+    CommonTools.getBlobUrlFromFile(file).then(blob => {
+      const entity: ChatmsgEntityModel = this.messageEntityService.createChatMsgEntity_TO_IMAGE(
+        blob, 0, CommonTools.uuid(), 0
+      );
+      entity.uh = this.localUserService.localUserInfo.userAvatarFileName;
+      entity.isOutgoing = false;
+      this.sendChatMap.set(file.uid, entity);
+      this.sendMessage.emit({
+        chat: entity,
+        dataContent: this.getDefaultDataContent(MsgType.TYPE_IMAGE)
+      });
+    });
   }
 
   getFileInfo(file: any) {
-    // CommonTools.getBlobUrlFromFile(file).then(blob => {
-    //   this.sendChatMap[file.uid] = this.messageEntityService.createChatMsgEntity_TO_FILE('',
-    //     blob, 0, CommonTools.fingerPrint(), 0
-    //   );
-    //   this.sendMessage.emit({
-    //     chat: this.sendChatMap[file.uid],
-    //     dataContent: this.getDefaultDataContent(MsgType.TYPE_FILE)
-    //   });
-    // });
+    CommonTools.getBlobUrlFromFile(file).then(blob => {
+      const entity: ChatmsgEntityModel = this.messageEntityService.createChatMsgEntity_TO_FILE('',
+        blob, 0, CommonTools.uuid(), 0
+      );
+      entity.uh = this.localUserService.localUserInfo.userAvatarFileName;
+      entity.isOutgoing = false;
+      this.sendChatMap.set(file.uid, entity);
+        this.sendMessage.emit({
+        chat: entity,
+        dataContent: this.getDefaultDataContent(MsgType.TYPE_FILE)
+      });
+    });
   }
 
   /**
@@ -216,10 +222,10 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
    * @param uploadedFile
    */
   imageUploaded(uploadedFile: UploadedFile) {
-    // const msg = this.sendChatMap[uploadedFile.file.uid];
+    const msg = this.sendChatMap.get(uploadedFile.file.uid);
     // const messageText = msg.text = uploadedFile.url.href;
     const messageText = uploadedFile.url.href;
-    return this.doSend(messageText, MsgType.TYPE_IMAGE,true);
+    return this.doSend(messageText, MsgType.TYPE_IMAGE,false, msg);
   }
 
   /**
@@ -227,7 +233,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
    * @param uploadedFile
    */
   fileUploaded(uploadedFile: UploadedFile) {
-    // const msg = this.sendChatMap[uploadedFile.file.uid];
+    const msg = this.sendChatMap.get(uploadedFile.file.uid);
     // const messageText = msg.text = uploadedFile.url.href;
 
     const message = {
@@ -236,7 +242,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
       fileMd5 : CommonTools.md5([uploadedFile.file.name, uploadedFile.file.lastModified].join("-")),
       fileLength: uploadedFile.file.size
     };
-    return this.doSend(JSON.stringify(message), MsgType.TYPE_FILE, true);
+    return this.doSend(JSON.stringify(message), MsgType.TYPE_FILE, false, msg);
   }
 
   /**
@@ -306,14 +312,14 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
 
         //111 新增指纹码 he 消息类型msgType
         // debugger
-        const chatMsgEntity = this.messageEntityService.prepareSendedMessage(
+        const chatMsgEntity: ChatmsgEntityModel = this.messageEntityService.prepareSendedMessage(
           message, new Date().getTime(), res.fingerPrint, messageType
         );
         chatMsgEntity.uh = this.localUserService.localUserInfo.userAvatarFileName;
-        if (replaceEntity) {
-          replaceEntity.fingerPrintOfProtocal = chatMsgEntity.fingerPrintOfProtocal;
-          // this.cacheService.chatMsgEntityMap.delete(replaceEntity.fingerPrintOfProtocal);
-        }
+        // if (replaceEntity) {
+        //   replaceEntity.fingerPrintOfProtocal = chatMsgEntity.fingerPrintOfProtocal;
+        //   // this.cacheService.chatMsgEntityMap.delete(replaceEntity.fingerPrintOfProtocal);
+        // }
 
         // this.tempList.push({
         //   chatMsgEntity: chatMsgEntity,
@@ -322,8 +328,19 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
         // });
         // this.pushCache();
 
-        this.cacheService.putChattingCache(this.currentChat, chatMsgEntity).then(() => {
+        this.cacheService.putChattingCache(this.currentChat, chatMsgEntity, emitToUI).then(() => {
           if(emitToUI) {
+            this.sendMessage.emit({chat: chatMsgEntity, dataContent: res.msgBody});
+          } else if(replaceEntity) {
+            const newMap: Map<string, ChatmsgEntityModel> = new Map();
+            this.cacheService.chatMsgEntityMap.forEach((v, k) => {
+              if(k === replaceEntity.fingerPrintOfProtocal) {
+                newMap.set(chatMsgEntity.fingerPrintOfProtocal, chatMsgEntity);
+              } else {
+                newMap.set(k, v);
+              }
+            });
+            this.cacheService.chatMsgEntityMap = newMap;
             this.sendMessage.emit({chat: chatMsgEntity, dataContent: res.msgBody});
           }
         });
@@ -376,13 +393,24 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
           message, 0, res.fingerPrint, messageType
         );
         chatMsgEntity.uh = this.localUserService.localUserInfo.userAvatarFileName;
-        if (replaceEntity) {
-          replaceEntity.fingerPrintOfProtocal = chatMsgEntity.fingerPrintOfProtocal;
-        }
+        // if (replaceEntity) {
+        //   replaceEntity.fingerPrintOfProtocal = chatMsgEntity.fingerPrintOfProtocal;
+        // }
         // chatMsgEntity.isOutgoing = false;
 
-        this.cacheService.putChattingCache(this.currentChat, chatMsgEntity).then(() => {
+        this.cacheService.putChattingCache(this.currentChat, chatMsgEntity, emitToUI).then(() => {
           if(emitToUI) {
+            this.sendMessage.emit({chat: chatMsgEntity, dataContent: res.msgBody});
+          } else if(replaceEntity) {
+            const newMap: Map<string, ChatmsgEntityModel> = new Map();
+            this.cacheService.chatMsgEntityMap.forEach((v, k) => {
+              if(k === replaceEntity.fingerPrintOfProtocal) {
+                newMap.set(chatMsgEntity.fingerPrintOfProtocal, chatMsgEntity);
+              } else {
+                newMap.set(k, v);
+              }
+            });
+            this.cacheService.chatMsgEntityMap = newMap;
             this.sendMessage.emit({chat: chatMsgEntity, dataContent: res.msgBody});
           }
         });

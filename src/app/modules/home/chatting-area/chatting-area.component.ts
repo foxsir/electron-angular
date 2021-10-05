@@ -888,8 +888,8 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
       const dataContent: ProtocalModelDataContent[] = JSON.parse(res.dataContent);
       if(dataContent.length) {
         const data = dataContent[0];
-        const msg = JSON.parse(data.m);
         if(data.ty === MsgType.TYPE_NOTALK) {
+          const msg = JSON.parse(data.m);
           this.cacheService.generateAlarmItem(data.t, 'group').then(alarm => {
             alarm.metadata.allSilence = msg.isBanned;
             if(this.currentChat) {

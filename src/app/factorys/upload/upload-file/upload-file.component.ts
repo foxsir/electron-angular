@@ -1,8 +1,8 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {Observable, Observer} from 'rxjs';
+import {Observable, Observer, Subscription} from 'rxjs';
 
 import {NzMessageService} from 'ng-zorro-antd/message';
-import {NzUploadFile} from 'ng-zorro-antd/upload';
+import {NzUploadFile, NzUploadXHRArgs} from 'ng-zorro-antd/upload';
 
 import uploadIcon from "./upload-icon";
 import {DomSanitizer} from "@angular/platform-browser";
@@ -58,30 +58,32 @@ export class UploadFileComponent implements OnInit {
 
   beforeUpload = (file: NzUploadFile, _fileList: NzUploadFile[]) =>
     new Observable((observer: Observer<boolean>) => {
-      this.getFileInfo.emit(file);
-
       if(this.fileTypes === undefined) {
+        const err = '请定义 fileTypes';
         this.snackBarService.openMessage("请定义 fileTypes");
-        observer.complete();
+        observer.error(err);
         return;
       }
 
       const isJpgOrPng = this.fileTypes.includes(file.type) || this.fileTypes.includes('*');
       if (!isJpgOrPng) {
-        this.snackBarService.openMessage(['不允许的文件类型: ', file.type].join(""));
-        observer.complete();
+        const err = ['不允许的文件类型: ', file.type].join("");
+        this.snackBarService.openMessage(err);
+        observer.error(err);
         return;
       }
       const isLt2M = file.size! / 1024 / 1024 < 100;
       if (!isLt2M) {
-        this.snackBarService.openMessage('文件大小不允许超过 100MB!');
-        observer.complete();
+        const err = '文件大小不允许超过 100MB!';
+        this.snackBarService.openMessage(err);
+        observer.error(err);
         return;
       }
 
       if(Object.values(DirectoryType).includes(this.directoryType) === false) {
-        this.snackBarService.openMessage('请使用正确的目录名称，参考：DirectoryType');
-        observer.complete();
+        const err = '请使用正确的目录名称，参考：DirectoryType';
+        this.snackBarService.openMessage(err);
+        observer.error(err);
         return;
       }
 
@@ -111,6 +113,8 @@ export class UploadFileComponent implements OnInit {
           }
         });
       });
+
+      this.getFileInfo.emit(file);
     });
 
   private getBase64(img: File, callback: (img: string) => void): void {
