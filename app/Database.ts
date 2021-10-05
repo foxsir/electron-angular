@@ -148,9 +148,15 @@ export default class Database {
       const name = ModelMap.get(msg.model);
       name.useConnection(this.connection);
       if (name) {
-        await name.delete(msg.query).then(del => {
-          event.sender.send('deleteData-reply', {status: 200, data: del, uuid: msg.uuid});
-        });
+        if(msg.query) {
+          await name.delete(msg.query).then(del => {
+            event.sender.send('deleteData-reply', {status: 200, data: del, uuid: msg.uuid});
+          });
+        } else {
+          await name.clear().then(() => {
+            event.sender.send('deleteData-reply', {status: 200, data: true, uuid: msg.uuid});
+          });
+        }
       } else {
         event.sender.send('deleteData-reply', {status: 500, error: "query error " + msg.model, uuid: msg.uuid});
       }
