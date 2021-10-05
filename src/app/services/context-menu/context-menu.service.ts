@@ -459,6 +459,8 @@ export class ContextMenuService {
           const localUserInfo: LocalUserinfoModel = RBChatUtils.getAuthedLocalUserInfoFromCookie();
           const noSelf = filterData.chat.uid.toString() !== localUserInfo.userId.toString();
           const isFriend = filterData.friends.get(filterData.chat.uid.toString());
+          console.dir(filterData.members)
+          console.dir(filterData.members.get(filterData.chat.uid.toString()));
           // 不能是自己 and 必需不是好友
           return noSelf && !isFriend;
         },
@@ -686,6 +688,7 @@ export class ContextMenuService {
   async getContextMenuForAvatar(alarmItem: AlarmItemInterface, chat: ChatmsgEntityModel) {
     let admins;
     let friends;
+    let members;
     let groups: Map<string, GroupModel> = new Map();
     await this.cacheService.getCacheGroupAdmins(alarmItem.alarmItem.dataId).then((data) => {
       admins = data;
@@ -697,11 +700,15 @@ export class ContextMenuService {
     await this.cacheService.getCacheGroups().then(data => {
       groups = data;
     });
+    await this.cacheService.getGroupMembers(alarmItem.alarmItem.dataId).then(data => {
+      members = data;
+    });
 
     const filterData: Partial<MenuFilterData> = {
       admins: admins,
       friends: friends,
       groups: groups,
+      members: members,
       alarmItem: alarmItem,
       chat: chat
     };
