@@ -90,12 +90,6 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
 
   private tempList = [];
 
-  /**
-   * false = 发送中，true 可以发送
-   * @private
-   */
-  private sendStatus: boolean = true;
-
   constructor(
     private router: Router,
     private dom: DomSanitizer,
@@ -179,7 +173,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
     this.currentChattingChangeService.currentChatting$.subscribe((currentChat) => {
       if(currentChat) {
         this.getGroupMembers(currentChat);
-        this.messageText = "";
+        this.clearTextArea();
       }
     });
   }
