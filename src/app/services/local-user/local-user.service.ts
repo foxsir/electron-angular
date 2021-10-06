@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {RestService} from "@services/rest/rest.service";
+// import {RestService} from "@services/rest/rest.service";
 import RBChatUtils from "@app/libs/rbchat-utils";
 import LocalUserinfoModel from "@app/models/local-userinfo.model";
 
@@ -26,7 +26,7 @@ export class LocalUserService {
   public token;
 
   constructor(
-    private restService: RestService
+    // private restService: RestService
   ) {
     this.localUserInfo = RBChatUtils.getAuthedLocalUserInfoFromCookie();
   }
@@ -107,33 +107,33 @@ export class LocalUserService {
    *
    * @param fn_callback_ok 本地用户信息加载成功后将调用本回调，本参数为空时将不调用
    */
-  reloadFromServer(fn_callback_ok) {
-    const that = this;
-
-    // 调用HTTP REST接口：“【接口1008-3-8】获取用户/好友的个人信息”，接口返回值详细情况，详见接口文档或服务端代码。
-    // 开始从服务端查询指定uid的用户基本信息，同时尝试在ui上显示之
-    // this.getUid() 注意此id为本地用户的uid
-    // 数据读取成功后的回调
-    this.restService.submitGetUserInfoToServer(false, null, this.getUid(),function(returnValue) {
-        // 服务端返回的是java对象RosterElementEntity的JSON文本
-        const ree = JSON.parse(returnValue);
-
-        if (ree) {
-          that.update(ree);
-
-          if (fn_callback_ok)
-          {fn_callback_ok();}
-        } else {
-          RBChatUtils.logToConsole_WARN('[前端-GET-【接口1008-3-8】[reloadFromServer]本地用户个人信息获取接口返回值解析后] 数据为空，' +
-            '无需进入ui处理代码。(returnValue=' + returnValue + ')');
-        }
-      },
-      // 数据读取失败后的回调
-      function(errorThrownStr) {
-        RBChatUtils.logToConsole_ERROR('[前端-GET-【接口1008-3-8】[reloadFromServer]本地用户的基本信息数据读取出错，可能是网络故障，请稍后再试！');
-      }
-    );
-  }
+  // reloadFromServer(fn_callback_ok) {
+  //   const that = this;
+  //
+  //   // 调用HTTP REST接口：“【接口1008-3-8】获取用户/好友的个人信息”，接口返回值详细情况，详见接口文档或服务端代码。
+  //   // 开始从服务端查询指定uid的用户基本信息，同时尝试在ui上显示之
+  //   // this.getUid() 注意此id为本地用户的uid
+  //   // 数据读取成功后的回调
+  //   this.restService.submitGetUserInfoToServer(false, null, this.getUid(),function(returnValue) {
+  //       // 服务端返回的是java对象RosterElementEntity的JSON文本
+  //       const ree = JSON.parse(returnValue);
+  //
+  //       if (ree) {
+  //         that.update(ree);
+  //
+  //         if (fn_callback_ok)
+  //         {fn_callback_ok();}
+  //       } else {
+  //         RBChatUtils.logToConsole_WARN('[前端-GET-【接口1008-3-8】[reloadFromServer]本地用户个人信息获取接口返回值解析后] 数据为空，' +
+  //           '无需进入ui处理代码。(returnValue=' + returnValue + ')');
+  //       }
+  //     },
+  //     // 数据读取失败后的回调
+  //     function(errorThrownStr) {
+  //       RBChatUtils.logToConsole_ERROR('[前端-GET-【接口1008-3-8】[reloadFromServer]本地用户的基本信息数据读取出错，可能是网络故障，请稍后再试！');
+  //     }
+  //   );
+  // }
 
 
 
