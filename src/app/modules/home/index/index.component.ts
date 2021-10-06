@@ -106,7 +106,6 @@ export class IndexComponent implements OnInit {
     private avatarService: AvatarService,
     private cacheService: CacheService,
     private miniUiService: MiniUiService,
-    private databaseService: DatabaseService,
   ) {
     this.router.events.subscribe(e => {
       if (e instanceof NavigationEnd) {
@@ -118,7 +117,7 @@ export class IndexComponent implements OnInit {
 
   connectDB() {
     const userInfo = this.localUserService.localUserInfo;
-    this.databaseService.connectionDB(userInfo.userId.toString()).then((connect) => {
+    this.cacheService.connectionDB(userInfo.userId.toString()).then((connect) => {
       console.dir("connect: " + connect);
     });
   }
@@ -366,6 +365,7 @@ export class IndexComponent implements OnInit {
 
     //    111 新增退出状态
     this.restService.loginOut().subscribe();
+    this.imService.disconnectSocket();
 
     // (returnValue) {
     //   // 断开与IM服务器的网络连接
