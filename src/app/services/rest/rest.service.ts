@@ -54,13 +54,12 @@ import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 })
 export class RestService {
   private deviceInfo = "chrome 91.0.4472.124";
-  private localUserService: LocalUserService;
 
   constructor(
     private http: HttpService,
     private imService: ImService,
+    private localUserService: LocalUserService,
   ) {
-    this.localUserService = new LocalUserService(this);
   }
 
   private restServer(processorId: number, jobDispatchId: number, actionId: number, data: any): Observable<any> {
@@ -871,7 +870,7 @@ export class RestService {
   //    111 退出登录
   loginOut() {
     const xum = {
-      uid: "web" + this.localUserService.getObj().userId
+      uid: "web" + this.localUserService.localUserInfo.userId
     };
 
     return this.restServer(MyProcessorConst.PROCESSSOR_LOGOUT,-1 ,-1
