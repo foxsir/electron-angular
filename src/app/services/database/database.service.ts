@@ -25,9 +25,6 @@ interface DeleteParams<T> {
   uuid?: string;
 }
 
-@Injectable({
-  providedIn: 'root'
-})
 export abstract class DatabaseService {
   private isConnected = false;
 
