@@ -1,1 +1,3 @@
-<webview src="https://{{tabLink}}"  (new-window)="newwindow($event)"></webview>
+<!--<webview src="https://{{tabLink}}"  (new-window)="newwindow($event)"></webview>-->
+
+<webview (new-window)="newwindow($event)" #webviewmain></webview>

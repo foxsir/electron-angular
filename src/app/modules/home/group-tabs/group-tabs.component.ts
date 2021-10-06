@@ -1,4 +1,4 @@
-import {AfterContentChecked, Component, Input, OnInit} from '@angular/core';
+import {AfterContentChecked, Component, Input, OnInit, ElementRef, Renderer2, ViewChild} from '@angular/core';
 
 @Component({
     selector: 'app-group-tabs',
@@ -7,16 +7,31 @@ import {AfterContentChecked, Component, Input, OnInit} from '@angular/core';
 })
 export class GroupTabsComponent implements OnInit {
     @Input() tabLink: string;
+    @ViewChild("webviewmain") webviewmain: ElementRef;
 
-    constructor(
-    ) { }
+    constructor(private renderer: Renderer2) { }
 
     ngOnInit(): void {
+        
+    }
+
+    ngAfterViewInit() {
+        
+    }
+
+    openLink(url) {
+        this.renderer.setAttribute(this.webviewmain.nativeElement, 'src', 'https://' + url);
+        console.log('群页签设置属性：', this.tabLink, url);
     }
 
     newwindow(event) {
+        //console.log('event: ', event);
+        //this.tabLink = event.url.replace('http://', '').replace('https://', '');
+        //event.preventDefault();
+
         console.log('event: ', event);
-        this.tabLink = event.url.replace('http://', '').replace('https://', '');
+        let url = event.url.replace('http://', '').replace('https://', '');
+        this.renderer.setAttribute(this.webviewmain.nativeElement, 'src', 'https://' + url);
         event.preventDefault();
     }
 

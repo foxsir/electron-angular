@@ -106,11 +106,11 @@
               <nav mat-tab-nav-bar fxLayout="row">
                 <a fxFlex mat-tab-link (click)="showGroupTabs = false"> 聊天 </a>
                 <a fxFlex mat-tab-link
-                   *ngFor="let link of group_tab_data.list" [fxHide]="link.status != 1" (click)="tabLink = link.addressUrl; showGroupTabs = true"> {{link.name}} </a>
+                   *ngFor="let link of group_tab_data.list" [fxHide]="link.status != 1" (click)="tabLink = link.addressUrl; showGroupTabs = true; this.grouptabs.openLink(link.addressUrl);"> {{link.name}} </a>
               </nav>
             </div>
             <div fxFlex="100">
-              <app-group-tabs [tabLink]="tabLink"></app-group-tabs>
+              <app-group-tabs [tabLink]="tabLink" #grouptabs></app-group-tabs>
             </div>
           </div>
         </div>
