@@ -76,10 +76,10 @@ export default class WindowEventListen {
 
     ipcMain.on("loginWindow", (event, arg) => {
       this.getFocusedWindow().then(win => {
-        win.setSize(defaultOptions.size.width, defaultOptions.size.height);
+        win.setMinimumSize(400, 460);
+        win.setSize(400, 460);
         win.setResizable(false);
         win.center();
-        win.setMinimumSize(defaultOptions.size.width, defaultOptions.size.height);
       });
     });
 
@@ -103,6 +103,7 @@ export default class WindowEventListen {
     ipcMain.on("openDevTools", (event, arg) => {
       this.getFocusedWindow().then(win => {
         win.webContents.openDevTools();
+        win.setMinimumSize(defaultOptions.size.width, defaultOptions.size.height);
         win.setResizable(true);
       });
     });
@@ -112,8 +113,8 @@ export default class WindowEventListen {
         frame: true,
       });
       win.loadURL(arg).then(() => {
-        win.show();
         win.setMinimumSize(defaultOptions.size.width, defaultOptions.size.height);
+        win.show();
       });
     });
   }
