@@ -142,10 +142,14 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
     visible: false,
     list: []
   };
-  public groupData: Partial<GroupInfoModel> = {
-      gnotice: '',
-      gtopContent: '',
-  };
+    public groupData = {
+        gnotice: '',
+        gtopContent: '',
+        gnotice_visible: true,
+        gtopContent_visible: true,
+        gnotice_class: '',
+        gtopContent_class: '',
+    };
 
   // @我的消息
   public atMsg: AtMeModel;
@@ -202,10 +206,18 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
         }
 
         /*获取群基本信息*/
-        this.restService.getGroupBaseById(this.currentChat.alarmItem.dataId).subscribe((res: NewHttpResponseInterface<GroupInfoModel>) => {
+        this.restService.getGroupBaseById(this.currentChat.alarmItem.dataId).subscribe(res => {
             if (res.status === 200 && res.data) {
                 this.groupData = res.data;
                 console.log('group data: ', this.groupData);
+
+                var gnotice_length = this.groupData.gnotice.length;
+                var gtopContent_length = this.groupData.gtopContent.length;
+                this.groupData.gnotice_class = 'animate-' + parseInt(((gnotice_length >= 150 ? 150 : gnotice_length) / 50).toString());
+                this.groupData.gtopContent_class = 'animate-' + parseInt(((gtopContent_length >= 150 ? 150 : gtopContent_length) / 50).toString());
+
+                this.groupData.gnotice_visible = true;
+                this.groupData.gtopContent_visible = true;
             }
 
         });
