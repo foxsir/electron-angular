@@ -205,22 +205,35 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
           this.cacheService.chatMsgEntityList = new Array(...this.cacheService.chatMsgEntityMap).flatMap(t => t[1]);
         }
 
-        /*获取群基本信息*/
-        this.restService.getGroupBaseById(this.currentChat.alarmItem.dataId).subscribe(res => {
-            if (res.status === 200 && res.data) {
-                this.groupData = res.data;
-                console.log('group data: ', this.groupData);
+          if (this.currentChat.alarmItem.chatType === 'group') {
+              /*获取群基本信息*/
+              this.restService.getGroupBaseById(this.currentChat.alarmItem.dataId).subscribe(res => {
+                  if (res.status === 200 && res.data) {
+                      this.groupData.gnotice = res.data.gnotice == null ? '' : res.data.gnotice;
+                      this.groupData.gtopContent = res.data.gtopContent == null ? '' : res.data.gtopContent;
+                      console.log('group data: ', this.groupData);
 
-                var gnotice_length = this.groupData.gnotice.length;
-                var gtopContent_length = this.groupData.gtopContent.length;
-                this.groupData.gnotice_class = 'animate-' + parseInt(((gnotice_length >= 150 ? 150 : gnotice_length) / 50).toString());
-                this.groupData.gtopContent_class = 'animate-' + parseInt(((gtopContent_length >= 150 ? 150 : gtopContent_length) / 50).toString());
+                      var gnotice_length = this.groupData.gnotice.length;
+                      var gtopContent_length = this.groupData.gtopContent.length;
+                      this.groupData.gnotice_class = 'animate-' + parseInt(((gnotice_length >= 150 ? 150 : gnotice_length) / 50).toString());
+                      this.groupData.gtopContent_class = 'animate-' + parseInt(((gtopContent_length >= 150 ? 150 : gtopContent_length) / 50).toString());
 
-                this.groupData.gnotice_visible = true;
-                this.groupData.gtopContent_visible = true;
-            }
+                      this.groupData.gnotice_visible = true;
+                      this.groupData.gtopContent_visible = true;
+                  }
 
-        });
+              });
+          }
+          else {
+              this.groupData = {
+                  gnotice: '',
+                  gtopContent: '',
+                  gnotice_visible: true,
+                  gtopContent_visible: true,
+                  gnotice_class: '',
+                  gtopContent_class: '',
+              };
+          }
       }
 
       if(cache.atMe) {
