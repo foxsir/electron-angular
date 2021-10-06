@@ -1,6 +1,6 @@
 const defaultOptions = {
   size: {
-    width: 400, height: 460,
+    width: 408, height: 593,
   }
 }
 

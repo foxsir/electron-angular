@@ -40,10 +40,8 @@ function createWindow(): BrowserWindow {
     backgroundColor: "#F1F1F1;",
     show: false,
     resizable: false,
-    width: defaultOptions.size.width,
-    height: defaultOptions.size.height,
-    minWidth: defaultOptions.size.width,
-    minHeight: defaultOptions.size.height,
+    width: 400,
+    height: 460,
     frame: false,
     webPreferences: {
       webviewTag: true, // 启用webview

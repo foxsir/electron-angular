@@ -33,6 +33,7 @@ export default class WindowEventListen {
     ipcMain.on("fullScreen", (event, arg) => {
       this.getFocusedWindow().then(win => {
         win.setFullScreen(true);
+        win.setMinimumSize(defaultOptions.size.width, defaultOptions.size.height);
       });
     });
 
@@ -46,6 +47,7 @@ export default class WindowEventListen {
           }
         }
         win.setResizable(true);
+        win.setMinimumSize(defaultOptions.size.width, defaultOptions.size.height);
       });
     });
 
@@ -53,12 +55,14 @@ export default class WindowEventListen {
       this.getFocusedWindow().then(win => {
         win.unmaximize();
         win.setResizable(true);
+        win.setMinimumSize(defaultOptions.size.width, defaultOptions.size.height);
       });
     });
 
     ipcMain.on("minimizeWindow", (event, arg) => {
       this.getFocusedWindow().then(win => {
         win.minimize();
+        win.setMinimumSize(defaultOptions.size.width, defaultOptions.size.height);
       });
     });
 
@@ -66,6 +70,7 @@ export default class WindowEventListen {
       this.getFocusedWindow().then(win => {
         win.restore();
         win.setResizable(true);
+        win.setMinimumSize(defaultOptions.size.width, defaultOptions.size.height);
       });
     });
 
@@ -74,6 +79,7 @@ export default class WindowEventListen {
         win.setSize(defaultOptions.size.width, defaultOptions.size.height);
         win.setResizable(false);
         win.center();
+        win.setMinimumSize(defaultOptions.size.width, defaultOptions.size.height);
       });
     });
 
@@ -82,6 +88,7 @@ export default class WindowEventListen {
         win.setSize(800, 600);
         win.setResizable(true);
         win.center();
+        win.setMinimumSize(defaultOptions.size.width, defaultOptions.size.height);
       });
     });
 
@@ -106,6 +113,7 @@ export default class WindowEventListen {
       });
       win.loadURL(arg).then(() => {
         win.show();
+        win.setMinimumSize(defaultOptions.size.width, defaultOptions.size.height);
       });
     });
   }
