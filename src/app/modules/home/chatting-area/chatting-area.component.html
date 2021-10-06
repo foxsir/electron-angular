@@ -115,17 +115,27 @@
           </div>
         </div>
         <div fxFlex fxLayout="column" [fxHide]="showGroupTabs">
-          <div class="down-arrow" [fxShow]="showDownArrow">
-            <button mat-icon-button mat-raised-button (click)="scrollToBottom()">
-              <mat-icon class="hover-icon">
-                <img [src]="downArrowIcon" class="icon" alt="">
-                <img [src]="downArrowActiveIcon" class="icon-active" alt="">
-              </mat-icon>
-            </button>
-          </div>
-          <div fxFlex="20px" *ngIf="atMsg" class="at-me-sheet mat-primary text hover-item">
-            <div fxFlexFill fxLayoutAlign="center center" (click)="gotoAt()">有人@我</div>
-          </div>
+            <div class="down-arrow" [fxShow]="showDownArrow">
+                <button mat-icon-button mat-raised-button (click)="scrollToBottom()">
+                    <mat-icon class="hover-icon">
+                        <img [src]="downArrowIcon" class="icon" alt="">
+                        <img [src]="downArrowActiveIcon" class="icon-active" alt="">
+                    </mat-icon>
+                </button>
+            </div>
+            <div *ngIf="groupData.gnotice.length > 0" class="moving-group-info mat-primary text hover-item">
+                <img class="icon" [src]="gNoticeTip" alt="">
+                <div class="box">
+                    <p class="animate animate-3">{{groupData.gnotice}}</p>
+                </div>
+                <img class="icon" [src]="gNoticeDelete" alt="">
+            </div>
+            <div fxFlex="20px" *ngIf="atMsg" class="at-me-sheet mat-primary text hover-item">
+                <div fxFlexFill fxLayoutAlign="center center">群上屏</div>
+            </div>
+            <div fxFlex="20px" *ngIf="atMsg" class="at-me-sheet mat-primary text hover-item">
+                <div fxFlexFill fxLayoutAlign="center center" (click)="gotoAt()">有人@我</div>
+            </div>
           <div fxFlex id="chatting-panel" #chattingContainer>
             <mat-card class="mat-elevation-z0 transparent" fxFlex="100">
               <mat-card-content fxFlex="100">

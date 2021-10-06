@@ -25,6 +25,11 @@ import closeCircleActiveIcon from "@app/assets/icons/close-circle-active.svg";
 import downArrowIcon from "@app/assets/icons/keyboard_arrow_down.svg";
 import downArrowActiveIcon from "@app/assets/icons/keyboard_arrow_down-active.svg";
 
+import gNoticeTip from "@app/assets/icons/gnotice-tip.svg";
+import gNoticeDelete from "@app/assets/icons/gnotice-delete.svg";
+import gTopContentTip from "@app/assets/icons/gtopcontent-tip.svg";
+import gTopContentDelete from "@app/assets/icons/gtopcontent-delete.svg";
+
 import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 import {QuoteMessageService} from "@services/quote-message/quote-message.service";
 import LocalUserinfoModel from "@app/models/local-userinfo.model";
@@ -60,6 +65,7 @@ import {GroupModel} from "@app/models/group.model";
 import GroupTabModel from "@app/models/group-tab.model";
 import AtMeModel from "@app/models/at-me.model";
 import SilenceUserModel from "@app/models/silence-user.model";
+import GroupInfoModel from "@app/models/group-info.model";
 
 @Component({
   selector: 'app-chatting-area',
@@ -92,6 +98,11 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
   public voiceActiveIcon = this.dom.bypassSecurityTrustResourceUrl(voiceActiveIcon);
   public downArrowIcon = this.dom.bypassSecurityTrustResourceUrl(downArrowIcon);
   public downArrowActiveIcon = this.dom.bypassSecurityTrustResourceUrl(downArrowActiveIcon);
+
+  public gNoticeTip = this.dom.bypassSecurityTrustResourceUrl(gNoticeTip);
+  public gNoticeDelete = this.dom.bypassSecurityTrustResourceUrl(gNoticeDelete);
+  public gTopContentTip = this.dom.bypassSecurityTrustResourceUrl(gTopContentTip);
+  public gTopContentDelete = this.dom.bypassSecurityTrustResourceUrl(gTopContentDelete);
   // end icon
 
   public currentChatSubtitle: string = null;
@@ -130,6 +141,9 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
   public group_tab_data: {visible: boolean; list: GroupTabModel[]} = {
     visible: false,
     list: []
+  };
+  public groupData: Partial<GroupInfoModel> = {
+      gnotice: '',
   };
 
   // @我的消息
@@ -185,6 +199,15 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
         } else {
           this.cacheService.chatMsgEntityList = new Array(...this.cacheService.chatMsgEntityMap).flatMap(t => t[1]);
         }
+
+        /*获取群基本信息*/
+        this.restService.getGroupBaseById(this.currentChat.alarmItem.dataId).subscribe((res: NewHttpResponseInterface<GroupInfoModel>) => {
+            if (res.status === 200 && res.data) {
+                this.groupData = res.data;
+                console.log('group data: ', this.groupData);
+            }
+
+        });
       }
 
       if(cache.atMe) {
