@@ -11,7 +11,6 @@ import {CacheService} from "@services/cache/cache.service";
 import {DatabaseService} from "@services/database/database.service";
 import {SignupModel} from "@app/models/signup.model";
 import RegisterResponseModel from "@app/models/register-response.model";
-import {sign} from "crypto";
 
 interface Login {
   login: boolean;
@@ -62,28 +61,10 @@ export class SessionService {
     this.restService.submitRegisterToServer(signup).subscribe((res: NewHttpResponseInterface<RegisterResponseModel>) => {
       if (res.status === 200) {
         this.login(signup.user_phone || signup.user_mail, signup.user_psw);
-        // this.localUserService.update(userInfo);
-        // this.router.navigate(["/home"]).then(() => {
-        //   this.snackBarService.openMessage("注册成功");
-        //   this.windowService.normalWindow();
-        //   this.cacheService.cacheMyInfo(userInfo.userId).then(() => {
-        //     // 使用缓存中的头像
-        //     this.cacheService.getMyInfo().then((myInfo: UserModel) => {
-        //       this.updateLocalUserInfo(myInfo);
-        //       // if(data.userAvatarFileName.length > 0) {
-        //       //   this.myAvatar = this.dom.bypassSecurityTrustResourceUrl(data.userAvatarFileName);
-        //       // }
-        //     });
-        //   });
-        // });
       } else {
         this.snackBarService.openMessage(res.msg);
       }
     });
-  }
-
-  logout() {
-
   }
 
   updateLocalUserInfo(data: UserModel) {
