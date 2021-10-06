@@ -144,6 +144,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
   };
   public groupData: Partial<GroupInfoModel> = {
       gnotice: '',
+      gtopContent: '',
   };
 
   // @我的消息

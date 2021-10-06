@@ -45,15 +45,29 @@
     overflow: hidden;
     position: relative;
 
+    .icon-tip{
+        position:absolute;
+        left:10px;
+        top:8px;
+        width:18px;
+    }
+
     .box {
         position: absolute;
-        left: 0;
+        left: 33px;
         top: 0;
-        right: 0;
+        right: 33px;
         bottom: 0;
         color: #ff9b35;
         margin: 0 auto;
         overflow: hidden;
+    }
+
+    .icon-delete{
+        position:absolute;
+        right:10px;
+        top:8px;
+        width:18px;
     }
 
     .animate {

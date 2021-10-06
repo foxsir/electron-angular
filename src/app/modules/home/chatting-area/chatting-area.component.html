@@ -124,14 +124,18 @@
                 </button>
             </div>
             <div *ngIf="groupData.gnotice.length > 0" class="moving-group-info mat-primary text hover-item">
-                <img class="icon" [src]="gNoticeTip" alt="">
+                <img class="icon-tip" [src]="gNoticeTip" alt="">
                 <div class="box">
                     <p class="animate animate-3">{{groupData.gnotice}}</p>
                 </div>
-                <img class="icon" [src]="gNoticeDelete" alt="">
+                <img class="icon-delete" [src]="gNoticeDelete" alt="">
             </div>
-            <div fxFlex="20px" *ngIf="atMsg" class="at-me-sheet mat-primary text hover-item">
-                <div fxFlexFill fxLayoutAlign="center center">群上屏</div>
+            <div *ngIf="groupData.gtopContent.length > 0" class="moving-group-info mat-primary text hover-item">
+                <img class="icon-tip" [src]="gTopContentTip" alt="">
+                <div class="box">
+                    <p class="animate animate-3">{{groupData.gtopContent}}</p>
+                </div>
+                <img class="icon-delete" [src]="gTopContentDelete" alt="">
             </div>
             <div fxFlex="20px" *ngIf="atMsg" class="at-me-sheet mat-primary text hover-item">
                 <div fxFlexFill fxLayoutAlign="center center" (click)="gotoAt()">有人@我</div>
