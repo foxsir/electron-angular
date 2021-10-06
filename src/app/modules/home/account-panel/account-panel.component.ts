@@ -33,6 +33,8 @@ import {CacheService} from "@services/cache/cache.service";
 import {UploadedFile} from "@app/factorys/upload/upload-file/upload-file.component";
 import {UserModel} from "@app/models/user.model";
 import {DatabaseService} from "@services/database/database.service";
+import {ImService} from "@services/im/im.service";
+import {CurrentChattingChangeService} from "@services/current-chatting-change/current-chatting-change.service";
 // import icons end
 
 @Component({
@@ -105,8 +107,9 @@ export class AccountPanelComponent implements OnInit {
     private router: Router,
     private windowService: WindowService,
     private restService: RestService,
+    private imService: ImService,
     private cacheService: CacheService,
-    private databaseService: DatabaseService,
+    private currentChattingChangeService: CurrentChattingChangeService,
   ) {
   }
 
@@ -151,10 +154,14 @@ export class AccountPanelComponent implements OnInit {
     this.dialogService.confirm({title: '退出登录', text: "确定要退出当前账号吗？"}).then(ok => {
       if(ok) {
         this.router.navigate(['/']).then(() => {
-          localStorage.removeItem(RBChatUtils.COOKIE_KEY_AUTHED_LOCAL_USER_INFO_ID);
-          this.windowService.loginWindow();
-          // 关闭数据库链接
-          this.cacheService.disconnectDB();
+          this.restService.loginOut().subscribe(() => {
+            this.imService.disconnectSocket();
+            this.windowService.loginWindow();
+            // 关闭数据库链接
+            this.cacheService.disconnectDB();
+            this.currentChattingChangeService.switchCurrentChatting(null).then();
+            localStorage.removeItem(RBChatUtils.COOKIE_KEY_AUTHED_LOCAL_USER_INFO_ID);
+          });
         });
       }
     });
