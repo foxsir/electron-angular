@@ -30,7 +30,6 @@ export class SessionService {
     private snackBarService: SnackBarService,
     private windowService: WindowService,
     private cacheService: CacheService,
-    private databaseService: DatabaseService,
   ) { }
 
   login(account: string, password: string, message: string = "登录成功") {
@@ -38,7 +37,7 @@ export class SessionService {
       if (res.status === 200) {
         const userInfo = res.data;
         this.localUserService.update(userInfo);
-        this.databaseService.connectionDB(userInfo.userId.toString()).then((connect) => {
+        this.cacheService.connectionDB(userInfo.userId.toString()).then((connect) => {
           this.cacheService.cacheMyInfo(userInfo.userId).then(() => {
             // 使用缓存中的头像
             this.cacheService.getMyInfo().then((myInfo: UserModel) => {
