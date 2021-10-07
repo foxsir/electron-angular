@@ -18,7 +18,7 @@ export class ShortDatePipe implements PipeTransform {
   isToday(timestamp: number): boolean {
     const date = new Date(timestamp);
     const now = new Date();
-    return date.getDate() === now.getDate() && date.getMonth() === now.getMonth()
+    return date.getDate() === now.getDate() && date.getMonth() === now.getMonth();
   }
 
 }
