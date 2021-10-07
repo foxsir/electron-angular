@@ -37,17 +37,17 @@ import SilenceUserModel from "@app/models/silence-user.model";
 export type AlarmDataMap = Map<string, {alarmData: AlarmItemInterface; message?: Map<string, ChatmsgEntityModel>}>;
 
 interface CacheItem {
-  alarmDataMap: AlarmDataMap;
-  friendMap: Map<string, FriendModel>;
-  groupMap: Map<string, GroupModel>;
-  groupAdminMap: Map<string, Map<string, GroupAdminModel>>;
-  groupMemberMap: Map<string, GroupMemberModel>;
-  myInfo: UserModel;
-  muteMap: Map<string, boolean>;
-  topMap: Map<string, boolean>;
-  blackListMap: Map<string, BlackListModel>;
-  newFriendMap: Map<string, FriendRequestModel>;
-  atMe: boolean;
+  alarmDataMap: AlarmDataMap; // 会话信息
+  friendMap: Map<string, FriendModel>; // 好友信息
+  groupMap: Map<string, GroupModel>; // 我的群组
+  groupAdminMap: Map<string, Map<string, GroupAdminModel>>; // 群组管理员
+  groupMemberMap: Map<string, GroupMemberModel>; // 群组成员
+  myInfo: UserModel; // 当前用户信息
+  muteMap: Map<string, boolean>; // 静音的会话
+  topMap: Map<string, boolean>; // 置顶的会话
+  blackListMap: Map<string, BlackListModel>; // 黑名单
+  newFriendMap: Map<string, FriendRequestModel>; // 新好友请求
+  atMe: boolean; // @我的消息
 }
 
 @Injectable({
