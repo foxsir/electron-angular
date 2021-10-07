@@ -115,17 +115,31 @@
           </div>
         </div>
         <div fxFlex fxLayout="column" [fxHide]="showGroupTabs">
-          <div class="down-arrow" [fxShow]="showDownArrow">
-            <button mat-icon-button mat-raised-button (click)="scrollToBottom()">
-              <mat-icon class="hover-icon">
-                <img [src]="downArrowIcon" class="icon" alt="">
-                <img [src]="downArrowActiveIcon" class="icon-active" alt="">
-              </mat-icon>
-            </button>
-          </div>
-          <div fxFlex="20px" *ngIf="atMsg" class="at-me-sheet mat-primary text hover-item">
-            <div fxFlexFill fxLayoutAlign="center center" (click)="gotoAt()">有人@我</div>
-          </div>
+            <div class="down-arrow" [fxShow]="showDownArrow">
+                <button mat-icon-button mat-raised-button (click)="scrollToBottom()">
+                    <mat-icon class="hover-icon">
+                        <img [src]="downArrowIcon" class="icon" alt="">
+                        <img [src]="downArrowActiveIcon" class="icon-active" alt="">
+                    </mat-icon>
+                </button>
+            </div>
+            <div *ngIf="groupData.gnotice.length > 0 && groupData.gnotice_visible == true" class="moving-group-info mat-primary text hover-item">
+                <img class="icon-tip" [src]="gNoticeTip" alt="">
+                <div class="box">
+                    <p class="animate {{groupData.gnotice_class}}">{{groupData.gnotice}}</p>
+                </div>
+                <img class="icon-delete" [src]="gNoticeDelete" alt="" (click)="this.groupData.gnotice_visible = false;">
+            </div>
+            <div *ngIf="groupData.gtopContent.length > 0 && groupData.gtopContent_visible == true" class="moving-group-info mat-primary text hover-item">
+                <img class="icon-tip" [src]="gTopContentTip" alt="">
+                <div class="box">
+                    <p class="animate {{groupData.gtopContent_class}}">{{groupData.gtopContent}}</p>
+                </div>
+                <img class="icon-delete" [src]="gTopContentDelete" alt="" (click)="this.groupData.gtopContent_visible = false;">
+            </div>
+            <div fxFlex="20px" *ngIf="atMsg" class="at-me-sheet mat-primary text hover-item">
+                <div fxFlexFill fxLayoutAlign="center center" (click)="gotoAt()">有人@我</div>
+            </div>
           <div fxFlex id="chatting-panel" #chattingContainer>
             <mat-card class="mat-elevation-z0 transparent" fxFlex="100">
               <mat-card-content fxFlex="100">
