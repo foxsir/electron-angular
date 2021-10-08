@@ -113,6 +113,9 @@ export class IndexComponent implements OnInit {
       }
     });
     this.connectDB();
+    this.messageDistributeService.USER_ONLINE_STATUS_CHANGE$.subscribe((res: ProtocalModel) => {
+      // alert(res.typeu);
+    });
   }
 
   connectDB() {
