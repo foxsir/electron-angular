@@ -88,8 +88,8 @@ export class MessageDistributeService {
   private GROUP_SILENCESource = new Subject<ProtocalModel>();
   public GROUP_SILENCE$ = this.GROUP_SILENCESource.asObservable();
 
-  private GROUP_ALL_SILENCESource = new Subject<ProtocalModel>();
-  public GROUP_ALL_SILENCE$ = this.GROUP_ALL_SILENCESource.asObservable();
+  private USER_ONLINE_STATUS_CHANGESource = new Subject<ProtocalModel>();
+  public USER_ONLINE_STATUS_CHANGE$ = this.USER_ONLINE_STATUS_CHANGESource.asObservable();
 
   constructor() { }
 
@@ -168,6 +168,9 @@ export class MessageDistributeService {
         break;
       case UserProtocalsType.GROUP_SILENCE:
         this.GROUP_SILENCESource.next(originData);
+        break;
+      case UserProtocalsType.USER_ONLINE_STATUS_CHANGE:
+        this.USER_ONLINE_STATUS_CHANGESource.next(originData);
         break;
       default:
         this.illegalMessageSource.next(originData);
