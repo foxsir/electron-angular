@@ -184,7 +184,7 @@ export class IndexComponent implements OnInit {
   }
 
   initIMServer() {
-    // this.imService.setDebugEnable(true);          // 开启框架的log输出
+    this.imService.setDebugCoreEnable(true);          // 开启框架的log输出
     this.imService.setDebugPingPongEnable(false); // 关闭底层socket.io的心跳Log输出，否则心跳Log会太频繁而干其它更重要的Log查看
 
     // 【WEBIM的SDK调用第1步：设置回调函数】
