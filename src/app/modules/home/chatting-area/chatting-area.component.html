@@ -19,7 +19,7 @@
     <!--语音聊天 drawerContent.voice 不要删除  *ngIf="drawerContent.voice"-->
     <div fxFlex="280px" [fxShow]="drawerContent.voice">
       <mat-card class="mat-elevation-z0" *ngIf="currentChat">
-        <app-chatting-voice [drawer]="chattingAreaDrawer" #appChattingVoice [currentChat]="currentChat"></app-chatting-voice>
+        <!--<app-chatting-voice [drawer]="chattingAreaDrawer" #appChattingVoice [currentChat]="currentChat"></app-chatting-voice>-->
       </mat-card>
     </div>
   </mat-drawer>
@@ -80,12 +80,12 @@
                 </mat-icon>
               </button>
               <!--点击按钮：语音聊天-->
-              <button [fxShow]="currentChat.metadata.chatType === 'friend'" mat-icon-button (click)="openEndDrawer('voice', true);">
-                <mat-icon class="hover-icon">
-                  <img class="icon" [src]="voiceIcon" alt="">
-                  <img class="icon-active" [src]="voiceActiveIcon" alt="">
-                </mat-icon>
-              </button>
+              <!--<button [fxShow]="currentChat.metadata.chatType === 'friend'" mat-icon-button (click)="openEndDrawer('voice', true);">-->
+              <!--  <mat-icon class="hover-icon">-->
+              <!--    <img class="icon" [src]="voiceIcon" alt="">-->
+              <!--    <img class="icon-active" [src]="voiceActiveIcon" alt="">-->
+              <!--  </mat-icon>-->
+              <!--</button>-->
               <button mat-icon-button (click)="openEndDrawer('setting', true)">
                 <mat-icon class="hover-icon">
                   <img class="icon" [src]="settingIcon" alt="">

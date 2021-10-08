@@ -49,7 +49,7 @@ function createWindow(): BrowserWindow {
       allowRunningInsecureContent: (serve) ? true : false,
       contextIsolation: false,  // false if you want to run e2e test with Spectron
       enableRemoteModule : true, // true if you want to run e2e test with Spectron or use remote module in renderer context (ie. Angular)
-      preload: path.resolve(__dirname, 'agora-renderer.js')
+      // preload: path.resolve(__dirname, 'agora-renderer.js')
     },
   });
 
