@@ -2,6 +2,7 @@ class SignupModel {
   public user_mail?: string = null;
   public user_phone?: string = null;
   public code?: string = null;
+  public area?: string = null;
   public user_psw?: string = null;
   public confirm_password?: string = null;
 }

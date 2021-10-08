@@ -103,9 +103,10 @@ export class RegisterComponent implements OnInit {
   public nextStep() {
     if (this.form.form.valid) {
       const data = {
-        phone: [this.form.form.value.area, this.form.form.value.user_phone].join("-"),
+        phone: [this.form.model.area, this.form.form.value.user_phone].join("-"),
         vCode: this.form.form.value.code
       };
+
       if (this.registerType === 1) {
         this.restService.submitVerifyCodeToServer(data).subscribe((res: NewHttpResponseInterface<any>) => {
           if (res.status === 200) {
@@ -127,7 +128,7 @@ export class RegisterComponent implements OnInit {
    */
   gotoStepTwo() {
     const data = {
-      phone: [this.form.form.value.area, this.form.form.value.user_phone].join("-"),
+      phone: [this.form.model.area, this.form.form.value.user_phone].join("-"),
       username: this.form.form.value.user_mail
     };
     let params = "";
@@ -159,6 +160,9 @@ export class RegisterComponent implements OnInit {
         ...this.step2Form.value,
         user_sex: this.userSex,
       };
+      if(this.registerType === 1) {
+        data.user_phone = [this.form.model.area, this.form.form.value.user_phone].join("-");
+      }
       if(this.avatarUrl && this.avatarUrl.pathname) {
         data = Object.assign(data, {userAvatarFileName: this.avatarUrl.pathname});
       }
