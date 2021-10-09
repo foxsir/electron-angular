@@ -587,7 +587,7 @@ export class MessageService {
         return new Promise((resolve, reject) => {
             const localUserInfo = this.localUserService.localUserInfo;
             //let p = JSON.stringify(msgBody);
-
+            msgBody.QoS = true;
             this.imService.sendData(msgBody);
 
             resolve({
