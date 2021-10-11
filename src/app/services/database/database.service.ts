@@ -1,4 +1,3 @@
-import { Injectable } from '@angular/core';
 import {Subject} from 'rxjs';
 import {BaseEntity} from 'typeorm';
 import IpcResponseInterface from "@app/interfaces/ipc-response.interface";
