@@ -327,23 +327,20 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
         //   msgBody: res.msgBody
         // });
         // this.pushCache();
-
-        this.cacheService.putChattingCache(this.currentChat, chatMsgEntity, emitToUI).then(() => {
-          if(emitToUI) {
-            this.sendMessage.emit({chat: chatMsgEntity, dataContent: res.msgBody});
-          } else if(replaceEntity) {
-            const newMap: Map<string, ChatmsgEntityModel> = new Map();
-            this.cacheService.chatMsgEntityMap.forEach((v, k) => {
-              if(k === replaceEntity.fingerPrintOfProtocal) {
-                newMap.set(chatMsgEntity.fingerPrintOfProtocal, chatMsgEntity);
-              } else {
-                newMap.set(k, v);
-              }
-            });
-            this.cacheService.chatMsgEntityMap = newMap;
-            this.sendMessage.emit({chat: chatMsgEntity, dataContent: res.msgBody});
-          }
-        });
+        if(emitToUI) {
+          this.sendMessage.emit({chat: chatMsgEntity, dataContent: res.msgBody});
+        } else if(replaceEntity) {
+          const newMap: Map<string, ChatmsgEntityModel> = new Map();
+          this.cacheService.chatMsgEntityMap.forEach((v, k) => {
+            if(k === replaceEntity.fingerPrintOfProtocal) {
+              newMap.set(chatMsgEntity.fingerPrintOfProtocal, chatMsgEntity);
+            } else {
+              newMap.set(k, v);
+            }
+          });
+          this.cacheService.chatMsgEntityMap = newMap;
+          this.sendMessage.emit({chat: chatMsgEntity, dataContent: res.msgBody});
+        }
       }
     });
   }
