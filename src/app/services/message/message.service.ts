@@ -11,6 +11,9 @@ import {FriendRequestModel} from "@app/models/friend-request.model";
 import {FriendAddWay} from "@app/config/friend-add-way";
 import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
+import {CacheService} from "@services/cache/cache.service";
+import {CurrentChattingChangeService} from "@services/current-chatting-change/current-chatting-change.service";
+import {MessageEntityService} from "@services/message-entity/message-entity.service";
 
 interface SendMessageResponse {
   success: boolean;
@@ -36,6 +39,9 @@ export class MessageService {
     private imService: ImService,
     private localUserService: LocalUserService,
     private groupsProviderService: GroupsProviderService,
+    private cacheService: CacheService,
+    private currentChattingChangeService: CurrentChattingChangeService,
+    private messageEntityService: MessageEntityService,
   ) {
   }
 
@@ -247,15 +253,23 @@ export class MessageService {
           // 详见：http://docs.52im.net/extend/docs/api/mobileimsdk/server/net/openmob/mobileimsdk/server/protocal/Protocal.html）
           const p: any = createCommonData2(JSON.stringify(msgBody), fromUid, friendUID, UserProtocalsType.MT03_OF_CHATTING_MESSAGE);
           // 将消息通过websocket发送出去
-          // QoS = true 需要质量保证
-          p.QoS = true;
-          this.imService.sendData(p);
-          sucess = true;
+          p.QoS = true; // 需要质量保证
 
-          resolve({
-            success: sucess,
-            msgBody: msgBody,
-            fingerPrint: p.fp,
+
+          const message = msgBody.m;
+          const chatMsgEntity: ChatmsgEntityModel = this.messageEntityService.prepareSendedMessage(
+            message, new Date().getTime(), p.fp, msgType
+          );
+          chatMsgEntity.uh = this.localUserService.localUserInfo.userAvatarFileName;
+          this.cacheService.putChattingCache(this.currentChattingChangeService.currentChatting, chatMsgEntity, true).then(() => {
+            this.imService.sendData(p);
+            sucess = true;
+
+            resolve({
+              success: sucess,
+              msgBody: msgBody,
+              fingerPrint: p.fp,
+            });
           });
         });
       }
