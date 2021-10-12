@@ -207,7 +207,7 @@ export default class MBUtils {
       if (websocket.readyState === 1) {
         try {
           // api文档：https://developer.mozilla.org/zh-CN/docs/Web/API/WebSocket/send
-          websocket.send(dataWithString);
+          // websocket.send(dataWithString);
           sendSucess = true;
 
           if (MBUtils.mbCore.debugEnabled()) {

@@ -9,6 +9,8 @@ import LoginInfoModel from "../../models/login-info.model";
 import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 import {Router} from "@angular/router";
 import {SnackBarService} from "@services/snack-bar/snack-bar.service";
+import {WorkerService} from "@services/worker/worker.service";
+import MBProtocalFactory from "@app/client/MBProtocalFactory";
 
 type ReceivedMessageType = (fingerPrint: string) => void;
 
@@ -129,10 +131,13 @@ export class ImService {
     }
   };
 
+  private mbProtocalFactory = new MBProtocalFactory();
+
 
   constructor(
     private router: Router,
     private snackBarService: SnackBarService,
+    private workerService: WorkerService
   ) {
   }
 
@@ -194,7 +199,10 @@ export class ImService {
     // 将消息通过websocket发送出去
     // this._socket.emit(p.type, p);
 
-    return this.mbDataSender.sendCommonData(p); // TODO: 原生的mbw中没有返回值，mbwpro中有，后面的app中可对相应的业务代码进行优化！
+    this.workerService.post(JSON.stringify(p));
+    return 0;
+
+    // return this.mbDataSender.sendCommonData(p); // TODO: 原生的mbw中没有返回值，mbwpro中有，后面的app中可对相应的业务代码进行优化！
   }
 
   /**
@@ -291,6 +299,12 @@ export class ImService {
     this.setLoginInfo(varloginInfo);
 
     if(varloginInfo && wsUrl){
+
+
+      // worker login
+      const p = this.mbProtocalFactory.createPLoginInfo(varloginInfo.loginUserId, varloginInfo);
+      this.workerService.login(wsUrl, JSON.stringify(p));
+
       // 首先设置要连接的目标WebSocket服务地址
       this.mbCore.setWebsocketUrl(wsUrl);
       // // 同时保存一份登陆信息，以备登陆成功后使用

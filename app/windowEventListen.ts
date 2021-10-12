@@ -1,4 +1,4 @@
-import {screen, ipcMain, remote, BrowserWindow} from 'electron';
+import {ipcMain, BrowserWindow} from 'electron';
 import defaultOptions from "./DefaultOptions";
 
 export default class WindowEventListen {

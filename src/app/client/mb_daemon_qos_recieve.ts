@@ -52,7 +52,7 @@ export default class MBQoS4ReciveDaemon {
   private mbCore: MBCore;
 
   // 保存setInverval(...)定时器id（此id方便用于关闭定时时使用）
-  intervalId: any;
+  private static intervalId: any;
 
   /* 检查线程执行间隔（单位：毫秒），默认5分钟 */
   CHECH_INTERVAL = 5 * 60 * 1000; // 5分钟
@@ -65,7 +65,7 @@ export default class MBQoS4ReciveDaemon {
    *
    * key=消息包指纹码(String)，value=最近1次收到该包的时间戳（时间戳用于判定该包是否
    * 已失效时有用，收到重复包时用最近一次收到时间更新时间戳从而最大限度保证不重复） */
-  recievedMessages = new MBHashMap();
+  private static recievedMessages = new MBHashMap();
 
   /* 本次执行是否还未完成（内部变量，开发者无需理会） */
   _excuting = false;
@@ -88,7 +88,7 @@ export default class MBQoS4ReciveDaemon {
       this._excuting = true;
 
       if (this.mbCore.debugEnabled())
-        MBUtils.mblog_d(this.TAG, "【QoS接收方】+++++ START 暂存处理线程正在运行中，当前长度" + this.recievedMessages.size() + ".");
+        MBUtils.mblog_d(this.TAG, "【QoS接收方】+++++ START 暂存处理线程正在运行中，当前长度" + MBQoS4ReciveDaemon.recievedMessages.size() + ".");
 
 
       // TODO: 最终代码时要删除掉！！！！
@@ -96,17 +96,17 @@ export default class MBQoS4ReciveDaemon {
       // TODO: 最终代码时要删除掉！！！！
       // TODO: 最终代码时要删除掉！！！！
       console.debug('___________________________AAAAAAAAA');
-      this.recievedMessages.showAll();
+      MBQoS4ReciveDaemon.recievedMessages.showAll();
       console.debug('___________________________BBBBBBBBBB');
 
 
-      var arr = this.recievedMessages.keySet();
+      var arr = MBQoS4ReciveDaemon.recievedMessages.keySet();
       // 特别注意：遍历数组时如使用for in语法，则取出的实际是数组单元索引（0、1、2、3这种）
-      //          ，而非数组单元值，网上诸如“for (var key in this.recievedMessages.keySet()) ”
+      //          ，而非数组单元值，网上诸如“for (var key in MBQoS4ReciveDaemon.recievedMessages.keySet()) ”
       //          是错误的，因为此处的key是数组索引，并非数组单元的value！切记！
       for (var i = 0; i < arr.length; i++) {
         var key = arr[i];
-        var recievedTime = this.recievedMessages.get(key);
+        var recievedTime = MBQoS4ReciveDaemon.recievedMessages.get(key);
 
         var delta = MBUtils.getCurrentUTCTimestamp() - (recievedTime ? recievedTime : 0);
 
@@ -122,13 +122,13 @@ export default class MBQoS4ReciveDaemon {
         if (delta >= this.MESSAGES_VALID_TIME) {
           if (this.mbCore.debugEnabled())
             MBUtils.mblog_d(this.TAG, "【QoS接收方】指纹为" + key + "的包已生存" + delta + "ms(最大允许" + this.MESSAGES_VALID_TIME + "ms), 马上将删除之.");
-          this.recievedMessages.remove(key);
+          MBQoS4ReciveDaemon.recievedMessages.remove(key);
         }
       }
     }
 
     if (this.mbCore.debugEnabled())
-      MBUtils.mblog_d(this.TAG, "【QoS接收方】+++++ END 暂存处理线程正在运行中，当前长度" + this.recievedMessages.size() + ".");
+      MBUtils.mblog_d(this.TAG, "【QoS接收方】+++++ END 暂存处理线程正在运行中，当前长度" + MBQoS4ReciveDaemon.recievedMessages.size() + ".");
 
     this._excuting = false;
   }
@@ -149,8 +149,8 @@ export default class MBQoS4ReciveDaemon {
     // ** 如果列表不为空则尝试重置生成起始时间
     // 当重启时列表可能是不为空的（此场景目前出现在掉线后重新恢复时），那么为了防止在网络状况不好的情况下，登
     // 陆能很快恢复时对方可能存在的重传，此时也能一定程序避免消息重复的可能
-    if (this.recievedMessages != null && this.recievedMessages.size() > 0) {
-      var arr = this.recievedMessages.keySet();
+    if (MBQoS4ReciveDaemon.recievedMessages != null && MBQoS4ReciveDaemon.recievedMessages.size() > 0) {
+      var arr = MBQoS4ReciveDaemon.recievedMessages.keySet();
       for (var i = 0; i < arr.length; i++) {
         var key = arr[i];
         // 重置列表中的生存起始时间
@@ -164,7 +164,7 @@ export default class MBQoS4ReciveDaemon {
     }
 
     // 定时执行
-    this.intervalId = setInterval( () => {
+    MBQoS4ReciveDaemon.intervalId = setInterval( () => {
       this.excute();
     }, this.CHECH_INTERVAL);
 
@@ -178,8 +178,8 @@ export default class MBQoS4ReciveDaemon {
    * <b>本线程的启停，目前属于MobileIMSDK算法的一部分，暂时无需也不建议由应用层自行调用。</b>
    */
   stop() {
-    if (this.intervalId && this.intervalId !== 0) {
-      clearInterval(this.intervalId);
+    if (MBQoS4ReciveDaemon.intervalId && MBQoS4ReciveDaemon.intervalId !== 0) {
+      clearInterval(MBQoS4ReciveDaemon.intervalId);
     }
   }
 
@@ -206,7 +206,7 @@ export default class MBQoS4ReciveDaemon {
    */
   addRecieved(fingerPrintOfProtocal) {
     if (fingerPrintOfProtocal) {
-      if (this.recievedMessages.contains(fingerPrintOfProtocal))
+      if (MBQoS4ReciveDaemon.recievedMessages.contains(fingerPrintOfProtocal))
         MBUtils.mblog_w(this.TAG, "【QoS接收方】指纹为" + fingerPrintOfProtocal
           + "的消息已经存在于接收列表中，该消息重复了（原理可能是对方因未收到应答包而错误重传导致），更新收到时间戳哦.");
 
@@ -219,7 +219,7 @@ export default class MBQoS4ReciveDaemon {
 
   putImpl(fingerPrintOfProtocal) {
     if (fingerPrintOfProtocal)
-      this.recievedMessages.put(fingerPrintOfProtocal, MBUtils.getCurrentUTCTimestamp());
+      MBQoS4ReciveDaemon.recievedMessages.put(fingerPrintOfProtocal, MBUtils.getCurrentUTCTimestamp());
   }
 
   /**
@@ -231,7 +231,7 @@ export default class MBQoS4ReciveDaemon {
    * @return {boolean} true表示是，否则不是
    */
   hasRecieved(fingerPrintOfProtocal) {
-    return this.recievedMessages.contains(fingerPrintOfProtocal);
+    return MBQoS4ReciveDaemon.recievedMessages.contains(fingerPrintOfProtocal);
   }
 
   /**
@@ -241,7 +241,7 @@ export default class MBQoS4ReciveDaemon {
    * 据交叉。
    */
   clear() {
-    this.recievedMessages.clear();
+    MBQoS4ReciveDaemon.recievedMessages.clear();
   }
 
   /**
@@ -250,7 +250,7 @@ export default class MBQoS4ReciveDaemon {
    * @return {int} 列表大小
    */
   size() {
-    return this.recievedMessages.size();
+    return MBQoS4ReciveDaemon.recievedMessages.size();
   }
 
   /**

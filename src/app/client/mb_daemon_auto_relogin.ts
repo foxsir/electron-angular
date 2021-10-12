@@ -47,7 +47,7 @@ export default class MBAutoReLoginDaemon {
   private mbDataSender: MBDataSender;
 
   // 保存setInverval(...)定时器id（此id方便用于关闭定时器时使用）
-  intervalId: any;
+  private static intervalId: any;
 
   /*
    * 自动重新登陆时间间隔（单位：毫秒），默认3000毫秒。
@@ -155,7 +155,7 @@ export default class MBAutoReLoginDaemon {
     }
 
     // 定时执行
-    this.intervalId = setInterval(() => {
+    MBAutoReLoginDaemon.intervalId = setInterval(() => {
       this.excute();
     }, this.AUTO_RE$LOGIN_INTERVAL);
   }
@@ -166,8 +166,8 @@ export default class MBAutoReLoginDaemon {
    * <b>本线程的启停，目前属于MobileIMSDK算法的一部分，暂时无需也不建议由应用层自行调用。</b>
    */
   stop() {
-    if (this.intervalId && this.intervalId !== 0) {
-      clearInterval(this.intervalId);
+    if (MBAutoReLoginDaemon.intervalId && MBAutoReLoginDaemon.intervalId !== 0) {
+      clearInterval(MBAutoReLoginDaemon.intervalId);
     }
   }
 

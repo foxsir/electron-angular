@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {LocalUserService} from "@services/local-user/local-user.service";
 import {formatDate} from "@app/libs/mobileimsdk-client-common";
 import {GroupChattingCacheService} from "@services/group-chatting-cache/group-chatting-cache.service";
@@ -23,20 +23,12 @@ import chatting from "@app/assets/icons/chatting.svg";
 import chattingActive from "@app/assets/icons/chatting-active.svg";
 import addressList from "@app/assets/icons/address-list.svg";
 import addressListActive from "@app/assets/icons/address-list-active.svg";
-import groupChatting from "@app/assets/icons/group-chatting.svg";
-import groupChattingActive from "@app/assets/icons/group-chatting-active.svg";
-import collect from "@app/assets/icons/collect.svg";
-import collectActive from "@app/assets/icons/collect-active.svg";
 import {AvatarService} from "@services/avatar/avatar.service";
-import NewHttpResponseInterface from "@app/interfaces/new-http-response.interface";
-import RBChatUtils from "@app/libs/rbchat-utils";
-import { CacheService } from "@services/cache/cache.service";
+import {CacheService} from "@services/cache/cache.service";
 import netConnect from "@app/assets/icons/net-connect.svg";
 import netDisConnect from "@app/assets/icons/net-disconnect.svg";
 import {UserModel} from "@app/models/user.model";
-import {SoundService} from "@services/sound/sound.service";
 import {MiniUiService} from "@services/mini-ui/mini-ui.service";
-import {DatabaseService} from "@services/database/database.service";
 
 // import svg end
 
@@ -160,6 +152,19 @@ export class IndexComponent implements OnInit {
     // 监听好友请求
     this.messageDistributeService.MT07_OF_ADD_FRIEND_REQUEST_INFO_SERVER$TO$B$.subscribe(() => {
       this.cacheService.cacheNewFriends();
+    });
+
+    this.messageDistributeService.USER_INFO_UPDATE$.subscribe(user => {
+      console.dir(user);
+      // {
+      //   "userCornet": "8A7EE65D",
+      //   "userSex": 1,
+      //   "latestLoginTime": "1633680311121",
+      //   "nickname": "foxsir",
+      //   "updateAvatarTimestamp": 1633680336710,
+      //   "userAvatarFileName": "http://strawberry-im.oss-cn-shenzhen.aliyuncs.com/user_portrait/400340.jpg",
+      //   "userId": 400340
+      // }
     });
 
     this.listenNetStatus();

@@ -21,7 +21,7 @@ export class MessageTextComponent implements OnInit {
   public replyContentText: string = null;
   public replyContentData: ReplyContentType = null;
 
-  public content = "";
+  public content: string;
 
   public messageType = {
     [0]: '普通文字',
@@ -80,7 +80,8 @@ export class MessageTextComponent implements OnInit {
       }
     }
 
-    return content;
+
+    return content.split("\n").join('<br />');
   }
 
   /**

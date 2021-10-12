@@ -58,6 +58,7 @@
       <div fxLayout="row">
         <div fxFlex="20px"></div>
         <div fxFlex>
+            <input type="text" nz-input [(ngModel)]="search_keywords" class="txt-border-none" placeholder="搜索..."
           <div fxFlex="274px">
             <mat-label></mat-label>
             <input type="text" nz-input [(ngModel)]="search_keywords" class="txt-border-none" placeholder="搜索..."
@@ -81,7 +82,7 @@
         <button nz-button nzType="link" class="btncancel" (click)="cancel()">取消</button>
       </div>
     </mat-dialog-actions>
-    <div style="100%; height: 20px; clear:both"></div>
+    <div style="width:100%; height: 20px; clear:both"></div>
   </div>
 </div>
 
@@ -96,6 +97,10 @@
         <div fxFlex>
             <div fxLayout="column" fxLayoutGap="10px">
                 <mat-selection-list class="friend-list" #selectDeleteGroupAdmin disableRipple color="primary">
+                    <mat-list-option class="friend-list-item disable-hover" *ngFor="let item of data.admin_list" [value]="item.userUid">
+                        <mat-icon mat-list-icon class="friend-avatar">
+                            <img [src]="item.userAvatarFileName" alt="">
+                        </mat-icon>
                     <mat-list-option class="friend-list-item" *ngFor="let item of data.admin_list" [value]="item.userUid">
                         <img src="{{item.userAvatarFileName}}" mat-list-icon style="width: 40px; height: 40px" />
                         <div mat-line>{{item.nickname}}</div>

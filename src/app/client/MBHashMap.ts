@@ -26,37 +26,28 @@
  * ======================================================================
  */
 export default class MBHashMap {
-  length = 0;
   maxLength = Number.MAX_VALUE;
-  container = {};
+  container = new Map();
 
-  put(objName,objValue){
-    try{
-      if (this.length >= this.maxLength) {
-        throw new Error("[Error HashMap] : Map Datas' count overflow !");
-      }
-      if(objName !== ""){
-        for(const p in this.container){
-          if(p === objName){
-            this.container[objName] = objValue;
-            return ;
-          }
+  put(objName, objValue){
+    if(objName !== ""){
+      for(const p in this.container){
+        if(p === objName){
+          this.container.set(objName, objValue);
+          return ;
         }
-        this.container[objName] = objValue;
-        this.length ++ ;
       }
-    }catch(e){
-      return e;
+      this.container.set(objName, objValue);
     }
   }
 
   get(objName){
     try{
-      if(this.container[objName]) {
-        return this.container[objName];
+      if(this.container.get(objName)) {
+        return this.container.get(objName);
       }
       return null;
-    }catch(e){
+    }catch(e) {
       return e;
     }
   }
@@ -77,8 +68,9 @@ export default class MBHashMap {
   containsValue(objValue){
     try{
       for(const p in this.container){
-        if(this.container[p] === objValue)
+        if(this.container.get(p) === objValue) {
           return true;
+        }
       }
       return false;
     }catch(e){
@@ -88,9 +80,8 @@ export default class MBHashMap {
 
   remove(objName){
     try{
-      if(this.container[objName]){
-        delete this.container[objName];
-        this.length -- ;
+      if(this.container.get(objName)){
+        this.container.delete(objName);
         return true;
       }
       return false;
@@ -124,31 +115,22 @@ export default class MBHashMap {
 
   clear(){
     try{
-      delete this.container;
-      this.container = {};
-      this.length = 0;
+      this.container = new Map();
     }catch(e){
       return e;
     }
   }
 
   isEmpty(){
-    if(this.length === 0)
-      return true;
-    else
-      return false;
+    return this.container.size === 0;
   }
 
   keySet(){
-    var _keys = [];
-    for (var key in this.container) {
-      _keys.push(key);
-    }
-    return _keys;
+    return new Array(...this.container.keys());
   }
 
   size(){
-    return this.length;
+    return this.container.size;
   }
 
   //HashMap.prototype.runIn = function(fun){
@@ -166,9 +148,9 @@ export default class MBHashMap {
 
   // 本方法仅用于debug时
   showAll(funValueToString: Function = null){
-    if(this.length > 0) {
+    if(this.container.size > 0) {
       console.log("[hashmap.js_showAll()] 正在输出HashMap内容(列表长度 %d) ------------------->"
-        , this.length);
+        , this.container.size);
       // 遍历
       for (var key in this.container) {
         if(funValueToString){
@@ -181,7 +163,7 @@ export default class MBHashMap {
       }
     }
     else {
-      console.log("[hashmap.js_showAll()] 列表中长度为：%d !", this.length);
+      console.log("[hashmap.js_showAll()] 列表中长度为：%d !", this.container.size);
     }
   }
 

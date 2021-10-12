@@ -84,7 +84,7 @@ export class AlarmsProviderService {
     // amd.alarmMessageType = AlarmMessageType.tempChatMessage;
     // //amd.title = '陌生人'+(RBChatUtils.isStringEmpty(beyondNickName)?'':' - '+beyondNickName);
     // amd.title = beyondNickName;
-    // amd.msgContent = this.messageService.parseMessageForShow(messageContent, messageContentType);
+    // amd.msgContent = MessageService.parseMessageForShow(messageContent, messageContentType);
     // amd.date = (time <= 0 ? RBChatUtils.getCurrentUTCTimestamp() : time);
     //
     // amd.dataId = beyondUid;
@@ -99,7 +99,7 @@ export class AlarmsProviderService {
     return {
       alarmMessageType: AlarmMessageType.tempChatMessage,
       title: beyondNickName,
-      msgContent: this.messageService.parseMessageForShow(messageContent, messageContentType),
+      msgContent: MessageService.parseMessageForShow(messageContent, messageContentType),
       date: (time <= 0 ? RBChatUtils.getCurrentUTCTimestamp() : time),
       dataId: beyondUid,
       avatar: null,
@@ -152,9 +152,9 @@ export class AlarmsProviderService {
     return {
       alarmMessageType: AlarmMessageType.reviceMessage,
       title: friendNickName,
-      msgContent: this.messageService.parseMessageForShow(messageContent, messageContentType),
+      msgContent: MessageService.parseMessageForShow(messageContent, messageContentType),
       //--
-      // msgContent: this.messageService.parseMessageForShow(messageContent, messageContentType),
+      // msgContent: MessageService.parseMessageForShow(messageContent, messageContentType),
       date: (time <= 0 ? RBChatUtils.getCurrentUTCTimestamp() : time),
 
       dataId: friendUid,
@@ -234,9 +234,9 @@ export class AlarmsProviderService {
       title: toGname,
       //原版
       // msgContent: (RBChatUtils.isStringEmpty(fromUserNickName)?'': fromUserNickName+': ')
-      //     + this.messageService.parseMessageForShow(messageContent, messageContentType);
+      //     + MessageService.parseMessageForShow(messageContent, messageContentType);
       msgContent: (RBChatUtils.isStringEmpty(fromUserNickName) ? '' : fromUserNickName + ': ')
-        + this.messageService.parseMessageForShow(messageContent, messageContentType),
+        + MessageService.parseMessageForShow(messageContent, messageContentType),
       date: (time <= 0 ? RBChatUtils.getCurrentUTCTimestamp() : time),
       dataId: toGid,
       avatar: null,
