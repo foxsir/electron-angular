@@ -592,7 +592,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
             if(this.virtualScrollViewport.measureScrollOffset('bottom') > 0) {
               this.scrollToBottom('auto');
             }
-          }, 100);
+          }, 500);
         }
       };
 

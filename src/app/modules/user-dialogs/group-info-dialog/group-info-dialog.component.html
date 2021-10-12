@@ -53,7 +53,7 @@
     <div fxLayout="column" fxLayoutGap="20px">
         <div fxFlex><label>{{data.popup_title}}</label></div>
         <div fxFlex>
-            <input type="text" nz-input [(ngModel)]="search_keywords" class="txt-border-none" placeholder="搜索..." 
+            <input type="text" nz-input [(ngModel)]="search_keywords" class="txt-border-none" placeholder="搜索..."
                    (keyup)="txtSearchChange($event)"/>
         </div>
         <div fxFlex>
@@ -87,7 +87,7 @@
         <div fxFlex>
             <div fxLayout="column" fxLayoutGap="10px">
                 <mat-selection-list class="friend-list" #selectDeleteGroupAdmin disableRipple color="primary">
-                    <mat-list-option class="friend-list-item" *ngFor="let item of data.admin_list" [value]="item.userUid">
+                    <mat-list-option class="friend-list-item disable-hover" *ngFor="let item of data.admin_list" [value]="item.userUid">
                         <mat-icon mat-list-icon class="friend-avatar">
                             <img [src]="item.userAvatarFileName" alt="">
                         </mat-icon>
