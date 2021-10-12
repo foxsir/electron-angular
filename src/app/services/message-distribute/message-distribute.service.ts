@@ -91,6 +91,9 @@ export class MessageDistributeService {
   private USER_ONLINE_STATUS_CHANGESource = new Subject<ProtocalModel>();
   public USER_ONLINE_STATUS_CHANGE$ = this.USER_ONLINE_STATUS_CHANGESource.asObservable();
 
+  private USER_INFO_UPDATESource = new Subject<ProtocalModel>();
+  public USER_INFO_UPDATE$ = this.USER_INFO_UPDATESource.asObservable();
+
   constructor() { }
 
   inceptMessage(originData: ProtocalModel) {
@@ -171,6 +174,9 @@ export class MessageDistributeService {
         break;
       case UserProtocalsType.USER_ONLINE_STATUS_CHANGE:
         this.USER_ONLINE_STATUS_CHANGESource.next(originData);
+        break;
+      case UserProtocalsType.USER_INFO_UPDATE:
+        this.USER_INFO_UPDATESource.next(originData);
         break;
       default:
         this.illegalMessageSource.next(originData);
