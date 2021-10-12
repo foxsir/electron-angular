@@ -1,15 +1,22 @@
-<div>
-  <div fxLayout="column">
-    <div fxFlex="32px">
+<div class="selFriend" style="height: 580px;">
+  <div fxLayout="column" fxFill>
+    <div fxFlex="50px">
       <h1 mat-dialog-title>选择联系人</h1>
     </div>
-    <div fxFlex="70">
-      <mat-form-field fxFlex="100">
-        <input type="text" matInput (ngModelChange)="filter()" [(ngModel)]="filterFriend" placeholder="搜索"/>
-      </mat-form-field>
+    <div fxFlex="50px">
+      <div fxLayout="row">
+        <div fxFlex="20px"></div>
+        <div fxFlex>
+          <mat-form-field fxFlex="100">
+            <mat-label>搜索...</mat-label>
+            <input type="text" matInput (ngModelChange)="filter()" [(ngModel)]="filterFriend"/>
+          </mat-form-field>
+        </div>
+        <div fxFlex="20px"></div>
+      </div>
     </div>
     <div fxFlex>
-      <div style="height: 450px" class="scrollbar">
+      <div style="height: 430px;clear: both" class="scrollbar">
         <mat-list class="friend-item-list">
           <mat-list-item *ngFor="let friend of friendList" class="hover-item" (click)="select(friend)">
             <mat-icon mat-list-icon class="friend-avatar">
@@ -21,11 +28,12 @@
           </mat-list-item>
         </mat-list>
       </div>
+      <mat-dialog-actions>
+        <div fxFlex="100" fxLayoutAlign="end">
+          <button mat-button color="primary" (click)="cancel()">取消</button>
+        </div>
+      </mat-dialog-actions>
     </div>
   </div>
 </div>
-<mat-dialog-actions>
-  <div fxFlex="100" fxLayoutAlign="end">
-    <button mat-button color="primary" (click)="cancel()">取消</button>
-  </div>
-</mat-dialog-actions>
+

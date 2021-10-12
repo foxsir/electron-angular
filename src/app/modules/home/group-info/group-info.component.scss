@@ -100,6 +100,9 @@
         padding-left:0px;
         padding-right:0px;
     }
+  .list-box{
+    padding-left:0px
+  }
 }
 
 .role-group{
@@ -121,9 +124,48 @@
 .role-group-self{
     background-color:#0090ff;
 }
+.groupMember{
+  .list-box{
+    border-bottom: 0;
+  }
+  .mat-list-icon{
+    width:40px;
+    height:40px;
+    padding: 0;
+    margin: 0;
+  }
+  .nickName{
+    font-size: 14px;
+  }
+  .matLine{
+    padding-left:0;
+    margin: 0;
+  }
+  .role-group{
+    width: 36px;
+    height: 18px;
+    line-height: 18px;
+    border-radius: 10px;
+    color: #FFF;
+    font-size: 12px;
+    text-align: center;
+    padding: 0;
+    margin: 0;
+  }
+  .role-group-owner{
+    background-color: #fdab02;
+  }
+  .role-group-admin{
+    background-color: #b2cbd8;
+  }
+  .role-group-self{
+    background-color: #0091ff;
+  }
+}
 
 ::ng-deep {
   .groupInfo {
+    overflow: hidden;
     .mat-elevation-z0 {
       margin-top: 0px;
     }
@@ -141,6 +183,25 @@
     .btnsave,.ant-btn,.ant-btn-link{
       padding: 0;
       width: 30px;
+    }
+  }
+
+  .groupMember {
+    .mat-divider {
+      display: block;
+      margin: 0;
+      border-top-width: 0px;
+      border-top-style: none;
+    }
+    .mat-list-base .mat-list-item.mat-2-line, .mat-list-base .mat-list-option.mat-2-line {
+      height: 56px;
+    }
+
+  }
+  .groupAdmin{
+    border-bottom: 0px;
+    .mat-list-base .mat-list-item.mat-list-item-with-avatar .mat-list-item-content .mat-list-text, .mat-list-base .mat-list-item.mat-list-option .mat-list-item-content .mat-list-text, .mat-list-base .mat-list-option.mat-list-item-with-avatar .mat-list-item-content .mat-list-text, .mat-list-base .mat-list-option.mat-list-option .mat-list-item-content .mat-list-text{
+      padding-left:10px
     }
   }
 }

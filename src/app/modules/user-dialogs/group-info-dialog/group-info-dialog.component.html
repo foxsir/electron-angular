@@ -97,11 +97,8 @@
             <div fxLayout="column" fxLayoutGap="10px">
                 <mat-selection-list class="friend-list" #selectDeleteGroupAdmin disableRipple color="primary">
                     <mat-list-option class="friend-list-item" *ngFor="let item of data.admin_list" [value]="item.userUid">
-                        <mat-icon mat-list-icon class="friend-avatar">
-                            <img [src]="item.userAvatarFileName" alt="">
-                        </mat-icon>
+                        <img src="{{item.userAvatarFileName}}" mat-list-icon style="width: 40px; height: 40px" />
                         <div mat-line>{{item.nickname}}</div>
-                        <mat-divider></mat-divider>
                     </mat-list-option>
                 </mat-selection-list>
             </div>
