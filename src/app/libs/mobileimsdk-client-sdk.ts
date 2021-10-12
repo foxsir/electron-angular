@@ -1,4 +1,4 @@
-import io from "socket.io-client";
+// import io from "socket.io-client";
 // const io = window["io"];
 /**
  * 【基本说明】：
@@ -15,7 +15,6 @@ import io from "socket.io-client";
  *
  * Created by Jack Jiang on 16-9-1.
  */
-import {C_IMEVT_COMMON$DATA, S_IMEVT_DUPLICATED, S_IMEVT_ILLEGAL} from "./mobileimsdk-client-common";
 import {Subject} from "rxjs";
 
 export default class IMSDK {
@@ -222,233 +221,232 @@ export default class IMSDK {
         resolve(this._loginInfo);
       } else {
         this.loginInfo$.subscribe(() => {
-          console.dir(this._loginInfo)
           resolve(this._loginInfo);
         });
       }
     });
   }
 
-  loginImpl(varloginInfo, wsUrl, supportSSL) {
-    this.setLoginInfo(varloginInfo);
-
-    // 发起首次连接和认证
-    this._socket = io.connect(wsUrl, {
-      query: {token: JSON.stringify(this._loginInfo)},
-      forceNew:true,               // 20170110：加了此选项才能让客户端socketio.disconnect()生效！
-      secure: !!supportSSL // 20170526：是否支持SSL/TLS
-    });
-
-    /**
-     * 以下是socket.io客户端库的Socket事件.
-     * 更多资料请见：https://github.com/socketio/socket.io-client
-     */
-    // 收到对方客户端的“通用数据”消息（此事件表示收到IM消息了）
-    this._socket.on(C_IMEVT_COMMON$DATA, (p) => {
-      console.dir(p);
-      if(this._debugEnable){
-        this.callback_onIMLog('[E] >> 收到[聊天消息]：'+JSON.stringify(p), true);
-      }
-
-      // 将收到的消息通知应用层显示出来
-      this.callback_onIMData(p);
-    });
-    // 收到服务端的“重复登陆被踢”消息（此事件由服务端检测到当前loginUserId已经别处登陆时发出）
-    this._socket.on(S_IMEVT_DUPLICATED, (p) => {
-      if(this._debugEnable) {
-        this.callback_onIMLog('[E] >> 收到[重复登陆被踢事件]：' + JSON.stringify(p), true);
-      }
-
-      const alertContent = '账号已在其它地方登陆，当前会话已断开，请退出后重新登陆！';
-      // 如果开发者自已设置信息提示回调实现，就优先用开发者设置的
-      if(this.callback_onIMShowAlert){
-        this.callback_onIMShowAlert(alertContent);
-      }
-      // 否则用浏览器默认的alert方法（就是UI有点土）
-      else{
-        alert(alertContent);
-      }
-    });
-    // 收到服务端的“非法连接被拒绝服务并断开连接”消息（此事件由服务器判定客户端的socket
-    // 不存在登陆认证信息时发出，防止非法攻击）
-    this._socket.on(S_IMEVT_ILLEGAL, (p) => {
-      if(this._debugEnable) {
-        this.callback_onIMLog('[E] >> 收到[非法连接被拒绝服务]：' + JSON.stringify(p), true);
-      }
-
-      const alertContent = '服务判定你的连接非法，已被拒绝服务并断开连接！';
-      // 如果开发者自已设置信息提示回调实现，就优先用开发者设置的
-      if(this.callback_onIMShowAlert){
-        this.callback_onIMShowAlert(alertContent);
-      }
-      // 否则用浏览器默认的alert方法（就是UI有点土）
-      else{
-        alert(alertContent);
-      }
-    });
-    this._socket.on('connect', () => {
-      if(this._debugEnable) {
-        this.callback_onIMLog('[E] 本客户端的Socket connect 事件已经触发', true);
-      }
-    });
-    // 此事件发生时表示网络连接断开了
-    this._socket.on('disconnect', (data) => {// data content is "io server disconnect"
-      if(this._debugEnable) {
-        this.callback_onIMLog('[E] 本客户端的Socket disconnect 事件已经触发【END】!', true);
-      }
-
-      //if(logined)
-      {
-        // 重置在线标识，此标识只在登陆过之后才有意义（在此无条件重置吧，防止未知情况出现导致不能复位到false）
-        this._online = false;
-      }
-
-      // 属于首次登陆时，此时的disconnect发生的原因可能是：认证未通过、真的断网了等，
-      // 此处复位这两个缓存量是合理的：以便用户可以再次登陆
-      if(!this._logined){
-        this._loginInfo = null;
-      }
-
-      if(this._debugEnable) {
-        this.callback_onIMLog("[E] 对不起，你与IM服务器的网络连接断开了（掉线罗）...", true);
-      }
-
-      // 通知应用层网络掉线了
-      if(this.callback_onIMDisconnected){
-        this.callback_onIMDisconnected();
-      }
-    });
-    this._socket.on('connect_error', (data) => {
-      if(this._debugEnable) {
-        //this.callback_onIMLog('[E] 本客户端 connect_error 事件已触发' + JSON.stringify(data), true);
-      }
-    });
-    this._socket.on('connect_timeout', () => {
-      if(this._debugEnable) {
-        this.callback_onIMLog('[E] 本客户端 connect_timeout 事件已触发', true);
-      }
-    });
-    // 系统级的Error事件回调（socket.io v1.0后的版本中，官方推荐的连接认证最佳实践是通过服务端的error事件来处理的），
-    // 根据socket.io官方的建议，MobileIMSDK-Web是利于本事件来实现登陆认证和掉线重连接认证的
-    this._socket.on('error', (err) => {
-      if(this._debugEnable) {
-        this.callback_onIMLog('[E] 本客户端 error 事件已经触发' + err, true);
-      }
-
-      const errObj = JSON.parse(err);
-      const code = errObj.code;
-      const msg = errObj.msg;
-
-      //  认证成功
-      if(100 === code) {// 每次掉线都会重新走一遍认证过程，code=100的逻辑要注意别搞混
-        if(this._debugEnable) {
-          this.callback_onIMLog('[E] 本客户端 error 事件中：登陆认证成功(' + (this._logined ?
-            '掉线重连' : '首次登陆') + ')！【code=' + code + '】', true);
-        }
-
-        // 设置在线标识
-        this._online = true;
-
-        let welcome = '';
-        // 首次登陆成功
-        if (!this._logined) {
-
-          // 通知应用层对登陆结果处理展现或处理
-          this.callback_onIMAfterLoginSucess();
-
-          // Display the welcome message
-          welcome = "- 已成功登陆至 MobileIMSDK-Web 服务器 -";
-          this.callback_onIMLog(welcome, true);
-
-          // 设置已经登陆过标识（此标识主要用于区分首次登陆时的界面显示）
-          this._logined = true;
-        }
-        // 掉线重连成功
-        else{
-          if(this._debugEnable) {
-            this.callback_onIMLog("[E] 掉线自动重连成功了！", true);
-          }
-
-          // 通知应用层对掉线重连成功结果处理展现或处理
-          this.callback_onIMReconnectSucess();
-        }
-      }
-      else {
-        // 未认证成功（认证失败了）
-        if (101 === code) {
-          // 首次登陆时认证失败
-          if (!this._logined) {
-
-            if(this.callback_onIMAfterLoginFailed){
-              this.callback_onIMAfterLoginFailed(false);
-            }
-
-            if(this._debugEnable) {
-              this.callback_onIMLog("[E] 登陆认证失败，请检查您的用户名或密码！");
-            }
-          }
-          // 掉线重连时的认证失败
-          else {
-            const alertContent = '掉线重连时认证失败，请退出后重新登陆。。。';
-            // 如果开发者自已设置信息提示回调实现，就优先用开发者设置的
-            if(this.callback_onIMShowAlert){
-              this.callback_onIMShowAlert(alertContent);
-            }
-            // 否则用浏览器默认的alert方法（就是UI有点土）
-            else{
-              alert(alertContent);
-            }
-
-            if(this.callback_onIMAfterLoginFailed){
-              this.callback_onIMAfterLoginFailed(true);
-            }
-          }
-
-          if(this._debugEnable) {
-            this.callback_onIMLog('[E] 本客户端 error 事件中：登陆认证失败【code=' + code + '】', true);
-          }
-
-          // 客户端自已主动把连接断开！
-          //socket.disconnect(); // js补充：不能由客户端主动关闭，不然本地的disconnect事件不能被触发哦！
-        }
-      }
-    });
-    this._socket.on('reconnect', () => {
-      if(this._debugEnable) {
-        //this.callback_onIMLog('[E] 本客户端 reconnect 事件已触发', true);
-      }
-    });
-    this._socket.on('reconnect_attempt', () => {
-      if(this._debugEnable) {
-        this.callback_onIMLog('[E] 本客户端 reconnect_attempt 事件已触发', true);
-      }
-    });
-    this._socket.on('reconnect_failed', () => {
-      if(this._debugEnable) {
-        //this.callback_onIMLog('[E] 本客户端 reconnect_failed 事件已触发', true);
-      }
-    });
-    this._socket.on('reconnect_error', () => {
-      if(this._debugEnable) {
-        //this.callback_onIMLog('[E] 本客户端 reconnect_error 事件已触发', true);
-      }
-    });
-    this._socket.on('ping', () => {
-      if(this._debugEnable && this._debugPingPongEnable) {
-        this.callback_onIMLog('[E] 心跳请求已发出 →', true);
-      }
-
-      if(this.callback_onIMPing)
-        {this.callback_onIMPing();}
-    });
-    this._socket.on('pong', () => {
-      if(this._debugEnable && this._debugPingPongEnable) {
-        this.callback_onIMLog('[E] 心跳响应已收到 ←', true);
-      }
-
-      if(this.callback_onIMPong)
-        {this.callback_onIMPong();}
-    });
-  }
+  // loginImpl(varloginInfo, wsUrl, supportSSL) {
+  //   this.setLoginInfo(varloginInfo);
+  //
+  //   // 发起首次连接和认证
+  //   this._socket = io.connect(wsUrl, {
+  //     query: {token: JSON.stringify(this._loginInfo)},
+  //     forceNew:true,               // 20170110：加了此选项才能让客户端socketio.disconnect()生效！
+  //     secure: !!supportSSL // 20170526：是否支持SSL/TLS
+  //   });
+  //
+  //   /**
+  //    * 以下是socket.io客户端库的Socket事件.
+  //    * 更多资料请见：https://github.com/socketio/socket.io-client
+  //    */
+  //   // 收到对方客户端的“通用数据”消息（此事件表示收到IM消息了）
+  //   this._socket.on(C_IMEVT_COMMON$DATA, (p) => {
+  //     console.dir(p);
+  //     if(this._debugEnable){
+  //       this.callback_onIMLog('[E] >> 收到[聊天消息]：'+JSON.stringify(p), true);
+  //     }
+  //
+  //     // 将收到的消息通知应用层显示出来
+  //     this.callback_onIMData(p);
+  //   });
+  //   // 收到服务端的“重复登陆被踢”消息（此事件由服务端检测到当前loginUserId已经别处登陆时发出）
+  //   this._socket.on(S_IMEVT_DUPLICATED, (p) => {
+  //     if(this._debugEnable) {
+  //       this.callback_onIMLog('[E] >> 收到[重复登陆被踢事件]：' + JSON.stringify(p), true);
+  //     }
+  //
+  //     const alertContent = '账号已在其它地方登陆，当前会话已断开，请退出后重新登陆！';
+  //     // 如果开发者自已设置信息提示回调实现，就优先用开发者设置的
+  //     if(this.callback_onIMShowAlert){
+  //       this.callback_onIMShowAlert(alertContent);
+  //     }
+  //     // 否则用浏览器默认的alert方法（就是UI有点土）
+  //     else{
+  //       alert(alertContent);
+  //     }
+  //   });
+  //   // 收到服务端的“非法连接被拒绝服务并断开连接”消息（此事件由服务器判定客户端的socket
+  //   // 不存在登陆认证信息时发出，防止非法攻击）
+  //   this._socket.on(S_IMEVT_ILLEGAL, (p) => {
+  //     if(this._debugEnable) {
+  //       this.callback_onIMLog('[E] >> 收到[非法连接被拒绝服务]：' + JSON.stringify(p), true);
+  //     }
+  //
+  //     const alertContent = '服务判定你的连接非法，已被拒绝服务并断开连接！';
+  //     // 如果开发者自已设置信息提示回调实现，就优先用开发者设置的
+  //     if(this.callback_onIMShowAlert){
+  //       this.callback_onIMShowAlert(alertContent);
+  //     }
+  //     // 否则用浏览器默认的alert方法（就是UI有点土）
+  //     else{
+  //       alert(alertContent);
+  //     }
+  //   });
+  //   this._socket.on('connect', () => {
+  //     if(this._debugEnable) {
+  //       this.callback_onIMLog('[E] 本客户端的Socket connect 事件已经触发', true);
+  //     }
+  //   });
+  //   // 此事件发生时表示网络连接断开了
+  //   this._socket.on('disconnect', (data) => {// data content is "io server disconnect"
+  //     if(this._debugEnable) {
+  //       this.callback_onIMLog('[E] 本客户端的Socket disconnect 事件已经触发【END】!', true);
+  //     }
+  //
+  //     //if(logined)
+  //     {
+  //       // 重置在线标识，此标识只在登陆过之后才有意义（在此无条件重置吧，防止未知情况出现导致不能复位到false）
+  //       this._online = false;
+  //     }
+  //
+  //     // 属于首次登陆时，此时的disconnect发生的原因可能是：认证未通过、真的断网了等，
+  //     // 此处复位这两个缓存量是合理的：以便用户可以再次登陆
+  //     if(!this._logined){
+  //       this._loginInfo = null;
+  //     }
+  //
+  //     if(this._debugEnable) {
+  //       this.callback_onIMLog("[E] 对不起，你与IM服务器的网络连接断开了（掉线罗）...", true);
+  //     }
+  //
+  //     // 通知应用层网络掉线了
+  //     if(this.callback_onIMDisconnected){
+  //       this.callback_onIMDisconnected();
+  //     }
+  //   });
+  //   this._socket.on('connect_error', (data) => {
+  //     if(this._debugEnable) {
+  //       //this.callback_onIMLog('[E] 本客户端 connect_error 事件已触发' + JSON.stringify(data), true);
+  //     }
+  //   });
+  //   this._socket.on('connect_timeout', () => {
+  //     if(this._debugEnable) {
+  //       this.callback_onIMLog('[E] 本客户端 connect_timeout 事件已触发', true);
+  //     }
+  //   });
+  //   // 系统级的Error事件回调（socket.io v1.0后的版本中，官方推荐的连接认证最佳实践是通过服务端的error事件来处理的），
+  //   // 根据socket.io官方的建议，MobileIMSDK-Web是利于本事件来实现登陆认证和掉线重连接认证的
+  //   this._socket.on('error', (err) => {
+  //     if(this._debugEnable) {
+  //       this.callback_onIMLog('[E] 本客户端 error 事件已经触发' + err, true);
+  //     }
+  //
+  //     const errObj = JSON.parse(err);
+  //     const code = errObj.code;
+  //     const msg = errObj.msg;
+  //
+  //     //  认证成功
+  //     if(100 === code) {// 每次掉线都会重新走一遍认证过程，code=100的逻辑要注意别搞混
+  //       if(this._debugEnable) {
+  //         this.callback_onIMLog('[E] 本客户端 error 事件中：登陆认证成功(' + (this._logined ?
+  //           '掉线重连' : '首次登陆') + ')！【code=' + code + '】', true);
+  //       }
+  //
+  //       // 设置在线标识
+  //       this._online = true;
+  //
+  //       let welcome = '';
+  //       // 首次登陆成功
+  //       if (!this._logined) {
+  //
+  //         // 通知应用层对登陆结果处理展现或处理
+  //         this.callback_onIMAfterLoginSucess();
+  //
+  //         // Display the welcome message
+  //         welcome = "- 已成功登陆至 MobileIMSDK-Web 服务器 -";
+  //         this.callback_onIMLog(welcome, true);
+  //
+  //         // 设置已经登陆过标识（此标识主要用于区分首次登陆时的界面显示）
+  //         this._logined = true;
+  //       }
+  //       // 掉线重连成功
+  //       else{
+  //         if(this._debugEnable) {
+  //           this.callback_onIMLog("[E] 掉线自动重连成功了！", true);
+  //         }
+  //
+  //         // 通知应用层对掉线重连成功结果处理展现或处理
+  //         this.callback_onIMReconnectSucess();
+  //       }
+  //     }
+  //     else {
+  //       // 未认证成功（认证失败了）
+  //       if (101 === code) {
+  //         // 首次登陆时认证失败
+  //         if (!this._logined) {
+  //
+  //           if(this.callback_onIMAfterLoginFailed){
+  //             this.callback_onIMAfterLoginFailed(false);
+  //           }
+  //
+  //           if(this._debugEnable) {
+  //             this.callback_onIMLog("[E] 登陆认证失败，请检查您的用户名或密码！");
+  //           }
+  //         }
+  //         // 掉线重连时的认证失败
+  //         else {
+  //           const alertContent = '掉线重连时认证失败，请退出后重新登陆。。。';
+  //           // 如果开发者自已设置信息提示回调实现，就优先用开发者设置的
+  //           if(this.callback_onIMShowAlert){
+  //             this.callback_onIMShowAlert(alertContent);
+  //           }
+  //           // 否则用浏览器默认的alert方法（就是UI有点土）
+  //           else{
+  //             alert(alertContent);
+  //           }
+  //
+  //           if(this.callback_onIMAfterLoginFailed){
+  //             this.callback_onIMAfterLoginFailed(true);
+  //           }
+  //         }
+  //
+  //         if(this._debugEnable) {
+  //           this.callback_onIMLog('[E] 本客户端 error 事件中：登陆认证失败【code=' + code + '】', true);
+  //         }
+  //
+  //         // 客户端自已主动把连接断开！
+  //         //socket.disconnect(); // js补充：不能由客户端主动关闭，不然本地的disconnect事件不能被触发哦！
+  //       }
+  //     }
+  //   });
+  //   this._socket.on('reconnect', () => {
+  //     if(this._debugEnable) {
+  //       //this.callback_onIMLog('[E] 本客户端 reconnect 事件已触发', true);
+  //     }
+  //   });
+  //   this._socket.on('reconnect_attempt', () => {
+  //     if(this._debugEnable) {
+  //       this.callback_onIMLog('[E] 本客户端 reconnect_attempt 事件已触发', true);
+  //     }
+  //   });
+  //   this._socket.on('reconnect_failed', () => {
+  //     if(this._debugEnable) {
+  //       //this.callback_onIMLog('[E] 本客户端 reconnect_failed 事件已触发', true);
+  //     }
+  //   });
+  //   this._socket.on('reconnect_error', () => {
+  //     if(this._debugEnable) {
+  //       //this.callback_onIMLog('[E] 本客户端 reconnect_error 事件已触发', true);
+  //     }
+  //   });
+  //   this._socket.on('ping', () => {
+  //     if(this._debugEnable && this._debugPingPongEnable) {
+  //       this.callback_onIMLog('[E] 心跳请求已发出 →', true);
+  //     }
+  //
+  //     if(this.callback_onIMPing)
+  //       {this.callback_onIMPing();}
+  //   });
+  //   this._socket.on('pong', () => {
+  //     if(this._debugEnable && this._debugPingPongEnable) {
+  //       this.callback_onIMLog('[E] 心跳响应已收到 ←', true);
+  //     }
+  //
+  //     if(this.callback_onIMPong)
+  //       {this.callback_onIMPong();}
+  //   });
+  // }
   //*************************************************** 【3】以下公开函数供开发者在自已的代码中使用 END
 }
