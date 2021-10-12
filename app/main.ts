@@ -19,7 +19,7 @@ process.env.DeviceID = DeviceID;
 
 
 // 声网：如果使用 Electron 9.x 及以上版本，需要将 allowRendererProcessReuse 设为 false
-app.allowRendererProcessReuse = false;
+// app.allowRendererProcessReuse = false;
 
 const args = process.argv.slice(1),
   serve = args.some(val => val === '--serve');
@@ -48,7 +48,7 @@ function createWindow(): BrowserWindow {
       nodeIntegration: true,
       allowRunningInsecureContent: (serve) ? true : false,
       contextIsolation: false,  // false if you want to run e2e test with Spectron
-      enableRemoteModule : true, // true if you want to run e2e test with Spectron or use remote module in renderer context (ie. Angular)
+      // enableRemoteModule : true, // true if you want to run e2e test with Spectron or use remote module in renderer context (ie. Angular)
       // preload: path.resolve(__dirname, 'agora-renderer.js')
     },
   });
