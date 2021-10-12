@@ -1,19 +1,9 @@
-import {
-  AfterContentInit,
-  AfterViewChecked,
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  Component,
-  ElementRef,
-  OnInit,
-  ViewChild
-} from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {AlarmsProviderService} from "@services/alarms-provider/alarms-provider.service";
-import RBChatUtils from "@app/libs/rbchat-utils";
-import {AlarmMessageType, ChatModeType, MsgType, RBChatConfig, UserProtocalsType} from "@app/config/rbchat-config";
+import {MsgType} from "@app/config/rbchat-config";
 import {LocalUserService} from "@services/local-user/local-user.service";
 import {RestService} from "@services/rest/rest.service";
-import {createCommonData2, formatDate} from "@app/libs/mobileimsdk-client-common";
+import {formatDate} from "@app/libs/mobileimsdk-client-common";
 import {GroupChattingCacheService} from "@services/group-chatting-cache/group-chatting-cache.service";
 import {SingleChattingCacheService} from "@services/single-chatting-cache/single-chatting-cache.service";
 import {MessageEntityService} from "@services/message-entity/message-entity.service";
@@ -29,7 +19,6 @@ import voiceIcon from "@app/assets/icons/voice.svg";
 import voiceActiveIcon from "@app/assets/icons/voice-active.svg";
 import closePromptIcon from "@app/assets/icons/close-prompt.svg";
 // import icon end
-
 import LocalUserinfoModel from "@app/models/local-userinfo.model";
 import {MatMenuTrigger} from "@angular/material/menu";
 import {ImService} from "@services/im/im.service";
@@ -44,7 +33,7 @@ import {ProtocalModel, ProtocalModelDataContent} from "@app/models/protocal.mode
 import {MessageDistributeService} from "@services/message-distribute/message-distribute.service";
 import {DomSanitizer, SafeResourceUrl} from "@angular/platform-browser";
 import {ContextMenuService} from "@services/context-menu/context-menu.service";
-import {ContextMenuModel, ContextMenuChattingModel} from "@app/models/context-menu.model";
+import {ContextMenuChattingModel, ContextMenuModel} from "@app/models/context-menu.model";
 import {AvatarService} from "@services/avatar/avatar.service";
 import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 import {AlarmDataMap, CacheService} from "@services/cache/cache.service";
@@ -191,7 +180,9 @@ export class MessageComponent implements OnInit, AfterViewInit {
         });
 
         this.currentChattingChangeService.currentChatting$.subscribe((alarm: AlarmItemInterface) => {
-            this.currentChat = alarm;
+          this.currentChat = alarm;
+          // 发送已读
+          this.messageService.alreadyRead(this.currentChat.alarmItem.dataId, this.currentChat.metadata.chatType);
         });
         this.currentChat = this.currentChattingChangeService.currentChatting;
     }
@@ -371,19 +362,21 @@ export class MessageComponent implements OnInit, AfterViewInit {
      * @param alarm
      */
     switchChat(alarm: AlarmItemInterface) {
-        if (!this.currentChat || this.currentChat.alarmItem.dataId !== alarm.alarmItem.dataId) {
-            this.currentChat = alarm;
-            this.currentChattingChangeService.switchCurrentChatting(this.currentChat).then(() => {
-                // 缓存群管理员列表
-                if (this.currentChat.metadata.chatType === 'group') {
-                    this.cacheService.cacheGroupAdmins(this.currentChat.alarmItem.dataId).then();
-                    this.cacheService.cacheGroupMembers(this.currentChat.alarmItem.dataId).then();
-                }
-            });
-        } else {
-            // 如果是当前会话，只清除badges
-            this.cacheService.setChattingBadges(this.currentChat, 0);
-        }
+      if (!this.currentChat || this.currentChat.alarmItem.dataId !== alarm.alarmItem.dataId) {
+        this.currentChat = alarm;
+        this.currentChattingChangeService.switchCurrentChatting(this.currentChat).then(() => {
+          // 缓存群管理员列表
+          if (this.currentChat.metadata.chatType === 'group') {
+            this.cacheService.cacheGroupAdmins(this.currentChat.alarmItem.dataId).then();
+            this.cacheService.cacheGroupMembers(this.currentChat.alarmItem.dataId).then();
+          }
+        });
+      } else {
+        // 如果是当前会话，只清除badges
+        this.cacheService.setChattingBadges(this.currentChat, 0);
+      }
+      // 发送已读
+      this.messageService.alreadyRead(this.currentChat.alarmItem.dataId, this.currentChat.metadata.chatType);
     }
 
     async contextMenuForChatting(e: MouseEvent, menu: MatMenuTrigger, span: HTMLSpanElement, alarmItem: AlarmItemInterface) {

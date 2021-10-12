@@ -76,7 +76,7 @@ export class TransmitMessageComponent implements OnInit {
                 alarmMessageType: ChatModeType.CHAT_TYPE_FRIEND$CHAT,
                 dataId: friend.friendUserUid.toString(),
                 date: msg.date,
-                msgContent: this.messageService.parseMessageForShow(msg.text, msg.msgType),
+                msgContent: MessageService.parseMessageForShow(msg.text, msg.msgType),
                 title: friend.nickname,
                 avatar: null,
               },

@@ -52,7 +52,7 @@ export class MessageService {
    * @return 返回消息文本（仅用于ui显示哦）
    * @since 2.2
    */
-  parseMessageForShow(messageContent, msgType) {
+  public static parseMessageForShow(messageContent, msgType) {
     // console.log(msgType)
     if (RBChatUtils.isStringEmpty(messageContent))
       {return "";}

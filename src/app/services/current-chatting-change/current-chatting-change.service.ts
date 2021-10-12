@@ -21,7 +21,6 @@ export class CurrentChattingChangeService {
     private router: Router,
     private cacheService: CacheService,
     private quoteMessageService: QuoteMessageService,
-    private messageService: MessageService,
   ) { }
 
   switchCurrentChatting(currentChatting: AlarmItemInterface): Promise<boolean> {
@@ -37,7 +36,6 @@ export class CurrentChattingChangeService {
             this.currentChatting = currentChatting;
             this.currentChattingSource.next(currentChatting);
             this.quoteMessageService.setQuoteMessage(null);
-            this.messageService.alreadyRead(currentChatting.alarmItem.dataId, currentChatting.metadata.chatType);
           }
           this.currentChatting = currentChatting;
           this.currentChattingSource.next(currentChatting);
