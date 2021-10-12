@@ -43,6 +43,12 @@
   }
 }
 
+.disable-hover {
+  &:hover {
+    background: inherit !important;
+  }
+}
+
 // snack bar 剧中样式
 body.center-snack-bar {
   .cdk-global-overlay-wrapper {
