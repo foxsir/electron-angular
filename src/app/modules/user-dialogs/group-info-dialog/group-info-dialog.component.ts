@@ -31,7 +31,7 @@ export class GroupInfoDialogComponent implements OnInit {
         /*是否设置支付密码*/
         this.restService.submitGetGroupMembersListFromServer(this.data.toUserId).subscribe(res => {
             console.log('群信息弹出框获取群成员：', res);
-            this.group_members = res.data.list;
+            this.group_members = res.data.list; console.log(res.data.list);
             for (let item of this.group_members) {
                 item.show = true;
             }
