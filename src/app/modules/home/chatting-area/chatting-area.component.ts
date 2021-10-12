@@ -66,6 +66,7 @@ import GroupTabModel from "@app/models/group-tab.model";
 import AtMeModel from "@app/models/at-me.model";
 import SilenceUserModel from "@app/models/silence-user.model";
 import GroupInfoModel from "@app/models/group-info.model";
+import {convertNodeSourceSpanToLoc} from "@angular-eslint/template-parser/dist/convert-source-span-to-loc";
 
 @Component({
   selector: 'app-chatting-area',
@@ -337,6 +338,10 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
     } else {
       if(data.dataContent.cy === ChatModeType.CHAT_TYPE_FRIEND$CHAT) { // 单聊
         if(this.currentChat && chatActive) {
+          this.virtualScrollViewport.scrollTo({
+              bottom: 1,
+              behavior: 'auto',
+            });
           this.cacheService.chatMsgEntityMap.set(data.chat.fingerPrintOfProtocal, data.chat);
           // this.cacheService.chatMsgEntityList = new Array(...this.cacheService.chatMsgEntityMap).flatMap(t => t[1]);
           this.scrollToBottom();
@@ -565,34 +570,46 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
     this.imService.callback_messagesBeReceived = this.updateDataForUI.bind(this);
   }
 
+  private scrollEnd = true;
+
   /**
    * 消息列表滚动底部
    * @param behavior
    */
   scrollToBottom(behavior: "auto" | "smooth" = "smooth") {
-    console.dir(this.cacheService.chatMsgEntityMap.size);
     if(this.virtualScrollViewport) {
       const sb = () => {
-        this.virtualScrollViewport.scrollTo({
-          bottom: 0,
-          behavior: behavior,
-        });
+        if(this.scrollEnd) {
+          this.scrollEnd = false;
+          setTimeout(() => {
+            this.virtualScrollViewport.scrollTo({
+              bottom: 0,
+              behavior: behavior,
+            });
+            this.scrollEnd = true;
+          }, 50);
+          setTimeout(() => {
+            if(this.virtualScrollViewport.measureScrollOffset('bottom') > 0) {
+              this.scrollToBottom(behavior);
+            }
+          }, 4000);
+        }
       };
+
       this.chattingAreaOnScroll();
       if(this.chattingContainer) {
-        setTimeout(() => {
-          const images = this.chattingContainer.nativeElement.querySelectorAll("img");
-          images.forEach(img => {
-            img.onload = () => {
-              setTimeout(() => {
-                sb();
-              });
-            };
-          });
-
-          sb();
+        const images = this.chattingContainer.nativeElement.querySelectorAll("img");
+        images.forEach(img => {
+          img.onload = () => {
+            sb();
+          };
         });
+        sb();
       }
+    } else {
+      setTimeout(() => {
+        this.scrollToBottom(behavior);
+      }, 500);
     }
   }
 
@@ -714,7 +731,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
       if(index === 0) {
         this.loadMessage();
       }
-      this.showDownArrow = this.virtualScrollViewport.measureScrollOffset('bottom') > 100;
+      this.showDownArrow = this.virtualScrollViewport.measureScrollOffset('bottom') > 300;
     });
   }
 
