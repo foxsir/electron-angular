@@ -62,7 +62,7 @@ export default class MBQoS4SendDaemon {
   private mbDataSender: MBDataSender;
 
   // 保存setInverval(...)定时器id（此id方便用于关闭定时器时使用）
-  intervalId: any;
+  private static intervalId: any;
 
   /*
    * QoS质量保证线程心跳间隔（单位：毫秒），默认5000ms.
@@ -100,9 +100,9 @@ export default class MBQoS4SendDaemon {
   QOS_TRY_COUNT = 2;// since 3.0 (20160918): 为了降低服务端负载，本参数由原3调整为2
 
   /* 本Hash表目前用于缓存一段时间内的已发送消息，<key=String, value=Protocal> */
-  sentMessages = new MBHashMap();
+  private static sentMessages = new MBHashMap();
   /* 本Hash表目前仅用于QoS重传判断是否是“刚刚”发出的消息之用（别无它用），<key=String, value=long> */
-  sendMessagesTimestamp = new MBHashMap();
+  private static sendMessagesTimestamp = new MBHashMap();
 
   /* 本次执行是否还未完成（内部变量，开发者无需理会） */
   _excuting = false;
@@ -141,15 +141,15 @@ export default class MBQoS4SendDaemon {
 
     this._excuting = true;
     try {
-      if (this.mbCore.debugEnabled() && this.sentMessages.size() > 0)
-        {MBUtils.mblog_d(this.TAG, "【QoS】====== 消息发送质量保证线程运行中, 当前需要处理的列表长度为" + this.sentMessages.size() + "...");}
+      if (this.mbCore.debugEnabled() && MBQoS4SendDaemon.sentMessages.size() > 0)
+        {MBUtils.mblog_d(this.TAG, "【QoS】====== 消息发送质量保证线程运行中, 当前需要处理的列表长度为" + MBQoS4SendDaemon.sentMessages.size() + "...");}
 
       // 开始处理中 ************************************************
-      const arr = this.sentMessages.keySet();
+      const arr = MBQoS4SendDaemon.sentMessages.keySet();
       for (let i = 0; i < arr.length; i++) {
         const key = arr[i];
 
-        const p = this.sentMessages.get(key);
+        const p = MBQoS4SendDaemon.sentMessages.get(key);
         if (p && p.QoS) {
           // 达到或超过了最大重试次数（判定丢包）
           // if(p.getRetryCount() >= this.QOS_TRY_COUNT)
@@ -167,7 +167,7 @@ export default class MBQoS4SendDaemon {
           // 没有达到重传上限则开始进行重传
           else {
             //### 2015103 Bug Fix: 解决了无线网络延较大时，刚刚发出的消息在其应答包还在途中时被错误地进行重传
-            const sendMessageTimestamp = this.sendMessagesTimestamp.get(key);
+            const sendMessageTimestamp = MBQoS4SendDaemon.sendMessagesTimestamp.get(key);
             const delta = MBUtils.getCurrentUTCTimestamp() - (sendMessageTimestamp == null ? 0 : sendMessageTimestamp);
             // 该消息包是“刚刚”发出的，本次不需要重传它哦
             if (delta <= this.MESSAGES_JUST$NOW_TIME) {
@@ -249,7 +249,7 @@ export default class MBQoS4SendDaemon {
     }
 
     // 定时执行
-    this.intervalId = setInterval(() => {
+    MBQoS4SendDaemon.intervalId = setInterval(() => {
       this.excute();
     }, this.CHECH_INTERVAL);
   }
@@ -260,8 +260,8 @@ export default class MBQoS4SendDaemon {
    * 注意：本线程的启停，目前属于MobileIMSDK算法的一部分，暂时无需也不建议由应用层自行调用。
    */
   stop() {
-    if (this.intervalId && this.intervalId !== 0) {
-      clearInterval(this.intervalId);
+    if (MBQoS4SendDaemon.intervalId && MBQoS4SendDaemon.intervalId !== 0) {
+      clearInterval(MBQoS4SendDaemon.intervalId);
     }
   }
 
@@ -272,7 +272,7 @@ export default class MBQoS4SendDaemon {
    * @return true表示是，否则不是
    */
   exist(fingerPrint) {
-    return this.sentMessages.get(fingerPrint) != null;
+    return MBQoS4SendDaemon.sentMessages.get(fingerPrint) != null;
   }
 
   /**
@@ -286,13 +286,13 @@ export default class MBQoS4SendDaemon {
       if (p.fp) {
         if (p.QoS) {
           // 如果列表中已经存则仅提示（用于debug）
-          if (this.sentMessages.get(p.fp) != null)
+          if (MBQoS4SendDaemon.sentMessages.get(p.fp) != null)
             {MBUtils.mblog_w(this.TAG, "【QoS】指纹为" + p.fp + "的消息已经放入了发送质量保证队列，该消息为何会重复？（生成的指纹码重复？还是重复put？）");}
 
           // save it
-          this.sentMessages.put(p.fp, p);
+          MBQoS4SendDaemon.sentMessages.put(p.fp, p);
           // 同时保存时间戳
-          this.sendMessagesTimestamp.put(p.fp, MBUtils.getCurrentUTCTimestamp());
+          MBQoS4SendDaemon.sendMessagesTimestamp.put(p.fp, MBUtils.getCurrentUTCTimestamp());
         } else {
           MBUtils.mblog_w(this.TAG, "This protocal is not QoS pkg, ignore it!");
         }
@@ -312,10 +312,10 @@ export default class MBQoS4SendDaemon {
    * @param fingerPrint {String} 消息包的特纹特征码（理论上是唯一的）
    */
   remove(fingerPrint) {
-    this.sendMessagesTimestamp.remove(fingerPrint);
+    MBQoS4SendDaemon.sendMessagesTimestamp.remove(fingerPrint);
 
-    const removedObj = this.sentMessages.get(fingerPrint);
-    this.sentMessages.remove(fingerPrint);
+    const removedObj = MBQoS4SendDaemon.sentMessages.get(fingerPrint);
+    MBQoS4SendDaemon.sentMessages.remove(fingerPrint);
 
     MBUtils.mblog_w(this.TAG, "【QoS】指纹为" + fingerPrint + "的消息已成功从发送质量保证队列中移除(可能是收到接收方的应答也可能是达到了重传的次数上限)，重试次数="
       + (removedObj != null ? (removedObj.retryCount) : "none呵呵."));
@@ -329,8 +329,8 @@ export default class MBQoS4SendDaemon {
    * @since 3.2
    */
   clear() {
-    this.sentMessages.clear();
-    this.sendMessagesTimestamp.clear();
+    MBQoS4SendDaemon.sentMessages.clear();
+    MBQoS4SendDaemon.sendMessagesTimestamp.clear();
   }
 
   /**
@@ -339,7 +339,7 @@ export default class MBQoS4SendDaemon {
    * @return
    */
   size() {
-    return this.sentMessages.size();
+    return MBQoS4SendDaemon.sentMessages.size();
   }
 
   /**

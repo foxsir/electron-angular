@@ -27,6 +27,7 @@ import MBQoS4ReciveDaemon from "./mb_daemon_qos_recieve";
 import MBUtils from "./mb_utils";
 import LoginInfoModel from "../models/login-info.model";
 import InstanceFactory from "@app/client/InstanceFactory";
+import {MBSocketEvent} from "@app/client/mb_constants";
 
 /**
  * MobileIMSDK框架的浏览器端核心算法层入口类（相当于其它客户端sdk中的ClientCoreSDK类）。

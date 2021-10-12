@@ -46,7 +46,7 @@ export default class MBKeepAliveDaemon {
   private mbCore: MBCore;
   private mbDataSender: MBDataSender;
 
-  intervalId: any;
+  private static intervalId: any;
 
   /*
    * Keep Alive 心跳时间间隔（单位：毫秒），默认15000秒（即15秒）.
@@ -191,7 +191,7 @@ export default class MBKeepAliveDaemon {
     }
 
     // 定时执行
-    this.intervalId = setInterval(() => {
+    MBKeepAliveDaemon.intervalId = setInterval(() => {
       this.excute();
     }, this.KEEP_ALIVE_INTERVAL);
   }
@@ -202,8 +202,8 @@ export default class MBKeepAliveDaemon {
    * 注意：本线程的启停，目前属于MobileIMSDK算法的一部分，暂时无需也不建议由应用层自行调用。
    */
   stop() {
-    if (this.intervalId && this.intervalId !== 0) {
-      clearInterval(this.intervalId);
+    if (MBKeepAliveDaemon.intervalId && MBKeepAliveDaemon.intervalId !== 0) {
+      clearInterval(MBKeepAliveDaemon.intervalId);
     }
     this.lastGetKeepAliveResponseFromServerTimstamp = 0;
   }

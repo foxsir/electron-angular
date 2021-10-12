@@ -185,9 +185,10 @@ export default class MBDataReciever {
    */
   onMessageRecievedACK(pFromServer) {
     // 应答包的消息内容即为之前收到包的指纹id
-    let theFingerPrint = pFromServer.dataContent;
-    if (this.mbCore.debugEnabled())
+    const theFingerPrint = pFromServer.dataContent;
+    if (this.mbCore.debugEnabled()) {
       MBUtils.mblog_d(this.TAG, "【QoS】收到" + pFromServer.from + "发过来的指纹为" + theFingerPrint + "的应答包.");
+    }
 
     // 将收到的应答事件通知事件处理者
     this.mbCore.emit(MBSocketEvent.SOCKET_EVENT_MESSAGE_BE_RECIEVED, theFingerPrint);
