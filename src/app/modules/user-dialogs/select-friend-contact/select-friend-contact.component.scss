@@ -1,7 +1,45 @@
-.friend-item-list {
-  .friend-avatar, .friend-avatar>img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
+ .selFriend {
+   background-color: #FFF;
+   overflow: hidden;
+    .scrollbar {
+      .friend-avatar, .friend-avatar > img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+      }
+    }
+}
+
+
+::ng-deep{
+  .selFriend {
+    .mat-dialog-title {
+      font-size: 16px;
+      padding: 10px 0 30px 20px;
+    }
+
+    .mat-dialog-container {
+      color: #CCC;
+    }
+    .mat-form-field-appearance-legacy .mat-form-field-underline {
+      background-color: #CCC;
+      margin-left: -20px;
+      width: 334px;
+
+    }
+    .mat-list-base .mat-list-item.mat-2-line, .mat-list-base .mat-list-option.mat-2-line{
+      height: 56px;
+      margin: 0px;
+    }
+    .mat-list-base .mat-list-item.mat-list-item-with-avatar .mat-list-item-content .mat-list-text, .mat-list-base .mat-list-item.mat-list-option .mat-list-item-content .mat-list-text, .mat-list-base .mat-list-option.mat-list-item-with-avatar .mat-list-item-content .mat-list-text, .mat-list-base .mat-list-option.mat-list-option .mat-list-item-content .mat-list-text{
+      padding-left:8px;
+    }
+
+    button{
+      padding:0px;
+      position: relative;
+      z-index: 1000;
+    }
   }
 }
+

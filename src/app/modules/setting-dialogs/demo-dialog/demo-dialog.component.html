@@ -15,10 +15,10 @@
 
 <div *ngIf="data.hasOwnProperty('two')" style="width:250px;">
     <div fxLayout="column" fxLayoutGap="20px">
-        <div fxFlex><label>选择发言时间间隔</label></div>
+        <div fxFlex><label style="font-size: 16px">选择发言时间间隔</label></div>
         <div>
             <div *ngFor="let item of internel_list" (click)="setInternel(item)" style="display:flex;cursor:pointer;margin:15px;">
-                <label style="flex:1;cursor:pointer;">{{item}}秒</label>
+                <label style="flex:1;cursor:pointer; font-size: 14px">{{item}}秒</label>
                 <img [src]="checkboxActiveIcon" *ngIf="data.talkInterval == item"/>
                 <img [src]="checkboxIcon" *ngIf="data.talkInterval != item" />
             </div>

@@ -50,30 +50,40 @@
 
 <!--选择群成员-->
 <div *ngIf="data.dialog_type === 'choose_group_member'" class="group-info-dialog-container">
-    <div fxLayout="column" fxLayoutGap="20px">
-        <div fxFlex><label>{{data.popup_title}}</label></div>
+  <div fxLayout="column" fxFill>
+    <div fxFlex="50px">
+      <h1 mat-dialog-title>{{data.popup_title}}</h1>
+    </div>
+    <div fxFlex="50px">
+      <div fxLayout="row">
+        <div fxFlex="20px"></div>
         <div fxFlex>
             <input type="text" nz-input [(ngModel)]="search_keywords" class="txt-border-none" placeholder="搜索..."
+          <div fxFlex="274px">
+            <mat-label></mat-label>
+            <input type="text" nz-input [(ngModel)]="search_keywords" class="txt-border-none" placeholder="搜索..."
                    (keyup)="txtSearchChange($event)"/>
+          </div>
         </div>
-        <div fxFlex>
-            <div fxLayout="column" fxLayoutGap="10px">
-                <mat-list>
-                    <mat-list-item *ngFor="let item of group_members" class="list-box" (click)="confirmChoose(item)" style="cursor:pointer;">
-                        <img src="{{item.userAvatarFileName}}" mat-list-icon style="width:44px;height:44px;" />
-                        <div mat-line>{{item.showNickname}}</div>
-                        <div mat-line>最近上线：</div>
-                        <mat-divider></mat-divider>
-                    </mat-list-item>
-                </mat-list>
-            </div>
-        </div>
-        <div fxFlex>
-            <div fxLayout="row" fxLayoutAlign="end" fxLayoutGap="10">
-                <button nz-button nzType="link" class="btncancel" (click)="cancel()">取消</button>
-            </div>
-        </div>
+        <div fxFlex="20px"></div>
+      </div>
     </div>
+    <div class="scrollbar" fxFlex="430px">
+      <mat-list>
+        <mat-list-item *ngFor="let item of group_members" class="list-box" (click)="confirmChoose(item)" style="cursor:pointer;">
+          <img src="{{item.userAvatarFileName}}" mat-list-icon />
+          <div mat-line class="nickName">{{item.showNickname}}</div>
+          <div mat-line class="onlineTime">最近上线：</div>
+        </mat-list-item>
+      </mat-list>
+    </div>
+    <mat-dialog-actions fxFlex="50px" fxFill>
+      <div fxFlex="100" fxLayoutAlign="end">
+        <button nz-button nzType="link" class="btncancel" (click)="cancel()">取消</button>
+      </div>
+    </mat-dialog-actions>
+    <div style="width:100%; height: 20px; clear:both"></div>
+  </div>
 </div>
 
 <!--删除管理员-->
@@ -91,8 +101,9 @@
                         <mat-icon mat-list-icon class="friend-avatar">
                             <img [src]="item.userAvatarFileName" alt="">
                         </mat-icon>
+                    <mat-list-option class="friend-list-item" *ngFor="let item of data.admin_list" [value]="item.userUid">
+                        <img src="{{item.userAvatarFileName}}" mat-list-icon style="width: 40px; height: 40px" />
                         <div mat-line>{{item.nickname}}</div>
-                        <mat-divider></mat-divider>
                     </mat-list-option>
                 </mat-selection-list>
             </div>

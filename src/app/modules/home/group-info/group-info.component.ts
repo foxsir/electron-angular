@@ -385,10 +385,9 @@ export class GroupInfoComponent implements OnInit {
             toUserId: this.currentChat.alarmItem.dataId,
             chatType: this.currentChat.metadata.chatType,
             count: '',
-            popup_title: popup_title
+            popup_title: popup_title,
         };
-
-        this.dialogService.openDialog(GroupInfoDialogComponent, { data: data }).then((res: any) => {
+        this.dialogService.openDialog(GroupInfoDialogComponent, { data: data,width: '314px',panelClass: "padding-less-dialog" }).then((res: any) => {
             console.log('group info dialog result: ', res);
 
             if (res.ok == false) {
@@ -489,7 +488,7 @@ export class GroupInfoComponent implements OnInit {
 
     /* 邀请好友 */
     inviteFriend() {
-        this.dialogService.openDialog(SelectFriendContactComponent, { width: '400px', maxHeight: '600px' }).then((friend) => {
+        this.dialogService.openDialog(SelectFriendContactComponent, { width: '314px',panelClass: "padding-less-dialog", }).then((friend) => {
             if (friend) {
                 console.log('选择的好友：', friend);
                 //return;
