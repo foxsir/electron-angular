@@ -140,6 +140,8 @@ export class MessageComponent implements OnInit, AfterViewInit {
         this.subscribeAtMe();
     }
 
+    public dd = false;
+
     ngOnInit(): void {
         this.cacheService.getMute().then((map) => {
             if (map) {
@@ -261,8 +263,9 @@ export class MessageComponent implements OnInit, AfterViewInit {
     private subscribeChattingListUpdate() {
         this.cacheService.cacheUpdate$.subscribe(cache => {
             if (cache.alarmDataMap) {
-                this.alarmItemList.clear();
-                this.alarmItemList = cache.alarmDataMap;
+              this.cacheService.getChattingList().then(list => {
+                this.alarmItemList = list;
+              });
             }
         });
     }
