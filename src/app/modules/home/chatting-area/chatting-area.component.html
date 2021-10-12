@@ -130,10 +130,10 @@
                 </div>
                 <img class="icon-delete" [src]="gNoticeDelete" alt="" (click)="this.groupData.gnotice_visible = false;">
             </div>
-            <div *ngIf="groupData.gtopContent.length > 0 && groupData.gtopContent_visible == true" class="moving-group-info mat-primary text hover-item">
+            <div *ngIf="groupData.gtopContent.length > 0 && groupData.gtopContent_visible == true" class="moving-group-info mat-primary text hover-item" style="background-color: #d9efff">
                 <img class="icon-tip" [src]="gTopContentTip" alt="">
                 <div class="box">
-                    <p class="animate {{groupData.gtopContent_class}}">{{groupData.gtopContent}}</p>
+                    <p class="animate {{groupData.gtopContent_class}}" style="color:#0091ff">{{groupData.gtopContent}}</p>
                 </div>
                 <img class="icon-delete" [src]="gTopContentDelete" alt="" (click)="this.groupData.gtopContent_visible = false;">
             </div>
