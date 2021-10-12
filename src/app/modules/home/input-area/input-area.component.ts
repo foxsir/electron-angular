@@ -174,6 +174,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
       if(currentChat) {
         this.getGroupMembers(currentChat);
         this.clearTextArea();
+        this.autofocus();
       }
     });
   }
