@@ -1,9 +1,11 @@
 .group-info-dialog-container{
-  height: 580px;
+  width: 314px;
   background-color: #FFF;
   padding:0;
   overflow: hidden;
   .scrollbar {
+    height: 430px;
+    clear: both;
     .friend-avatar, .friend-avatar > img {
       width: 40px;
       height: 40px;
@@ -45,8 +47,6 @@
 
     button{
       padding:0px;
-      position: relative;
-      z-index: 1000;
       margin-right: 20px;
     }
   }

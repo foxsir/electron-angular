@@ -58,7 +58,7 @@
       <div fxLayout="row">
         <div fxFlex="20px"></div>
         <div fxFlex>
-          <div fxFlex="100">
+          <div fxFlex="274px">
             <mat-label></mat-label>
             <input type="text" nz-input [(ngModel)]="search_keywords" class="txt-border-none" placeholder="搜索..."
                    (keyup)="txtSearchChange($event)"/>
@@ -67,22 +67,21 @@
         <div fxFlex="20px"></div>
       </div>
     </div>
-    <div fxFlex>
-      <div style="height: 430px;clear: both" class="scrollbar">
-        <mat-list>
-          <mat-list-item *ngFor="let item of group_members" class="list-box" (click)="confirmChoose(item)" style="cursor:pointer;">
-            <img src="{{item.userAvatarFileName}}" mat-list-icon style="width:40px;height:40px;" />
-            <div mat-line class="nickName">{{item.showNickname}}</div>
-            <div mat-line class="onlineTime">最近上线：</div>
-          </mat-list-item>
-        </mat-list>
-      </div>
-      <mat-dialog-actions>
-        <div fxFlex="100" fxLayoutAlign="end">
-          <button nz-button nzType="link" class="btncancel" (click)="cancel()">取消</button>
-        </div>
-      </mat-dialog-actions>
+    <div class="scrollbar" fxFlex="430px">
+      <mat-list>
+        <mat-list-item *ngFor="let item of group_members" class="list-box" (click)="confirmChoose(item)" style="cursor:pointer;">
+          <img src="{{item.userAvatarFileName}}" mat-list-icon />
+          <div mat-line class="nickName">{{item.showNickname}}</div>
+          <div mat-line class="onlineTime">最近上线：</div>
+        </mat-list-item>
+      </mat-list>
     </div>
+    <mat-dialog-actions fxFlex="50px" fxFill>
+      <div fxFlex="100" fxLayoutAlign="end">
+        <button nz-button nzType="link" class="btncancel" (click)="cancel()">取消</button>
+      </div>
+    </mat-dialog-actions>
+    <div style="100%; height: 20px; clear:both"></div>
   </div>
 </div>
 
