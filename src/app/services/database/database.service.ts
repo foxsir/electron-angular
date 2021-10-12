@@ -91,18 +91,9 @@ export abstract class DatabaseService {
     });
   }
 
-  saveData<T extends BaseEntity>(data: SaveParams<T>): Promise<T> {
-    return new Promise((resolve) => {
-      data.uuid = CommonTools.uuid();
-      ipcRenderer.send('sendData', data);
-
-      const subscribe = this.sendDataUpdate$.subscribe((res) => {
-        if(res.uuid === data.uuid) {
-          resolve(res);
-          subscribe.unsubscribe();
-        }
-      });
-    });
+  saveData<T extends BaseEntity>(data: SaveParams<T>): void {
+    data.uuid = CommonTools.uuid();
+    ipcRenderer.send('sendData', data);
   }
 
   /**

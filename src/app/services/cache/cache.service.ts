@@ -78,7 +78,7 @@ export class CacheService extends DatabaseService {
     private rosterProviderService: RosterProviderService,
     private restService: RestService,
     private localUserService: LocalUserService,
-    private messageService: MessageService,
+    // private messageService: MessageService,
     private historyMessageService: HistoryMessageService,
     private httpService: HttpService,
     private soundService: SoundService,
@@ -123,20 +123,27 @@ export class CacheService extends DatabaseService {
       };
       chatting.date = lastTime || alarmData.alarmItem.date;
 
-      this.saveData<ChattingModel>({model: "chatting", data: chatting, update: {dataId: chatting.dataId}}).then();
+      this.saveData<ChattingModel>({model: "chatting", data: chatting, update: {dataId: chatting.dataId}});
+      if(cache.size === 0) {
+        if (subscription) {
+          this.getChattingList().then(list => {
+            this.cacheSource.next({alarmDataMap: list});
+          });
+        }
+        resolve(true);
+      }
       cache.forEach((msg) => {
         msg.dataId = chatting.dataId;
         this.saveData<ChatmsgEntityModel>({
           model: "chatmsgEntity", data: msg, update: {fingerPrintOfProtocal: msg.fingerPrintOfProtocal}
-        }).then();
-      });
-
-      if (subscription) {
-        this.getChattingList().then(list => {
-          this.cacheSource.next({alarmDataMap: list});
         });
-      }
-      resolve(true);
+        if (subscription) {
+          this.getChattingList().then(list => {
+            this.cacheSource.next({alarmDataMap: list});
+          });
+        }
+        resolve(true);
+      });
     });
   }
 
@@ -296,7 +303,7 @@ export class CacheService extends DatabaseService {
               alarmMessageType: protocalModel.type,
               dataId: dataID,
               date: protocalModel.recvTime,
-              msgContent: this.messageService.parseMessageForShow(dataContent.m, dataContent.ty),
+              // msgContent: this.messageService.parseMessageForShow(dataContent.m, dataContent.ty),
               title: title,
               avatar: avatar,
             },
@@ -369,7 +376,7 @@ export class CacheService extends DatabaseService {
             const data = new Map<string, FriendModel>();
             friendList.forEach(f => {
               data.set(f.friendUserUid.toString(), f);
-              this.saveData<FriendModel>({model: 'friend', data: f, update: {friendUserUid: f.friendUserUid}}).then();
+              this.saveData<FriendModel>({model: 'friend', data: f, update: {friendUserUid: f.friendUserUid}});
             });
             this.cacheSource.next({friendMap: data});
           }
@@ -389,7 +396,7 @@ export class CacheService extends DatabaseService {
           res.data.forEach(g => {
             if(g) {
               groupMap.set(g.gid, g);
-              this.saveData<GroupModel>({model: 'group', data: g, update: {gid: g.gid}}).then();
+              this.saveData<GroupModel>({model: 'group', data: g, update: {gid: g.gid}});
             }
           });
           this.cacheSource.next({groupMap: groupMap});
@@ -412,7 +419,7 @@ export class CacheService extends DatabaseService {
               admin.gid = gid;
               this.saveData<GroupAdminModel>({
                 model: "groupAdmin", data: admin, update: {gid: gid, userUid: admin.userUid}
-              }).then();
+              });
             });
             const newData = new Map<string, Map<string, GroupAdminModel>>();
             this.cacheSource.next({groupAdminMap: newData});
@@ -500,10 +507,9 @@ export class CacheService extends DatabaseService {
         if(res.status === 200) {
           const data = res.data;
           data.userLevel = JSON.stringify(data.userLevel);
-          this.saveData<UserModel>({model: "user", data: data, update: {userUid: data.userUid}}).then(() => {
-            this.cacheSource.next({myInfo: res.data});
-            resolve(res.data);
-          });
+          this.saveData<UserModel>({model: "user", data: data, update: {userUid: data.userUid}});
+          this.cacheSource.next({myInfo: res.data});
+          resolve(res.data);
         }
       });
     });
@@ -671,7 +677,7 @@ export class CacheService extends DatabaseService {
           alarmMessageType: chatType === 'friend' ? ChatModeType.CHAT_TYPE_FRIEND$CHAT : ChatModeType.CHAT_TYPE_GROUP$CHAT,
           dataId: dataId,
           date: new Date().getTime(),
-          msgContent: this.messageService.parseMessageForShow(text, msgType),
+          // msgContent: this.messageService.parseMessageForShow(text, msgType),
           title: title,
           avatar: avatar,
         },
@@ -725,20 +731,19 @@ export class CacheService extends DatabaseService {
         mute: mute,
         updated_at: new Date().getTime(),
       };
-      this.saveData<MuteModel>({model: "mute", data: data, update: {dataId: dataId}}).then(() => {
-        const res = new Map([[dataId, mute]]);
-        const url = _HTTP_SERVER_URL + "/api/user/setNoDisturb";
-        const params = {
-          userId: this.localUserService.localUserInfo.userId,
-          noDisturbId: dataId,
-          type: mute ? 1 : 0,
-          userType: type === 'friend' ? 0 : 1,
-        };
-        this.httpService.postForm(url, params).subscribe();
-        resolve(res);
-        this.getMute().then(mutes => {
-          this.cacheSource.next({muteMap: mutes});
-        });
+      this.saveData<MuteModel>({model: "mute", data: data, update: {dataId: dataId}});
+      const res = new Map([[dataId, mute]]);
+      const url = _HTTP_SERVER_URL + "/api/user/setNoDisturb";
+      const params = {
+        userId: this.localUserService.localUserInfo.userId,
+        noDisturbId: dataId,
+        type: mute ? 1 : 0,
+        userType: type === 'friend' ? 0 : 1,
+      };
+      this.httpService.postForm(url, params).subscribe();
+      resolve(res);
+      this.getMute().then(mutes => {
+        this.cacheSource.next({muteMap: mutes});
       });
     });
   }
@@ -774,20 +779,19 @@ export class CacheService extends DatabaseService {
         top: top,
         updated_at: new Date().getSeconds(),
       };
-      this.saveData<TopModel>({model: "top", data: data, update: {dataId: dataId}}).then(() => {
-        const res = new Map([[dataId, top]]);
-        const url = _HTTP_SERVER_URL + "/api/user/setTop";
-        const params = {
-          userId: this.localUserService.localUserInfo.userId,
-          topId: dataId,
-          type: top ? 1 : 0,
-          userType: type === 'friend' ? 0 : 1,
-        };
-        this.httpService.postForm(url, params).subscribe();
-        resolve(res);
-        this.getTop().then(tops => {
-          this.cacheSource.next({topMap: tops});
-        });
+      this.saveData<TopModel>({model: "top", data: data, update: {dataId: dataId}});
+      const res = new Map([[dataId, top]]);
+      const url = _HTTP_SERVER_URL + "/api/user/setTop";
+      const params = {
+        userId: this.localUserService.localUserInfo.userId,
+        topId: dataId,
+        type: top ? 1 : 0,
+        userType: type === 'friend' ? 0 : 1,
+      };
+      this.httpService.postForm(url, params).subscribe();
+      resolve(res);
+      this.getTop().then(tops => {
+        this.cacheSource.next({topMap: tops});
       });
     });
   }
@@ -824,7 +828,7 @@ export class CacheService extends DatabaseService {
               groupMemberMap.set(member.userUid.toString(), member);
               this.saveData<GroupMemberModel>({
                 model: "groupMember", data: member, update: {groupId: gid, userUid: member.userUid}
-              }).then();
+              });
             });
             this.cacheSource.next({groupMemberMap: groupMemberMap});
             resolve(groupMemberMap);
@@ -862,7 +866,7 @@ export class CacheService extends DatabaseService {
           if(res.data !== null) {
             res.data.forEach(item => {
               bl.set(item.userUid, item);
-              this.saveData<BlackListModel>({model: 'blackList', data: item}).then();
+              this.saveData<BlackListModel>({model: 'blackList', data: item});
             });
             this.cacheSource.next({blackListMap: bl});
           } else {
@@ -900,8 +904,8 @@ export class CacheService extends DatabaseService {
         res.data.forEach(item => {
           map.set(item.reqUserId.toString(), item);
           item.agree = null;
-          this.saveData<FriendRequestModel>({model: 'friendRequest', data: item}).then();
-          this.cacheSource.next({newFriendMap: map})
+          this.saveData<FriendRequestModel>({model: 'friendRequest', data: item});
+          this.cacheSource.next({newFriendMap: map});
         });
       }
     });
@@ -915,10 +919,9 @@ export class CacheService extends DatabaseService {
   updateNewFriendMap(reqUserId: number, agree: boolean): void {
     this.saveData<FriendRequestModel>({
       model: 'friendRequest', data: {agree: agree}, update: {reqUserId: reqUserId}
-    }).then(() => {
-      this.getNewFriendMap().then(res => {
-        this.cacheSource.next({newFriendMap: res});
-      });
+    });
+    this.getNewFriendMap().then(res => {
+      this.cacheSource.next({newFriendMap: res});
     });
   }
 
@@ -954,9 +957,8 @@ export class CacheService extends DatabaseService {
       fingerPrintOfProtocal: msg.fingerPrintOfProtocal,
       date: msg.date
     };
-    this.saveData<AtMeModel>({model: 'atMe', data: data, update: {fingerPrintOfProtocal: msg.fingerPrintOfProtocal}}).then(() => {
-      this.cacheSource.next({atMe: true});
-    });
+    this.saveData<AtMeModel>({model: 'atMe', data: data, update: {fingerPrintOfProtocal: msg.fingerPrintOfProtocal}});
+    this.cacheSource.next({atMe: true});
   }
 
   /**
