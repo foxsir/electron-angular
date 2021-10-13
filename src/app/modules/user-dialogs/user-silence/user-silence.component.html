@@ -1,16 +1,16 @@
-<div fxFlex="314px" fxLayout="column" fxLayoutGap="20px">
+<div fxFlex="254px" fxLayout="column" fxLayoutGap="20px" class="silenceDiv">
   <div fxFlex>
-    <div mat-dialog-title>选择禁言时间</div>
+    <div mat-dialog-title style="font-size: 16px">选择禁言时间</div>
   </div>
   <div fxFlex>
-    <mat-radio-group [value]="durationTime" [(ngModel)]="durationTime" color="primary" fxLayoutGap="8px" fxLayout="column">
+    <mat-radio-group [value]="durationTime" [(ngModel)]="durationTime" color="primary" fxLayoutGap="12px" fxLayout="column">
       <mat-radio-button class="silence-user-radio-item" *ngFor="let item of timeList" [value]="item.time">{{item.label}}</mat-radio-button>
     </mat-radio-group>
   </div>
   <div fxFlex>
-    <div fxLayout="row" fxLayoutAlign="end" fxLayoutGap="10">
-      <button nz-button nzType="link" mat-dialog-close>取消</button>
-      <button nz-button nzType="link" (click)="save()">保存</button>
+    <div fxLayout="row" fxLayoutAlign="end" fxLayoutGap="10" style="margin-right:-15px">
+      <button tabindex="-1" nz-button nzType="link" mat-dialog-close>取消</button>
+      <button tabindex="-1" nz-button nzType="link" (click)="save()">保存</button>
     </div>
   </div>
 </div>

@@ -3,9 +3,70 @@
     label {
       justify-content: space-between;
       flex-direction: row-reverse;
+      font-size: 14px;
     }
     label:hover {
       color: #0091ff;
+    }
+
+  }
+}
+
+::ng-deep {
+  .mat-dialog-title {
+    margin: 0px;
+  }
+  .silenceDiv{
+    .mat-radio-outer-circle {
+      display: none;
+    }
+    .mat-radio-ripple{
+      display: none;
+    }
+    .mat-ripple-element mat-radio-persistent-ripple{
+      display: none;
+    }
+
+    input[type=radio] {
+      width: 20px;
+      height: 20px;
+      appearance: none;
+      position: relative;
+      left:0px
+    }
+    input[type=radio]:before{
+      content: '';
+      width: 18px;
+      height: 18px;
+      border: 1px solid #CCC;
+      display: inline-block;
+      border-radius: 50%;
+      vertical-align: middle;
+    }
+    input[type=radio]:checked:before{
+      content: '';
+      width: 18px;
+      height: 18px;
+      border: 1px solid #0091FF;
+      background:#0091FF;
+      display: inline-block;
+      border-radius: 50%;
+      vertical-align: middle;
+    }
+    input[type=radio]:checked:after{
+      content: '';
+      width: 8px;
+      height:4px;
+      border: 2px solid white;
+      border-top: transparent;
+      border-right: transparent;
+      text-align: center;
+      display: block;
+      position: absolute;
+      top: 6px;
+      left:6px;
+      vertical-align: middle;
+      transform: rotate(-45deg);
     }
   }
 }

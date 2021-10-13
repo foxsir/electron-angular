@@ -152,10 +152,13 @@
 
 .message-container {
   overflow: hidden;
+  margin-top: 15px;
+
   .message-time {
     font-size: 12px;
     color: #888888;
     visibility: hidden;
+    margin-right: 50px;
   }
 }
 
