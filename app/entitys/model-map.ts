@@ -18,6 +18,7 @@ import SessionStatusModel from "./session-status.model";
 import MuteModel from "./mute.model";
 import TopModel from "./top.model";
 import AtMeModel from "./at-me.model";
+import LastMessageModel from "./last-message.model";
 
 const ModelMap: Map<string, typeof BaseEntity> = new Map();
 
@@ -39,5 +40,6 @@ ModelMap.set("sessionStatus", SessionStatusModel);
 ModelMap.set("mute", MuteModel);
 ModelMap.set("top", TopModel);
 ModelMap.set("atMe", AtMeModel);
+ModelMap.set("lastMessage", LastMessageModel);
 
 export default ModelMap;
