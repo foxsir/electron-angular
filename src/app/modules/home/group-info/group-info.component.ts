@@ -21,6 +21,8 @@ import { MessageService } from "@services/message/message.service";
 import { CurrentChattingChangeService } from "@services/current-chatting-change/current-chatting-change.service";
 import NewHttpResponseInterface from "@app/interfaces/new-http-response.interface";
 import GroupInfoModel from "@app/models/group-info.model";
+import {SnackBarService} from "@services/snack-bar/snack-bar.service";
+import {GroupModel} from "@app/models/group.model";
 
 @Component({
     selector: 'app-group-info',
@@ -96,9 +98,10 @@ export class GroupInfoComponent implements OnInit {
         private cacheService: CacheService,
         private messageService: MessageService,
         private currentChattingChangeService: CurrentChattingChangeService,
+        private snackBarService: SnackBarService,
     ) {
         this.currentChattingChangeService.currentChatting$.subscribe(currentChat => {
-          if(this.currentChat.alarmItem.dataId !== currentChat.alarmItem.dataId) {
+          if(currentChat && this.currentChat.alarmItem.dataId !== currentChat.alarmItem.dataId) {
             console.log('会话切换...');
             this.currentChat = currentChat;
             this.view_mode = 'switch_default';
@@ -461,27 +464,16 @@ export class GroupInfoComponent implements OnInit {
 
             this.restService.jieSangGroup(post_data).subscribe(res => {
                 if (res.success == false) {
-                    return;
+                    return this.snackBarService.openMessage("解散失败,请重试") ;
+                } else {
+                  this.dialogService.alert({ title: '解散成功！', text: '输入框不能为空！' }).then(() => {});
+                  // 删除会话
+                  this.cacheService.deleteChattingCache(this.currentChat.alarmItem.dataId).then(() => {});
+                  // 清空历史消息
+                  this.cacheService.clearChattingCache(this.currentChat).then(() => {});
+                  // 从我的群组列表中删除
+                  this.cacheService.deleteData<GroupModel>({model: 'group', query: {gid: this.currentChat.alarmItem.dataId}}).then();
                 }
-                console.log('解散成功，发送通知消息...');
-
-                var imdata = {
-                    bridge: false,
-                    dataContent: {
-                        "nickName": "",
-                        "uh": "", "f": "0",
-                        "t": this.currentChat.alarmItem.dataId,
-                        "m": "本群已被" + this.userinfo.nickname + "解散",
-                        "cy": 2, "ty": 90, "sync": "0"
-                    },
-                    fp: '', from: 0, qoS: true, sm: -1, sync: 0, type: 2, typeu: 48,
-                };
-                this.messageService.sendCustomerMessage(imdata).then(res => {
-                    if (res.success === true) {
-                        this.dialogService.alert({ title: '解散成功！', text: '输入框不能为空！' }).then((ok) => {
-                        });
-                    }
-                });
             });
         });
     }
@@ -495,9 +487,8 @@ export class GroupInfoComponent implements OnInit {
 
                 this.dialogService.confirm({ title: "消息提示", text: "确定邀请该好友入群？" }).then((ok) => {
                     if (ok == false) {
-                        return;
+                      return;
                     }
-
                     var post_data = {
                         invite_to_gid: this.currentChat.alarmItem.dataId,
                         invite_uid: this.userinfo.userId,
@@ -507,7 +498,7 @@ export class GroupInfoComponent implements OnInit {
 
                     this.restService.inviteFriendToGroup(post_data).subscribe(res => {
                         if (res.success == false) {
-                            return;
+                          return this.snackBarService.openMessage(res.msg);
                         }
                         this.dialogService.alert({ title: '邀请成功！'}).then(() => {
                           setTimeout(() => {
