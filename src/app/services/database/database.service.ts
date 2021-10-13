@@ -2,6 +2,7 @@ import {Subject} from 'rxjs';
 import {BaseEntity} from 'typeorm';
 import IpcResponseInterface from "@app/interfaces/ipc-response.interface";
 import CommonTools from "@app/common/common.tools";
+import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 const { ipcRenderer } = window.require('electron');
 
 interface QueryParams<T> {
@@ -39,9 +40,6 @@ export abstract class DatabaseService {
   private deleteDataSource = new Subject<any>();
   private deleteDataUpdate$ = this.deleteDataSource.asObservable();
 
-  private dropDBSource = new Subject<any>();
-  private dropDBUpdate$ = this.dropDBSource.asObservable();
-
   constructor() {
     if(this.isConnected !== true) {
       this.listenReply();
@@ -51,12 +49,12 @@ export abstract class DatabaseService {
   connectionDB(name: string): Promise<boolean> {
     return new Promise((resolve) => {
       if(this.isConnected !== true) {
-        ipcRenderer.send('connectionDB', name);
         const subscribe = this.connectedUpdate$.subscribe((connected: boolean) => {
           this.isConnected = connected;
           resolve(connected);
           subscribe.unsubscribe();
         });
+        ipcRenderer.send('connectionDB', name);
       } else {
         resolve(true);
       }
@@ -84,10 +82,6 @@ export abstract class DatabaseService {
 
     ipcRenderer.on('deleteData-reply', (event, data) => {
       this.deleteDataSource.next(data);
-    });
-
-    ipcRenderer.on('dropDB-reply', (event, data) => {
-      this.dropDBSource.next(data);
     });
   }
 
@@ -135,17 +129,12 @@ export abstract class DatabaseService {
   /**
    * 删除当前用户数据库（缓存）
    */
-  dropDB() {
+  clearDB() {
     return new Promise((resolve) => {
-      const uuid = CommonTools.uuid();
-      ipcRenderer.send('dropDB', {uuid: uuid});
-
-      const subscribe = this.dropDBUpdate$.subscribe((res: IpcResponseInterface<{uuid: string}>) => {
-        if(res.uuid === uuid) {
-          resolve(res);
-          subscribe.unsubscribe();
-        }
-      });
+      this.deleteData<ChatmsgEntityModel>({model: 'chatmsgEntity', query: null}).then(() => {
+        resolve(true);
+      })
     });
   }
+
 }
