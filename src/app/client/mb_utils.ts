@@ -20,6 +20,7 @@
  */
 
 import MBCore from "./mb_core";
+import {WorkerService} from "@services/worker/worker.service";
 
 /**
  * 一些MobileIMSDK的H5客户端要用到的实用工具函数等。
@@ -29,6 +30,7 @@ import MBCore from "./mb_core";
 export default class MBUtils {
 
   public static mbCore = new MBCore();
+  private static workerService: WorkerService = WorkerService.getInstance();
 
   /**
    * 对Date的扩展，将 Date 转化为指定格式的String。
@@ -208,6 +210,7 @@ export default class MBUtils {
         try {
           // api文档：https://developer.mozilla.org/zh-CN/docs/Web/API/WebSocket/send
           // websocket.send(dataWithString);
+          MBUtils.workerService.post(dataWithString);
           sendSucess = true;
 
           if (MBUtils.mbCore.debugEnabled()) {

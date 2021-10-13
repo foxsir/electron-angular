@@ -25,6 +25,7 @@ import {MBErrorCode} from "./mb_constants";
 import MBProtocalFactory from "./MBProtocalFactory";
 import MBSocketProvider from "./mb_socket_provider";
 import MBQoS4SendDaemon from "./mb_daemon_qos_send";
+import {WorkerService} from "@services/worker/worker.service";
 
 /**
  * 数据发送处理实用类。
@@ -39,6 +40,7 @@ export default class MBDataSender {
   private mbProtocalFactory = new MBProtocalFactory();
   private mbSocketProvider = new MBSocketProvider();
   private mbQoS4SendDaemon = new MBQoS4SendDaemon();
+  private workerService: WorkerService = WorkerService.getInstance();
 
   // /**
   //  * 发送登陆(连接)信息给服务端。
@@ -78,11 +80,12 @@ export default class MBDataSender {
 
       const connectionDoneCallback = (sucess, extraObj) => {
         // 成功建立了Websocket连接后立即把登陆包发出去
-        if (sucess)
+        if (sucess) {
           this.sendLoginImpl(loginInfo);
         // TCP连接建立失败
-        else
+        } else {
           MBUtils.mblog_w(this.TAG, "[来自ws连接结果回调观察者通知]socket连接失败，本次登陆信息未成功发出！");
+        }
       }
       // 调置连接回调
       this.mbSocketProvider.setConnectionDoneCallback(connectionDoneCallback);
@@ -111,7 +114,8 @@ export default class MBDataSender {
     // byte[] b = ProtocalFactory.createPLoginInfo(loginUserId, loginToken, extra).toBytes();
 
     const p = this.mbProtocalFactory.createPLoginInfo(loginInfo.loginUserId, loginInfo);
-    const code = this.send(JSON.stringify(p));
+    const infoString = JSON.stringify(p);
+    const code = this.send(infoString);
     // 登陆信息成功发出时就把登陆名存下来
     if (code === 0) {
       // let currentLoginInfo = {

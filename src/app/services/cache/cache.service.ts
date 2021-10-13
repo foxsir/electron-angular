@@ -33,6 +33,7 @@ import MuteModel from "@app/models/mute.model";
 import TopModel from "@app/models/top.model";
 import AtMeModel from "@app/models/at-me.model";
 import SilenceUserModel from "@app/models/silence-user.model";
+import LastMessageModel from "@app/models/last-message.model";
 
 export type AlarmDataMap = Map<string, {alarmData: AlarmItemInterface; message?: Map<string, ChatmsgEntityModel>}>;
 
@@ -270,8 +271,16 @@ export class CacheService extends DatabaseService {
    * @constructor
    */
   async syncChattingList(chattingListCache: AlarmDataMap): Promise<Map<string, AlarmItemInterface>> {
-    const friends = await this.getCacheFriends().then(res => res);
-    const groups = await this.getCacheGroups().then(res => res);
+    let friends: Map<string, FriendModel>;
+    let groups: Map<string, GroupModel>;
+    const lastMessage: Map<string, string> = new Map();
+    await this.getCacheFriends().then(res => { friends = res; });
+    await this.getCacheGroups().then(res => { groups = res; });
+    await this.queryData<LastMessageModel>({model: 'lastMessage', query: null}).then((res: IpcResponseInterface<LastMessageModel>) => {
+      res.data.forEach(t => {
+        lastMessage.set(t.dataId, t.fp);
+      });
+    });
 
     return new Promise((resolve, reject) => {
       this.getAllLastMessage().then((res: Map<string, RoamLastMsgModel>) =>{
@@ -312,11 +321,11 @@ export class CacheService extends DatabaseService {
               unread: data.unread
             }
           };
+
           // 将本地不存在的对话返回到聊天Map
           if(chattingListCache === null) {
             newMap.set(alarmItem.alarmItem.dataId, alarmItem);
-          } else if(chattingListCache.get(alarmItem.alarmItem.dataId)) {
-            // 如果已经有缓存， 只更新缓存有的会话
+          } else if (lastMessage.get(alarmItem.alarmItem.dataId) !== protocalModel.fp) { // 检查是否是删除的会话
             newMap.set(alarmItem.alarmItem.dataId, alarmItem);
           }
           // 同步消息
@@ -369,17 +378,15 @@ export class CacheService extends DatabaseService {
     this.rosterProviderService.refreshRosterAsync().subscribe((res: NewHttpResponseInterface<any>) => {
       // 服务端返回的是一维RosterElementEntity对象数组
       if(res.status === 200) {
-        this.deleteData<FriendModel>({model: "friend", query: null}).then(() => {
-          const friendList: FriendModel[] = res.data;
-          if (friendList.length > 0) {
-            const data = new Map<string, FriendModel>();
-            friendList.forEach(f => {
-              data.set(f.friendUserUid.toString(), f);
-              this.saveData<FriendModel>({model: 'friend', data: f, update: {friendUserUid: f.friendUserUid}});
-            });
-            this.cacheSource.next({friendMap: data});
-          }
-        });
+        const friendList: FriendModel[] = res.data;
+        if (friendList.length > 0) {
+          const data = new Map<string, FriendModel>();
+          friendList.forEach(f => {
+            data.set(f.friendUserUid.toString(), f);
+            this.saveData<FriendModel>({model: 'friend', data: f, update: {friendUserUid: f.friendUserUid}});
+          });
+          this.cacheSource.next({friendMap: data});
+        }
       }
     });
   }
@@ -390,16 +397,14 @@ export class CacheService extends DatabaseService {
   cacheGroups() {
     this.restService.getUserJoinGroup().subscribe((res: NewHttpResponseInterface<GroupModel[]>) => {
       if(res.status === 200) {
-        this.deleteData<GroupModel>({model: "group", query: null}).then(() => {
-          const groupMap = new Map<string, GroupModel>();
-          res.data.forEach(g => {
-            if(g) {
-              groupMap.set(g.gid, g);
-              this.saveData<GroupModel>({model: 'group', data: g, update: {gid: g.gid}});
-            }
-          });
-          this.cacheSource.next({groupMap: groupMap});
+        const groupMap = new Map<string, GroupModel>();
+        res.data.forEach(g => {
+          if(g) {
+            groupMap.set(g.gid, g);
+            this.saveData<GroupModel>({model: 'group', data: g, update: {gid: g.gid}});
+          }
         });
+        this.cacheSource.next({groupMap: groupMap});
       }
     });
   }
@@ -411,19 +416,17 @@ export class CacheService extends DatabaseService {
     return new Promise(resolve => {
       this.restService.getGroupAdminList(gid).subscribe((res: NewHttpResponseInterface<GroupAdminModel[]>) => {
         if(res.status === 200) {
-          this.deleteData<GroupAdminModel>({model: 'groupAdmin', query: {gid: gid}}).then(() => {
-            const groupAdminMap = new Map<string, GroupAdminModel>();
-            res.data.forEach(admin => {
-              groupAdminMap.set(admin.userUid.toString(), admin);
-              admin.gid = gid;
-              this.saveData<GroupAdminModel>({
-                model: "groupAdmin", data: admin, update: {gid: gid, userUid: admin.userUid}
-              });
+          const groupAdminMap = new Map<string, GroupAdminModel>();
+          res.data.forEach(admin => {
+            groupAdminMap.set(admin.userUid.toString(), admin);
+            admin.gid = gid;
+            this.saveData<GroupAdminModel>({
+              model: "groupAdmin", data: admin, update: {gid: gid, userUid: admin.userUid}
             });
-            const newData = new Map<string, Map<string, GroupAdminModel>>();
-            this.cacheSource.next({groupAdminMap: newData});
-            resolve(newData);
           });
+          const newData = new Map<string, Map<string, GroupAdminModel>>();
+          this.cacheSource.next({groupAdminMap: newData});
+          resolve(newData);
         }
       });
     });
@@ -489,11 +492,7 @@ export class CacheService extends DatabaseService {
    * 清空缓存
    */
   clearAllCache() {
-    this.dropDB().then(() => {
-      const localUserInfo = this.localUserService.localUserInfo;
-      this.connectionDB(localUserInfo.userId.toString()).then(() => {
-      });
-    });
+    this.clearDB().then(() => {});
   }
 
   /**
@@ -821,17 +820,15 @@ export class CacheService extends DatabaseService {
     return new Promise(resolve => {
       this.restService.submitGetGroupMembersListFromServer(gid).subscribe((res: NewHttpResponseInterface<{list: GroupMemberModel[]}>) => {
         if(res.status === 200) {
-          this.deleteData<GroupMemberModel>({model: 'groupMember', query: {groupId: gid}}).then(() => {
-            const groupMemberMap = new Map<string, GroupMemberModel>();
-            res.data.list.forEach(member => {
-              groupMemberMap.set(member.userUid.toString(), member);
-              this.saveData<GroupMemberModel>({
-                model: "groupMember", data: member, update: {groupId: gid, userUid: member.userUid}
-              });
+          const groupMemberMap = new Map<string, GroupMemberModel>();
+          res.data.list.forEach(member => {
+            groupMemberMap.set(member.userUid.toString(), member);
+            this.saveData<GroupMemberModel>({
+              model: "groupMember", data: member, update: {groupId: gid, userUid: member.userUid}
             });
-            this.cacheSource.next({groupMemberMap: groupMemberMap});
-            resolve(groupMemberMap);
           });
+          this.cacheSource.next({groupMemberMap: groupMemberMap});
+          resolve(groupMemberMap);
         }
       });
     });
@@ -860,19 +857,16 @@ export class CacheService extends DatabaseService {
   cacheBlackList() {
     this.restService.getMyBlackList().subscribe((res: NewHttpResponseInterface<BlackListModel[]>) => {
       if(res.status === 200) {
-        this.deleteData<BlackListModel>({model: "blackList", query: null}).then(() => {
-          const bl = new Map();
-          if(res.data !== null) {
-            res.data.forEach(item => {
-              bl.set(item.userUid, item);
-              this.saveData<BlackListModel>({model: 'blackList', data: item});
-            });
-            this.cacheSource.next({blackListMap: bl});
-          } else {
-            this.cacheSource.next({blackListMap: bl});
-          }
-        });
-
+        const bl = new Map();
+        if(res.data !== null) {
+          res.data.forEach(item => {
+            bl.set(item.userUid, item);
+            this.saveData<BlackListModel>({model: 'blackList', data: item});
+          });
+          this.cacheSource.next({blackListMap: bl});
+        } else {
+          this.cacheSource.next({blackListMap: bl});
+        }
       }
     });
   }

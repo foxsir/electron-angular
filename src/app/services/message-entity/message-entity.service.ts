@@ -3,7 +3,6 @@ import {MsgType} from "@app/config/rbchat-config";
 import RBChatUtils from "@app/libs/rbchat-utils";
 import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 import {LocalUserService} from "@services/local-user/local-user.service";
-import {ImService} from "@services/im/im.service";
 
 /**
  * 聊天消息内容列表中的每个单元数据封装对象（本对像仅用于聊天消息显示界面中的UI显示时，不会用作别的地方）。
@@ -17,7 +16,6 @@ export class MessageEntityService {
 
   constructor(
     private localUserService: LocalUserService,
-    private imService: ImService
   ) {}
 
   /**
@@ -187,12 +185,12 @@ export class MessageEntityService {
       }
       //111 新增了自己发的红包
       case MsgType.TYPE_REDBAG:
-        chatMsgEntityObj = this.createChatMsgEntity_TO_REDBAG(this.imService.getLoginInfo().loginUserId, this.localUserInfo.nickname, msg, time, fingerPrint);
+        chatMsgEntityObj = this.createChatMsgEntity_TO_REDBAG(this.localUserInfo.userId, this.localUserInfo.nickname, msg, time, fingerPrint);
         break;
 
       //111 新增了自己发的红包
       case MsgType.TYPE_GETREDBAG:
-        chatMsgEntityObj = this.createChatMsgEntity_TO_GETREDBAG(this.imService.getLoginInfo().loginUserId, this.localUserInfo.nickname, msg, time, fingerPrint);
+        chatMsgEntityObj = this.createChatMsgEntity_TO_GETREDBAG(this.localUserInfo.userId, this.localUserInfo.nickname, msg, time, fingerPrint);
         break;
 
       //111 新增了 @
@@ -213,12 +211,12 @@ export class MessageEntityService {
         break;
       case MsgType.TYPE_QUOTE: {
         // 回复类型
-        chatMsgEntityObj = this.createChatMsgEntity_COME_QUOTE(this.imService.getLoginInfo().loginUserId, this.localUserInfo.nickname, msg, time, fingerPrint);
+        chatMsgEntityObj = this.createChatMsgEntity_COME_QUOTE(this.localUserInfo.userId, this.localUserInfo.nickname, msg, time, fingerPrint);
         break;
       }
       case MsgType.TYPE_TRANSFER: {
         // 合并转发
-        chatMsgEntityObj = this.createChatMsgEntity_COME_TRANSFER(this.imService.getLoginInfo().loginUserId, this.localUserInfo.nickname, msg, time, fingerPrint);
+        chatMsgEntityObj = this.createChatMsgEntity_COME_TRANSFER(this.localUserInfo.userId, this.localUserInfo.nickname, msg, time, fingerPrint);
         break;
       }
       default:
@@ -231,7 +229,7 @@ export class MessageEntityService {
 
   createChatMsgEntity_TO_TEXT(message, time, fingerPrint, xu_isRead_type = null) {
     // const chatMsgEntityObj =
-    // this.createChatMsgEntity_COME_TEXT(this.imService.getLoginInfo().loginUserId, this.localUserInfo.nickname, message, time, fingerPrint);
+    // this.createChatMsgEntity_COME_TEXT(this.localUserInfo.userId, this.localUserInfo.nickname, message, time, fingerPrint);
     const chatMsgEntityObj = this.createChatMsgEntity_COME_TEXT(this.localUserService.getObj().userId, this.localUserInfo.nickname, message, time, fingerPrint);
     // chatMsgEntityObj.isOutgoing = true;
 
@@ -243,7 +241,7 @@ export class MessageEntityService {
 
   createChatMsgEntity_TO_IMAGE(fileName, time, fingerPrint, xu_isRead_type = null) {
     const chatMsgEntityObj =
-      this.createChatMsgEntity_COME_IMAGE(this.imService.getLoginInfo().loginUserId, this.localUserInfo.nickname, fileName, time, fingerPrint);
+      this.createChatMsgEntity_COME_IMAGE(this.localUserInfo.userId, this.localUserInfo.nickname, fileName, time, fingerPrint);
     // chatMsgEntityObj.isOutgoing = true;
     chatMsgEntityObj.xu_isRead_type = xu_isRead_type;  //111 新增已读类型
 
@@ -252,7 +250,7 @@ export class MessageEntityService {
 
   createChatMsgEntity_TO_VOICE(fileName, time, fingerPrint, xu_isRead_type = null) {
     const chatMsgEntityObj =
-      this.createChatMsgEntity_COME_VOICE(this.imService.getLoginInfo().loginUserId, this.localUserInfo.nickname, fileName, time, fingerPrint);
+      this.createChatMsgEntity_COME_VOICE(this.localUserInfo.userId, this.localUserInfo.nickname, fileName, time, fingerPrint);
     // chatMsgEntityObj.isOutgoing = true;
 
     chatMsgEntityObj.xu_isRead_type = xu_isRead_type;  //111 新增已读类型
@@ -262,7 +260,7 @@ export class MessageEntityService {
 
   createChatMsgEntity_TO_GIFT$FOR$SEND(giftIdent, time, fingerPrint, xu_isRead_type = null) {
     const chatMsgEntityObj = this.createChatMsgEntity_COME_GIFT$FOR$SEND(
-      this.imService.getLoginInfo().loginUserId, this.localUserInfo.nickname, giftIdent, time, fingerPrint
+      this.localUserInfo.userId, this.localUserInfo.nickname, giftIdent, time, fingerPrint
     );
     // chatMsgEntityObj.isOutgoing = true;
     chatMsgEntityObj.xu_isRead_type = xu_isRead_type;  //111 新增已读类型
@@ -271,7 +269,7 @@ export class MessageEntityService {
 
   createChatMsgEntity_TO_GIFT$FOR$GET(giftIdent, time, fingerPrint, xu_isRead_type = null) {
     const chatMsgEntityObj = this.createChatMsgEntity_COME_GIFT$FOR$GET(
-      this.imService.getLoginInfo().loginUserId, this.localUserInfo.nickname, giftIdent, time, fingerPrint
+      this.localUserInfo.userId, this.localUserInfo.nickname, giftIdent, time, fingerPrint
     );
     // chatMsgEntityObj.isOutgoing = true;
     chatMsgEntityObj.xu_isRead_type = xu_isRead_type;  //111 新增已读类型
@@ -285,7 +283,7 @@ export class MessageEntityService {
       fileLength:fileLength,
     };
     const chatMsgEntityObj = this.createChatMsgEntity_COME_FILE(msg,
-      this.imService.getLoginInfo().loginUserId, this.localUserInfo.nickname, time, fingerPrint
+      this.localUserInfo.userId, this.localUserInfo.nickname, time, fingerPrint
     );
     // chatMsgEntityObj.isOutgoing = true;
     chatMsgEntityObj.xu_isRead_type = xu_isRead_type;  //111 新增已读类型
@@ -293,14 +291,14 @@ export class MessageEntityService {
   }
 
   createChatMsgEntity_TO_SHORTVIDEO(msg, time, fingerPrint, xu_isRead_type = null) {
-    const chatMsgEntityObj = this.createChatMsgEntity_COME_SHORTVIDEO(this.imService.getLoginInfo().loginUserId, this.localUserInfo.nickname, msg, time, fingerPrint);
+    const chatMsgEntityObj = this.createChatMsgEntity_COME_SHORTVIDEO(this.localUserInfo.userId, this.localUserInfo.nickname, msg, time, fingerPrint);
     // chatMsgEntityObj.isOutgoing = true;
     chatMsgEntityObj.xu_isRead_type = xu_isRead_type;  //111 新增已读类型
     return chatMsgEntityObj;
   }
 
   createChatMsgEntity_TO_CONTACT(theUid, theNickName, time, fingerPrint, xu_isRead_type = null) {
-    const chatMsgEntityObj = this.createChatMsgEntity_COME_CONTACT(this.imService.getLoginInfo().loginUserId, this.localUserInfo.nickname, theUid, theNickName, time, fingerPrint);
+    const chatMsgEntityObj = this.createChatMsgEntity_COME_CONTACT(this.localUserInfo.userId, this.localUserInfo.nickname, theUid, theNickName, time, fingerPrint);
     // chatMsgEntityObj.isOutgoing = true;
     chatMsgEntityObj.xu_isRead_type = xu_isRead_type;  //111 新增已读类型
     return chatMsgEntityObj;
@@ -308,7 +306,7 @@ export class MessageEntityService {
 
   createChatMsgEntity_TO_LOCATION(thLocationTitle, thLocationContent, thLongitude, thLatitude, time, fingerPrint, xu_isRead_type = null) {
 
-    const chatMsgEntityObj = this.createChatMsgEntity_COME_LOCATON(this.imService.getLoginInfo().loginUserId, this.localUserInfo.nickname
+    const chatMsgEntityObj = this.createChatMsgEntity_COME_LOCATON(this.localUserInfo.userId, this.localUserInfo.nickname
       , thLocationTitle, thLocationContent, thLongitude, thLatitude, null
       , time, fingerPrint);
     // chatMsgEntityObj.isOutgoing = true;

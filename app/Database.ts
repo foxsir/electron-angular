@@ -3,6 +3,7 @@ import {ipcMain} from 'electron';
 
 import {BaseEntity, Connection, createConnection} from "typeorm";
 import ModelMap from "./entitys/model-map";
+const fs = require('fs')
 
 interface QueryParams {
   model: string;
@@ -28,6 +29,7 @@ export default class Database {
 
   // 保存链接
   private connection: Connection = null;
+  private database: string;
 
   constructor() {
   }
@@ -54,6 +56,7 @@ export default class Database {
       ModelMap.forEach(m => {
         models.push(m);
       });
+      this.database = database;
       createConnection({
         type: "sqlite",
         database: [__dirname, "databases", database].join("/"),
@@ -64,6 +67,7 @@ export default class Database {
         this.connection = connection;
         resolve(true);
       }).catch(error => {
+        console.error(error);
         resolve(false);
       });
     });
@@ -75,7 +79,6 @@ export default class Database {
     this.onQueryData();
     this.onDeleteData();
     this.onCloseDB();
-    this.onDropDB();
   }
 
   onConnectionDB() {
@@ -167,16 +170,6 @@ export default class Database {
     ipcMain.on('closeDB', async (event, msg) => {
       if(this.connection) {
         await this.connection.close();
-      }
-    });
-  }
-
-  onDropDB() {
-    ipcMain.on('dropDB', async (event, msg: {uuid: string}) => {
-      if(this.connection) {
-        await this.connection.dropDatabase().then(() => {
-          event.sender.send('dropDB-reply', {status: 200, uuid: msg.uuid});
-        });
       }
     });
   }

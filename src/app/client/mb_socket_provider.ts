@@ -25,6 +25,7 @@ import MBDataReciever from "./mb_data_reciever";
 import MBKeepAliveDaemon from "./mb_daemon_keep_alive";
 import InstanceFactory from "@app/client/InstanceFactory";
 import MBDataSender from "@app/client/mb_data_sender";
+import {WorkerService} from "@services/worker/worker.service";
 
 /**
  * 本地 WebSocket 实例封装实用类。
@@ -46,7 +47,8 @@ export default class MBSocketProvider {
   private _websocketUrl = null;
 
   /* 本地WebSocket对象引用 */
-  public static localSocket: WebSocket;
+  public static localSocket: WorkerService;
+  private workerService: WorkerService = WorkerService.getInstance();
 
   /*
    * 连接完成后将被通知的观察者。如果设置本参数，则将在连接完成后调用1次，调用完成后置null。
@@ -123,10 +125,15 @@ export default class MBSocketProvider {
       // }
 
       if (window.WebSocket) {
-        MBSocketProvider.localSocket = new WebSocket(this.mbCore.getWebsocketUrl());// "ws://192.168.99.190:7080/websocket"
+        // MBSocketProvider.localSocket = new WebSocket(this.mbCore.getWebsocketUrl());// "ws://192.168.99.190:7080/websocket"
+        MBSocketProvider.localSocket = this.workerService;
+
+        // worker
+        this.workerService.createSocket(this.mbCore.getWebsocketUrl());
 
         //## WebSocket的HTML5标准API连接建立时的回调处理
-        MBSocketProvider.localSocket.onopen = (event) => {
+        // MBSocketProvider.localSocket.onopen = (event) => {
+        this.workerService.openHandle = (event) => {
           if (this.mbCore.debugEnabled()) {
             MBUtils.mblog_d(this.TAG, "WS.onopen - 连接已成功建立！(isLocalSocketReady=" + this.isLocalSocketReady() + ")");
           }
@@ -141,7 +148,7 @@ export default class MBSocketProvider {
         };
 
         //## WebSocket的HTML5标准API连接关闭时的回调处理
-        MBSocketProvider.localSocket.onclose = (evt) => {
+        this.workerService.closeHandle = (evt) => {
           if (this.mbCore.debugEnabled()) {
             MBUtils.mblog_d(this.TAG, "WS.onclose - 连接已断开。。。。(isLocalSocketReady=" + this.isLocalSocketReady()
               + ", MBClientCoreSDK.connectedToServer=" + this.mbCore.isConnectedToServer() + ")", evt);
@@ -158,16 +165,17 @@ export default class MBSocketProvider {
         };
 
         //## WebSocket的HTML5标准API发生错误时的回调处理
-        MBSocketProvider.localSocket.onerror = (evt) => {
+        this.workerService.errorHandle = (evt) => {
           // if(MBClientCoreSDK.debugEnabled())
           MBUtils.mblog_e(this.TAG, "WS.onerror - 异常被触发了，原因是：", evt);
 
-          if (MBSocketProvider.localSocket)
-            {MBSocketProvider.localSocket.close();}
+          if (MBSocketProvider.localSocket) {
+            this.workerService.close();
+          }
         }
 
         //## WebSocket的HTML5标准API收到数据时的回调处理
-        MBSocketProvider.localSocket.onmessage = (event) => {
+        this.workerService.messageHandle = (event) => {
           const protocalJsonStr = (event ? (event.data ? event.data : null) : null);
 
           if (this.mbCore.debugEnabled())

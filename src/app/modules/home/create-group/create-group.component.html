@@ -28,7 +28,7 @@
   <div fxFlex [fxShow]="step === 'one'">
     <mat-card class="mat-elevation-z0 transparent">
       <mat-card-content>
-        <nz-input-group fxFlex="100" [nzSuffix]="suffixTemplateInfo">
+        <nz-input-group fxFlex="100" [nzSuffix]="suffixTemplateInfo" style="border-radius: 4px;">
           <input nz-input placeholder="搜索"
                  (keydown.enter)="doSearchFriend()"
                  (ngModelChange)="doSearchFriend()" [(ngModel)]="searchFriend" />
@@ -44,11 +44,11 @@
         <mat-selection-list class="friend-item-list" #friendSelect disableRipple color="primary">
           <mat-list-option *ngFor="let friend of friendList" [value]="friend">
             <mat-icon mat-list-icon class="friend-avatar">
-              <img [src]="friend.userAvatarFileName" alt="">
+              <img [src]="friend.userAvatarFileName" alt="" style="width: 40px; height: 40px">
             </mat-icon>
-            <div mat-line>{{friend.nickname}}</div>
-            <div mat-line *ngIf="!!friend.isOnline === true" style="color: #0091FF;">[在线]</div>
-            <div mat-line *ngIf="!!friend.isOnline === false" style="color: #CCCCCC;">[离线]</div>
+            <div mat-line style="font-size: 14px;padding-bottom: 2px">{{friend.nickname}}</div>
+            <div mat-line *ngIf="!!friend.isOnline === true" style="color: #0091FF;font-size: 12px">[在线]</div>
+            <div mat-line *ngIf="!!friend.isOnline === false" style="color: #CCCCCC;font-size:12px">[离线]</div>
           </mat-list-option>
         </mat-selection-list>
       </mat-card-content>
@@ -61,9 +61,9 @@
           <mat-card-content>
             <div fxLayout="row" fxLayoutGap="10px">
               <div fxFlex="50px">
-                <img [src]="defaultGroupAvatar" style="width: 50px; height: 50px" mat-card-avatar alt="">
+                <img [src]="defaultGroupAvatar" style="width: 40px; height: 40px" mat-card-avatar alt="">
               </div>
-              <div fxFlex fxFlexAlign="center">
+              <div fxFlex fxFlexAlign="center" style="font-size: 14px;padding-bottom: 2px">
                   {{defaultGroupName}}
               </div>
             </div>
@@ -76,11 +76,11 @@
             <mat-list class="friend-item-list">
               <mat-list-item *ngFor="let friend of selectedFriends">
                 <mat-icon mat-list-icon class="friend-avatar">
-                  <img [src]="friend.userAvatarFileName" alt="">
+                  <img [src]="friend.userAvatarFileName" alt="" style="width: 40px;height: 40px">
                 </mat-icon>
-                <div mat-line>{{friend.nickname}}</div>
-                <div mat-line *ngIf="!!friend.isOnline === true" style="color: #0091FF;">[在线]</div>
-                <div mat-line *ngIf="!!friend.isOnline === false" style="color: #CCCCCC;">[离线]</div>
+                <div mat-line style="font-size: 14px;padding-bottom: 2px">{{friend.nickname}}</div>
+                <div mat-line *ngIf="!!friend.isOnline === true" style="color: #0091FF;font-size:12px">[在线]</div>
+                <div mat-line *ngIf="!!friend.isOnline === false" style="color: #CCCCCC; font-size:12px">[离线]</div>
               </mat-list-item>
             </mat-list>
           </mat-card-content>

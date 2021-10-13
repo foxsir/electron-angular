@@ -1,5 +1,5 @@
 .create-group-container {
-  background: #f0f2f5;
+  background: #ffffff;
   .create-group-header {
     border-bottom: solid #CCCCCC 1px;
   }
@@ -10,5 +10,49 @@
       height: 40px;
       border-radius: 50%;
     }
+  }
+
+}
+
+::ng-deep {
+  .create-group-container{
+    .mat-card{
+      padding: 16px 20px 16px 20px;
+    }
+    .mat-list-base .mat-list-item .mat-list-item-content, .mat-list-base .mat-list-option .mat-list-item-content{
+      padding: 0px;
+    }
+    .mat-list-base{
+      padding: 0px;
+    }
+    .mat-list-base .mat-list-item.mat-2-line, .mat-list-base .mat-list-option.mat-2-line{
+      height: 56px;
+    }
+    .search-area .mat-list-base .mat-list-item.mat-2-line, .mat-list-base .mat-list-option.mat-2-line {
+      padding: 0px;
+    }
+    .mat-list-text .mat-line{
+      font-size: 14px;
+    }
+    .mat-list-base .mat-list-item.mat-list-item-with-avatar.mat-list-option .mat-list-item-content-reverse .mat-list-text, .mat-list-base .mat-list-item.mat-list-item-with-avatar.mat-list-option .mat-list-item-content .mat-list-text, .mat-list-base .mat-list-option.mat-list-item-with-avatar.mat-list-option .mat-list-item-content-reverse .mat-list-text, .mat-list-base .mat-list-option.mat-list-item-with-avatar.mat-list-option .mat-list-item-content .mat-list-text{
+      padding-left: 10px;
+    }
+    .mat-list-base .mat-list-item .mat-list-icon, .mat-list-base .mat-list-option .mat-list-icon{
+      padding: 0px;
+    }
+    .mat-pseudo-checkbox {
+      width: 16px;
+      height: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      cursor: pointer;
+      display: inline-block;
+      padding: 3px 0 0 3px;
+      box-sizing: border-box;
+      position: relative;
+      flex-shrink: 0;
+      transition: border-color 30ms cubic-bezier(0, 0, 0.2, 0.1),background-color 30ms cubic-bezier(0, 0, 0.2, 0.1);
+    }
+
   }
 }

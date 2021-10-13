@@ -34,6 +34,7 @@ import {ForwardMessageService} from "@services/forward-message/forward-message.s
 import {SelectFriendContactComponent} from "@modules/user-dialogs/select-friend-contact/select-friend-contact.component";
 import {MessageEntityService} from "@services/message-entity/message-entity.service";
 import FriendModel from "@app/models/friend.model";
+import LastMessageModel from "@app/models/last-message.model";
 
 @Injectable({
   providedIn: 'root'
@@ -119,6 +120,7 @@ export class ContextMenuService {
         this.dialogService.openDialog(SelectFriendContactComponent, {
           width: '314px',
           maxHeight: '600px',
+          panelClass: "padding-less-dialog"
         }).then((friend: FriendModel) => {
           if(friend) {
             this.dialogService.confirm({title: "消息提示", text: "确认分享联系信息到当前聊天吗？"}).then((ok) => {
@@ -147,8 +149,17 @@ export class ContextMenuService {
       action: (chatting: AlarmItemInterface) => {
         this.dialogService.confirm({title: '删除会话'}).then((ok) => {
           if(ok) {
-            this.cacheService.deleteChattingCache(chatting.alarmItem.dataId).then(() => {
-              return this.currentChattingChangeService.switchCurrentChatting(null);
+            this.cacheService.getChattingCache(chatting).then(data => {
+              const dataId = chatting.alarmItem.dataId;
+              const keys = new Array(...data.keys());
+              if(keys.length > 0) {
+                this.cacheService.saveData<LastMessageModel>(
+                  {model: 'lastMessage', data: {dataId: dataId, fp: keys.slice(-1).pop()}, update: {dataId: dataId}}
+                );
+              }
+              this.cacheService.deleteChattingCache(dataId).then(() => {
+                return this.currentChattingChangeService.switchCurrentChatting(null);
+              });
             });
           }
         });

@@ -177,20 +177,22 @@ export class MessageComponent implements OnInit, AfterViewInit {
         this.cacheService.cacheSessionStatusList();
 
         this.cacheService.getChattingList().then(res => {
-            if (res) {
-              const aMap = new Map();
-              res.forEach(item => aMap.set(item.alarmData.alarmItem.dataId, { alarmData: item.alarmData }));
-              this.alarmItemList = aMap;
-              this.getAtMeMessage();
-              console.log('聊天会话：', res);
-            }
-            this.cacheService.syncChattingList(res).then(list => { });
+          if (res) {
+            const aMap = new Map();
+            res.forEach(item => aMap.set(item.alarmData.alarmItem.dataId, { alarmData: item.alarmData }));
+            this.alarmItemList = aMap;
+            this.getAtMeMessage();
+            console.log('聊天会话：', res);
+          }
+          this.cacheService.syncChattingList(res).then(list => { });
         });
 
         this.currentChattingChangeService.currentChatting$.subscribe((alarm: AlarmItemInterface) => {
           this.currentChat = alarm;
-          // 发送已读
-          this.messageService.alreadyRead(this.currentChat.alarmItem.dataId, this.currentChat.metadata.chatType);
+          if(alarm) {
+            // 发送已读
+            this.messageService.alreadyRead(this.currentChat.alarmItem.dataId, this.currentChat.metadata.chatType);
+          }
         });
         this.currentChat = this.currentChattingChangeService.currentChatting;
     }
@@ -299,30 +301,6 @@ export class MessageComponent implements OnInit, AfterViewInit {
             }
         });
     }
-
-    /**
-     * 消息已被对方收到的回调事件通知
-     * @private
-     */
-    // private subscribeMessagesBeReceived() {
-    //   this.imService.callback_messagesBeReceived = (fingerPrint) => {
-    //     if (fingerPrint) {
-    //       this.cacheService.getChattingCache(this.currentChat).then(data => {
-    //         if(data[fingerPrint]) {
-    //           const chat: ChatmsgEntityModel = data[fingerPrint];
-    //           chat.isOutgoing = true;
-    //           this.cacheService.putChattingCache(this.currentChat, chat).then(() => {
-    //             this.cacheService.getChattingCache(this.currentChat).then(res => {
-    //               if(!!res) {
-    //                 this.chatMsgEntityList = Object.values(res);
-    //               }
-    //             });
-    //           });
-    //         }
-    //       });
-    //     }
-    //   };
-    // }
 
     /**
      * 普通一对一聊天消息的报文头（聊天消息可能是：文本、图片、语音留言、礼物等）
@@ -464,8 +442,8 @@ export class MessageComponent implements OnInit, AfterViewInit {
     });
   }
 
-    keepOrder() {
-        return 1;
-    }
+  keepOrder() {
+    return 1;
+  }
 
 }

@@ -1,33 +1,35 @@
 function script() {
   let ws = null;
 
-  const login = (url: string, data: string) => {
+  const socket = (url: string) => {
     ws = new WebSocket(url);
 
     ws.onopen = (e) => {
-      ws.send(data);
-      // self.postMessage({type: 'open', event: e.type}, e.target);
+      self.postMessage({type: 'open', data: e.type}, e.target);
     };
 
     ws.onclose = (e) => {
       console.dir(e);
       console.dir(e);
       console.dir(e);
-      // self.postMessage({type: 'close', event: e.type}, e.target);
+      self.postMessage({type: 'close', data: e.type}, e.target);
     };
 
     ws.onmessage = (e) => {
       console.dir(e.data);
-      self.postMessage({type: 'message', event: e.data}, e.target);
+      self.postMessage({type: 'message', data: e.data}, e.target);
     };
 
     ws.onerror = (e) => {
       console.dir(e);
       console.dir(e);
       console.dir(e);
-      // self.postMessage({type: 'error', event: e.type}, e.target);
+      self.postMessage({type: 'error', data: e.type}, e.target);
     };
+  }
 
+  const login = (data: string) => {
+    ws.send(data);
   };
 
   const logout = (data: string) => {
@@ -41,17 +43,27 @@ function script() {
     ws.send(data);
   };
 
+  const closeSocket = () => {
+    ws.close();
+  };
+
 
   self.onmessage = function(e) {
     switch (e.data.type) {
+      case 'socket':
+        socket(e.data.data.url);
+        break;
       case 'login':
-        login(e.data.data.url, e.data.data.data);
+        login(e.data.data.data);
         break;
       case 'logout':
         logout(e.data.data);
         break;
       case 'message':
         message(e.data.data);
+        break;
+      case 'close':
+        closeSocket();
         break;
     }
   };
