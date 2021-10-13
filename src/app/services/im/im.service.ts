@@ -3,14 +3,13 @@ import io from "socket.io-client";
 import {C_IMEVT_COMMON$DATA, S_IMEVT_DUPLICATED, S_IMEVT_ILLEGAL} from "@app/libs/mobileimsdk-client-common";
 import {Subject} from "rxjs";
 import MBDataSender from "../../client/mb_data_sender";
-import {MBErrorCode, MBKickoutCode, MBSocketEvent} from "../../client/mb_constants";
+import {MBErrorCode, MBKickoutCode, MBSocketEvent} from "@app/client/mb_constants";
 import MBCore from "../../client/mb_core";
 import LoginInfoModel from "../../models/login-info.model";
-import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 import {Router} from "@angular/router";
 import {SnackBarService} from "@services/snack-bar/snack-bar.service";
-import {WorkerService} from "@services/worker/worker.service";
 import MBProtocalFactory from "@app/client/MBProtocalFactory";
+import {LocalUserService} from "@services/local-user/local-user.service";
 
 type ReceivedMessageType = (fingerPrint: string) => void;
 
@@ -133,11 +132,10 @@ export class ImService {
 
   private mbProtocalFactory = new MBProtocalFactory();
 
-
   constructor(
     private router: Router,
     private snackBarService: SnackBarService,
-    private workerService: WorkerService
+    private localUserService: LocalUserService
   ) {
   }
 
@@ -161,7 +159,7 @@ export class ImService {
   checkLogined(){
     if (!this.isLogined()) {
       return this.router.navigate(['/session/login']).then(() => {
-        return this.snackBarService.openMessage("请先登录后在使用");
+        return this.snackBarService.openMessage("请先登录后再使用");
       });
     }
   }
@@ -184,9 +182,21 @@ export class ImService {
    *
    * @returns {} 之前登陆时提交的内容
    */
-  getLoginInfo(){
+  getLoginInfo(): LoginInfoModel {
     // return this._loginInfo;
-    return this.mbCore.getCurrentLoginInfo();
+    const userInfo = this.localUserService.localUserInfo;
+    return {
+      // 保存提交到服务端的准一身份id，可能是登陆用户名、任意不重复的id等，具体意义由开发者业务层决定
+      loginUserId: userInfo.userId.toString(),
+      // 保存提交到服务端用于身份鉴别和合法性检查的token，它可能是登陆密码、也可能是通过前置http单点
+      // 登陆接口拿到的token等，具体意义由业务层决定。
+      loginToken: userInfo.token,
+      // 保存本地用户登陆时要提交的额外信息（非必须字段，具体意义由客户端自行决定）
+      loginExtra: null,
+      // 保存客户端首次登陆时间（此时间由服务端在客户端首次登陆时返回的登陆信息中提供，客户端后绪在
+      // 掉重连时带上本字段，以便服务端用于多端互踢判定逻辑中使用）。此值不设置则默认应置为0
+      firstLoginTime: Number(userInfo.latest_login_time),
+    }
   }
 
   /**
@@ -199,10 +209,7 @@ export class ImService {
     // 将消息通过websocket发送出去
     // this._socket.emit(p.type, p);
 
-    this.workerService.post(JSON.stringify(p));
-    return 0;
-
-    // return this.mbDataSender.sendCommonData(p); // TODO: 原生的mbw中没有返回值，mbwpro中有，后面的app中可对相应的业务代码进行优化！
+    return this.mbDataSender.sendCommonData(p); // TODO: 原生的mbw中没有返回值，mbwpro中有，后面的app中可对相应的业务代码进行优化！
   }
 
   /**
@@ -299,11 +306,6 @@ export class ImService {
     this.setLoginInfo(varloginInfo);
 
     if(varloginInfo && wsUrl){
-
-
-      // worker login
-      const p = this.mbProtocalFactory.createPLoginInfo(varloginInfo.loginUserId, varloginInfo);
-      this.workerService.login(wsUrl, JSON.stringify(p));
 
       // 首先设置要连接的目标WebSocket服务地址
       this.mbCore.setWebsocketUrl(wsUrl);
@@ -587,9 +589,9 @@ export class ImService {
           alert(alertContent);
         }
       }
-    }
-    else{
+    } else {
       this.callback_onIMShowAlert('无效的参数：varloginInfo='+varloginInfo+'、wsUrl='+wsUrl+'、supportSSL='+supportSSL);
     }
   }
+
 }

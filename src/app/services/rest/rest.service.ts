@@ -4,7 +4,6 @@ import {JobDispatchConst, MyProcessorConst, RBChatConfig, SysActionConst} from "
 import {HttpService} from "@services/http/http.service";
 import {Observable} from "rxjs";
 import {LocalUserService} from "@services/local-user/local-user.service";
-import {ImService} from "@services/im/im.service";
 import {
   addGroupSilence,
   addMissuCollect,
@@ -57,7 +56,6 @@ export class RestService {
 
   constructor(
     private http: HttpService,
-    private imService: ImService,
     private localUserService: LocalUserService,
   ) {
   }
@@ -66,7 +64,7 @@ export class RestService {
     if (typeof data === 'object') {
       data = JSON.stringify(data);
     }
-    const localUserUid = this.imService.getLoginInfo()?.loginUserId;
+    const localUserUid = this.localUserService.localUserInfo.userId;
     const url = RBChatConfig.HTTP_REST_POST_URL;
     const postData = {
       newData: data,
