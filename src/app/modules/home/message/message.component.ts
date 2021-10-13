@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {AlarmsProviderService} from "@services/alarms-provider/alarms-provider.service";
 import {MsgType} from "@app/config/rbchat-config";
 import {LocalUserService} from "@services/local-user/local-user.service";
@@ -43,13 +43,14 @@ import {MatDrawer} from "@angular/material/sidenav";
 import {MiniUiService} from "@services/mini-ui/mini-ui.service";
 import {GroupModel} from "@app/models/group.model";
 import FriendModel from "@app/models/friend.model";
+import {Subscription} from "rxjs";
 
 @Component({
     selector: 'app-message',
     templateUrl: './message.component.html',
     styleUrls: ['./message.component.scss'],
 })
-export class MessageComponent implements OnInit, AfterViewInit {
+export class MessageComponent implements OnInit, AfterViewInit,OnDestroy {
     @ViewChild("chattingPanel") chattingPanel: MatDrawer;
     readonly Infinity = 9999999999;
 
@@ -98,6 +99,8 @@ export class MessageComponent implements OnInit, AfterViewInit {
     public topMapOfArray: string[] = [];
 
     public atMap: Map<string, number> = new Map();
+
+    public currentSubscription: Subscription;
 
     constructor(
         private alarmsProviderService: AlarmsProviderService,
@@ -187,7 +190,7 @@ export class MessageComponent implements OnInit, AfterViewInit {
           this.cacheService.syncChattingList(res).then(list => { });
         });
 
-        this.currentChattingChangeService.currentChatting$.subscribe((alarm: AlarmItemInterface) => {
+        this.currentSubscription = this.currentChattingChangeService.currentChatting$.subscribe((alarm: AlarmItemInterface) => {
           this.currentChat = alarm;
           if(alarm) {
             // 发送已读
@@ -445,5 +448,10 @@ export class MessageComponent implements OnInit, AfterViewInit {
   keepOrder() {
     return 1;
   }
+
+  ngOnDestroy() {
+    this.currentSubscription.unsubscribe();
+  }
+
 
 }

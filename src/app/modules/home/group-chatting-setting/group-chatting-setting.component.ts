@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import ChattingModel from "@app/models/chatting.model";
 import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 import { MatDrawer } from "@angular/material/sidenav";
@@ -13,13 +13,14 @@ import { RestService } from "@services/rest/rest.service";
 import { DemoDialogComponent } from "@modules/setting-dialogs/demo-dialog/demo-dialog.component";
 import { DialogService } from "@services/dialog/dialog.service";
 import { CurrentChattingChangeService } from "@services/current-chatting-change/current-chatting-change.service";
+import {Subscription} from "rxjs";
 
 @Component({
     selector: 'app-group-chatting-setting',
     templateUrl: './group-chatting-setting.component.html',
     styleUrls: ['./group-chatting-setting.component.scss']
 })
-export class GroupChattingSettingComponent implements OnInit {
+export class GroupChattingSettingComponent implements OnInit,OnDestroy {
     @Input() currentChat: AlarmItemInterface; // 测试群ID：0000000642
     @Input() drawer: MatDrawer;
 
@@ -48,6 +49,8 @@ export class GroupChattingSettingComponent implements OnInit {
     public customerServiceList: any[];
     public groupTabList: any[];
 
+    public currentSubscription: Subscription;
+
     /*
      * switch_default: 默认
      * group_top: 群上屏编辑
@@ -68,15 +71,18 @@ export class GroupChattingSettingComponent implements OnInit {
         private dialogService: DialogService,
         private currentChattingChangeService: CurrentChattingChangeService,
     ) {
-        this.currentChattingChangeService.currentChatting$.subscribe(currentChat => {
-            console.log('会话切换...');
+       this.currentSubscription =  this.currentChattingChangeService.currentChatting$.subscribe(currentChat => {
+          if(currentChat && this.currentChat.alarmItem.dataId !== currentChat.alarmItem.dataId) {
+            console.log('群聊设置会话切换...');
+            console.log("当前会话id:"+this.currentChat.alarmItem.dataId+",切换到的会话id:"+currentChat.alarmItem.dataId);
             this.currentChat = currentChat;
             this.initGroupData();
+          }
         });
     }
 
     initGroupData() {
-        console.log('currentChat: ', this.currentChat);
+        console.log('currentChat:'+this.currentChat+"当前页面:群聊设置界面");
         if (this.currentChat.metadata.chatType === 'friend') {
             return;
         }
@@ -238,5 +244,10 @@ export class GroupChattingSettingComponent implements OnInit {
             }
         });
     }
+
+  ngOnDestroy() {
+    this.currentSubscription.unsubscribe();
+  }
+
 
 }

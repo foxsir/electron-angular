@@ -4,7 +4,7 @@ import {
   AfterViewInit, ChangeDetectionStrategy,
   Component,
   ElementRef,
-  Input,
+  Input, OnDestroy,
   OnInit,
   ViewChild
 } from '@angular/core';
@@ -67,13 +67,14 @@ import AtMeModel from "@app/models/at-me.model";
 import SilenceUserModel from "@app/models/silence-user.model";
 import GroupInfoModel from "@app/models/group-info.model";
 import {convertNodeSourceSpanToLoc} from "@angular-eslint/template-parser/dist/convert-source-span-to-loc";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-chatting-area',
   templateUrl: './chatting-area.component.html',
   styleUrls: ['./chatting-area.component.scss'],
 })
-export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterContentInit {
+export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterContentInit,OnDestroy {
   @ViewChild("chattingContainer") chattingContainer: ElementRef;
   @ViewChild('appChattingVoice') appChattingVoice: ChattingVoiceComponent;
   @ViewChild('chattingAreaDrawer') private chattingAreaDrawer: MatDrawer;
@@ -159,6 +160,8 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
 
   public isAdmin: boolean = false;
   public isOwner: boolean = false;
+
+  public currentSubscription: Subscription;
 
   constructor(
     public cacheService: CacheService, // 模版中要用
@@ -266,7 +269,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
     }
 
     // 获取缓存
-    this.currentChattingChangeService.currentChatting$.subscribe(currentChat => {
+    this.currentSubscription =  this.currentChattingChangeService.currentChatting$.subscribe(currentChat => {
       this.searching = false;
       // === 为刷新聊天列表，只更新数据
       this.loadTabData();
@@ -972,5 +975,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
       });
     }
   }
-
+  ngOnDestroy() {
+    this.currentSubscription.unsubscribe();
+  }
 }

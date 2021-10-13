@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import ChattingModel from "@app/models/chatting.model";
 import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 import {CacheService} from "@services/cache/cache.service";
@@ -7,13 +7,14 @@ import CommonTools from "@app/common/common.tools";
 import {MsgType} from "@app/config/rbchat-config";
 import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 import {CurrentChattingChangeService} from "@services/current-chatting-change/current-chatting-change.service";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-search-chatting',
   templateUrl: './search-chatting.component.html',
   styleUrls: ['./search-chatting.component.scss']
 })
-export class SearchChattingComponent implements OnInit {
+export class SearchChattingComponent implements OnInit ,OnDestroy{
   @Input() chatting: AlarmItemInterface;
 
   public formatDate = formatDate;
@@ -27,6 +28,8 @@ export class SearchChattingComponent implements OnInit {
   public imageMap: Map<string, ChatmsgEntityModel> = new Map();
   public fileMap: Map<string, ChatmsgEntityModel> = new Map();
 
+  public currentSubscription: Subscription;
+
   constructor(
     private cacheService: CacheService,
     private currentChattingChangeService: CurrentChattingChangeService,
@@ -36,7 +39,7 @@ export class SearchChattingComponent implements OnInit {
   ngOnInit(): void {
     this.loadImageAndFile();
 
-    this.currentChattingChangeService.currentChatting$.subscribe(chatting => {
+    this.currentSubscription = this.currentChattingChangeService.currentChatting$.subscribe(chatting => {
       if(chatting) {
         this.chatting = chatting;
         this.loadImageAndFile();
@@ -92,5 +95,9 @@ export class SearchChattingComponent implements OnInit {
         }
       });
     });
+  }
+
+  ngOnDestroy() {
+    this.currentSubscription.unsubscribe();
   }
 }
