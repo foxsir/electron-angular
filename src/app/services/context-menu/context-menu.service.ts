@@ -120,6 +120,7 @@ export class ContextMenuService {
         this.dialogService.openDialog(SelectFriendContactComponent, {
           width: '314px',
           maxHeight: '600px',
+          panelClass: "padding-less-dialog"
         }).then((friend: FriendModel) => {
           if(friend) {
             this.dialogService.confirm({title: "消息提示", text: "确认分享联系信息到当前聊天吗？"}).then((ok) => {

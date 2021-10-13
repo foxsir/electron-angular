@@ -1,4 +1,5 @@
 import {Component, Inject, OnInit} from '@angular/core';
+import { PipeTransform, Pipe } from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
@@ -11,6 +12,7 @@ import { LocalUserService } from "@services/local-user/local-user.service";
     templateUrl: './group-info-dialog.component.html',
     styleUrls: ['./group-info-dialog.component.scss']
 })
+
 export class GroupInfoDialogComponent implements OnInit {
 
     constructor(
@@ -104,25 +106,6 @@ export class GroupInfoDialogComponent implements OnInit {
         this.dialogRef.close(result);
     }
 
-    /**
-     * 搜索
-     * @param event
-     */
-    txtSearchChange(event: KeyboardEvent) {
-        if (event.key != 'Enter') {
-            return;
-        }
-
-        console.log('回车确认：', this.search_keywords);
-        for (let item of this.group_members) {
-            if (item.showNickname.indexOf(this.search_keywords) == -1) {
-                item.show = false;
-            }
-            else {
-                item.show = true;
-            }
-        }
-    }
 
     /* 确认选择 */
     confirmChoose(item) {
