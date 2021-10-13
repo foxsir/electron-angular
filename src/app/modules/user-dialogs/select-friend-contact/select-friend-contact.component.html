@@ -9,7 +9,8 @@
         <div fxFlex>
           <mat-form-field fxFlex="100">
             <mat-label>搜索...</mat-label>
-            <input type="text" tabindex="-1" matInput (ngModelChange)="filter()" [(ngModel)]="filterFriend"/>
+            <input type="text" tabindex="-1" matInput  [(ngModel)]="filterFriend" />
+
           </mat-form-field>
         </div>
         <div fxFlex="20px"></div>
@@ -18,7 +19,7 @@
     <div fxFlex>
       <div style="height: 430px;clear: both" class="scrollbar">
         <mat-list class="friend-item-list">
-          <mat-list-item *ngFor="let friend of friendList" class="hover-item" (click)="select(friend)">
+          <mat-list-item *ngFor="let friend of friendList" [fxHide]="!friend.nickname.includes(filterFriend)" class="hover-item" (click)="select(friend)">
             <mat-icon mat-list-icon class="friend-avatar">
               <img [src]="friend.base64Avatar || friend.userAvatarFileName" alt="">
             </mat-icon>
