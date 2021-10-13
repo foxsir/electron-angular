@@ -33,6 +33,7 @@ import MuteModel from "@app/models/mute.model";
 import TopModel from "@app/models/top.model";
 import AtMeModel from "@app/models/at-me.model";
 import SilenceUserModel from "@app/models/silence-user.model";
+import LastMessageModel from "@app/models/last-message.model";
 
 export type AlarmDataMap = Map<string, {alarmData: AlarmItemInterface; message?: Map<string, ChatmsgEntityModel>}>;
 
@@ -272,8 +273,14 @@ export class CacheService extends DatabaseService {
   async syncChattingList(chattingListCache: AlarmDataMap): Promise<Map<string, AlarmItemInterface>> {
     let friends: Map<string, FriendModel>;
     let groups: Map<string, GroupModel>;
+    const lastMessage: Map<string, string> = new Map();
     await this.getCacheFriends().then(res => { friends = res; });
     await this.getCacheGroups().then(res => { groups = res; });
+    await this.queryData<LastMessageModel>({model: 'lastMessage', query: null}).then((res: IpcResponseInterface<LastMessageModel>) => {
+      res.data.forEach(t => {
+        lastMessage.set(t.dataId, t.fp);
+      });
+    });
 
     return new Promise((resolve, reject) => {
       this.getAllLastMessage().then((res: Map<string, RoamLastMsgModel>) =>{
@@ -318,8 +325,7 @@ export class CacheService extends DatabaseService {
           // 将本地不存在的对话返回到聊天Map
           if(chattingListCache === null) {
             newMap.set(alarmItem.alarmItem.dataId, alarmItem);
-          } else if(chattingListCache.get(alarmItem.alarmItem.dataId)) {
-            // 如果已经有缓存， 只更新缓存有的会话
+          } else if (lastMessage.get(alarmItem.alarmItem.dataId) !== protocalModel.fp) { // 检查是否是删除的会话
             newMap.set(alarmItem.alarmItem.dataId, alarmItem);
           }
           // 同步消息
