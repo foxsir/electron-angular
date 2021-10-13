@@ -42,4 +42,12 @@ export class SnackBarService {
     });
   }
 
+  /**
+   * 系统级别提示消息
+   * @param text
+   */
+  public systemNotification(text: string) {
+    new Notification(text);
+  }
+
 }
