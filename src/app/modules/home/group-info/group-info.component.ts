@@ -108,8 +108,16 @@ export class GroupInfoComponent implements OnInit {
         });
 
         this.cacheService.cacheUpdate$.subscribe(res => {
-          if(res.groupMemberMap || res.groupAdminMap) {
-            this.initGroupData();
+          if(res.groupAdminMap) {
+            this.loadGroupAdminList();
+          }
+          if(res.groupMemberMap) {
+            this.cacheService.getGroupMembers(this.currentChat.alarmItem.dataId).then(members => {
+              this.group_member_list = [];
+              members.forEach(member => {
+                this.group_member_list.push(member);
+              });
+            });
           }
         });
     }
