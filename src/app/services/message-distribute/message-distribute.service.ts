@@ -94,6 +94,10 @@ export class MessageDistributeService {
   private USER_INFO_UPDATESource = new Subject<ProtocalModel>();
   public USER_INFO_UPDATE$ = this.USER_INFO_UPDATESource.asObservable();
 
+  // 删除好友
+  private DELETE_FRIENDSource = new Subject<ProtocalModel>();
+  public DELETE_FRIEND$ = this.DELETE_FRIENDSource.asObservable();
+
   constructor() { }
 
   inceptMessage(originData: ProtocalModel) {
@@ -177,6 +181,9 @@ export class MessageDistributeService {
         break;
       case UserProtocalsType.USER_INFO_UPDATE:
         this.USER_INFO_UPDATESource.next(originData);
+        break;
+      case UserProtocalsType.DELETE_FRIEND:
+        this.DELETE_FRIENDSource.next(originData);
         break;
       default:
         this.illegalMessageSource.next(originData);

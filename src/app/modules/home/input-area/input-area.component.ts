@@ -4,7 +4,7 @@ import {
   Component,
   ElementRef,
   EventEmitter,
-  Input,
+  Input, OnDestroy,
   OnInit,
   Output,
   ViewChild
@@ -48,6 +48,7 @@ import {ForwardMessageService} from "@services/forward-message/forward-message.s
 import {RedPocketComponent} from "@modules/user-dialogs/red-pocket/red-pocket.component";
 import {RedPacketInterface} from "@app/interfaces/red-packet.interface";
 import DirectoryType from "@services/file/config/DirectoryType";
+import {Subscription} from "rxjs";
 
 const { ipcRenderer } = window.require('electron');
 
@@ -57,7 +58,7 @@ const { ipcRenderer } = window.require('electron');
   styleUrls: ['./input-area.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class InputAreaComponent implements OnInit, AfterViewInit {
+export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
   @Input() currentChat: AlarmItemInterface;
   @Output() sendMessage = new EventEmitter<{chat: ChatmsgEntityModel; dataContent: ProtocalModelDataContent}>();
   @ViewChild("textarea") textarea: ElementRef;
@@ -89,6 +90,8 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
   private atTargetMember: string[] = [];
 
   private tempList = [];
+
+  public currentSubscription: Subscription;
 
   constructor(
     private router: Router,
@@ -170,7 +173,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
    */
   private chattingChange() {
     this.getGroupMembers(this.currentChat);
-    this.currentChattingChangeService.currentChatting$.subscribe((currentChat) => {
+    this.currentSubscription =  this.currentChattingChangeService.currentChatting$.subscribe((currentChat) => {
       if(currentChat) {
         this.getGroupMembers(currentChat);
         this.clearTextArea();
@@ -795,6 +798,10 @@ export class InputAreaComponent implements OnInit, AfterViewInit {
         callback(file);
       }
     }
+  }
+
+  ngOnDestroy() {
+    this.currentSubscription.unsubscribe();
   }
 
 }

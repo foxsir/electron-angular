@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import ChattingModel from "@app/models/chatting.model";
 import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 import { MatDrawer } from "@angular/material/sidenav";
@@ -13,13 +13,14 @@ import { RestService } from "@services/rest/rest.service";
 import { DemoDialogComponent } from "@modules/setting-dialogs/demo-dialog/demo-dialog.component";
 import { DialogService } from "@services/dialog/dialog.service";
 import { CurrentChattingChangeService } from "@services/current-chatting-change/current-chatting-change.service";
+import {Subscription} from "rxjs";
 
 @Component({
     selector: 'app-chatting-setting',
     templateUrl: './chatting-setting.component.html',
     styleUrls: ['./chatting-setting.component.scss']
 })
-export class ChattingSettingComponent implements OnInit {
+export class ChattingSettingComponent implements OnInit,OnDestroy {
     @Input() currentChat: AlarmItemInterface;
     @Input() drawer: MatDrawer;
 
@@ -45,16 +46,21 @@ export class ChattingSettingComponent implements OnInit {
         width: '314px'
     };
 
+  public currentSubscription: Subscription;
+
     constructor(
         private dom: DomSanitizer,
         private restService: RestService,
         private dialogService: DialogService,
         private currentChattingChangeService: CurrentChattingChangeService,
     ) {
-        this.currentChattingChangeService.currentChatting$.subscribe(currentChat => {
-            console.log('会话切换...');
+       this.currentSubscription = this.currentChattingChangeService.currentChatting$.subscribe(currentChat => {
+          if(currentChat && this.currentChat.alarmItem.dataId !== currentChat.alarmItem.dataId) {
+            console.log('单聊会话切换...');
+            console.log("当前会话id:"+this.currentChat.alarmItem.dataId+",切换到的会话id:"+currentChat.alarmItem.dataId);
             this.currentChat = currentChat;
             this.initData();
+          }
         });
     }
 
@@ -63,7 +69,6 @@ export class ChattingSettingComponent implements OnInit {
         if (this.currentChat.metadata.chatType === 'group') {
             return;
         }
-
         this.restService.getUserBaseById(this.currentChat.alarmItem.dataId).subscribe(res => {
             console.log('getUserBaseById result: ', res);
             if (res.status === 200 && res.data) {
@@ -121,4 +126,8 @@ export class ChattingSettingComponent implements OnInit {
             }
         });
     }
+
+  ngOnDestroy() {
+    this.currentSubscription.unsubscribe();
+  }
 }

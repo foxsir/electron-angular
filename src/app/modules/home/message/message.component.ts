@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {AlarmsProviderService} from "@services/alarms-provider/alarms-provider.service";
 import {MsgType} from "@app/config/rbchat-config";
 import {LocalUserService} from "@services/local-user/local-user.service";
@@ -41,13 +41,16 @@ import {MessageRoamService} from "@services/message-roam/message-roam.service";
 import {CurrentChattingChangeService} from "@services/current-chatting-change/current-chatting-change.service";
 import {MatDrawer} from "@angular/material/sidenav";
 import {MiniUiService} from "@services/mini-ui/mini-ui.service";
+import {GroupModel} from "@app/models/group.model";
+import FriendModel from "@app/models/friend.model";
+import {Subscription} from "rxjs";
 
 @Component({
     selector: 'app-message',
     templateUrl: './message.component.html',
     styleUrls: ['./message.component.scss'],
 })
-export class MessageComponent implements OnInit, AfterViewInit {
+export class MessageComponent implements OnInit, AfterViewInit,OnDestroy {
     @ViewChild("chattingPanel") chattingPanel: MatDrawer;
     readonly Infinity = 9999999999;
 
@@ -97,6 +100,8 @@ export class MessageComponent implements OnInit, AfterViewInit {
 
     public atMap: Map<string, number> = new Map();
 
+    public currentSubscription: Subscription;
+
     constructor(
         private alarmsProviderService: AlarmsProviderService,
         private groupsProviderService: GroupsProviderService,
@@ -138,6 +143,10 @@ export class MessageComponent implements OnInit, AfterViewInit {
         this.subscribeGroupMemberQuit();
         this.subscribeSENSITIVEWordUpdate(); // 敏感词
         this.subscribeAtMe();
+        // 解散群
+        this.subscribeDissolveGroup();
+        // 被删除的通知
+        this.subscribeDeleteFriend();
     }
 
     public dd = false;
@@ -181,7 +190,7 @@ export class MessageComponent implements OnInit, AfterViewInit {
           this.cacheService.syncChattingList(res).then(list => { });
         });
 
-        this.currentChattingChangeService.currentChatting$.subscribe((alarm: AlarmItemInterface) => {
+        this.currentSubscription = this.currentChattingChangeService.currentChatting$.subscribe((alarm: AlarmItemInterface) => {
           this.currentChat = alarm;
           if(alarm) {
             // 发送已读
@@ -228,6 +237,30 @@ export class MessageComponent implements OnInit, AfterViewInit {
         this.messageDistributeService.UPDATE_GROUP_ADMIN$.subscribe((res: ProtocalModel) => {
             this.snackBarService.openMessage('群管理员发生变更');
         });
+    }
+
+    /**
+     * 群被解散后收到的消息
+     */
+    subscribeDissolveGroup() {
+      this.messageDistributeService.MT48_OF_GROUP$SYSCMD_DISMISSED_FROM$SERVER$.subscribe((res: ProtocalModel) => {
+        console.log("收到群被解散的指令:"+res);
+        // 拿到群id
+        const dataContent: any = JSON.parse(res.dataContent);
+        const groupId: string = dataContent.t;
+        // 进行删除会话和删除聊天记录的操作
+        // 删除会话
+        this.cacheService.deleteChattingCache(groupId).then(() => {});
+        // 清空历史消息 先通过群id找到这个会话
+        this.cacheService.generateAlarmItem(groupId, 'group').then(chat => {
+          this.cacheService.clearChattingCache(chat).then(() => {});
+        });
+        this.cacheService.deleteData<GroupModel>({model: 'group', query: {gid: groupId}}).then();
+        // 删除聊天界面
+        if (this.currentChat && this.currentChat.alarmItem.dataId == groupId) {
+          this.currentChattingChangeService.switchCurrentChatting(null).then();
+        }
+      });
     }
 
     /**
@@ -337,8 +370,31 @@ export class MessageComponent implements OnInit, AfterViewInit {
             alert("敏感词更新");
         });
     }
-
     /**
+     * 被好友删除的通知
+     */
+    private subscribeDeleteFriend() {
+      this.messageDistributeService.DELETE_FRIEND$.subscribe((res: ProtocalModel) => {
+        // 拿到好友id
+        const dataContent: any = JSON.parse(res.dataContent);
+        const friendId: string = dataContent.userId;
+        console.log("收到被好友删除的指令,好友id:"+friendId);
+        // 清空历史消息 先通过群id找到这个会话
+        this.cacheService.generateAlarmItem(friendId, 'friend').then(chat => {
+          this.cacheService.clearChattingCache(chat).then(() => {});
+          // 删除会话
+          this.cacheService.deleteChattingCache(friendId).then(() => {});
+          // // 删除聊天界面
+          if (this.currentChat != null && this.currentChat.alarmItem.dataId == friendId) {
+            this.currentChattingChangeService.switchCurrentChatting(null).then();
+          }
+          // 从我的会话里删除
+          this.cacheService.deleteData<FriendModel>({model: 'friend', query: {friendUserUid: Number(friendId)}}).then();
+        });
+      });
+    }
+
+  /**
      * 切换聊天对象
      * @param alarm
      */
@@ -378,6 +434,8 @@ export class MessageComponent implements OnInit, AfterViewInit {
     });
   }
 
+
+
   getAtMeMessage() {
     this.alarmItemList.forEach(chatting => {
       const dataId = chatting.alarmData.alarmItem.dataId;
@@ -390,5 +448,10 @@ export class MessageComponent implements OnInit, AfterViewInit {
   keepOrder() {
     return 1;
   }
+
+  ngOnDestroy() {
+    this.currentSubscription.unsubscribe();
+  }
+
 
 }

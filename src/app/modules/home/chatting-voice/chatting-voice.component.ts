@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import ChattingModel from "@app/models/chatting.model";
 import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 import { MatDrawer } from "@angular/material/sidenav";
@@ -17,13 +17,14 @@ import { LocalUserService } from "@services/local-user/local-user.service";
 import callAccept from "@app/assets/icons/call_accept.svg";
 import callHangup from "@app/assets/icons/call_hangup.svg";
 import { CurrentChattingChangeService } from "@services/current-chatting-change/current-chatting-change.service";
+import {Subscription} from "rxjs";
 
 @Component({
     selector: 'app-chatting-voice',
     templateUrl: './chatting-voice.component.html',
     styleUrls: ['./chatting-voice.component.scss']
 })
-export class ChattingVoiceComponent implements OnInit {
+export class ChattingVoiceComponent implements OnInit,OnDestroy {
     @Input() currentChat: AlarmItemInterface;
     @Input() drawer: MatDrawer;
 
@@ -44,6 +45,8 @@ export class ChattingVoiceComponent implements OnInit {
     public imres: any;
     public datacontent: any;
 
+  public currentSubscription: Subscription;
+
     constructor(
         private dom: DomSanitizer,
         private restService: RestService,
@@ -52,11 +55,14 @@ export class ChattingVoiceComponent implements OnInit {
         private localUserService: LocalUserService,
         private currentChattingChangeService: CurrentChattingChangeService,
     ) {
-        this.currentChattingChangeService.currentChatting$.subscribe(currentChat => {
-            console.log('会话切换...');
+       this.currentSubscription =  this.currentChattingChangeService.currentChatting$.subscribe(currentChat => {
+          if(currentChat && this.currentChat.alarmItem.dataId !== currentChat.alarmItem.dataId) {
+            console.log('语音聊天会话切换...');
+            console.log("当前会话id:"+this.currentChat.alarmItem.dataId+",切换到的会话id:"+currentChat.alarmItem.dataId);
             this.currentChat = currentChat;
             this.view_mode = 'default';
             this.initGroupData();
+          }
         });
     }
 
@@ -233,4 +239,8 @@ export class ChattingVoiceComponent implements OnInit {
         this.view_mode = "default";
         this.drawer.close();
     }
+
+  ngOnDestroy() {
+    this.currentSubscription.unsubscribe();
+  }
 }
