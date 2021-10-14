@@ -14,6 +14,7 @@ import { DemoDialogComponent } from "@modules/setting-dialogs/demo-dialog/demo-d
 import { DialogService } from "@services/dialog/dialog.service";
 import { CurrentChattingChangeService } from "@services/current-chatting-change/current-chatting-change.service";
 import {Subscription} from "rxjs";
+import FriendModel from "../../../../../app/entitys/friend.model";
 
 @Component({
     selector: 'app-chatting-setting',
@@ -30,17 +31,7 @@ export class ChattingSettingComponent implements OnInit,OnDestroy {
     public backspaceActiveIcon = this.dom.bypassSecurityTrustResourceUrl(backspaceActiveIcon);
     public arrowRightIcon = this.dom.bypassSecurityTrustResourceUrl(arrowRightIcon);
 
-    public userData;
-    public setting_data = {
-        latestLoginAddres: '',
-        latestLoginIp: '',
-        userMail: '',
-        whatSUp: '',
-        nickname: '',
-        remark: '',
-        latestLoginTime: 0,
-        registerTime: '',
-    };
+    public friendInfo: FriendModel;
 
     private dialogConfig = {
         width: '314px'
@@ -69,29 +60,23 @@ export class ChattingSettingComponent implements OnInit,OnDestroy {
         if (this.currentChat.metadata.chatType === 'group') {
             return;
         }
-        this.restService.getUserBaseById(this.currentChat.alarmItem.dataId).subscribe(res => {
-            console.log('getUserBaseById result: ', res);
+        this.restService.getFriendInfo(Number(this.currentChat.alarmItem.dataId)).subscribe(res => {
+            console.log('getFriendInfo result: ', res);
             if (res.status === 200 && res.data) {
-                this.userData = res.data;
-
-                this.setting_data.nickname = this.userData.nickname;
-                this.setting_data.latestLoginAddres = this.userData.latestLoginAddres;
-                this.setting_data.latestLoginIp = this.userData.latestLoginIp;
-                this.setting_data.userMail = this.userData.userMail;
-                this.setting_data.whatSUp = this.userData.whatSUp == null || this.userData.whatSUp.length == 0 ? '此人很懒，什么都没留下' : this.userData.whatSUp;
+                this.friendInfo = res.data;
+                this.friendInfo.whatSUp = this.friendInfo.whatSUp == null || this.friendInfo.whatSUp.length == 0 ? '此人很懒，什么都没留下' : this.friendInfo.whatSUp;
             }
         });
 
         this.restService.getRemark({ toUserId: this.currentChat.alarmItem.dataId }).subscribe(res => {
             if (res.status === 200) {
-                this.setting_data.remark = res.data == null || res.data.length == 0 ? '' : res.data;
+                this.friendInfo.remark = res.data == null || res.data.length == 0 ? '' : res.data;
             }
         });
 
         this.restService.getFriendInfo(parseInt(this.currentChat.alarmItem.dataId)).subscribe(res => {
             if (res.status === 200) {
-                this.setting_data.latestLoginTime = res.data.latestLoginTime;
-                this.setting_data.registerTime = res.data.registerTime;
+                this.friendInfo.latestLoginTime = res.data.latestLoginTime;
             }
         });
     }
@@ -107,21 +92,21 @@ export class ChattingSettingComponent implements OnInit,OnDestroy {
         //    }
         //});
 
-        var data = {
+        const data = {
             one: 'xxx',
-            remark: this.setting_data.remark
+            remark: this.friendInfo.remark
         };
 
         this.dialogService.openDialog(DemoDialogComponent, { data: data }).then((res: any) => {
             console.log('dialog result: ', res);
             if (res.ok == true) {
-                var post_data = {
+                const post_data = {
                     toUserId: this.currentChat.alarmItem.dataId,
                     remark: res.remark,
                 };
 
                 this.restService.updRemark(post_data).subscribe(res => {
-                    this.setting_data.remark = post_data.remark;
+                    this.friendInfo.remark = post_data.remark;
                 });
             }
         });

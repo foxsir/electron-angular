@@ -12,8 +12,8 @@
           <img [src]="friend.value.base64Avatar || friend.value.userAvatarFileName" alt="">
         </mat-icon>
         <div mat-line>{{friend.value.nickname}}</div>
-        <div mat-line *ngIf="!!friend.value.isOnline === true" style="color: #0091FF;">[在线]</div>
-        <div mat-line *ngIf="!!friend.value.isOnline === false" style="color: #CCCCCC;">[离线]</div>
+        <div mat-line *ngIf="!!friend.value.onlineStatus === true" style="color: #0091FF;">[在线]</div>
+        <div mat-line *ngIf="!!friend.value.onlineStatus === false" style="color: #CCCCCC;">[离线]</div>
       </mat-list-option>
     </mat-selection-list>
   </div>

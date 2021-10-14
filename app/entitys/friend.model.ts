@@ -23,6 +23,9 @@ export default class FriendModel extends BaseEntity {
   nickname:  string; //  好友昵称
 
   @Column({nullable: true})
+  friendAccount:  string; //  好友账号
+
+  @Column({nullable: true})
   remark:  string; //  对好友的备注
 
   @Column({nullable: true})
@@ -39,6 +42,12 @@ export default class FriendModel extends BaseEntity {
 
   @Column({nullable: true})
   whatSUp:  string; //  好友签名
+
+  @Column({nullable: true})
+  latestLoginIp:  string; //  上次登录Ip
+
+  @Column({nullable: true})
+  registerTime:  string; //  注册时间
 
   @Column({nullable: true})
   latestLoginTime:  number; //  最近登录时间(时间戳)

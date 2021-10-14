@@ -7,3 +7,4 @@ export class RoamLastMsgModel {
   gid?: string;
   unread: number;
 }
+

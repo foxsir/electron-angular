@@ -18,10 +18,11 @@
                     </div>
                 </div>
                 <div class="user-info-headimg">
-                    <img class="img-head"/>
+                    <img class="img-head" src="{{friendInfo.userAvatarFileName}}"/>
                     <div class="status-bar">
-                        <span>{{setting_data.nickname}}</span>
-                        <span>在线</span>
+                        <span>{{friendInfo.nickname}}</span>
+                        <span mat-line *ngIf="!!friendInfo.onlineStatus === true">在线</span>
+                        <span mat-line *ngIf="!!friendInfo.onlineStatus === false" >离线</span>
                     </div>
                 </div>
             </mat-card-content>
@@ -36,7 +37,7 @@
                         <div class="info-item">备注</div>
                         <div class="info-item" (click)="changeRemark()">
                             <div fxFlex fxLayoutAlign="space-between center" class="group-pointer">
-                                <span class="privacy-item-text">{{setting_data.remark == '' ? '请输入备注' : setting_data.remark}}</span>
+                                <span class="privacy-item-text">{{friendInfo.remark == '' ? '请输入备注' : friendInfo.remark}}</span>
                                 <mat-icon class="mat-icon-cus" style="text-align:right;">
                                     <img [src]="arrowRightIcon" alt="" class="icon">
                                 </mat-icon>
@@ -46,19 +47,19 @@
                     <div class="split-item"></div>
                     <div class="info-box">
                         <div class="info-item">最近登录IP</div>
-                        <div class="info-item">{{setting_data.latestLoginAddres}} {{setting_data.latestLoginIp}}</div>
+                        <div class="info-item">{{friendInfo.latestLoginIp}}</div>
                     </div>
                     <div class="split-item"></div>
                     <div class="info-box">
                         <div class="info-item">基本信息</div>
-                        <div class="info-item">个人账号：{{setting_data.userMail}}</div>
-                        <div class="info-item">注册时间：{{setting_data.registerTime}}</div>
-                        <div class="info-item">最近登录：{{setting_data.latestLoginTime | date}}</div>
+                        <div class="info-item">个人账号：{{friendInfo.friendAccount}}</div>
+                        <div class="info-item">注册时间：{{friendInfo.registerTime}}</div>
+                        <div class="info-item">最近登录：{{friendInfo.latestLoginTime}}</div>
                     </div>
                     <div class="split-item"></div>
                     <div class="info-box">
                         <div class="info-item">个性签名</div>
-                        <div class="info-item">{{setting_data.whatSUp}}</div>
+                        <div class="info-item">{{friendInfo.whatSUp}}</div>
                     </div>
                 </div>
             </mat-card-content>

@@ -167,6 +167,9 @@ export class IndexComponent implements OnInit {
       if (cacheData.newFriendMap) {
         this.updateFriendRequestNumber();
       }
+      if (cacheData.myInfo) {
+        this.myAvatar = cacheData.myInfo.userAvatarFileName;
+      }
     });
 
     this.messageDistributeService.USER_INFO_UPDATE$.subscribe(user => {

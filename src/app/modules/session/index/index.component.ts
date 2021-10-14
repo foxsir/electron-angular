@@ -5,6 +5,7 @@ import NewHttpResponseInterface from "@app/interfaces/new-http-response.interfac
 import appConfigInterface from "@app/interfaces/app-config.interface";
 import {WindowService} from "@services/window/window.service";
 import {DatabaseService} from "@services/database/database.service";
+import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 
 @Component({
   selector: 'app-index',
@@ -14,6 +15,7 @@ import {DatabaseService} from "@services/database/database.service";
 export class IndexComponent implements OnInit {
   registerType: number = 0;
   selectedTab: number = 0;
+  loginProtocol : boolean = true;
 
   public appConfig: appConfigInterface;
 
@@ -21,6 +23,7 @@ export class IndexComponent implements OnInit {
     public router: Router,
     public restService: RestService,
     public windowService: WindowService,
+    private snackBarService: SnackBarService,
   ) {
     this.getAppConfig();
   }
@@ -56,4 +59,7 @@ export class IndexComponent implements OnInit {
     }
   }
 
+  selectLoginProtocol() {
+    this.loginProtocol = !this.loginProtocol;
+  }
 }

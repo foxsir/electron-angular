@@ -68,7 +68,9 @@ export class CreateGroupComponent implements OnInit {
    */
   getFriendList(filter: string = null) {
     this.cacheService.getCacheFriends().then((friendMap: Map<string, FriendModel>) => {
-      if(friendMap.size) {
+      if(friendMap.size > 0) {
+        // 赋值前先清空，避免重复叠加数据
+        this.friendList = [];
         friendMap.forEach(item => {
           if(filter === null) {
             this.friendList.push(item);

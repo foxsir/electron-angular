@@ -22,9 +22,9 @@ export class ResetPasswordForm {
       key: 'old_psw',
       type: 'password',
       templateOptions: {
-        label: '请设置最低6位密码备份',
+        label: '请输入原密码',
         type: 'password',
-        description: '请设置最低6位密码备份',
+        description: '请输入原密码',
         required: true,
         minLength: 6,
         maxLength: 20,
