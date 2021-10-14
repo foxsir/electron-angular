@@ -747,19 +747,20 @@ export class CacheService extends DatabaseService {
         mute: mute,
         updated_at: new Date().getTime(),
       };
-      this.saveData<MuteModel>({model: "mute", data: data, update: {dataId: dataId}});
-      const res = new Map([[dataId, mute]]);
-      const url = _HTTP_SERVER_URL + "/api/user/setNoDisturb";
-      const params = {
-        userId: this.localUserService.localUserInfo.userId,
-        noDisturbId: dataId,
-        type: mute ? 1 : 0,
-        userType: type === 'friend' ? 0 : 1,
-      };
-      this.httpService.postForm(url, params).subscribe();
-      resolve(res);
-      this.getMute().then(mutes => {
-        this.cacheSource.next({muteMap: mutes});
+      this.saveDataSync<MuteModel>({model: "mute", data: data, update: {dataId: dataId}}).then(() => {
+        const res = new Map([[dataId, mute]]);
+        const url = _HTTP_SERVER_URL + "/api/user/setNoDisturb";
+        const params = {
+          userId: this.localUserService.localUserInfo.userId,
+          noDisturbId: dataId,
+          type: mute ? 1 : 0,
+          userType: type === 'friend' ? 0 : 1,
+        };
+        this.httpService.postForm(url, params).subscribe();
+        resolve(res);
+        this.getMute().then(mutes => {
+          this.cacheSource.next({muteMap: mutes});
+        });
       });
     });
   }
@@ -795,19 +796,20 @@ export class CacheService extends DatabaseService {
         top: top,
         updated_at: new Date().getSeconds(),
       };
-      this.saveData<TopModel>({model: "top", data: data, update: {dataId: dataId}});
-      const res = new Map([[dataId, top]]);
-      const url = _HTTP_SERVER_URL + "/api/user/setTop";
-      const params = {
-        userId: this.localUserService.localUserInfo.userId,
-        topId: dataId,
-        type: top ? 1 : 0,
-        userType: type === 'friend' ? 0 : 1,
-      };
-      this.httpService.postForm(url, params).subscribe();
-      resolve(res);
-      this.getTop().then(tops => {
-        this.cacheSource.next({topMap: tops});
+      this.saveDataSync<TopModel>({model: "top", data: data, update: {dataId: dataId}}).then(() => {
+        const res = new Map([[dataId, top]]);
+        const url = _HTTP_SERVER_URL + "/api/user/setTop";
+        const params = {
+          userId: this.localUserService.localUserInfo.userId,
+          topId: dataId,
+          type: top ? 1 : 0,
+          userType: type === 'friend' ? 0 : 1,
+        };
+        this.httpService.postForm(url, params).subscribe();
+        resolve(res);
+        this.getTop().then(tops => {
+          this.cacheSource.next({topMap: tops});
+        });
       });
     });
   }
@@ -915,8 +917,9 @@ export class CacheService extends DatabaseService {
         res.data.forEach(item => {
           map.set(item.reqUserId.toString(), item);
           item.agree = null;
-          this.saveData<FriendRequestModel>({model: 'friendRequest', data: item});
-          this.cacheSource.next({newFriendMap: map});
+          this.saveDataSync<FriendRequestModel>({model: 'friendRequest', data: item}).then(() => {
+            this.cacheSource.next({newFriendMap: map});
+          });
         });
       }
     });
@@ -928,11 +931,12 @@ export class CacheService extends DatabaseService {
    * @param agree
    */
   updateNewFriendMap(reqUserId: number, agree: boolean): void {
-    this.saveData<FriendRequestModel>({
+    this.saveDataSync<FriendRequestModel>({
       model: 'friendRequest', data: {agree: agree}, update: {reqUserId: reqUserId}
-    });
-    this.getNewFriendMap().then(res => {
-      this.cacheSource.next({newFriendMap: res});
+    }).then(() => {
+      this.getNewFriendMap().then(res => {
+        this.cacheSource.next({newFriendMap: res});
+      });
     });
   }
 
@@ -968,8 +972,9 @@ export class CacheService extends DatabaseService {
       fingerPrintOfProtocal: msg.fingerPrintOfProtocal,
       date: msg.date
     };
-    this.saveData<AtMeModel>({model: 'atMe', data: data, update: {fingerPrintOfProtocal: msg.fingerPrintOfProtocal}});
-    this.cacheSource.next({atMe: true});
+    this.saveDataSync<AtMeModel>({model: 'atMe', data: data, update: {fingerPrintOfProtocal: msg.fingerPrintOfProtocal}}).then(() => {
+      this.cacheSource.next({atMe: true});
+    });
   }
 
   /**
