@@ -522,9 +522,10 @@ export class CacheService extends DatabaseService {
         if(res.status === 200) {
           const data = res.data;
           data.userLevel = JSON.stringify(data.userLevel);
-          this.saveData<UserModel>({model: "user", data: data, update: {userUid: data.userUid}});
-          this.cacheSource.next({myInfo: res.data});
-          resolve(res.data);
+          this.saveDataSync<UserModel>({model: "user", data: data, update: {userUid: data.userUid}}).then(() => {
+            this.cacheSource.next({myInfo: res.data});
+            resolve(res.data);
+          });
         }
       });
     });
