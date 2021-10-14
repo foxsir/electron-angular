@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {ChangeDetectorRef, Component, NgZone, OnInit} from '@angular/core';
 import {RestService} from "@services/rest/rest.service";
 import LocalUserinfoModel from "@app/models/local-userinfo.model";
 import {LocalUserService} from "@services/local-user/local-user.service";
@@ -27,6 +27,8 @@ export class NewFriendComponent implements OnInit {
       private messageService: MessageService,
       private snackBarService: SnackBarService,
       private cacheService: CacheService,
+      private zone: NgZone,
+      private changeDetectorRef: ChangeDetectorRef,
     ) {
         // this.cacheService.cacheNewFriends();
         this.cacheService.getNewFriendMap().then(cache => {
@@ -38,9 +40,12 @@ export class NewFriendComponent implements OnInit {
           }
           this.cacheService.cacheUpdate$.subscribe(data => {
             if(data.newFriendMap) {
-              this.model_list = [];
-              data.newFriendMap.forEach(item => {
-                this.model_list.push(item);
+              this.zone.run(() => {
+                this.model_list = [];
+                data.newFriendMap.forEach(item => {
+                  this.model_list.push(item);
+                });
+                this.changeDetectorRef.detectChanges();
               });
             }
           });

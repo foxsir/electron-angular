@@ -7,7 +7,7 @@
       <div id="chatting-list" class="scrollbar">
         <div fxLayout="column">
           <div fxFlex
-               *ngFor="let alarm of alarmItemList | keyvalue:keepOrder"
+               *ngFor="let alarm of alarmItemMap | keyvalue:keepOrder"
                [fxFlexOrder]="topMap.get(alarm.value.alarmData.alarmItem.dataId) ? topMapOfArray.indexOf(alarm.value.alarmData.alarmItem.dataId) : Infinity"
                [ngClass]="{'top': topMap.get(alarm.value.alarmData.alarmItem.dataId)}">
             <mat-card class="mat-elevation-z0"

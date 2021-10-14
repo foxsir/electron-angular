@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {AlarmsProviderService} from "@services/alarms-provider/alarms-provider.service";
 import {MsgType} from "@app/config/rbchat-config";
 import {LocalUserService} from "@services/local-user/local-user.service";
@@ -69,7 +69,7 @@ export class MessageComponent implements OnInit, AfterViewInit,OnDestroy {
     public closePromptIcon = this.dom.bypassSecurityTrustResourceUrl(closePromptIcon);
     // end icon
 
-    public alarmItemList: AlarmDataMap = new Map();
+    public alarmItemMap: AlarmDataMap = new Map();
     public chatMsgEntityList: ChatmsgEntityModel[];
     public currentChat: AlarmItemInterface;
     public currentChatAvatar: SafeResourceUrl;
@@ -123,7 +123,9 @@ export class MessageComponent implements OnInit, AfterViewInit,OnDestroy {
         private cacheService: CacheService,
         private messageRoamService: MessageRoamService,
         private currentChattingChangeService: CurrentChattingChangeService,
-        private miniUiService: MiniUiService
+        private miniUiService: MiniUiService,
+        private zone: NgZone,
+        private changeDetectorRef: ChangeDetectorRef,
     ) {
         this.localUserInfo = this.localUserService.localUserInfo;
 
@@ -142,39 +144,23 @@ export class MessageComponent implements OnInit, AfterViewInit,OnDestroy {
         this.subscribeGroupMemberWasRemoved();
         this.subscribeGroupMemberQuit();
         this.subscribeSENSITIVEWordUpdate(); // 敏感词
-        this.subscribeAtMe();
         // 解散群
         this.subscribeDissolveGroup();
         // 被删除的通知
         this.subscribeDeleteFriend();
     }
 
-    public dd = false;
-
     ngOnInit(): void {
         this.cacheService.getMute().then((map) => {
             if (map) {
                 this.muteMap = map;
             }
-            this.cacheService.cacheUpdate$.subscribe(data => {
-                if (data.muteMap) {
-                    this.muteMap = data.muteMap;
-                } else if(data.alarmDataMap) {
-                  this.alarmItemList = data.alarmDataMap;
-                }
-            });
         });
         this.cacheService.getTop().then((map) => {
             if (map) {
                 this.topMap = map;
             }
             this.topMapOfArray = new Array(...this.topMap.keys());
-            this.cacheService.cacheUpdate$.subscribe(data => {
-                if (data.topMap) {
-                    this.topMap = data.topMap;
-                    this.topMapOfArray = new Array(...this.topMap.keys());
-                }
-            });
         });
 
         this.cacheService.cacheSessionStatusList();
@@ -183,7 +169,7 @@ export class MessageComponent implements OnInit, AfterViewInit,OnDestroy {
           if (res) {
             const aMap = new Map();
             res.forEach(item => aMap.set(item.alarmData.alarmItem.dataId, { alarmData: item.alarmData }));
-            this.alarmItemList = aMap;
+            this.alarmItemMap = aMap;
             this.getAtMeMessage();
             console.log('聊天会话：', res);
           }
@@ -222,11 +208,11 @@ export class MessageComponent implements OnInit, AfterViewInit,OnDestroy {
     }
 
     insertItem(alarmData: AlarmItemInterface) {
-        if (this.alarmItemList.get(alarmData.alarmItem.dataId)) {
-            const item = this.alarmItemList.get(alarmData.alarmItem.dataId);
+        if (this.alarmItemMap.get(alarmData.alarmItem.dataId)) {
+            const item = this.alarmItemMap.get(alarmData.alarmItem.dataId);
             item.alarmData.alarmItem = alarmData.alarmItem;
         } else {
-            this.alarmItemList.set(alarmData.alarmItem.dataId, { alarmData: alarmData });
+            this.alarmItemMap.set(alarmData.alarmItem.dataId, { alarmData: alarmData });
         }
     }
 
@@ -297,11 +283,18 @@ export class MessageComponent implements OnInit, AfterViewInit,OnDestroy {
      */
     private subscribeChattingListUpdate() {
         this.cacheService.cacheUpdate$.subscribe(cache => {
-            if (cache.alarmDataMap) {
-              this.cacheService.getChattingList().then(list => {
-                this.alarmItemList = list;
-              });
+          this.zone.run(() => {
+            if (cache.muteMap) {
+              this.muteMap = cache.muteMap;
+            } else if(cache.alarmDataMap) {
+              this.alarmItemMap = cache.alarmDataMap;
+            } else if(cache.topMap) {
+              this.topMap = cache.topMap;
+            } else if(cache.atMe) {
+              this.getAtMeMessage();
             }
+            this.changeDetectorRef.detectChanges();
+          });
         });
     }
 
@@ -427,18 +420,8 @@ export class MessageComponent implements OnInit, AfterViewInit,OnDestroy {
         return e.defaultPrevented;
     }
 
-  subscribeAtMe() {
-    this.cacheService.cacheUpdate$.subscribe(data => {
-      if(data.atMe) {
-        this.getAtMeMessage();
-      }
-    });
-  }
-
-
-
   getAtMeMessage() {
-    this.alarmItemList.forEach(chatting => {
+    this.alarmItemMap.forEach(chatting => {
       const dataId = chatting.alarmData.alarmItem.dataId;
       this.cacheService.getAtMessage(dataId).then(ats => {
         this.atMap.set(dataId, ats.length);

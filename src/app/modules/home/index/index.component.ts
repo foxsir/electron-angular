@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, NgZone, OnInit} from '@angular/core';
 import {LocalUserService} from "@services/local-user/local-user.service";
 import {formatDate} from "@app/libs/mobileimsdk-client-common";
 import {GroupChattingCacheService} from "@services/group-chatting-cache/group-chatting-cache.service";
@@ -102,6 +102,8 @@ export class IndexComponent implements OnInit {
     private avatarService: AvatarService,
     private cacheService: CacheService,
     private miniUiService: MiniUiService,
+    private zone: NgZone,
+    private changeDetectorRef: ChangeDetectorRef,
   ) {
     this.router.events.subscribe(e => {
       if (e instanceof NavigationEnd) {
@@ -635,7 +637,10 @@ export class IndexComponent implements OnInit {
           friendRequestCount += 1;
         }
       });
-      this.massageBadges.set("address-list", friendRequestCount);
+      this.zone.run(() => {
+        this.massageBadges.set("address-list", friendRequestCount);
+        this.changeDetectorRef.detectChanges();
+      });
       console.log("新的好友请求数量:",this.massageBadges.get("address-list"));
     });
   }
