@@ -160,7 +160,7 @@ export class CreateGroupComponent implements OnInit {
                 }
             };
             if (res.success) {
-              this.cacheService.cacheGroups();
+              this.cacheService.cacheGroups().then();
               this.cacheService.putChattingCache(alarmData).then(() => {
                 this.currentChattingChangeService.switchCurrentChatting(alarmData).then();
               });

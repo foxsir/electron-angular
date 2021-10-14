@@ -53,5 +53,28 @@
       padding:0px;
       margin-right: 20px;
     }
+
+    .mat-pseudo-checkbox {
+      width: 16px;
+      height: 16px;
+      border: 1px solid #ccc;
+      border-radius: 50%;
+      cursor: pointer;
+      display: inline-block;
+      //padding: 3px 0 0 3px;
+      box-sizing: border-box;
+      position: relative;
+      flex-shrink: 0;
+      transition: border-color 30ms cubic-bezier(0, 0, 0.2, 0.1),background-color 30ms cubic-bezier(0, 0, 0.2, 0.1);
+    }
+    .mat-pseudo-checkbox:checked:before{
+      content: '';
+      width: 16px;
+      height: 16px;
+      border: 1px solid #0091FF;
+      background:#0091FF;
+      display: inline-block;
+      border-radius: 50%;
+    }
   }
 }

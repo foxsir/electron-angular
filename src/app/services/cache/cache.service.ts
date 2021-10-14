@@ -288,6 +288,8 @@ export class CacheService extends DatabaseService {
     let friends: Map<string, FriendModel>;
     let groups: Map<string, GroupModel>;
     const lastMessage: Map<string, string> = new Map();
+    await this.cacheFriends().then();
+    await this.cacheGroups().then();
     await this.getCacheFriends().then(res => { friends = res; });
     await this.getCacheGroups().then(res => { groups = res; });
     await this.queryData<LastMessageModel>({model: 'lastMessage', query: null}).then((res: IpcResponseInterface<LastMessageModel>) => {
@@ -391,38 +393,44 @@ export class CacheService extends DatabaseService {
   /**
    * 获取并缓存好友Map
    */
-  cacheFriends() {
-    this.rosterProviderService.refreshRosterAsync().subscribe((res: NewHttpResponseInterface<any>) => {
-      // 服务端返回的是一维RosterElementEntity对象数组
-      if(res.status === 200) {
-        const friendList: FriendModel[] = res.data;
-        if (friendList.length > 0) {
-          const data = new Map<string, FriendModel>();
-          friendList.forEach(f => {
-            data.set(f.friendUserUid.toString(), f);
-            this.saveData<FriendModel>({model: 'friend', data: f, update: {friendUserUid: f.friendUserUid}});
-          });
-          this.cacheSource.next({friendMap: data});
+  cacheFriends(): Promise<boolean> {
+    return new Promise((resolve) => {
+      this.rosterProviderService.refreshRosterAsync().subscribe((res: NewHttpResponseInterface<any>) => {
+        // 服务端返回的是一维RosterElementEntity对象数组
+        if(res.status === 200) {
+          const friendList: FriendModel[] = res.data;
+          if (friendList.length > 0) {
+            const data = new Map<string, FriendModel>();
+            friendList.forEach(f => {
+              data.set(f.friendUserUid.toString(), f);
+              this.saveData<FriendModel>({model: 'friend', data: f, update: {friendUserUid: f.friendUserUid}});
+            });
+            this.cacheSource.next({friendMap: data});
+          }
+          resolve(true);
         }
-      }
+      });
     });
   }
 
   /**
    * 获取并缓存群Map
    */
-  cacheGroups() {
-    this.restService.getUserJoinGroup().subscribe((res: NewHttpResponseInterface<GroupModel[]>) => {
-      if(res.status === 200) {
-        const groupMap = new Map<string, GroupModel>();
-        res.data.forEach(g => {
-          if(g) {
-            groupMap.set(g.gid, g);
-            this.saveData<GroupModel>({model: 'group', data: g, update: {gid: g.gid}});
-          }
-        });
-        this.cacheSource.next({groupMap: groupMap});
-      }
+  cacheGroups(): Promise<boolean> {
+    return new Promise(resolve => {
+      this.restService.getUserJoinGroup().subscribe((res: NewHttpResponseInterface<GroupModel[]>) => {
+        if(res.status === 200) {
+          const groupMap = new Map<string, GroupModel>();
+          res.data.forEach(g => {
+            if(g) {
+              groupMap.set(g.gid, g);
+              this.saveData<GroupModel>({model: 'group', data: g, update: {gid: g.gid}});
+            }
+          });
+          this.cacheSource.next({groupMap: groupMap});
+          resolve(true);
+        }
+      });
     });
   }
 
@@ -747,19 +755,20 @@ export class CacheService extends DatabaseService {
         mute: mute,
         updated_at: new Date().getTime(),
       };
-      this.saveData<MuteModel>({model: "mute", data: data, update: {dataId: dataId}});
-      const res = new Map([[dataId, mute]]);
-      const url = _HTTP_SERVER_URL + "/api/user/setNoDisturb";
-      const params = {
-        userId: this.localUserService.localUserInfo.userId,
-        noDisturbId: dataId,
-        type: mute ? 1 : 0,
-        userType: type === 'friend' ? 0 : 1,
-      };
-      this.httpService.postForm(url, params).subscribe();
-      resolve(res);
-      this.getMute().then(mutes => {
-        this.cacheSource.next({muteMap: mutes});
+      this.saveDataSync<MuteModel>({model: "mute", data: data, update: {dataId: dataId}}).then(() => {
+        const res = new Map([[dataId, mute]]);
+        const url = _HTTP_SERVER_URL + "/api/user/setNoDisturb";
+        const params = {
+          userId: this.localUserService.localUserInfo.userId,
+          noDisturbId: dataId,
+          type: mute ? 1 : 0,
+          userType: type === 'friend' ? 0 : 1,
+        };
+        this.httpService.postForm(url, params).subscribe();
+        resolve(res);
+        this.getMute().then(mutes => {
+          this.cacheSource.next({muteMap: mutes});
+        });
       });
     });
   }
@@ -795,19 +804,20 @@ export class CacheService extends DatabaseService {
         top: top,
         updated_at: new Date().getSeconds(),
       };
-      this.saveData<TopModel>({model: "top", data: data, update: {dataId: dataId}});
-      const res = new Map([[dataId, top]]);
-      const url = _HTTP_SERVER_URL + "/api/user/setTop";
-      const params = {
-        userId: this.localUserService.localUserInfo.userId,
-        topId: dataId,
-        type: top ? 1 : 0,
-        userType: type === 'friend' ? 0 : 1,
-      };
-      this.httpService.postForm(url, params).subscribe();
-      resolve(res);
-      this.getTop().then(tops => {
-        this.cacheSource.next({topMap: tops});
+      this.saveDataSync<TopModel>({model: "top", data: data, update: {dataId: dataId}}).then(() => {
+        const res = new Map([[dataId, top]]);
+        const url = _HTTP_SERVER_URL + "/api/user/setTop";
+        const params = {
+          userId: this.localUserService.localUserInfo.userId,
+          topId: dataId,
+          type: top ? 1 : 0,
+          userType: type === 'friend' ? 0 : 1,
+        };
+        this.httpService.postForm(url, params).subscribe();
+        resolve(res);
+        this.getTop().then(tops => {
+          this.cacheSource.next({topMap: tops});
+        });
       });
     });
   }
@@ -910,26 +920,26 @@ export class CacheService extends DatabaseService {
    */
   cacheNewFriends() {
     this.restService.getNewFriend().subscribe((res: NewHttpResponseInterface<FriendRequestModel[]>) => {
-      if(res.status === 200) {
+      if (res.status === 200) {
         const map = new Map<string, FriendRequestModel>();
         res.data.forEach(item => {
           // 先从本地缓存中查出来数据，如果有历史记录，进行更新，
           this.queryData<FriendRequestModel>({
-            model: 'friendRequest', query: {reqUserId:item.reqUserId}
+            model: 'friendRequest', query: {reqUserId: item.reqUserId}
           }).then((cacheRes: IpcResponseInterface<FriendRequestModel>) => {
             // 如果是在本地没有记录，才进行插入操作
             if (cacheRes.data.length === 0) {
               map.set(item.reqUserId.toString(), item);
               item.agree = null;
-              this.saveDataSync<FriendRequestModel>({model: 'friendRequest', data: item}).then(()=>{
+              this.saveDataSync<FriendRequestModel>({model: 'friendRequest', data: item}).then(() => {
                 this.cacheSource.next({newFriendMap: map});
               });
             } else {
               // 否则，更新缓存
-              cacheRes.data.forEach(cacheItem=> {
+              cacheRes.data.forEach(cacheItem => {
                 this.saveDataSync<FriendRequestModel>({
                   model: 'friendRequest', data: {agree: null}, update: {reqUserId: cacheItem.reqUserId}
-                }).then(()=>{
+                }).then(() => {
                   this.getNewFriendMap().then(saveRes => {
                     this.cacheSource.next({newFriendMap: saveRes});
                   });
@@ -950,7 +960,7 @@ export class CacheService extends DatabaseService {
   updateNewFriendMap(reqUserId: number, agree: boolean): void {
     this.saveDataSync<FriendRequestModel>({
       model: 'friendRequest', data: {agree: agree}, update: {reqUserId: reqUserId}
-    }).then(()=>{
+    }).then(() => {
       this.getNewFriendMap().then(res => {
         this.cacheSource.next({newFriendMap: res});
       });
@@ -989,8 +999,9 @@ export class CacheService extends DatabaseService {
       fingerPrintOfProtocal: msg.fingerPrintOfProtocal,
       date: msg.date
     };
-    this.saveData<AtMeModel>({model: 'atMe', data: data, update: {fingerPrintOfProtocal: msg.fingerPrintOfProtocal}});
-    this.cacheSource.next({atMe: true});
+    this.saveDataSync<AtMeModel>({model: 'atMe', data: data, update: {fingerPrintOfProtocal: msg.fingerPrintOfProtocal}}).then(() => {
+      this.cacheSource.next({atMe: true});
+    });
   }
 
   /**

@@ -144,9 +144,9 @@ export class IndexComponent implements OnInit {
     });
 
     // 获取并缓存好友列表
-    this.cacheService.cacheFriends();
+    this.cacheService.cacheFriends().then();
     // 获取并缓存群列表
-    this.cacheService.cacheGroups();
+    this.cacheService.cacheGroups().then();
     // 缓存黑名单
     this.cacheService.cacheBlackList();
     // 监听黑名单变化
