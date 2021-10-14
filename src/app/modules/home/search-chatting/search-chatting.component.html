@@ -1,12 +1,22 @@
-<div fxFlexFill>
-  <div fxLayout="column" fxFlexFill fxLayoutGap="20px" class="mat-card mat-elevation-z0">
-    <div fxFlex="112px">
+<div fxFlexFill class="searchChatting">
+  <div fxLayout="column" fxFlexFill fxLayoutGap="0px" class="mat-card mat-elevation-z0">
+    <div fxFlex="110px">
       <div fxLayout="column" fxFlexFill>
-        <div fxFlex="50">
-          <input nz-input placeholder="请输入搜索关键词" [(ngModel)]="keywords"
-                 (keyup.enter)="txtSearchChange()"/>
+        <div fxFlex="55" style="padding:20px 20px 0 20px">
+          <mat-card-content>
+            <nz-input-group fxFlex="100" [nzSuffix]="suffixTemplateInfo" style="border-radius: 4px;">
+              <input nz-input placeholder="请输入搜索关键词"
+                     (keydown.enter)="txtSearchChange()" [(ngModel)]="keywords" />
+            </nz-input-group>
+            <ng-template #suffixTemplateInfo>
+              <mat-icon (click)="keywords = null; txtSearchChange()" class="hover-icon icon14">
+                <img [src]="closeIcon" class="icon" alt="">
+                <img [src]="closeActiveIcon" class="icon-active" alt="">
+              </mat-icon>
+            </ng-template>
+          </mat-card-content>
         </div>
-        <div fxFlex="50">
+        <div fxFlex="40" style="border-bottom: 1px solid #CCC">
           <div fxLayout="row" fxLayoutGap="20px">
             <div fxFlex="33" fxLayoutAlign="center">
               <button mat-button (click)="currentTab = 'chat'"
@@ -34,36 +44,37 @@
       <!--聊天内容-->
       <ng-template [ngIf]="currentTab === 'chat'">
         <mat-list>
-          <mat-list-item class="hover-item" *ngFor="let chat of chatMap | keyvalue" style="padding-top:10px;">
-            <img src="{{avatarMap.get(chat.value.uid.toString())}}" mat-list-icon/>
-            <div mat-line>{{chat.value.name}}</div>
+          <mat-list-item class="hover-item" *ngFor="let chat of chatMap | keyvalue">
+            <img src="{{avatarMap.get(chat.value.uid.toString())}}" mat-list-icon style="width: 40px;height: 40px" />
+            <div mat-line style="font-size: 14px;">{{chat.value.name}}</div>
             <div mat-line>
-              <div fxLayout="row" fxLayoutAlign="space-between">
-                <div>{{chat.value.text}}</div>
+              <div fxLayout="row" fxLayoutAlign="space-between" style="font-size:12px;color:#888">
+                <div style="line-height: 18px">{{chat.value.text}}</div>
                 <div>{{chat.value.date | date:'Y-m-d H:m:ss'}}</div>
               </div>
             </div>
-            <mat-divider></mat-divider>
           </mat-list-item>
         </mat-list>
       </ng-template>
 
       <!--图片视频-->
       <ng-template [ngIf]="currentTab === 'media'">
-        <div fxFlexFill fxLayout="row wrap" fxLayoutGap="20px grid">
-          <div fxFlex="25" fxFlex.md="33" fxFlex.lt-md="50" *ngFor="let image of imageMap | keyvalue">
-            <img [src]="image.value.text" style="width: 100%; height: 100%; object-fit: cover;" alt="">
+        <div style="padding:0 0 14px 14px;">
+          <div *ngFor="let image of imageMap | keyvalue" class="imgv">
+            <img [src]="image.value.text">
           </div>
+          <div style="width: 100%; height: 1px; clear:both;"></div>
         </div>
       </ng-template>
 
       <!--文件-->
       <ng-template [ngIf]="currentTab === 'file'">
-        <div fxFlexFill fxLayout="row wrap" fxLayoutGap="20px grid">
-          <div fxFlex="100" *ngFor="let file of fileMap | keyvalue">
-            <app-message-file [chatMsg]="file.value"></app-message-file>
-          </div>
-        </div>
+        <mat-list>
+          <mat-list-item class="hover-item" *ngFor="let file of fileMap | keyvalue" >
+            <img src="{{avatarMap.get(file.value.uid.toString())}}" mat-list-icon style="width: 40px;height: 40px" />
+            <app-message-file [chatMsg]="file.value" class="filev"></app-message-file>
+          </mat-list-item>
+        </mat-list>
       </ng-template>
     </div>
   </div>
