@@ -105,3 +105,13 @@ https://material.angular.io/components/form-field/overview
 
 参考：https://github.com/ngx-formly/ngx-formly
 
+
+
+"agora_electron": {
+  "electron_version": "12.0.0",
+  "platform": "darwin",
+  "prebuilt": true,
+  "arch": "ia32"
+},
+
+"agora-electron-sdk": "3.5.0-rc.3-build.907",

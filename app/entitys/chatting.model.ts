@@ -32,6 +32,7 @@ export default class ChattingModel extends BaseEntity {
   @Column({nullable: true})
   avatar: string = "";
 
+
   /*仅本地*/
   @Column()
   chatType: string = 'friend'; // "friend" | "group"
@@ -41,6 +42,9 @@ export default class ChattingModel extends BaseEntity {
 
   @Column()
   sound: boolean = true; // 声音通知
+
+  @Column()
+  lastFp: string = "";
   /*仅本地*/
 }
 

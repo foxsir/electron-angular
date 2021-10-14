@@ -151,12 +151,6 @@ export class ContextMenuService {
           if(ok) {
             this.cacheService.getChattingCache(chatting).then(data => {
               const dataId = chatting.alarmItem.dataId;
-              const keys = new Array(...data.keys());
-              if(keys.length > 0) {
-                this.cacheService.saveData<LastMessageModel>(
-                  {model: 'lastMessage', data: {dataId: dataId, fp: keys.slice(-1).pop()}, update: {dataId: dataId}}
-                );
-              }
               this.cacheService.deleteChattingCache(dataId).then(() => {
                 return this.currentChattingChangeService.switchCurrentChatting(null);
               });

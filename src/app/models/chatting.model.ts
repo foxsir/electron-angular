@@ -16,5 +16,6 @@ export default class ChattingModel extends BaseEntity {
   chatType: string = 'friend'; // "friend" | "group"
   unread: number = 0; // 未读消息数
   sound: boolean = false; // 声音通知
+  lastFp: string;
   /*仅本地*/
 }
