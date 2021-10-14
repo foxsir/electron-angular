@@ -39,9 +39,6 @@ export class MessageRoamService {
     private localUserService: LocalUserService,
   ) { }
 
-  // 全部会话的最近一条聊天记录
-  private allLastMessage: RoamLastMsgModel[];
-
   private SERVER_URL: string = _HTTP_SERVER_URL;
   private groupHistoryApi = [this.SERVER_URL, "v1/chat/group-his"].join("/");
   private friendHistoryApi = [this.SERVER_URL, "v1/chat/friend-his"].join("/");
@@ -71,19 +68,16 @@ export class MessageRoamService {
    */
   getAllLastMessage(): Promise<RoamLastMsgModel[]> {
     return new Promise((resolve, reject) => {
-      if(this.allLastMessage) {
-        resolve(this.allLastMessage);
-      } else {
-        const options: AllLastMessageOptions = {
-          myuid: Number(this.localUserService.localUserInfo.userId)
-        };
-        this.http.get(this.allLastMessageApi, options).subscribe((res: NewHttpResponseInterface<any>) => {
-          if(res.status === 200) {
-            this.allLastMessage = res.data.result;
-            resolve(this.allLastMessage);
-          }
-        });
-      }
+      const options: AllLastMessageOptions = {
+        myuid: Number(this.localUserService.localUserInfo.userId)
+      };
+      this.http.get(this.allLastMessageApi, options).subscribe((res: NewHttpResponseInterface<any>) => {
+        if(res.status === 200) {
+          resolve(res.data.result);
+        } else {
+          resolve([]);
+        }
+      });
     });
   }
 
