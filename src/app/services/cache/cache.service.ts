@@ -99,6 +99,7 @@ export class CacheService extends DatabaseService {
     return new Promise((resolve, reject) => {
       const cache: Map<string, ChatmsgEntityModel> = new Map();
       let lastTime = null;
+      let lastFp = '';
       if(messages !== null) {
         if(messages.hasOwnProperty("length")) {
           messages = messages as ChatmsgEntityModel[];
@@ -109,12 +110,14 @@ export class CacheService extends DatabaseService {
           if(lastItem && lastItem[0]) {
             alarmData.alarmItem.msgContent = messages.slice(-1)[0]?.text;
             lastTime = lastItem.date;
+            lastFp = lastItem.fingerPrintOfProtocal;
           }
         } else {
           messages  = messages as ChatmsgEntityModel;
           cache.set(messages.fingerPrintOfProtocal, messages);
           alarmData.alarmItem.msgContent = messages.text;
           lastTime = messages.date;
+          lastFp = messages.fingerPrintOfProtocal;
         }
       }
       const chatting: Partial<ChattingModel> = {
@@ -122,6 +125,7 @@ export class CacheService extends DatabaseService {
         ...alarmData.metadata,
       };
       chatting.date = lastTime || alarmData.alarmItem.date;
+      chatting.lastFp = lastFp || alarmData.alarmItem.lastFp;
 
       this.saveData<ChattingModel>({model: "chatting", data: chatting, update: {dataId: chatting.dataId}});
       if(cache.size === 0) {
@@ -216,12 +220,22 @@ export class CacheService extends DatabaseService {
    */
   deleteChattingCache(dataId: string): Promise<boolean> {
     return new Promise<boolean>((resolve) => {
-      this.deleteData<ChattingModel>({model: "chatting", query: {dataId: dataId}}).then(() => {
-        this.getChattingList().then(list => {
-          list.delete(dataId);
-          this.cacheSource.next({alarmDataMap: list});
-          resolve(true);
-        });
+      this.getChattingList().then(list => {
+        if(list.get(dataId)) {
+          this.deleteData<ChattingModel>({model: "chatting", query: {dataId: dataId}}).then(() => {
+            const lastFp = list.get(dataId).alarmData.alarmItem.lastFp;
+            this.saveData<LastMessageModel>({
+              model: 'lastMessage',
+              data: {
+               dataId: dataId, fp: lastFp
+              },
+              update: {dataId: dataId}
+            });
+            list.delete(dataId);
+            this.cacheSource.next({alarmDataMap: list});
+            resolve(true);
+          });
+        }
       });
     });
   }
@@ -314,6 +328,7 @@ export class CacheService extends DatabaseService {
               msgContent: MessageService.parseMessageForShow(dataContent.m, dataContent.ty),
               title: title,
               avatar: avatar,
+              lastFp: protocalModel.fp
             },
             // 聊天元数据
             metadata: {
@@ -325,11 +340,13 @@ export class CacheService extends DatabaseService {
           // 将本地不存在的对话返回到聊天Map
           if(chattingListCache === null) {
             newMap.set(alarmItem.alarmItem.dataId, alarmItem);
+            // 同步消息
+            this.syncMessage(alarmItem, protocalModel.fp);
           } else if (lastMessage.get(alarmItem.alarmItem.dataId) !== protocalModel.fp) { // 检查是否是删除的会话
             newMap.set(alarmItem.alarmItem.dataId, alarmItem);
+            // 同步消息
+            this.syncMessage(alarmItem, protocalModel.fp);
           }
-          // 同步消息
-          this.syncMessage(alarmItem, protocalModel.fp);
         });
 
         const entries = newMap.entries();
