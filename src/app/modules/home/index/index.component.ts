@@ -29,6 +29,8 @@ import netConnect from "@app/assets/icons/net-connect.svg";
 import netDisConnect from "@app/assets/icons/net-disconnect.svg";
 import {UserModel} from "@app/models/user.model";
 import {MiniUiService} from "@services/mini-ui/mini-ui.service";
+import {FriendRequestModel} from "@app/models/friend-request.model";
+import IpcResponseInterface from "@app/interfaces/ipc-response.interface";
 
 // import svg end
 
@@ -40,9 +42,11 @@ import {MiniUiService} from "@services/mini-ui/mini-ui.service";
 export class IndexComponent implements OnInit {
     chatting = chatting.toString();
 
-    massageBadges = {
-        message: 0
-    };
+    // 消息角标
+    massageBadges =  new Map([
+      ['message', 0],
+      ['address-list', 0],
+    ]);
 
     myAvatar: SafeResourceUrl = this.dom.bypassSecurityTrustResourceUrl(
         this.avatarService.defaultLocalAvatar
@@ -133,10 +137,10 @@ export class IndexComponent implements OnInit {
     });
 
     this.messageDistributeService.MT03_OF_CHATTING_MESSAGE$.subscribe(data => {
-      this.massageBadges.message = 1;
+      this.massageBadges.set("message", 1);
     });
     this.messageDistributeService.MT45_OF_GROUP$CHAT$MSG_SERVER$TO$B$.subscribe(data => {
-      this.massageBadges.message = 1;
+      this.massageBadges.set("message", 1);
     });
 
     // 获取并缓存好友列表
@@ -152,6 +156,17 @@ export class IndexComponent implements OnInit {
     // 监听好友请求
     this.messageDistributeService.MT07_OF_ADD_FRIEND_REQUEST_INFO_SERVER$TO$B$.subscribe(() => {
       this.cacheService.cacheNewFriends();
+    });
+
+    // 缓存通讯录角标数量
+    this.updateFriendRequestNumber();
+
+
+    // 订阅新的好友通知
+    this.cacheService.cacheUpdate$.subscribe(cacheData => {
+      if (cacheData.newFriendMap) {
+        this.updateFriendRequestNumber();
+      }
     });
 
     this.messageDistributeService.USER_INFO_UPDATE$.subscribe(user => {
@@ -601,6 +616,25 @@ export class IndexComponent implements OnInit {
     };
     window.addEventListener('online', updateOnlineStatus);
     window.addEventListener('offline', updateOnlineStatus);
+  }
+
+  /**
+   * 更新通讯录角标数量
+   */
+  updateFriendRequestNumber() {
+    this.cacheService.queryData<FriendRequestModel>({
+      model: 'friendRequest', query: {}
+    }).then((res: IpcResponseInterface<FriendRequestModel>) => {
+      let friendRequestCount = 0;
+      console.log("本地的好友请求:",res.data);
+      res.data.forEach(item => {
+        if (item.agree == null) {
+          friendRequestCount += 1;
+        }
+      });
+      this.massageBadges.set("address-list", friendRequestCount);
+      console.log("新的好友请求数量:",this.massageBadges.get("address-list"));
+    });
   }
 
 }

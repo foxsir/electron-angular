@@ -913,10 +913,30 @@ export class CacheService extends DatabaseService {
       if(res.status === 200) {
         const map = new Map<string, FriendRequestModel>();
         res.data.forEach(item => {
-          map.set(item.reqUserId.toString(), item);
-          item.agree = null;
-          this.saveData<FriendRequestModel>({model: 'friendRequest', data: item});
-          this.cacheSource.next({newFriendMap: map});
+          // 先从本地缓存中查出来数据，如果有历史记录，进行更新，
+          this.queryData<FriendRequestModel>({
+            model: 'friendRequest', query: {reqUserId:item.reqUserId}
+          }).then((cacheRes: IpcResponseInterface<FriendRequestModel>) => {
+            // 如果是在本地没有记录，才进行插入操作
+            if (cacheRes.data.length === 0) {
+              map.set(item.reqUserId.toString(), item);
+              item.agree = null;
+              this.saveDataSync<FriendRequestModel>({model: 'friendRequest', data: item}).then(()=>{
+                this.cacheSource.next({newFriendMap: map});
+              });
+            } else {
+              // 否则，更新缓存
+              cacheRes.data.forEach(cacheItem=> {
+                this.saveDataSync<FriendRequestModel>({
+                  model: 'friendRequest', data: {agree: null}, update: {reqUserId: cacheItem.reqUserId}
+                }).then(()=>{
+                  this.getNewFriendMap().then(saveRes => {
+                    this.cacheSource.next({newFriendMap: saveRes});
+                  });
+                });
+              });
+            }
+          });
         });
       }
     });
@@ -928,11 +948,12 @@ export class CacheService extends DatabaseService {
    * @param agree
    */
   updateNewFriendMap(reqUserId: number, agree: boolean): void {
-    this.saveData<FriendRequestModel>({
+    this.saveDataSync<FriendRequestModel>({
       model: 'friendRequest', data: {agree: agree}, update: {reqUserId: reqUserId}
-    });
-    this.getNewFriendMap().then(res => {
-      this.cacheSource.next({newFriendMap: res});
+    }).then(()=>{
+      this.getNewFriendMap().then(res => {
+        this.cacheSource.next({newFriendMap: res});
+      });
     });
   }
 

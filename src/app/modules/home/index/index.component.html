@@ -14,10 +14,10 @@
             <div style="cursor: pointer" [routerLink]="menu.router" (click)="switchRouter(menu)">
               <div fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="3px">
                 <div>
-                  <mat-icon style="width: 30px" [matBadge]="massageBadges.message" matBadgeColor="warn"
+                  <mat-icon style="width: 30px" [matBadge]="massageBadges.get(menu.path)" matBadgeColor="warn"
                             matBadgePosition="above after" matBadgeSize="small"
                             matBadgeOverlap="true"
-                            [matBadgeHidden]="!menu.path || massageBadges[menu.path] === 0">
+                            [matBadgeHidden]="!massageBadges.get(menu.path) || massageBadges.get(menu.path) === 0">
                     <img *ngIf="currentRouter.includes(menu.router)" class="left-icon" [src]="menu.iconActive"
                          (mouseleave)="menu.icon = menu.iconUnActive"
                          alt="">

@@ -28,8 +28,9 @@ export class NewFriendComponent implements OnInit {
       private snackBarService: SnackBarService,
       private cacheService: CacheService,
     ) {
-        this.cacheService.cacheNewFriends();
+        // this.cacheService.cacheNewFriends();
         this.cacheService.getNewFriendMap().then(cache => {
+          console.log("缓存的好友请求数据:", cache);
           if(cache) {
             cache.forEach(item => {
               this.model_list.push(item);

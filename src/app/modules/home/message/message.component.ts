@@ -385,7 +385,8 @@ export class MessageComponent implements OnInit, AfterViewInit,OnDestroy {
           // 删除会话
           this.cacheService.deleteChattingCache(friendId).then(() => {});
           // // 删除聊天界面
-          if (this.currentChat != null && this.currentChat.alarmItem.dataId == friendId) {
+          console.log("当前会话是:",this.currentChat);
+          if (this.currentChat && this.currentChat.alarmItem.dataId == friendId) {
             this.currentChattingChangeService.switchCurrentChatting(null).then();
           }
           // 从我的会话里删除
