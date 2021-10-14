@@ -91,6 +91,24 @@ export abstract class DatabaseService {
   }
 
   /**
+   * 具有回调的数据保存方法
+   * @param data
+   */
+  saveDataSync<T extends BaseEntity>(data: SaveParams<T>): Promise<T> {
+    return new Promise((resolve) => {
+      data.uuid = CommonTools.uuid();
+      ipcRenderer.send('sendData', data);
+
+      const subscribe = this.sendDataUpdate$.subscribe((res) => {
+        if(res.uuid === data.uuid) {
+          resolve(res);
+          subscribe.unsubscribe();
+        }
+      });
+    });
+  }
+
+  /**
    * 查询数据库 uuid 请求并发是用来区分请求
    * @param data
    */
