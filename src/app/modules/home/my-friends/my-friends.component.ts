@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, NgZone, OnInit} from '@angular/core';
 import {CacheService} from "@services/cache/cache.service";
 import {RestService} from "@services/rest/rest.service";
 import FriendModel from "@app/models/friend.model";
@@ -31,7 +31,8 @@ export class MyFriendsComponent implements OnInit {
     private cacheService: CacheService,
     private restService: RestService,
     private currentChattingChangeService: CurrentChattingChangeService,
-    private router: Router
+    private zone: NgZone,
+    private changeDetectorRef: ChangeDetectorRef,
   ) {
   }
 
@@ -51,7 +52,10 @@ export class MyFriendsComponent implements OnInit {
     // 监听好友变化
     this.cacheService.cacheUpdate$.subscribe(cache => {
       if(cache.friendMap) {
-        this.showFriend(cache.friendMap);
+        this.zone.run(() => {
+          this.showFriend(cache.friendMap);
+          this.changeDetectorRef.detectChanges();
+        });
       }
     });
   }

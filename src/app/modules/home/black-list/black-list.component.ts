@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, NgZone, OnInit} from '@angular/core';
 import {RestService} from "@services/rest/rest.service";
 import {CacheService} from "@services/cache/cache.service";
 import BlackListModel from "@app/models/black-list.model";
@@ -18,6 +18,8 @@ export class BlackListComponent implements OnInit {
     private restService: RestService,
     private cacheService: CacheService,
     private dialogService: DialogService,
+    private zone: NgZone,
+    private changeDetectorRef: ChangeDetectorRef,
   ) {
     this.cacheService.getBlackList().then(cache => {
       if(cache) {
@@ -28,10 +30,13 @@ export class BlackListComponent implements OnInit {
     });
     this.cacheService.cacheUpdate$.subscribe(data => {
       if(data.blackListMap) {
-        this.blacklist = [];
-        data.blackListMap.forEach(item => {
-          this.blacklist.push(item);
-        });
+        this.zone.run(() => {
+          this.blacklist = [];
+          data.blackListMap.forEach(item => {
+            this.blacklist.push(item);
+          });
+          this.changeDetectorRef.detectChanges();
+        })
       }
     });
   }

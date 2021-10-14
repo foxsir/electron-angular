@@ -325,12 +325,9 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
   }
 
   pushMessageToPanel(data: {chat: ChatmsgEntityModel; dataContent: ProtocalModelDataContent}, type: 'send' | 'incept' = 'send') {
-    let chatActive: boolean;
-    if(type === 'incept') {
-      chatActive = this.currentChat.alarmItem.dataId.toString() === data.dataContent.f.toString();
-    } else {
-      chatActive = this.currentChat.alarmItem.dataId.toString() === data.dataContent.t.toString();
-    }
+    const isSide = this.currentChat.alarmItem.dataId.toString() === data.dataContent.f.toString();
+    const isSelf = this.currentChat.alarmItem.dataId.toString() === data.dataContent.t.toString();
+    const chatActive: boolean = isSelf || isSide;
     // this.messageService.alreadyRead(this.currentChat.alarmItem.dataId, this.currentChat.metadata.chatType);
     if(!data.dataContent) {
       if(this.cacheService.chatMsgEntityMap.size > 0) {
@@ -450,7 +447,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
         this.cacheService.generateAlarmItem(dataId.toString(), chatType, dataContent.m, dataContent.ty).then(alarm => {
           chatMsgEntity.xu_isRead_type = true;
           chatMsgEntity.isOutgoing = true;
-          this.cacheService.putChattingCache(alarm, chatMsgEntity).then(() => {
+          this.cacheService.putChattingCache(alarm, chatMsgEntity, true).then(() => {
             if(this.currentChat && this.currentChat.alarmItem.dataId === alarm.alarmItem.dataId) {
               this.pushMessageToPanel({chat: chatMsgEntity, dataContent: dataContent}, 'incept');
             }
