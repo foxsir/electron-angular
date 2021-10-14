@@ -288,6 +288,8 @@ export class CacheService extends DatabaseService {
     let friends: Map<string, FriendModel>;
     let groups: Map<string, GroupModel>;
     const lastMessage: Map<string, string> = new Map();
+    await this.cacheFriends().then();
+    await this.cacheGroups().then();
     await this.getCacheFriends().then(res => { friends = res; });
     await this.getCacheGroups().then(res => { groups = res; });
     await this.queryData<LastMessageModel>({model: 'lastMessage', query: null}).then((res: IpcResponseInterface<LastMessageModel>) => {
@@ -391,39 +393,45 @@ export class CacheService extends DatabaseService {
   /**
    * 获取并缓存好友Map
    */
-  cacheFriends() {
-    this.rosterProviderService.refreshRosterAsync().subscribe((res: NewHttpResponseInterface<any>) => {
-      // 服务端返回的是一维RosterElementEntity对象数组
-      if(res.status === 200) {
-        const friendList: FriendModel[] = res.data;
-        if (friendList.length > 0) {
-          const data = new Map<string, FriendModel>();
-          friendList.forEach(f => {
-            data.set(f.friendUserUid.toString(), f);
-            this.saveData<FriendModel>({model: 'friend', data: f, update: {friendUserUid: f.friendUserUid}});
-          });
-          this.cacheSource.next({friendMap: data});
+  cacheFriends(): Promise<boolean> {
+    return new Promise((resolve) => {
+      this.rosterProviderService.refreshRosterAsync().subscribe((res: NewHttpResponseInterface<any>) => {
+        // 服务端返回的是一维RosterElementEntity对象数组
+        if(res.status === 200) {
+          const friendList: FriendModel[] = res.data;
+          if (friendList.length > 0) {
+            const data = new Map<string, FriendModel>();
+            friendList.forEach(f => {
+              data.set(f.friendUserUid.toString(), f);
+              this.saveData<FriendModel>({model: 'friend', data: f, update: {friendUserUid: f.friendUserUid}});
+            });
+            this.cacheSource.next({friendMap: data});
+          }
+          resolve(true);
         }
-      }
+      });
     });
   }
 
   /**
    * 获取并缓存群Map
    */
-  cacheGroups() {
-    this.restService.getUserJoinGroup().subscribe((res: NewHttpResponseInterface<GroupModel[]>) => {
-      if(res.status === 200) {
-        const groupMap = new Map<string, GroupModel>();
-        res.data.forEach(g => {
-          if(g) {
-            groupMap.set(g.gid, g);
-            this.saveData<GroupModel>({model: 'group', data: g, update: {gid: g.gid}});
-          }
-        });
-        this.cacheSource.next({groupMap: groupMap});
-      }
-    });
+  cacheGroups(): Promise<boolean> {
+    return new Promise(resolve => {
+      this.restService.getUserJoinGroup().subscribe((res: NewHttpResponseInterface<GroupModel[]>) => {
+        if(res.status === 200) {
+          const groupMap = new Map<string, GroupModel>();
+          res.data.forEach(g => {
+            if(g) {
+              groupMap.set(g.gid, g);
+              this.saveData<GroupModel>({model: 'group', data: g, update: {gid: g.gid}});
+            }
+          });
+          this.cacheSource.next({groupMap: groupMap});
+          resolve(true);
+        }
+      });
+    })
   }
 
   /**
