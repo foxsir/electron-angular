@@ -19,11 +19,13 @@ import MuteModel from "./mute.model";
 import TopModel from "./top.model";
 import AtMeModel from "./at-me.model";
 import LastMessageModel from "./last-message.model";
+import BlackMeListModel from "./black-me-list.model";
 
 const ModelMap: Map<string, typeof BaseEntity> = new Map();
 
 ModelMap.set("user", UserModel);
 ModelMap.set("blackList", BlackListModel);
+ModelMap.set("blackMeList", BlackMeListModel);
 ModelMap.set("chatmsgEntity", ChatmsgEntityModel);
 ModelMap.set("chatting", ChattingModel);
 ModelMap.set("chattingGroup", ChattingGroupModel);

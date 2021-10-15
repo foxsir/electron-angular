@@ -104,6 +104,9 @@ export const getGroupAdminInfo=  _HTTP_SERVER_URL +"/api/groupBase/getAdminList"
 //获取黑名单列表
 export const getMyBlackUser = _HTTP_SERVER_URL + "/api/user/getMyBlackUser";
 
+//获取拉黑我的人
+export const getBlackMeUser = _HTTP_SERVER_URL + "/api/user/getBlackUser";
+
 //拉黑/取消拉黑
 export const blackUser = _HTTP_SERVER_URL + "/api/user/blackUser";
 
@@ -173,6 +176,9 @@ export const GetGroupMember = _HTTP_SERVER_URL + "/api/groupBase/memberList";
 
 // 好友信息
 export const GetFriendInfo = _HTTP_SERVER_URL + "/api/friend/info";
+
+// 检查拉黑状态
+export const getBlackDetail = _HTTP_SERVER_URL + "/api/user/blackUserDetail";
 
 //
 //  //封装请求函数

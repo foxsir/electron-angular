@@ -254,37 +254,33 @@ const UserProtocalsType = {
   MT50_OF_GROUP$SYSCMD_SOMEONEB$REMOVED_FROM$SERVER: 50,
   /** 群聊系统指令：群名被修改的系统通知（由Server发出，所有除修改者外的群员接收） */
   MT51_OF_GROUP$SYSCMD_GROUP$NAME$CHANGED_FROM$SERVER: 51,
-  /** 群管理员变更发送的指令 */
-  UPDATE_GROUP_ADMIN: 74,
 
-
-  //    111 新增主动进群 群聊系统指令  用户加群传给服务器的
+  // 新增主动进群 群聊系统指令  用户加群传给服务器的 (目前没用到)
   MT53_OF_GROUP$_JOIN: 53,
-
-  //    ji 新增踢人
-  MT53_OF_GROUP$_del: 78,
-
-  // 敏感词更新
-  SENSITIVE_WORD_UPDATE: 76,
-
-  // 被拉黑
-  PULLED_BLACK_LIST: 61,
 
   // 个人禁言的通知指令(发给被禁言人)
   GROUP_SILENCE: 57,
 
-  // 删除好友的通知
+  // 被好友删除的通知
   DELETE_FRIEND: 60,
 
-  // // 更新探索发现发送的指令
-  // UPDATE_DISCOVERY: 71,
-  // UPDATE_DISCOVERY_APP: 71,
+  // 被拉黑
+  PULLED_BLACK_LIST: 61,
+
+  // 更新全局APP配置的指令
+  UPDATE_APP_CONFIG : 72,
 
   // 用户个人信息更新的指令
   USER_INFO_UPDATE: 73,
 
+  // 群管理员变更发送的指令
+  UPDATE_GROUP_ADMIN: 74,
+
   // 更新群基本信息的指令
   GROUP_INFO_UPDATE: 75,
+
+  // 敏感词更新
+  SENSITIVE_WORD_UPDATE: 76,
 
   // 用户上线/下线时发送的指令
   USER_ONLINE_STATUS_CHANGE: 77,

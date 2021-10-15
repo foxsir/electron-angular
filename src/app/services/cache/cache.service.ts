@@ -34,6 +34,7 @@ import TopModel from "@app/models/top.model";
 import AtMeModel from "@app/models/at-me.model";
 import SilenceUserModel from "@app/models/silence-user.model";
 import LastMessageModel from "@app/models/last-message.model";
+import BlackMeListModel from "@app/models/black-me-list.model";
 
 export type AlarmDataMap = Map<string, {alarmData: AlarmItemInterface; message?: Map<string, ChatmsgEntityModel>}>;
 
@@ -47,6 +48,7 @@ interface CacheItem {
   muteMap: Map<string, boolean>; // 静音的会话
   topMap: Map<string, boolean>; // 置顶的会话
   blackListMap: Map<string, BlackListModel>; // 黑名单
+  blackMeListMap: Map<string, BlackMeListModel>; // 拉黑我的人
   newFriendMap: Map<string, FriendRequestModel>; // 新好友请求
   atMe: boolean; // @我的消息
 }
@@ -886,18 +888,52 @@ export class CacheService extends DatabaseService {
   }
 
   cacheBlackList() {
+    // 缓存我的黑名单
     this.restService.getMyBlackList().subscribe((res: NewHttpResponseInterface<BlackListModel[]>) => {
       if(res.status === 200) {
         const bl = new Map();
-        if(res.data !== null) {
-          res.data.forEach(item => {
-            bl.set(item.userUid, item);
-            this.saveData<BlackListModel>({model: 'blackList', data: item});
-          });
-          this.cacheSource.next({blackListMap: bl});
-        } else {
-          this.cacheSource.next({blackListMap: bl});
-        }
+        // 先清除原有的记录,否则数据会重复
+        this.deleteData<BlackListModel>({model: 'blackList', query: null}).then(()=>{
+          if(res.data !== null) {
+            let count = 0;
+            res.data.forEach(item => {
+              count ++;
+              bl.set(item.userUid, item);
+              this.saveDataSync<BlackListModel>({model: 'blackList', data: item}).then(()=>{
+                if (count === res.data.length) {
+                  this.cacheSource.next({blackListMap: bl});
+                }
+              });
+            });
+
+          } else {
+            this.cacheSource.next({blackListMap: bl});
+          }
+        });
+      }
+    });
+    // 缓存拉黑我的人
+    this.restService.getBlackMeList().subscribe((res: NewHttpResponseInterface<BlackMeListModel[]>) => {
+      if(res.status === 200) {
+        const blMe = new Map();
+        // 先清除原有的记录,否则数据会重复
+        this.deleteData<BlackMeListModel>({model: 'blackMeList', query: {}}).then(()=>{
+          if(res.data !== null) {
+            let count = 0;
+            res.data.forEach(item => {
+              count ++;
+              blMe.set(item.userUid, item);
+              this.saveDataSync<BlackMeListModel>({model: 'blackMeList', data: item}).then(()=>{
+                if (count === res.data.length) {
+                  this.cacheSource.next({blackMeListMap: blMe});
+                }
+              });
+            });
+
+          } else {
+            this.cacheSource.next({blackMeListMap: blMe});
+          }
+        });
       }
     });
   }
@@ -1048,4 +1084,22 @@ export class CacheService extends DatabaseService {
     return this.groupSilenceMap;
   }
 
+  /**
+   * 获取拉黑我的人员列表
+   */
+  getBlackMeListCache():Promise<Map<string, BlackMeListModel>>  {
+    return new Promise((resolve) => {
+      this.queryData({model: 'blackMeList', query: null}).then((res: IpcResponseInterface<BlackMeListModel>) => {
+        const map = new Map();
+        if(res.status === 200) {
+          res.data.forEach(item => {
+            map.set(item.userUid.toString() ,item);
+          });
+          resolve(map);
+        } else {
+          resolve(map);
+        }
+      });
+    });
+  }
 }
