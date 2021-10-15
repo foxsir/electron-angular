@@ -92,14 +92,15 @@
               <span class="privacy-item-text">消息免打扰</span>
               <nz-switch [(ngModel)]="setting_data.no_disturb" (ngModelChange)="bySwitch('no_disturb')" nzSize="small"></nz-switch>
             </div>
-            <div fxFlex fxLayoutAlign="space-between center" class="group-pointer">
+            <div fxFlex fxLayoutAlign="space-between center" ng-class="group-pointer">
               <span class="privacy-item-text">置顶聊天</span>
               <nz-switch [(ngModel)]="setting_data.top_chat" (ngModelChange)="bySwitch('top_chat')" nzSize="small"></nz-switch>
             </div>
-            <div *ngIf="user_role != 'common'" fxFlex fxLayoutAlign="space-between center" class="group-pointer groupLast">
+            <div *ngIf="user_role != 'common'" fxFlex fxLayoutAlign="space-between center" class="group-pointer">
               <span class="privacy-item-text">普通成员邀请好友入群</span>
               <nz-switch [(ngModel)]="setting_data.invite" (ngModelChange)="bySwitch('invite')" nzSize="small"></nz-switch>
             </div>
+            <div class="whiteBar"></div>
 
             <div class="split-item"></div>
 
@@ -184,7 +185,7 @@
         <mat-card-content>
           <div *ngIf="view_mode == 'group_notice'" fxLayout="column" fxLayoutGap="10px">
             <div *ngIf="group_notice_view_mode == 'view'" class="groupTips">
-              <div style="height:calc(100% - 25px);">
+              <div style="height:calc(100% - 35px);">
                 <p>{{setting_data.gnotice}}</p>
               </div>
               <div style="text-align:right;">
@@ -192,7 +193,7 @@
               </div>
             </div>
             <div *ngIf="group_notice_view_mode == 'edit'" class="edit-group-top">
-              <div class="martop1" style="height:calc(100% - 25px);">
+              <div class="martop1" style="height:calc(100% - 35px);">
                 <textarea type="text" nz-input [(ngModel)]="setting_data.gnotice_temp" class="txtcom" placeholder="请输入群公告信息"></textarea>
               </div>
               <div class="martop2">

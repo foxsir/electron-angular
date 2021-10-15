@@ -25,6 +25,12 @@
 .searchChatting{
 
   ::ng-deep{
+    .ant-input:focus{
+      box-shadow:none
+    }
+    .ant-input-affix-wrapper{
+      box-shadow:none;
+    }
     .mat-card{
       padding: 0px;
     }

@@ -66,13 +66,13 @@ export class ChattingSettingComponent implements OnInit,OnDestroy {
         this.restService.getFriendInfo(Number(this.currentChat.alarmItem.dataId)).subscribe(res => {
             console.log('getFriendInfo result: ', res);
             if (res.status === 200 && res.data) {
-                this.friendInfo = res.data;
-                this.friendInfo.whatSUp = this.friendInfo.whatSUp == null || this.friendInfo.whatSUp.length == 0 ? '此人很懒，什么都没留下' : this.friendInfo.whatSUp;
+              this.friendInfo = res.data;
+              this.friendInfo.whatSUp = this.friendInfo.whatSUp == null || this.friendInfo.whatSUp.length == 0 ? '此人很懒，什么都没留下' : this.friendInfo.whatSUp;
             }
         });
-
-
     }
+
+
 
     ngOnInit(): void {
         this.initData();
