@@ -31,6 +31,7 @@ import {UserModel} from "@app/models/user.model";
 import {MiniUiService} from "@services/mini-ui/mini-ui.service";
 import {FriendRequestModel} from "@app/models/friend-request.model";
 import IpcResponseInterface from "@app/interfaces/ipc-response.interface";
+import FriendModel from "@app/models/friend.model";
 
 // import svg end
 
@@ -111,9 +112,7 @@ export class IndexComponent implements OnInit {
       }
     });
     this.connectDB();
-    this.messageDistributeService.USER_ONLINE_STATUS_CHANGE$.subscribe((res: ProtocalModel) => {
-      // alert(res.typeu);
-    });
+
   }
 
   connectDB() {
@@ -166,6 +165,13 @@ export class IndexComponent implements OnInit {
     this.messageDistributeService.MT07_OF_ADD_FRIEND_REQUEST_INFO_SERVER$TO$B$.subscribe(() => {
       this.cacheService.cacheNewFriends();
     });
+    // 监听好友在线状态的更新
+    this.messageDistributeService.USER_ONLINE_STATUS_CHANGE$.subscribe((res: ProtocalModel) => {
+      const dataContent: any = JSON.parse(res.dataContent);
+      const friendId :string = dataContent.userId;
+      const onlineStatus : boolean = dataContent.onlineStatus;
+      this.cacheService.updateFriendOnlineStatus(friendId,onlineStatus);
+    });
 
     // 缓存通讯录角标数量
     this.updateFriendRequestNumber();
@@ -183,8 +189,9 @@ export class IndexComponent implements OnInit {
     /**
      * 更新个人信息的指令
      */
-    this.messageDistributeService.USER_INFO_UPDATE$.subscribe(user => {
-      console.dir(user);
+    this.messageDistributeService.USER_INFO_UPDATE$.subscribe(protocol => {
+      const userInfo : any = JSON.parse(protocol.dataContent)
+      this.cacheService.cacheMyInfo(userInfo.userId);
     });
 
     this.listenNetStatus();

@@ -1118,5 +1118,17 @@ export class CacheService extends DatabaseService {
     });
   }
 
-
+  /**
+   * 更新好友的在线状态
+   * @param friendId
+   * @param onlineStatus
+   */
+  updateFriendOnlineStatus(friendId: string, onlineStatus: boolean) {
+    // 然后更新好友的在线状态信息
+    this.saveDataSync<FriendModel>({
+      model: 'friend', data: {onlineStatus: onlineStatus}, update: {friendUserUid: Number(friendId)}
+    }).then(() => {
+      this.cacheSource.next({});
+    });
+  }
 }
