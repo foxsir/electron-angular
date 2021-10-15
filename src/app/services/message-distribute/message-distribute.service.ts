@@ -123,6 +123,10 @@ export class MessageDistributeService {
   private DELETE_FRIENDSource = new Subject<ProtocalModel>();
   public DELETE_FRIEND$ = this.DELETE_FRIENDSource.asObservable();
 
+  // 更新APP配置的订阅
+  private UPDATE_APP_CONFIGSource = new Subject<ProtocalModel>();
+  public UPDATE_APP_CONFIG$ = this.UPDATE_APP_CONFIGSource.asObservable();
+
   constructor() { }
 
   inceptMessage(originData: ProtocalModel) {
@@ -209,6 +213,9 @@ export class MessageDistributeService {
         break;
       case UserProtocalsType.GROUP_INFO_UPDATE:
         this.GROUP_INFO_UPDATESource.next(originData);
+        break;
+      case UserProtocalsType.UPDATE_APP_CONFIG:
+        this.UPDATE_APP_CONFIGSource.next(originData);
         break;
       default:
         this.illegalMessageSource.next(originData);

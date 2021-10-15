@@ -8,6 +8,7 @@ import {Router} from "@angular/router";
 import {CacheService} from "@services/cache/cache.service";
 import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 import {CurrentChattingChangeService} from "@services/current-chatting-change/current-chatting-change.service";
+import {IndexComponent} from "@modules/session/index/index.component";
 
 @Component({
   selector: 'app-search-widget',
@@ -31,6 +32,7 @@ export class SearchWidgetComponent implements OnInit {
     private router: Router,
     private cacheService: CacheService,
     private currentChattingChangeService: CurrentChattingChangeService,
+    private indexComponent:IndexComponent,
   ) {
   }
 

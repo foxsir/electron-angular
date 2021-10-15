@@ -119,7 +119,7 @@ export class FriendGroupComponent implements OnInit {
             this.restService.updateFriendGroupMembers(group.groupId, 'add', [friend.friendUserUid]).subscribe((res: NewHttpResponseInterface<any>) => {
               this.snackBarService.openMessage(res.msg);
               this.loadFriendList(group.groupId);
-              group.memberCount += 1;
+              this.getGroupList();
             });
           }
         });
@@ -154,7 +154,7 @@ export class FriendGroupComponent implements OnInit {
           .subscribe((res: NewHttpResponseInterface<any>) => {
             this.snackBarService.openMessage(res.msg);
             this.loadFriendList(group.groupId);
-            group.memberCount -= 1;
+            this.getGroupList();
           });
       }
     });

@@ -11,6 +11,7 @@ import {CacheService} from "@services/cache/cache.service";
 import {UserModel} from "@app/models/user.model";
 import LocalUserinfoModel from "@app/models/local-userinfo.model";
 import {SessionService} from "@services/session/session.service";
+import {IndexComponent} from "@modules/session/index/index.component";
 
 interface Login {
   login: boolean;
@@ -33,6 +34,7 @@ export class LoginComponent implements OnInit {
     private windowService: WindowService,
     private cacheService: CacheService,
     private sessionService: SessionService,
+    private indexComponent: IndexComponent,
   ) {
   }
 
@@ -40,9 +42,16 @@ export class LoginComponent implements OnInit {
   }
 
   public onSubmit() {
+    console.log("已阅读服务条款:",this.indexComponent.loginProtocol);
+    if (!this.indexComponent.loginProtocol) {
+      return this.snackBarService.openMessage("请确认已阅读服务条款");
+    }
     if (this.loginForm.form.valid) {
       const value = this.loginForm.form.value;
       this.sessionService.login(value.account, value.password);
+      // 更新后，更新默认的登录名和密码
+      this.loginForm.fields[0].defaultValue = value.account;
+      this.loginForm.fields[1].defaultValue = value.password;
     }
   }
 

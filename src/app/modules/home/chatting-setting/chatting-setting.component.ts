@@ -3,7 +3,6 @@ import ChattingModel from "@app/models/chatting.model";
 import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 import { MatDrawer } from "@angular/material/sidenav";
 import { DomSanitizer } from "@angular/platform-browser";
-
 import closeIcon from "@app/assets/icons/close.svg";
 import closeActiveIcon from "@app/assets/icons/close-active.svg";
 import backspaceIcon from "@app/assets/icons/backspace.svg";
@@ -107,5 +106,23 @@ export class ChattingSettingComponent implements OnInit,OnDestroy {
 
   ngOnDestroy() {
     this.currentSubscription.unsubscribe();
+  }
+  formatDate(date,format) {
+    if (["string", "number"].includes(typeof date)) {
+      date = new Date(Number(date));
+    }
+    if(date === null) {
+      date = new Date();
+    }
+    // 格式化时间
+    const year = date.getFullYear(),
+      month = ("0" + (date.getMonth() + 1)).slice(-2),
+      sdate = ("0" + date.getDate()).slice(-2),
+      hour = ("0" + date.getHours()).slice(-2),
+      minute = ("0" + date.getMinutes()).slice(-2);
+    // 拼接
+    const result = year + "-"+ month +"-"+ sdate +" "+ hour +":"+ minute;
+    // 返回
+    return result;
   }
 }

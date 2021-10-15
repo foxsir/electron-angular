@@ -48,6 +48,7 @@ import GroupCommonMessageModel from "@app/models/group-common-message.model";
 import TopModel from "@app/models/top.model";
 import BlackListModel from "@app/models/black-list.model";
 import BlackMeListModel from "@app/models/black-me-list.model";
+import {IndexComponent} from "@modules/session/index/index.component";
 
 @Component({
     selector: 'app-message',
@@ -130,6 +131,7 @@ export class MessageComponent implements OnInit, AfterViewInit,OnDestroy {
         private miniUiService: MiniUiService,
         private zone: NgZone,
         private changeDetectorRef: ChangeDetectorRef,
+        private indexComponent:IndexComponent,
     ) {
         this.localUserInfo = this.localUserService.localUserInfo;
 
@@ -152,6 +154,8 @@ export class MessageComponent implements OnInit, AfterViewInit,OnDestroy {
         this.subscribeDissolveGroup();
         // 被删除的通知
         this.subscribeDeleteFriend();
+        // 订阅App更新的通知
+        this.subscribeUpdateAppConfig();
     }
 
     ngOnInit(): void {
@@ -413,6 +417,12 @@ export class MessageComponent implements OnInit, AfterViewInit,OnDestroy {
       });
     }
 
+  private subscribeUpdateAppConfig() {
+    // this.messageDistributeService.UPDATE_APP_CONFIG$.subscribe((res: ProtocalModel) => {
+    //     this.indexComponent.getAppConfig();
+    // });
+  }
+
   /**
      * 切换聊天对象
      * @param alarm
@@ -461,6 +471,7 @@ export class MessageComponent implements OnInit, AfterViewInit,OnDestroy {
   ngOnDestroy() {
     this.currentSubscription.unsubscribe();
   }
+
 
 
 }

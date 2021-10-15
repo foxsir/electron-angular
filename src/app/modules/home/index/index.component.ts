@@ -173,17 +173,11 @@ export class IndexComponent implements OnInit {
       }
     });
 
+    /**
+     * 更新个人信息的指令
+     */
     this.messageDistributeService.USER_INFO_UPDATE$.subscribe(user => {
       console.dir(user);
-      // {
-      //   "userCornet": "8A7EE65D",
-      //   "userSex": 1,
-      //   "latestLoginTime": "1633680311121",
-      //   "nickname": "foxsir",
-      //   "updateAvatarTimestamp": 1633680336710,
-      //   "userAvatarFileName": "http://strawberry-im.oss-cn-shenzhen.aliyuncs.com/user_portrait/400340.jpg",
-      //   "userId": 400340
-      // }
     });
 
     this.listenNetStatus();

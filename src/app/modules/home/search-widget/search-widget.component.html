@@ -21,8 +21,8 @@
           </mat-icon>
         </button>
         <mat-menu #friendActions="matMenu">
-          <button mat-menu-item (click)="searchFriend()">添加好友</button>
-          <button mat-menu-item (click)="createGroup()">创建群聊</button>
+          <button *ngIf="this.indexComponent.appConfig.addFriends==1"  mat-menu-item (click)="searchFriend()">添加好友</button>
+          <button *ngIf="this.indexComponent.appConfig.createGroup==1"  mat-menu-item (click)="createGroup()">创建群聊</button>
         </mat-menu>
       </div>
     </div>
