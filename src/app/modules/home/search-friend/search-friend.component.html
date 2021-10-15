@@ -51,8 +51,8 @@
                 </div>
               </div>
               <div fxFlex fxLayoutAlign="end">
-                <div mat-line *ngIf="!!searchFriendInfo.isFriend ==0"><button mat-flat-button color="primary" (click)="friendRequest()">添加</button></div>
-                <div  mat-line *ngIf="!!searchFriendInfo.isFriend ==1" ><button mat-flat-button color="primary" (click)="switchChatting(searchFriendInfo)">发送消息</button></div>
+                <div mat-line *ngIf="!!searchFriendInfo.isFriend === false"><button mat-flat-button color="primary" (click)="friendRequest()">添加</button></div>
+                <div  mat-line *ngIf="!!searchFriendInfo.isFriend === true" ><button mat-flat-button color="primary" (click)="switchChatting(searchFriendInfo)">发送消息</button></div>
               </div>
             </div>
           </div>
