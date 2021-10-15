@@ -42,6 +42,8 @@ function createWindow(): BrowserWindow {
     resizable: false,
     width: 400,
     height: 460,
+    // width: 600,
+    // height: 440,
     frame: false,
     webPreferences: {
       webviewTag: true, // 启用webview
