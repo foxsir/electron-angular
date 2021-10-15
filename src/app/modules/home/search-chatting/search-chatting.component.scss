@@ -1,1 +1,75 @@
 @import "~ng-zorro-antd/input/style/index.min.css";
+
+.filev{
+  width:calc(100% - 40px);
+  padding: 15px 0 0 10px;
+
+  .fileMessageTitle{
+    position: relative;
+    top: 6px;
+    border: 1px solid red;
+  }
+
+  ::ng-deep{
+    .mat-button, .mat-icon-button, .mat-stroked-button, .mat-flat-button{
+      min-width:0px;
+      padding:0px;
+      line-height: 14px;
+      position: relative;
+      top: -17px;
+    }
+  }
+}
+
+
+.searchChatting{
+
+  ::ng-deep{
+    .mat-card{
+      padding: 0px;
+    }
+    .mat-list-base .mat-list-item.mat-2-line, .mat-list-base .mat-list-option.mat-2-line{
+      height: 56px;
+      margin: 0px;
+    }
+    .mat-list-base .mat-list-item.mat-list-item-with-avatar .mat-list-item-content .mat-list-text, .mat-list-base .mat-list-item.mat-list-option .mat-list-item-content .mat-list-text, .mat-list-base .mat-list-option.mat-list-item-with-avatar .mat-list-item-content .mat-list-text, .mat-list-base .mat-list-option.mat-list-option .mat-list-item-content .mat-list-text{
+      padding-left: 10px;
+    }
+    .imgv{
+      width: 120px;
+      height: 120px;
+      margin: 14px 14px 0 0;
+      float: left;
+    }
+    .imgv img{
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit:cover
+    }
+    .mat-button-wrapper{ font-size: 12px; color: #888}
+    .mat-list-base .mat-list-item {
+      font-size: 14px;
+    }
+
+    .mat-button-wrapper {
+      font-size: 12px;
+      color: #888;
+    }
+    .mat-list-base .mat-list-item .mat-divider, .mat-list-base .mat-list-option .mat-divider{
+      display: none;
+    }
+
+  }
+
+
+}
+
+.filev div{
+  ::ng-deep {
+    div {
+      padding-top: 0;
+      padding-bottom: 0
+    }
+  }
+}

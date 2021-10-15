@@ -8,6 +8,9 @@ import {MsgType} from "@app/config/rbchat-config";
 import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 import {CurrentChattingChangeService} from "@services/current-chatting-change/current-chatting-change.service";
 import {Subscription} from "rxjs";
+import {DomSanitizer} from "@angular/platform-browser";
+import closeIcon from "@app/assets/icons/close.svg";
+import closeActiveIcon from "@app/assets/icons/close-active.svg";
 
 @Component({
   selector: 'app-search-chatting',
@@ -17,6 +20,8 @@ import {Subscription} from "rxjs";
 export class SearchChattingComponent implements OnInit ,OnDestroy{
   @Input() chatting: AlarmItemInterface;
 
+  public closeIcon = this.dom.bypassSecurityTrustResourceUrl(closeIcon);
+  public closeActiveIcon = this.dom.bypassSecurityTrustResourceUrl(closeActiveIcon);
   public formatDate = formatDate;
   public commonTools = CommonTools;
   public currentTab: "chat" | "media" | "file" = "chat";
@@ -31,6 +36,7 @@ export class SearchChattingComponent implements OnInit ,OnDestroy{
   public currentSubscription: Subscription;
 
   constructor(
+    private dom: DomSanitizer,
     private cacheService: CacheService,
     private currentChattingChangeService: CurrentChattingChangeService,
   ) {
@@ -81,6 +87,8 @@ export class SearchChattingComponent implements OnInit ,OnDestroy{
         }
       });
     });
+    console.log("90:")
+    console.log(this.fileMap)
   }
 
   txtSearchChange() {
