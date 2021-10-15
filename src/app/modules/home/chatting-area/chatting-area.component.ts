@@ -68,6 +68,7 @@ import SilenceUserModel from "@app/models/silence-user.model";
 import GroupInfoModel from "@app/models/group-info.model";
 import {convertNodeSourceSpanToLoc} from "@angular-eslint/template-parser/dist/convert-source-span-to-loc";
 import {Subscription} from "rxjs";
+import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 
 @Component({
   selector: 'app-chatting-area',
@@ -81,6 +82,8 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
   @ViewChild('virtualScrollViewport') virtualScrollViewport: CdkVirtualScrollViewport;
 
   public currentChat: AlarmItemInterface;
+
+  public blacked:boolean = false;
 
   public formatDate = formatDate;
 
@@ -180,6 +183,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
     private historyMessageService: HistoryMessageService,
     private serverForwardService: ServerForwardService,
     private messageService: MessageService,
+    private snackBarService: SnackBarService,
   ) {
     this.localUserInfo = this.localUserService.localUserInfo;
 
@@ -192,6 +196,20 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
     // 选择消息
     this.elementService.selectMessage$.subscribe((directive) => {
       this.selectMessage = directive;
+    });
+
+    // 获取拉黑我的人列表
+    this.cacheService.cacheUpdate$.subscribe(cache => {
+      if(cache && cache.blackMeListMap && this.currentChat) {
+        this.blacked = false;
+        console.log("拉黑我的人:",cache.blackMeListMap);
+        cache.blackMeListMap.forEach(item => {
+          if (item.userUid.toString() == this.currentChat.alarmItem.dataId) {
+            this.blacked = true;
+            this.snackBarService.openMessage("你已被对方拉入黑名单");
+          }
+        });
+      }
     });
   }
 
@@ -260,6 +278,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
       this.loadTabData();
       this.getSilenceUsers();
       this.getGroupMembers();
+
       this.cacheService.getChattingCache(this.currentChat).then(data => {
         if(!!data) {
           this.cacheService.chatMsgEntityMapTemp = data;
@@ -271,6 +290,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
     // 获取缓存
     this.currentSubscription =  this.currentChattingChangeService.currentChatting$.subscribe(currentChat => {
       this.searching = false;
+      this.blacked = false;
       // === 为刷新聊天列表，只更新数据
       this.loadTabData();
       if (currentChat && this.currentChat !== currentChat) {
@@ -279,6 +299,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
         this.getSilenceUsers();
         this.getGroupMembers();
         this.scrollToBottom();
+        this.checkBlackStatus();
         // 切换会话清空列表
         this.cacheService.chatMsgEntityMapTemp.clear();
         this.cacheService.chatMsgEntityMap.clear();
@@ -298,11 +319,16 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
             this.currentChatSubtitle = null;
           }
         });
+
       } else {
         this.currentChat = currentChat;
       }
     });
+
   }
+
+
+
 
   /**
    * 获取群成员
@@ -314,6 +340,26 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
       });
     }
   }
+
+  checkBlackStatus() {
+    this.cacheService.getBlackMeListCache().then(cache=>{
+      let isBlack = false;
+      if(cache && this.currentChat) {
+        console.log("拉黑我的好友:",cache);
+        cache.forEach(item => {
+          if (item.userUid.toString() == this.currentChat.alarmItem.dataId) {
+            isBlack = true;
+          }
+        });
+      };
+      console.log("是否被好友" + this.currentChat.alarmItem.dataId + "拉黑", isBlack);
+      if(isBlack) {
+        this.snackBarService.openMessage("您已经被对方拉入黑名单");
+      }
+      this.blacked = isBlack;
+    });
+  }
+
 
   /**
    * keep keyvalue order
@@ -975,4 +1021,5 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
   ngOnDestroy() {
     this.currentSubscription.unsubscribe();
   }
+
 }

@@ -163,7 +163,6 @@ export class IndexComponent implements OnInit {
     // 缓存通讯录角标数量
     this.updateFriendRequestNumber();
 
-
     // 订阅新的好友通知
     this.cacheService.cacheUpdate$.subscribe(cacheData => {
       if (cacheData.newFriendMap) {

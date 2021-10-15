@@ -262,6 +262,11 @@
                 全体禁言
               </div>
             </div>
+            <div class="silence-overlay" *ngIf="blacked">
+              <div fxFill fxLayoutAlign="center center">
+                已被当前好友拉黑
+              </div>
+            </div>
             <app-input-area fxFlex="100" (sendMessage)="pushMessageToPanel($event)" [currentChat]="currentChat"></app-input-area>
           </div>
         </div>

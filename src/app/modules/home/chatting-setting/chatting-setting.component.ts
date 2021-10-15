@@ -15,6 +15,7 @@ import { DialogService } from "@services/dialog/dialog.service";
 import { CurrentChattingChangeService } from "@services/current-chatting-change/current-chatting-change.service";
 import {Subscription} from "rxjs";
 import FriendModel from "../../../../../app/entitys/friend.model";
+import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 
 @Component({
     selector: 'app-chatting-setting',
@@ -44,6 +45,7 @@ export class ChattingSettingComponent implements OnInit,OnDestroy {
         private restService: RestService,
         private dialogService: DialogService,
         private currentChattingChangeService: CurrentChattingChangeService,
+        private snackBarService: SnackBarService,
     ) {
        this.currentSubscription = this.currentChattingChangeService.currentChatting$.subscribe(currentChat => {
           if(currentChat && this.currentChat.alarmItem.dataId !== currentChat.alarmItem.dataId) {
@@ -60,6 +62,7 @@ export class ChattingSettingComponent implements OnInit,OnDestroy {
         if (this.currentChat.metadata.chatType === 'group') {
             return;
         }
+
         this.restService.getFriendInfo(Number(this.currentChat.alarmItem.dataId)).subscribe(res => {
             console.log('getFriendInfo result: ', res);
             if (res.status === 200 && res.data) {
@@ -68,17 +71,7 @@ export class ChattingSettingComponent implements OnInit,OnDestroy {
             }
         });
 
-        this.restService.getRemark({ toUserId: this.currentChat.alarmItem.dataId }).subscribe(res => {
-            if (res.status === 200) {
-                this.friendInfo.remark = res.data == null || res.data.length == 0 ? '' : res.data;
-            }
-        });
 
-        this.restService.getFriendInfo(parseInt(this.currentChat.alarmItem.dataId)).subscribe(res => {
-            if (res.status === 200) {
-                this.friendInfo.latestLoginTime = res.data.latestLoginTime;
-            }
-        });
     }
 
     ngOnInit(): void {

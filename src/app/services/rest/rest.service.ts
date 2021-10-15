@@ -45,6 +45,7 @@ import {
   UpGroupCustomerService,
   UpUserGroupTab,
   verifyCode, GetFriendInfo, getGroupSilenceById, deleteGroupSilenceById,
+  getBlackDetail, getBlackMeUser
 } from "@app/config/post-api";
 import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 
@@ -908,6 +909,17 @@ export class RestService {
     return this.http.get(getMyBlackUser, data);
     }
 
+  /**
+   * 获取我的黑名单
+   */
+  getBlackMeList() {
+    const localUser = this.localUserService.getObj();
+    const data = {
+      userId: localUser.userId,
+    };
+    return this.http.get(getBlackMeUser, data);
+  }
+
     /**
        * 拉黑/取消拉黑
        */
@@ -1249,6 +1261,17 @@ export class RestService {
     return this.http.get(GetFriendInfo, {
       friendId: friendId,
       userId: this.localUserService.localUserInfo.userId
+    });
+  }
+
+  /**
+   * 检查我是否被当前会话的好友拉黑
+   * @param friendId
+   */
+  getBlackDetail(friendId: number) {
+    return this.http.postForm(getBlackDetail, {
+      blackUserId: this.localUserService.localUserInfo.userId,
+      userId: friendId
     });
   }
 
