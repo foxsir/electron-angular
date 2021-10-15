@@ -87,8 +87,6 @@ export class SearchChattingComponent implements OnInit ,OnDestroy{
         }
       });
     });
-    console.log("90:")
-    console.log(this.fileMap)
   }
 
   txtSearchChange() {

@@ -8,14 +8,14 @@
         <mat-card class="mat-elevation-z0 hover-item light" (contextmenu)="contextMenuForItem($event, menuTrigge, collectSpan, item)">
           <mat-card-content>
             <div fxLayout="row">
-              <div fxFlex="50">
+              <div>
                 <app-message-factory [chatMsg]="item.chatMsg"></app-message-factory>
               </div>
             </div>
           </mat-card-content>
           <mat-card-content>
             <mat-card-subtitle>
-              <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start center">
+              <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start center" style="font-size: 12px;">
                 <div>{{item.collect.nickname}}</div>
                 <div>{{item.collect.createTime}}</div>
               </div>
