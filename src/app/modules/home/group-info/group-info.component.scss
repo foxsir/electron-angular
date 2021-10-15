@@ -46,6 +46,9 @@
 .groupLast{
   padding-bottom:15px;
 }
+.whiteBar{
+  height: 15px;
+}
 
 .split-item{
     background-color:rgb(241, 241, 241);
@@ -54,16 +57,16 @@
     margin-right:-16px;
 }
 .groupTips{
-  padding:10px 20px 10px 20px; font-size: 12px; line-height: 18px;
+  padding:15px 20px 10px 20px; font-size: 12px; line-height: 18px;
   color: #686868;
   height:calc(100vh - 190px);
   font-family: PingFangSC;
   p{
-    margin:0; padding: 0;
+    margin:0; padding:5px;
   }
 }
 .edit-group-top{
-  padding:10px 20px 10px 20px; font-size: 12px; line-height: 18px;
+  padding:15px 20px 10px 20px; font-size: 12px; line-height: 18px;
   color: #686868;
   height:calc(100vh - 190px);
     .martop1{
@@ -76,11 +79,13 @@
     }
 
     .txtcom{
-      padding:0 0 0 0; font-size: 12px; line-height: 18px;
+      padding:4px; font-size: 12px; line-height: 18px;
       color: #686868;
       border: none;
       height:100%;
       font-family: PingFangSC;
+      border: 1px solid #CCC;
+      box-shadow:none;
     }
 
     .btncancel{

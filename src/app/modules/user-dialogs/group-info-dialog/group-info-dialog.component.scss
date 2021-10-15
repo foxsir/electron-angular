@@ -76,5 +76,11 @@
       display: inline-block;
       border-radius: 50%;
     }
+    .ant-input:focus{
+      box-shadow:none
+    }
+    .ant-input-affix-wrapper{
+      box-shadow:none;
+    }
   }
 }
