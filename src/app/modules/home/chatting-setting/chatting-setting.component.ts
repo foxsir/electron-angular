@@ -63,22 +63,27 @@ export class ChattingSettingComponent implements OnInit,OnDestroy {
         this.restService.getFriendInfo(Number(this.currentChat.alarmItem.dataId)).subscribe(res => {
             console.log('getFriendInfo result: ', res);
             if (res.status === 200 && res.data) {
-                this.friendInfo = res.data;
-                this.friendInfo.whatSUp = this.friendInfo.whatSUp == null || this.friendInfo.whatSUp.length == 0 ? '此人很懒，什么都没留下' : this.friendInfo.whatSUp;
-            }
-        });
+              this.friendInfo = res.data;
+              this.friendInfo.whatSUp = this.friendInfo.whatSUp == null || this.friendInfo.whatSUp.length == 0 ? '此人很懒，什么都没留下' : this.friendInfo.whatSUp;
 
-        this.restService.getRemark({ toUserId: this.currentChat.alarmItem.dataId }).subscribe(res => {
-            if (res.status === 200) {
-                this.friendInfo.remark = res.data == null || res.data.length == 0 ? '' : res.data;
+              // getRemark 和 getFriendInfo 放到请求完成否则 friendInfo 不存在
+              this.getFriendInfo();
             }
         });
+    }
 
-        this.restService.getFriendInfo(parseInt(this.currentChat.alarmItem.dataId)).subscribe(res => {
-            if (res.status === 200) {
-                this.friendInfo.latestLoginTime = res.data.latestLoginTime;
-            }
-        });
+    getFriendInfo() {
+      this.restService.getRemark({ toUserId: this.currentChat.alarmItem.dataId }).subscribe(res => {
+        if (res.status === 200) {
+          this.friendInfo.remark = res.data == null || res.data.length == 0 ? '' : res.data;
+        }
+      });
+
+      this.restService.getFriendInfo(Number(this.currentChat.alarmItem.dataId)).subscribe(res => {
+        if (res.status === 200) {
+          this.friendInfo.latestLoginTime = res.data.latestLoginTime;
+        }
+      });
     }
 
     ngOnInit(): void {
