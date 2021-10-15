@@ -125,7 +125,7 @@ export class CacheService extends DatabaseService {
         ...alarmData.metadata,
       };
       chatting.date = lastTime || alarmData.alarmItem.date;
-      chatting.lastFp = lastFp || alarmData.alarmItem.lastFp;
+      chatting.lastFp = lastFp || alarmData.alarmItem.lastFp || "";
 
       this.saveDataSync<ChattingModel>({model: "chatting", data: chatting, update: {dataId: chatting.dataId}}).then(() => {
         if(cache.size === 0) {
