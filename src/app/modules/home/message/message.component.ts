@@ -49,6 +49,7 @@ import TopModel from "@app/models/top.model";
 import BlackListModel from "@app/models/black-list.model";
 import BlackMeListModel from "@app/models/black-me-list.model";
 import {IndexComponent} from "@modules/session/index/index.component";
+import NewHttpResponseInterface from "@app/interfaces/new-http-response.interface";
 
 @Component({
     selector: 'app-message',
@@ -149,7 +150,7 @@ export class MessageComponent implements OnInit, AfterViewInit,OnDestroy {
         this.subscribeCommonSystemMessage();
         this.subscribeGroupMemberWasRemoved();
         this.subscribeGroupMemberQuit();
-        this.subscribeSENSITIVEWordUpdate(); // 敏感词
+        // this.subscribeSENSITIVEWordUpdate(); // 敏感词
         // 解散群
         this.subscribeDissolveGroup();
         // 被删除的通知
@@ -381,10 +382,17 @@ export class MessageComponent implements OnInit, AfterViewInit,OnDestroy {
      * @private
      */
     private subscribeSENSITIVEWordUpdate() {
-        this.messageDistributeService.SENSITIVE_WORD_UPDATE$.subscribe((res: ProtocalModel) => {
-            // 需要获取敏感词并缓存
-            alert("敏感词更新");
-        });
+        // this.messageDistributeService.SENSITIVE_WORD_UPDATE$.subscribe((res: ProtocalModel) => {
+        //     // 需要获取敏感词并缓存
+        //     alert("敏感词更新");
+        //   // 缓存我的黑名单
+        //   this.restService.getSensitiveWordList().subscribe((res: NewHttpResponseInterface<string[]>) => {
+        //     if(res.status === 200) {
+        //       this.cacheService.sensitiveList = res.data;
+        //     }
+        //     console.log("敏感词:", this.cacheService.sensitiveList);
+        //   });
+        // });
     }
     /**
      * 被好友删除的通知

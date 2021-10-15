@@ -155,6 +155,13 @@ export class IndexComponent implements OnInit {
     this.messageDistributeService.PULLED_BLACK_LIST$.subscribe(() => {
       this.cacheService.cacheBlackList();
     });
+    // 缓存敏感词
+    this.cacheService.sensitiveWordList();
+    // 监听敏感词变化
+    this.messageDistributeService.SENSITIVE_WORD_UPDATE$.subscribe(() => {
+      this.cacheService.sensitiveWordList();
+    });
+
     // 监听好友请求
     this.messageDistributeService.MT07_OF_ADD_FRIEND_REQUEST_INFO_SERVER$TO$B$.subscribe(() => {
       this.cacheService.cacheNewFriends();

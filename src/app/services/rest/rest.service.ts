@@ -45,7 +45,7 @@ import {
   UpGroupCustomerService,
   UpUserGroupTab,
   verifyCode, GetFriendInfo, getGroupSilenceById, deleteGroupSilenceById,
-  getBlackDetail, getBlackMeUser
+  getBlackDetail, getBlackMeUser, getSensitiveWord
 } from "@app/config/post-api";
 import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 
@@ -918,6 +918,14 @@ export class RestService {
       userId: localUser.userId,
     };
     return this.http.get(getBlackMeUser, data);
+  }
+
+
+  /**
+   * 获取敏感词
+   */
+  getSensitiveWordList() {
+    return this.http.get(getSensitiveWord, {});
   }
 
     /**

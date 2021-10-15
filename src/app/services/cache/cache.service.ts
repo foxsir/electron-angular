@@ -75,6 +75,8 @@ export class CacheService extends DatabaseService {
   // input draft
   public draftMap: Map<string, string> = new Map<string, string>();
 
+  public sensitiveList : string[] = [];
+
   constructor(
     private messageRoamService: MessageRoamService,
     private messageEntityService: MessageEntityService,
@@ -938,6 +940,19 @@ export class CacheService extends DatabaseService {
     });
   }
 
+  /**
+   * 缓存我的敏感词
+   */
+  sensitiveWordList() {
+    // 缓存我的黑名单
+    this.restService.getSensitiveWordList().subscribe((res: NewHttpResponseInterface<string[]>) => {
+      if(res.status === 200) {
+        this.sensitiveList = res.data;
+        console.log("敏感词:", this.sensitiveList);
+      }
+    });
+  }
+
   getBlackList(): Promise<Map<string, BlackListModel>> {
     return new Promise<Map<string, BlackListModel>>((resolve) => {
       this.queryData({model: 'blackList', query: {}}).then((res: IpcResponseInterface<BlackListModel>) => {
@@ -1102,4 +1117,6 @@ export class CacheService extends DatabaseService {
       });
     });
   }
+
+
 }

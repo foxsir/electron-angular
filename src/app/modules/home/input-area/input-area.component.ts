@@ -267,6 +267,17 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
     if (!messageText || messageText.trim().length === 0) {
       return false;
     }
+    // 检查是否在敏感词内
+    let includeSensitiveWord = false;
+    this.cacheService.sensitiveList.forEach(sensitiveWord=>{
+      if (sensitiveWord.includes(messageText)){
+        includeSensitiveWord = true;
+      }
+    });
+    if (includeSensitiveWord) {
+      this.snackBarService.openMessage("消息中包含敏感词汇'" + messageText + "'");
+      return false;
+    }
     if (!this.imService.isLogined()) {
       return this.imService.checkLogined();
     }
