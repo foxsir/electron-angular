@@ -127,26 +127,29 @@ export class CacheService extends DatabaseService {
       chatting.date = lastTime || alarmData.alarmItem.date;
       chatting.lastFp = lastFp || alarmData.alarmItem.lastFp;
 
-      this.saveData<ChattingModel>({model: "chatting", data: chatting, update: {dataId: chatting.dataId}});
-      if(cache.size === 0) {
-        if (subscription) {
-          this.getChattingList().then(list => {
-            this.cacheSource.next({alarmDataMap: list});
-          });
+      this.saveDataSync<ChattingModel>({model: "chatting", data: chatting, update: {dataId: chatting.dataId}}).then(() => {
+        if(cache.size === 0) {
+          if (subscription) {
+            this.getChattingList().then(list => {
+              this.cacheSource.next({alarmDataMap: list});
+            });
+          }
+          resolve(true);
         }
-        resolve(true);
-      }
+      });
+
       cache.forEach((msg) => {
         msg.dataId = chatting.dataId;
-        this.saveData<ChatmsgEntityModel>({
+        this.saveDataSync<ChatmsgEntityModel>({
           model: "chatmsgEntity", data: msg, update: {fingerPrintOfProtocal: msg.fingerPrintOfProtocal}
+        }).then(() => {
+          if (subscription) {
+            this.getChattingList().then(list => {
+              this.cacheSource.next({alarmDataMap: list});
+            });
+          }
+          resolve(true);
         });
-        if (subscription) {
-          this.getChattingList().then(list => {
-            this.cacheSource.next({alarmDataMap: list});
-          });
-        }
-        resolve(true);
       });
     });
   }
