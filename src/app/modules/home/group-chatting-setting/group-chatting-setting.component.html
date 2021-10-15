@@ -141,7 +141,7 @@
             <mat-card-content>
                 <div *ngIf="view_mode == 'group_top'" fxLayout="column" fxLayoutGap="10px">
                     <div *ngIf="group_top_view_mode == 'view'" class="qsp0">
-                        <div style="height:calc(100% - 25px);">
+                        <div style="height:calc(100% - 35px);">
                             <p>{{setting_data.gtopContent}}</p>
                         </div>
                         <div style="text-align:right;">
@@ -149,7 +149,7 @@
                         </div>
                     </div>
                     <div *ngIf="group_top_view_mode == 'edit'" class="edit-group-top">
-                        <div class="martop1" style="height:calc(100% - 25px);">
+                        <div class="martop1" style="height:calc(100% - 35px);">
                             <textarea type="text" nz-input [(ngModel)]="setting_data.gtopContentTemp" class="txtcom" placeholder="请输入群上屏信息"></textarea>
                         </div>
                         <div class="martop2">
