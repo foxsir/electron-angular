@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {AfterContentInit, AfterViewInit, Component, Input, OnInit} from '@angular/core';
 import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 import CommonTools from "@app/common/common.tools";
 import {FileService} from "@services/file/file.service";

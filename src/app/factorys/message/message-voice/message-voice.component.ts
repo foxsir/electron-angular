@@ -11,7 +11,6 @@ import {FileService} from "@services/file/file.service";
 })
 export class MessageVoiceComponent implements OnInit {
   @Input() chatMsg: ChatmsgEntityModel;
-  @Input() wrapDiv: HTMLDivElement;
   public resource: SafeResourceUrl;
 
   private amr: BenzAMRRecorder = null;
@@ -29,7 +28,6 @@ export class MessageVoiceComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.wrapDiv.style.background = 'transparent';
     this.amrInit();
   }
 

@@ -14,7 +14,7 @@
 
 <app-message-location *ngIf="chatMsg.msgType ===  msgType.TYPE_LOCATION" [chatMsg]="chatMsg"></app-message-location>
 
-<app-message-red-envelope *ngIf="chatMsg.msgType ===  msgType.TYPE_REDBAG" [chatMsg]="chatMsg" [wrapDiv]="wrapDiv"></app-message-red-envelope>
+<app-message-red-envelope *ngIf="chatMsg.msgType ===  msgType.TYPE_REDBAG" [chatMsg]="chatMsg"></app-message-red-envelope>
 
 <app-message-system *ngIf="chatMsg.msgType ===  msgType.TYPE_SYSTEAM$INFO" [chatMsg]="chatMsg"></app-message-system>
 
@@ -24,7 +24,7 @@
 
 <app-message-video *ngIf="chatMsg.msgType ===  msgType.TYPE_SHORTVIDEO" [chatMsg]="chatMsg"></app-message-video>
 
-<app-message-voice *ngIf="chatMsg.msgType ===  msgType.TYPE_VOICE" [chatMsg]="chatMsg" [wrapDiv]="wrapDiv"></app-message-voice>
+<app-message-voice *ngIf="chatMsg.msgType ===  msgType.TYPE_VOICE" [chatMsg]="chatMsg"></app-message-voice>
 
 <app-message-no-talk *ngIf="chatMsg.msgType ===  msgType.TYPE_NOTALK" [chatMsg]="chatMsg"></app-message-no-talk>
 

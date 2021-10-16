@@ -7,6 +7,8 @@ import {ReplyContentType} from "@app/interfaces/reply-content.interface";
 import {QuoteMessageService} from "@services/quote-message/quote-message.service";
 import {DialogService} from "@services/dialog/dialog.service";
 import {MessageMergeMultipleComponent} from "@app/factorys/message/message-merge-multiple/message-merge-multiple.component";
+import LocalUserinfoModel from "@app/models/local-userinfo.model";
+import {LocalUserService} from "@services/local-user/local-user.service";
 
 @Component({
   selector: 'app-message-text',
@@ -20,6 +22,8 @@ export class MessageTextComponent implements OnInit {
   public newChatMsg: ReplyMessageType;
   public replyContentText: string = null;
   public replyContentData: ReplyContentType = null;
+
+  public localUserInfo: LocalUserinfoModel;
 
   public content: string;
 
@@ -43,7 +47,9 @@ export class MessageTextComponent implements OnInit {
     private dom: DomSanitizer,
     private quoteMessageService: QuoteMessageService,
     private dialogService: DialogService,
+    private localUserService: LocalUserService,
   ){
+    this.localUserInfo = this.localUserService.localUserInfo;
   }
 
   ngOnInit() {

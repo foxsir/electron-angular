@@ -9,7 +9,6 @@ import {MsgType} from "@app/config/rbchat-config";
 })
 export class MessageFactoryComponent implements OnInit {
   @Input() chatMsg: ChatmsgEntityModel;
-  @Input() wrapDiv: HTMLDivElement;
 
   // private chatMsgTemplate = {
   //   [MsgType.TYPE_AITE]: MessageAtComponent,

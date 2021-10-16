@@ -15,7 +15,6 @@ import {RedBagComponent} from "@modules/user-dialogs/red-bag/red-bag.component";
 })
 export class MessageRedEnvelopeComponent implements OnInit {
   @Input() chatMsg: ChatmsgEntityModel;
-  @Input() wrapDiv: HTMLDivElement;
   public redBag: RedPacketResponseInterface;
 
   public redBagIcon = this.dom.bypassSecurityTrustResourceUrl(redBagIcon);
@@ -27,8 +26,6 @@ export class MessageRedEnvelopeComponent implements OnInit {
 
   ngOnInit(): void {
     this.redBag = JSON.parse(this.chatMsg.text);
-    this.wrapDiv.style.background = '#FB9D3B';
-    this.wrapDiv.style.borderRadius = '6px';
   }
 
   openRedBag() {
