@@ -349,8 +349,8 @@ export class RestService {
    * @param params
    * @param data
    */
-  checkUsernameAndPhone(params: string, data: any) {
-    return this.http.post(RBChatConfig._HTTP_CHECK_REPEAT_URL + params, data);
+  checkUsernameAndPhone(data: any) {
+    return this.http.postForm(RBChatConfig._HTTP_CHECK_REPEAT_URL, data);
   }
 
   getAppConfig() {

@@ -235,8 +235,8 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
                       this.groupData.gtopContent = res.data.gtopContent == null ? '' : res.data.gtopContent;
                       console.log('group data: ', this.groupData);
 
-                      var gnotice_length = this.groupData.gnotice.length;
-                      var gtopContent_length = this.groupData.gtopContent.length;
+                      let gnotice_length = this.groupData.gnotice.length;
+                      let gtopContent_length = this.groupData.gtopContent.length;
                       this.groupData.gnotice_class = 'animate-' + parseInt(((gnotice_length >= 150 ? 150 : gnotice_length) / 50).toString());
                       this.groupData.gtopContent_class = 'animate-' + parseInt(((gtopContent_length >= 150 ? 150 : gtopContent_length) / 50).toString());
 
@@ -245,8 +245,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
                   }
 
               });
-          }
-          else {
+          } else {
               this.groupData = {
                   gnotice: '',
                   gtopContent: '',
@@ -314,7 +313,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
         });
         this.restService.getUserBaseById(this.currentChat.alarmItem.dataId).subscribe(res => {
           if (res.data !== null) {
-            this.currentChatSubtitle = [res.data.latestLoginAddres, res.data.registerIp].join(": ");
+            this.currentChatSubtitle = [res.data.latestLoginAddres, res.data.latestLoginIp].join(": ");
           } else {
             this.currentChatSubtitle = null;
           }

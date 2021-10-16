@@ -15,6 +15,7 @@ import { CurrentChattingChangeService } from "@services/current-chatting-change/
 import {Subscription} from "rxjs";
 import FriendModel from "../../../../../app/entitys/friend.model";
 import {SnackBarService} from "@services/snack-bar/snack-bar.service";
+import {CacheService} from "@services/cache/cache.service";
 
 @Component({
     selector: 'app-chatting-setting',
@@ -45,6 +46,7 @@ export class ChattingSettingComponent implements OnInit,OnDestroy {
         private dialogService: DialogService,
         private currentChattingChangeService: CurrentChattingChangeService,
         private snackBarService: SnackBarService,
+        private cacheService: CacheService,
     ) {
        this.currentSubscription = this.currentChattingChangeService.currentChatting$.subscribe(currentChat => {
           if(currentChat && this.currentChat.alarmItem.dataId !== currentChat.alarmItem.dataId) {
@@ -90,7 +92,6 @@ export class ChattingSettingComponent implements OnInit,OnDestroy {
         };
 
         this.dialogService.openDialog(DemoDialogComponent, { data: data }).then((res: any) => {
-            console.log('dialog result: ', res);
             if (res.ok == true) {
                 const post_data = {
                     toUserId: this.currentChat.alarmItem.dataId,
@@ -99,6 +100,11 @@ export class ChattingSettingComponent implements OnInit,OnDestroy {
 
                 this.restService.updRemark(post_data).subscribe(res => {
                     this.friendInfo.remark = post_data.remark;
+                    // 然后更新会话的标题
+                    this.cacheService.upFriendRemark(this.friendInfo.friendUserUid, this.friendInfo.remark);
+                    if (this.currentChat.alarmItem.dataId == this.friendInfo.friendUserUid.toString()) {
+                      this.currentChat.alarmItem.title = this.friendInfo.remark;
+                    }
                 });
             }
         });

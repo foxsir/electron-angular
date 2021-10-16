@@ -130,7 +130,6 @@ export class CacheService extends DatabaseService {
       };
       chatting.date = lastTime || alarmData.alarmItem.date;
       chatting.lastFp = lastFp || alarmData.alarmItem.lastFp;
-
       this.saveDataSync<ChattingModel>({model: "chatting", data: chatting, update: {dataId: chatting.dataId}}).then(() => {
         if(cache.size === 0) {
           if (subscription) {
@@ -319,7 +318,7 @@ export class CacheService extends DatabaseService {
           let title = "";
           let avatar = "";
           if(data.chatType === 'friend' && friends && friends.get(dataID)) {
-            title = friends.get(dataID).nickname;
+            title = friends.get(dataID).remark?friends.get(dataID).remark:friends.get(dataID).nickname;
             avatar = friends.get(dataID).userAvatarFileName;
             if(avatar.includes('http') === false) {
               avatar = this.avatarService.defaultLocalAvatar;
@@ -694,7 +693,7 @@ export class CacheService extends DatabaseService {
       let avatar = this.avatarService.defaultLocalAvatar;
       if(chatType === 'friend') {
         if(friends.get(dataId)) {
-          title = friends.get(dataId).nickname;
+          title = friends.get(dataId).remark ? friends.get(dataId).remark:friends.get(dataId).nickname;
           avatar = friends.get(dataId).userAvatarFileName;
         }
       } else {
@@ -1129,6 +1128,43 @@ export class CacheService extends DatabaseService {
       model: 'friend', data: {onlineStatus: onlineStatus}, update: {friendUserUid: Number(friendId)}
     }).then(() => {
       this.cacheSource.next({});
+    });
+  }
+
+  /**
+   * 更新好友的备注
+   * @param friendUserUid
+   * @param remark
+   */
+  upFriendRemark(friendUserUid: number, remark: string) {
+    this.saveDataSync<FriendModel>({
+      model: 'friend', data: {remark: remark}, update: {friendUserUid: Number(friendUserUid)}
+    }).then(()=>{
+      this.queryData({model: 'friend', query: null}).then((res: IpcResponseInterface<FriendModel>) => {
+        const map = new Map();
+        if(res.status === 200) {
+          res.data.forEach(f => {
+            map.set(f.friendUserUid.toString(), f);
+          });
+        }
+        this.cacheSource.next({friendMap: map});
+      });
+    });
+    this.saveDataSync<ChattingModel>({
+      model: 'chatting', data: {title: remark}, update: {dataId: friendUserUid.toString()}
+    }).then(()=>{
+      this.queryData<ChattingModel>({model: 'chatting', query: null, orderBy: ['date', "DESC"]}).then(res => {
+        const map: AlarmDataMap = new Map();
+        res.data.forEach(chatting => {
+          map.set(chatting.dataId, {
+            alarmData: {
+              alarmItem: chatting,
+              metadata: chatting
+            }
+          });
+        });
+        this.cacheSource.next({alarmDataMap: map});
+      });
     });
   }
 }

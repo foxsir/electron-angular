@@ -72,6 +72,8 @@ export class RegisterComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // 清楚相关信息
+    this.form.form.reset();
   }
 
   setSex(sex: 0 | 1) {
@@ -128,16 +130,10 @@ export class RegisterComponent implements OnInit {
    */
   gotoStepTwo() {
     const data = {
-      phone: [this.form.model.area, this.form.form.value.user_phone].join("-"),
-      username: this.form.form.value.user_mail
+      phone: this.form.form.value.user_phone ? [this.form.model.area, this.form.form.value.user_phone].join("-"):'',
+      username: this.form.form.value.user_mail?this.form.form.value.user_mail:'',
     };
-    let params = "";
-    if (this.registerType === 1) {
-      params = "?phone="+data.phone;
-    } else {
-      params = "?username="+data.username;
-    }
-    this.restService.checkUsernameAndPhone(params, data).subscribe((res: NewHttpResponseInterface<any>) => {
+    this.restService.checkUsernameAndPhone(data).subscribe((res: NewHttpResponseInterface<any>) => {
       if(res.status === 200) {
         this.step = 'two';
       } else {
@@ -164,9 +160,10 @@ export class RegisterComponent implements OnInit {
         data.user_phone = [this.form.model.area, this.form.form.value.user_phone].join("-");
       }
       if(this.avatarUrl && this.avatarUrl.pathname) {
-        data = Object.assign(data, {userAvatarFileName: this.avatarUrl.pathname});
+        data = Object.assign(data, {userAvatarFileName: this.avatarUrl});
       }
       this.sessionService.register(data);
+
     } else {
       this.step2Form.markAllAsTouched();
     }

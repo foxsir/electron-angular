@@ -120,8 +120,8 @@ export class ChattingVoiceComponent implements OnInit,OnDestroy {
                 fromUserId: fromuserid,
                 from_name: this.localUserInfo.nickname,
                 from_avatar: this.localUserInfo.userAvatarFileName,
-                to_name: this.currentChat.alarmItem.avatar,
-                to_avatar: this.currentChat.alarmItem.title,
+                to_name: this.currentChat.alarmItem.title,
+                to_avatar: this.currentChat.alarmItem.avatar,
                 token: res.data.accessToken,
             };
             var imdata = {

@@ -126,7 +126,7 @@ export class SearchFriendComponent implements OnInit {
         dataId: item.friendUserUid.toString(),
         date: new Date().getTime(),
         msgContent: "",
-        title: item.nickname,
+        title: item.remark?item.remark:item.nickname,
         avatar: item.userAvatarFileName,
       },
       // 聊天元数据
