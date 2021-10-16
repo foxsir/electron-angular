@@ -651,6 +651,13 @@ export class ContextMenuService {
       this.actionCollection.collect,
     ];
 
+    this.contextMenuForMessage[this.msgType.TYPE_QUOTE] = [
+      this.actionCollection.copyText,
+      this.actionCollection.quote,
+      this.actionCollection.repeal,
+      ...com,
+    ];
+
     this.contextMenuForMessage[this.msgType.TYPE_TEXT] = [
       this.actionCollection.copyText,
       this.actionCollection.quote,
