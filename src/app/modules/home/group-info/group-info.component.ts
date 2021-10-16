@@ -493,7 +493,12 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
 
     /* 邀请好友 */
     inviteFriend() {
-        this.dialogService.openDialog(SelectFriendContactComponent, { width: '314px',panelClass: "padding-less-dialog", }).then((friend) => {
+        // 先查询出来群内已有的人
+        const filterFriendId: number[] = [];
+        this.group_member_list.forEach(item=>{
+          filterFriendId.push(Number(item.userUid));
+        });
+        this.dialogService.openDialog(SelectFriendContactComponent, { width: '314px',panelClass: "padding-less-dialog", data : filterFriendId}).then((friend) => {
             if (friend) {
                 console.log('选择的好友：', friend);
                 //return;

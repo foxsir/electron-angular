@@ -19,6 +19,7 @@ import ChattingModel from "@app/models/chatting.model";
 import HttpResponseInterface from "@app/interfaces/http-response.interface";
 import {CurrentChattingChangeService} from "@services/current-chatting-change/current-chatting-change.service";
 import {GroupModel} from "@app/models/group.model";
+import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 
 interface GroupMember {
   groupUserId: string;
@@ -56,6 +57,7 @@ export class CreateGroupComponent implements OnInit {
     private restService: RestService,
     private localUserService: LocalUserService,
     private currentChattingChangeService: CurrentChattingChangeService,
+    private snackBarService: SnackBarService,
   ) { }
 
   ngOnInit(): void {
@@ -166,6 +168,7 @@ export class CreateGroupComponent implements OnInit {
               this.cacheService.putChattingCache(alarmData).then(() => {
                 this.currentChattingChangeService.switchCurrentChatting(alarmData).then();
               });
+              this.snackBarService.openMessage("创建成功");
             }
         });
     }
