@@ -75,7 +75,7 @@ export class CacheService extends DatabaseService {
   // input draft
   public draftMap: Map<string, string> = new Map<string, string>();
 
-  public sensitiveList : string[] = [];
+  public sensitiveList: string[] = [];
 
   constructor(
     private messageRoamService: MessageRoamService,
@@ -1102,7 +1102,7 @@ export class CacheService extends DatabaseService {
   /**
    * 获取拉黑我的人员列表
    */
-  getBlackMeListCache():Promise<Map<string, BlackMeListModel>>  {
+  getBlackMeListCache(): Promise<Map<string, BlackMeListModel>>  {
     return new Promise((resolve) => {
       this.queryData({model: 'blackMeList', query: null}).then((res: IpcResponseInterface<BlackMeListModel>) => {
         const map = new Map();
@@ -1165,6 +1165,21 @@ export class CacheService extends DatabaseService {
           });
         });
         this.cacheSource.next({alarmDataMap: map});
+      });
+    });
+  }
+
+  saveSystemMessage(dataId: number, content: string, timestamp: number) {
+    const chatMsgEntity: ChatmsgEntityModel = this.messageEntityService.prepareRecievedMessage(
+      dataId.toString(), "", content, timestamp, 0, ""
+    );
+    chatMsgEntity.dataId = dataId.toString();
+    chatMsgEntity.msgType = 999;
+    this.saveDataSync<ChatmsgEntityModel>({
+      model: "chatmsgEntity", data: chatMsgEntity, update: null
+    }).then(() => {
+      this.getChattingList().then(list => {
+        this.cacheSource.next({alarmDataMap: list});
       });
     });
   }
