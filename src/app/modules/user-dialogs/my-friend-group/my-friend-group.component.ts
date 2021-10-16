@@ -33,6 +33,9 @@ export class MyFriendGroupComponent implements OnInit {
 
   save() {
     if(this.nameFormControl.valid && this.groupName.length > 0) {
+      if(this.groupName.length > 14) {
+        return this.snackBarService.openMessage("分组名称不能超过14个字符");
+      }
       if(this.data && this.data.groupId) {
         // 修改
         this.restService.updateFriendGroup(this.data.groupId, this.groupName).subscribe((res: NewHttpResponseInterface<any>) => {

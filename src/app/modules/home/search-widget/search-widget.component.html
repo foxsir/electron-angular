@@ -1,8 +1,8 @@
 <div class="search-container" fxLayout="row" fxLayoutAlign="center center">
-  <div fxLayout="row" fxFlex="0 0 calc(100% - 40px)" fxLayoutGap="10px">
+  <div fxLayout="row" fxFlex="0 0 calc(100% - 40px)">
     <div fxFlex="auto" fxLayoutAlign="center center">
       <div fxLayout="row">
-        <div fxFlex="0 0 calc(279px - 60px)">
+        <div fxFlex="0 0 calc(279px - 52px)">
           <input type="text" (keydown.escape)="cancelSearch()" [(ngModel)]="search"
                  (keyup.enter)="txtSearchChange()"
                  (ngModelChange)="searchContent()" nz-input placeholder="搜索"/>
@@ -21,8 +21,8 @@
           </mat-icon>
         </button>
         <mat-menu #friendActions="matMenu">
-          <button mat-menu-item (click)="searchFriend()">添加好友</button>
-          <button mat-menu-item (click)="createGroup()">创建群聊</button>
+          <button *ngIf="this.indexComponent.appConfig.addFriends==1"  mat-menu-item (click)="searchFriend()">添加好友</button>
+          <button *ngIf="this.indexComponent.appConfig.createGroup==1"  mat-menu-item (click)="createGroup()">创建群聊</button>
         </mat-menu>
       </div>
     </div>

@@ -180,7 +180,7 @@
                                 </mat-menu>
                               </div>
                               <div fxFlex>
-                                <div *ngIf="currentChat.metadata.chatType === 'group'"
+                                <div *ngIf="currentChat.metadata.chatType === 'group'" class="nickName"
                                      [fxLayoutAlign]="chat.value.uid.toString() === localUserInfo.userId.toString() ? 'end end' : 'start'">
                                   {{chat.value.name}}
                                 </div>
@@ -259,6 +259,11 @@
             <div class="silence-overlay" *ngIf="currentChat && currentChat.metadata.allSilence && !isAdmin && !isOwner">
               <div fxFill fxLayoutAlign="center center">
                 全体禁言
+              </div>
+            </div>
+            <div class="silence-overlay" *ngIf="blacked">
+              <div fxFill fxLayoutAlign="center center">
+                已被当前好友拉黑
               </div>
             </div>
             <app-input-area fxFlex="100" (sendMessage)="pushMessageToPanel($event)" [currentChat]="currentChat"></app-input-area>

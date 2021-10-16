@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Injectable, OnInit} from '@angular/core';
 import {NavigationEnd, Router} from "@angular/router";
 import {RestService} from "@services/rest/rest.service";
 import NewHttpResponseInterface from "@app/interfaces/new-http-response.interface";
@@ -6,16 +6,21 @@ import appConfigInterface from "@app/interfaces/app-config.interface";
 import {WindowService} from "@services/window/window.service";
 import {DatabaseService} from "@services/database/database.service";
 import {SnackBarService} from "@services/snack-bar/snack-bar.service";
+import {MessageDistributeService} from "@services/message-distribute/message-distribute.service";
+import {ProtocalModel} from "@app/models/protocal.model";
 
 @Component({
   selector: 'app-index',
   templateUrl: './index.component.html',
   styleUrls: ['./index.component.scss']
 })
+@Injectable({
+  providedIn: 'root'
+})
 export class IndexComponent implements OnInit {
   registerType: number = 0;
   selectedTab: number = 0;
-  loginProtocol : boolean = true;
+  public loginProtocol : boolean = true;
 
   public appConfig: appConfigInterface;
 
@@ -24,8 +29,10 @@ export class IndexComponent implements OnInit {
     public restService: RestService,
     public windowService: WindowService,
     private snackBarService: SnackBarService,
+    private messageDistributeService: MessageDistributeService,
   ) {
     this.getAppConfig();
+    this.subscribeUpdateAppConfig();
   }
 
   ngOnInit(): void {
@@ -59,7 +66,20 @@ export class IndexComponent implements OnInit {
     }
   }
 
-  selectLoginProtocol() {
+  selectLoginProtocol(event) {
+    event.preventDefault();
     this.loginProtocol = !this.loginProtocol;
+    alert(this.loginProtocol);
   }
+
+  /**
+   * 系统配置发送了改变
+   */
+  subscribeUpdateAppConfig() {
+    this.messageDistributeService.UPDATE_APP_CONFIG$.subscribe((res: ProtocalModel) => {
+      console.log("收到更新App配置的指令111");
+      this.getAppConfig();
+    });
+  }
+
 }

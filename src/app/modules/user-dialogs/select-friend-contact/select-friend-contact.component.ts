@@ -14,6 +14,7 @@ export class SelectFriendContactComponent implements OnInit {
   public filterFriend: string = "";
 
   constructor(
+    @Inject(MAT_DIALOG_DATA) public data: number[] = [],
     private dialogRef: MatDialogRef<SelectFriendContactComponent>,
     private cacheService: CacheService,
   ) {}
@@ -21,7 +22,10 @@ export class SelectFriendContactComponent implements OnInit {
   ngOnInit(): void {
     this.cacheService.getCacheFriends().then(data => {
       data.forEach(friend => {
-        this.friendList.push(friend);
+        // 过滤掉已经筛选过的用户
+        if (!this.data || !this.data.includes(Number(friend.friendUserUid))) {
+          this.friendList.push(friend);
+        }
       });
     });
   }

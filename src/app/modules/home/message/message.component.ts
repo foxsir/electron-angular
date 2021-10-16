@@ -44,6 +44,12 @@ import {MiniUiService} from "@services/mini-ui/mini-ui.service";
 import {GroupModel} from "@app/models/group.model";
 import FriendModel from "@app/models/friend.model";
 import {Subscription} from "rxjs";
+import GroupCommonMessageModel from "@app/models/group-common-message.model";
+import TopModel from "@app/models/top.model";
+import BlackListModel from "@app/models/black-list.model";
+import BlackMeListModel from "@app/models/black-me-list.model";
+import {IndexComponent} from "@modules/session/index/index.component";
+import NewHttpResponseInterface from "@app/interfaces/new-http-response.interface";
 
 @Component({
     selector: 'app-message',
@@ -126,6 +132,7 @@ export class MessageComponent implements OnInit, AfterViewInit,OnDestroy {
         private miniUiService: MiniUiService,
         private zone: NgZone,
         private changeDetectorRef: ChangeDetectorRef,
+        private indexComponent:IndexComponent,
     ) {
         this.localUserInfo = this.localUserService.localUserInfo;
 
@@ -143,11 +150,13 @@ export class MessageComponent implements OnInit, AfterViewInit,OnDestroy {
         this.subscribeCommonSystemMessage();
         this.subscribeGroupMemberWasRemoved();
         this.subscribeGroupMemberQuit();
-        this.subscribeSENSITIVEWordUpdate(); // 敏感词
+        // this.subscribeSENSITIVEWordUpdate(); // 敏感词
         // 解散群
         this.subscribeDissolveGroup();
         // 被删除的通知
         this.subscribeDeleteFriend();
+        // 订阅App更新的通知
+        this.subscribeUpdateAppConfig();
     }
 
     ngOnInit(): void {
@@ -263,7 +272,22 @@ export class MessageComponent implements OnInit, AfterViewInit,OnDestroy {
      */
     subscribeGroupMemberWasRemoved() {
         this.messageDistributeService.MT49_OF_GROUP$SYSCMD_YOU$BE$KICKOUT_FROM$SERVER$.subscribe((res: ProtocalModel) => {
-            this.snackBarService.openMessage('被踢');
+            // 解析消息体，拿到群信息
+            const groupMsg: GroupCommonMessageModel = JSON.parse(res.dataContent);
+            this.snackBarService.systemNotification(groupMsg.m);
+            // 删除会话信息等
+            const groupId = groupMsg.t;
+            // 删除会话
+            this.cacheService.deleteChattingCache(groupId).then(() => {});
+            // 清空历史消息 先通过群id找到这个会话
+            this.cacheService.generateAlarmItem(groupId, 'group').then(chat => {
+              this.cacheService.clearChattingCache(chat).then(() => {});
+            });
+            this.cacheService.deleteData<GroupModel>({model: 'group', query: {gid: groupId}}).then();
+            // 删除聊天界面
+            if (this.currentChat && this.currentChat.alarmItem.dataId == groupId) {
+              this.currentChattingChangeService.switchCurrentChatting(null).then();
+            }
         });
     }
 
@@ -358,10 +382,17 @@ export class MessageComponent implements OnInit, AfterViewInit,OnDestroy {
      * @private
      */
     private subscribeSENSITIVEWordUpdate() {
-        this.messageDistributeService.SENSITIVE_WORD_UPDATE$.subscribe((res: ProtocalModel) => {
-            // 需要获取敏感词并缓存
-            alert("敏感词更新");
-        });
+        // this.messageDistributeService.SENSITIVE_WORD_UPDATE$.subscribe((res: ProtocalModel) => {
+        //     // 需要获取敏感词并缓存
+        //     alert("敏感词更新");
+        //   // 缓存我的黑名单
+        //   this.restService.getSensitiveWordList().subscribe((res: NewHttpResponseInterface<string[]>) => {
+        //     if(res.status === 200) {
+        //       this.cacheService.sensitiveList = res.data;
+        //     }
+        //     console.log("敏感词:", this.cacheService.sensitiveList);
+        //   });
+        // });
     }
     /**
      * 被好友删除的通知
@@ -384,9 +415,21 @@ export class MessageComponent implements OnInit, AfterViewInit,OnDestroy {
           }
           // 从我的会话里删除
           this.cacheService.deleteData<FriendModel>({model: 'friend', query: {friendUserUid: Number(friendId)}}).then();
+          // 删除置顶
+          this.cacheService.deleteData<TopModel>({model:'top',query:{dataId:friendId}}).then();
+          // 从我的黑名单里删除
+          this.cacheService.deleteData<BlackListModel>({model:'blackList',query:{userUid:Number(friendId)}}).then();
+          // 从拉黑我的人里删除
+          this.cacheService.deleteData<BlackMeListModel>({model:'blackMeList',query:{userUid:Number(friendId)}}).then();
         });
       });
     }
+
+  private subscribeUpdateAppConfig() {
+    // this.messageDistributeService.UPDATE_APP_CONFIG$.subscribe((res: ProtocalModel) => {
+    //     this.indexComponent.getAppConfig();
+    // });
+  }
 
   /**
      * 切换聊天对象
@@ -436,6 +479,7 @@ export class MessageComponent implements OnInit, AfterViewInit,OnDestroy {
   ngOnDestroy() {
     this.currentSubscription.unsubscribe();
   }
+
 
 
 }

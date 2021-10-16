@@ -77,7 +77,7 @@ export class TransmitMessageComponent implements OnInit {
                 dataId: friend.friendUserUid.toString(),
                 date: msg.date,
                 msgContent: MessageService.parseMessageForShow(msg.text, msg.msgType),
-                title: friend.nickname,
+                title: friend.remark?friend.remark:friend.nickname,
                 avatar: null,
               },
               metadata: {

@@ -31,6 +31,7 @@ import {UserModel} from "@app/models/user.model";
 import {MiniUiService} from "@services/mini-ui/mini-ui.service";
 import {FriendRequestModel} from "@app/models/friend-request.model";
 import IpcResponseInterface from "@app/interfaces/ipc-response.interface";
+import FriendModel from "@app/models/friend.model";
 
 // import svg end
 
@@ -111,9 +112,7 @@ export class IndexComponent implements OnInit {
       }
     });
     this.connectDB();
-    this.messageDistributeService.USER_ONLINE_STATUS_CHANGE$.subscribe((res: ProtocalModel) => {
-      // alert(res.typeu);
-    });
+
   }
 
   connectDB() {
@@ -155,14 +154,27 @@ export class IndexComponent implements OnInit {
     this.messageDistributeService.PULLED_BLACK_LIST$.subscribe(() => {
       this.cacheService.cacheBlackList();
     });
+    // 缓存敏感词
+    this.cacheService.sensitiveWordList();
+    // 监听敏感词变化
+    this.messageDistributeService.SENSITIVE_WORD_UPDATE$.subscribe(() => {
+      this.cacheService.sensitiveWordList();
+    });
+
     // 监听好友请求
     this.messageDistributeService.MT07_OF_ADD_FRIEND_REQUEST_INFO_SERVER$TO$B$.subscribe(() => {
       this.cacheService.cacheNewFriends();
     });
+    // 监听好友在线状态的更新
+    this.messageDistributeService.USER_ONLINE_STATUS_CHANGE$.subscribe((res: ProtocalModel) => {
+      const dataContent: any = JSON.parse(res.dataContent);
+      const friendId :string = dataContent.userId;
+      const onlineStatus : boolean = dataContent.onlineStatus;
+      this.cacheService.updateFriendOnlineStatus(friendId,onlineStatus);
+    });
 
     // 缓存通讯录角标数量
     this.updateFriendRequestNumber();
-
 
     // 订阅新的好友通知
     this.cacheService.cacheUpdate$.subscribe(cacheData => {
@@ -174,17 +186,12 @@ export class IndexComponent implements OnInit {
       }
     });
 
-    this.messageDistributeService.USER_INFO_UPDATE$.subscribe(user => {
-      console.dir(user);
-      // {
-      //   "userCornet": "8A7EE65D",
-      //   "userSex": 1,
-      //   "latestLoginTime": "1633680311121",
-      //   "nickname": "foxsir",
-      //   "updateAvatarTimestamp": 1633680336710,
-      //   "userAvatarFileName": "http://strawberry-im.oss-cn-shenzhen.aliyuncs.com/user_portrait/400340.jpg",
-      //   "userId": 400340
-      // }
+    /**
+     * 更新个人信息的指令
+     */
+    this.messageDistributeService.USER_INFO_UPDATE$.subscribe(protocol => {
+      const userInfo : any = JSON.parse(protocol.dataContent)
+      this.cacheService.cacheMyInfo(userInfo.userId);
     });
 
     this.listenNetStatus();

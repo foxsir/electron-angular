@@ -42,6 +42,7 @@ export class CurrentChattingChangeService {
           resolve(true);
         });
       } else {
+        // 如果为null，切换到
         this.currentChatting = currentChatting;
         this.currentChattingSource.next(currentChatting);
         resolve(true);

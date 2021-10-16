@@ -54,7 +54,8 @@
                         <div class="info-item">基本信息</div>
                         <div class="info-item">个人账号：{{friendInfo.friendAccount}}</div>
                         <div class="info-item">注册时间：{{friendInfo.registerTime}}</div>
-                        <div class="info-item">最近登录：{{friendInfo.latestLoginTime}}</div>
+                        <div class="info-item">最近登录：{{formatDate(friendInfo.latestLoginTime,'yy-MM-dd hh:mm')}}</div>
+<!--                        <div class="info-item">最近登录：{{friendInfo.latestLoginTime | date}}</div>-->
                     </div>
                     <div class="split-item"></div>
                     <div class="info-box">

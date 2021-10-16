@@ -112,14 +112,18 @@ export class FriendGroupComponent implements OnInit {
   }
 
   addFriends(group: MyGroupListInterface) {
-    this.dialogService.openDialog(SelectFriendContactComponent).then((friend: FriendModel) => {
+    const filterFriendId: number[] = [];
+    this.friendListMap.get(group.groupId).list.forEach(item=>{
+      filterFriendId.push(item.friendId);
+    });
+    this.dialogService.openDialog(SelectFriendContactComponent,{data:filterFriendId}).then((friend: FriendModel) => {
       if(friend) {
         this.dialogService.confirm({text: ['添加好友：', friend.nickname, ' 到组中'].join("")}).then(ok => {
           if(ok) {
             this.restService.updateFriendGroupMembers(group.groupId, 'add', [friend.friendUserUid]).subscribe((res: NewHttpResponseInterface<any>) => {
               this.snackBarService.openMessage(res.msg);
               this.loadFriendList(group.groupId);
-              group.memberCount += 1;
+              this.getGroupList();
             });
           }
         });
@@ -154,7 +158,7 @@ export class FriendGroupComponent implements OnInit {
           .subscribe((res: NewHttpResponseInterface<any>) => {
             this.snackBarService.openMessage(res.msg);
             this.loadFriendList(group.groupId);
-            group.memberCount -= 1;
+            this.getGroupList();
           });
       }
     });

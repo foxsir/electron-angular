@@ -59,6 +59,7 @@ export class SignupMobileForm {
         label: '获取验证码',
         type: 'number',
         minLength: 6,
+        maxLength: 6,
         // description: '10分钟内有效',
         required: true,
         blur:  (field: FormlyFieldConfig, event?: any) => {
@@ -77,6 +78,7 @@ export class SignupMobileForm {
     columns.forEach(item => {
       this.fields.forEach(field => {
         if( field.key === item ) {
+          field.defaultValue = null;
           selectFields.push(field);
         }
       });

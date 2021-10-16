@@ -7,6 +7,7 @@ import {CurrentChattingChangeService} from "@services/current-chatting-change/cu
 import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 import {Router} from "@angular/router";
 import ChattingModel from "@app/models/chatting.model";
+import {LocalUserService} from "@services/local-user/local-user.service";
 
 @Component({
   selector: 'app-group',
@@ -17,11 +18,13 @@ export class GroupComponent implements OnInit, OnDestroy {
   public chattingGroup: GroupInfoModel[] = [];
   private subscribe: Subscription;
 
+
   constructor(
     private router: Router,
     private restService: RestService,
     private cacheService: CacheService,
     private currentChattingChangeService: CurrentChattingChangeService,
+    public localUserService : LocalUserService,
   ) {
     this.cacheService.getCacheGroups().then(data => {
       if(data) {

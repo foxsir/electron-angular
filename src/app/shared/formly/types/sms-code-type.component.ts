@@ -7,6 +7,8 @@ import {APP_CONFIG as environment} from "environments/environment";
 import {FormControl} from "@angular/forms";
 import {getVerifyCode} from "@app/config/post-api";
 import NewHttpResponseInterface from "@app/interfaces/new-http-response.interface";
+import {RestService} from "@services/rest/rest.service";
+import {IndexComponent} from "@modules/session/index/index.component";
 
 
 @Component({
@@ -50,9 +52,13 @@ export class SmsCodeTypeComponent extends FieldType implements OnInit {
   private resendText = "秒后可重新发送";
   private seconds = environment.smsSpaceSeconds;
   private counter = this.seconds;
+
   constructor(
     private http: HttpService,
-    private snackBar: SnackBarService
+    private snackBar: SnackBarService,
+    private restService: RestService,
+    private snackBarService: SnackBarService,
+    private indexComponent: IndexComponent
   ) {
     super();
   }
@@ -63,37 +69,49 @@ export class SmsCodeTypeComponent extends FieldType implements OnInit {
   send(button: MatButton) {
     const mobile = this.field.form.value.user_phone;
     const areaCode = this.model.area;
-
-    if (mobile > 0) {
-      // alert(this.formControl.value);
-      // button.disabled = true;
-      this.http.postForm(getVerifyCode, {phone: [areaCode, mobile].join("-")}).subscribe((res: NewHttpResponseInterface<any>) => {
-        if (Number(res.status) === 200) {
-          // if (res.data.seconds) {
-          //   this.counter = res.data.seconds;
-          // } else {
-          //   this.snackBar.openMessage(res.data.Message, 'mat-warn');
-          // }
-          const si = setInterval(() => {
-            if (this.counter === 0) {
-              this.sendText = "发送验证码";
-              button.disabled = false;
-              clearInterval(si);
-            } else {
-              this.counter --;
-              this.sendText = [this.counter, this.resendText].join("");
-            }
-          }, 1000);
+    // 发送验证码前,先验证手机号是否存在
+    const data = {
+      phone: [this.model.area, this.form.value.user_phone].join("-"),
+      username: this.form.value.user_mail ? this.form.value.user_mail : '',
+    };
+    if (mobile && mobile.length > 0) {
+      this.restService.checkUsernameAndPhone(data).subscribe((res: NewHttpResponseInterface<any>) => {
+        if (res.status !== 200) {
+          return this.snackBarService.openMessage(res.msg);
         } else {
-          this.snackBar.openMessage(res.msg);
-          button._elementRef.nativeElement.textContent = "重新获取";
-          button.disabled = false;
+          // alert(this.formControl.value);
+          button.disabled = true;
+          this.http.postForm(getVerifyCode, {phone: [areaCode, mobile].join("-")}).subscribe((res: NewHttpResponseInterface<any>) => {
+            if (Number(res.status) === 200) {
+              // if (res.data.seconds) {
+              //   this.counter = res.data.seconds;
+              // } else {
+              //   this.snackBar.openMessage(res.data.Message, 'mat-warn');
+              // }
+              const si = setInterval(() => {
+                if (this.counter === 0) {
+                  this.sendText = "重新获取";
+                  button.disabled = false;
+                  clearInterval(si);
+                } else {
+                  this.counter--;
+                  this.sendText = [this.counter, this.resendText].join("");
+                }
+              }, 1000);
+            } else {
+              this.snackBar.openMessage(res.msg);
+              button._elementRef.nativeElement.textContent = "重新获取";
+              button.disabled = false;
+            }
+          });
+
         }
       });
     } else {
-      // this.snackBar.openMessage("请输入手机号");
       this.form.controls.user_phone.markAsTouched();
     }
+
+
   }
 
 }
