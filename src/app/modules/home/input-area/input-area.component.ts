@@ -49,6 +49,7 @@ import {RedPocketComponent} from "@modules/user-dialogs/red-pocket/red-pocket.co
 import {RedPacketInterface} from "@app/interfaces/red-packet.interface";
 import DirectoryType from "@services/file/config/DirectoryType";
 import {Subscription} from "rxjs";
+import {InputAreaService} from "@services/input-area/input-area.service";
 
 const { ipcRenderer } = window.require('electron');
 
@@ -111,6 +112,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
     private dialogService: DialogService,
     private localUserService: LocalUserService,
     private forwardMessageService: ForwardMessageService,
+    private inputAreaService: InputAreaService,
   ) {
   }
 
@@ -263,6 +265,10 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
     emitToUI: boolean = true,
     replaceEntity: ChatmsgEntityModel = null
   ) {
+    // 检查输入框是否被禁用
+    if(this.inputAreaService.enable === false) {
+      return false;
+    }
     // sendStatus
     if (!messageText || messageText.trim().length === 0) {
       return false;
