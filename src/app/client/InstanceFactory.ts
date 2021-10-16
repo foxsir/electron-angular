@@ -15,9 +15,6 @@ export default class InstanceFactory {
   private static classMap = new Map();
   static getInstance<T>(classRef: { new(): T }): T {
     if(InstanceFactory.classMap.get(classRef.name)) {
-      console.dir("classRef.name")
-      console.dir(classRef.name)
-      console.dir(InstanceFactory.classMap)
       return InstanceFactory.classMap.get(classRef.name);
     } else {
       InstanceFactory.classMap.set(classRef.name, new classRef());
