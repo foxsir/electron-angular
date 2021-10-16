@@ -122,20 +122,9 @@
 
 #chatting-panel {
   overflow-y: scroll;
-  .message-entity-item {
+  .message-entity {
     position: relative;
-    padding: 10px;
-    background: white;
-    width: fit-content;
-    box-sizing: border-box;
-    border-radius: 0px 6px 6px 6px;
-    word-break: break-word;
-    margin-top: 3px;
-  }
-  .self-message .message-entity-item {
-    background: #CCE4FF;
-    border-radius: 6px 0px 6px 6px;
-    line-height: 22px;
+    background: red;
   }
   .group-avatar {
     position: relative
@@ -149,6 +138,7 @@
 .message-status {
   font-size: 12px;
   color: #686868;
+  height: 16px;
 }
 
 .message-container {

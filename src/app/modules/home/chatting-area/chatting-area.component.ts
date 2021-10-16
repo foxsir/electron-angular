@@ -12,8 +12,6 @@ import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 import {DomSanitizer, SafeResourceUrl} from "@angular/platform-browser";
 import {AvatarService} from "@services/avatar/avatar.service";
 
-import {formatDate} from "@app/libs/mobileimsdk-client-common";
-
 import settingIcon from "@app/assets/icons/setting.svg";
 import settingActiveIcon from "@app/assets/icons/setting-active.svg";
 import searchIcon from "@app/assets/icons/search.svg";
@@ -81,8 +79,6 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
   @ViewChild('virtualScrollViewport') virtualScrollViewport: CdkVirtualScrollViewport;
 
   public currentChat: AlarmItemInterface;
-
-  public formatDate = formatDate;
 
   public drawerContent = {
     setting: false,
@@ -162,6 +158,8 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
   public isOwner: boolean = false;
 
   public currentSubscription: Subscription;
+
+  public itemSize: number = 0;
 
   constructor(
     public cacheService: CacheService, // 模版中要用
@@ -339,9 +337,8 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
       if(data.dataContent.cy === ChatModeType.CHAT_TYPE_FRIEND$CHAT) { // 单聊
         if(this.currentChat && chatActive) {
           this.virtualScrollViewport.scrollTo({
-              bottom: 1,
-              behavior: 'auto',
-            });
+            bottom: 0,
+          });
           this.cacheService.chatMsgEntityMap.set(data.chat.fingerPrintOfProtocal, data.chat);
           // this.cacheService.chatMsgEntityList = new Array(...this.cacheService.chatMsgEntityMap).flatMap(t => t[1]);
           this.scrollToBottom();
@@ -569,46 +566,33 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
     this.imService.callback_messagesBeReceived = this.updateDataForUI.bind(this);
   }
 
-  private scrollEnd = true;
-
   /**
    * 消息列表滚动底部
    * @param behavior
    */
   scrollToBottom(behavior: "auto" | "smooth" = "smooth") {
+    this.itemSize = 0;
     if(this.virtualScrollViewport) {
       const sb = () => {
-        if(this.scrollEnd) {
-          this.scrollEnd = false;
-          setTimeout(() => {
-            this.virtualScrollViewport.scrollTo({
-              bottom: 0,
-              behavior: behavior,
-            });
-            this.scrollEnd = true;
-          }, 50);
-          setTimeout(() => {
-            if(this.virtualScrollViewport.measureScrollOffset('bottom') > 0) {
-              this.scrollToBottom('auto');
-            }
-          }, 500);
-        }
+        this.virtualScrollViewport.scrollTo({
+          bottom: 0,
+          behavior: behavior,
+        });
       };
+      setTimeout(() => {
+        this.itemSize = 50;
+      }, 100);
 
       this.chattingAreaOnScroll();
       if(this.chattingContainer) {
-        const images = this.chattingContainer.nativeElement.querySelectorAll("img");
-        images.forEach(img => {
-          img.onload = () => {
-            sb();
-          };
-        });
-        sb();
+        setTimeout(() => {
+          sb();
+        }, 10);
       }
     } else {
       setTimeout(() => {
         this.scrollToBottom(behavior);
-      }, 500);
+      }, 100);
     }
   }
 
@@ -727,7 +711,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
    */
   chattingAreaOnScroll() {
     this.virtualScrollViewport.scrolledIndexChange.subscribe((index) => {
-      if(index === 0) {
+      if(index === 1) {
         this.loadMessage();
       }
       this.showDownArrow = this.virtualScrollViewport.measureScrollOffset('bottom') > 300;

@@ -148,11 +148,10 @@
                     <mat-spinner [diameter]="20" [strokeWidth]="3" mode="indeterminate"></mat-spinner>
                   </div>
                   <div fxFlex="100" fxFill>
-                    <cdk-virtual-scroll-viewport fxFill #virtualScrollViewport itemSize="50" minBufferPx="53" maxBufferPx="200">
-                      <div fxLayout="row" *cdkVirtualFor="let chat of cacheService.chatMsgEntityMap | keyvalue : asIsOrder"
+                    <cdk-virtual-scroll-viewport fxFill #virtualScrollViewport [itemSize]="itemSize">
+                      <div fxLayout="row" *cdkVirtualFor="let chat of cacheService.chatMsgEntityMap | keyvalue : asIsOrder;"
                            (click)="selectMessage ? collectMessage(chat.value, msgCheckbox) : false"
-                           [fxLayoutAlign]="chat.value.uid.toString() === localUserInfo.userId.toString() ? 'space-between' : 'start'"
-                           [ngClass]="{'self-message': chat.value.uid.toString() === localUserInfo.userId.toString()}">
+                           [fxLayoutAlign]="chat.value.uid.toString() === localUserInfo.userId.toString() ? 'space-between' : 'start'">
                         <div [fxFlex]="selectMessage ? '35px' : '1px'" fxLayoutAlign="start center">
                           <div [fxShow]="selectMessage">
                             <mat-checkbox #msgCheckbox disableRipple color="primary" (change)="collectMessage(chat.value, msgCheckbox)"></mat-checkbox>
@@ -164,7 +163,7 @@
                           <div fxLayout="column" class="message-container" fxLayoutGap="5px"
                                [fxLayoutAlign]="chat.value.uid.toString() === localUserInfo.userId.toString() ? 'end end' : 'start'">
                             <div class="message-time">
-                              {{formatDate(chat.value.date, 'M-dd hh:m')}}
+                              {{chat.value.date | date}}
                             </div>
                             <!--[fxLayoutAlign]="chat.value.uid === localUserInfo.userId ? 'end' : 'start'"-->
                             <div [fxLayout]="chat.value.uid.toString() === localUserInfo.userId.toString() ? 'row-reverse' : 'row'" fxLayoutGap="10px">
@@ -186,14 +185,14 @@
                                   {{chat.value.name}}
                                 </div>
                                 <div fxLayout="row" [fxLayoutAlign]="chat.value.uid.toString() === localUserInfo.userId.toString() ? 'end' : 'start'">
-                                  <div fxLayoutAlign="center center" style="width: 22px">
-                                    <mat-spinner
-                                      [fxShow]="chat.value.isOutgoing === false && chat.value.uid.toString() === localUserInfo.userId.toString()"
-                                      [diameter]="20" [strokeWidth]="3" mode="indeterminate"></mat-spinner>
+                                  <div fxLayoutAlign="center center" style="width: 22px; height: 22px;">
+<!--                                    <mat-spinner-->
+<!--                                      [fxShow]="chat.value.isOutgoing === false && chat.value.uid.toString() === localUserInfo.userId.toString()"-->
+<!--                                      [diameter]="20" [strokeWidth]="3" mode="indeterminate"></mat-spinner>-->
                                   </div>
-                                  <div class="message-entity-item" #wrapDiv fxLayout="row" (contextmenu)="contextMenuForMessage($event, createPlanMenuTrigger, span, chat.value)">
-                                    <div class="message-entity" #messageContainer>
-                                      <app-message-factory [chatMsg]="chat.value" [wrapDiv]="wrapDiv"></app-message-factory>
+                                  <div class="message-entity" fxLayout="row" (contextmenu)="contextMenuForMessage($event, createPlanMenuTrigger, span, chat.value)">
+                                    <div #messageContainer>
+                                      <app-message-factory [chatMsg]="chat.value"></app-message-factory>
                                     </div>
                                     <span #createPlanMenuTrigger="matMenuTrigger" #span [matMenuTriggerFor]="contextmenu"></span>
                                     <mat-menu #contextmenu="matMenu">
