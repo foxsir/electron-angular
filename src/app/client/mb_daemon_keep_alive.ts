@@ -59,7 +59,7 @@ export default class MBKeepAliveDaemon {
    * <p>
    * 参定此参数的同时，也需要相应设置服务端的ServerLauncher.SESION_RECYCLER_EXPIRE参数。
    */
-  KEEP_ALIVE_INTERVAL = 150000;//3000;//1000;
+  KEEP_ALIVE_INTERVAL = 15000;//3000;//1000;
 
   /*
    * 收到服务端响应心跳包的超时间时间（单位：毫秒），默认（15 * 1000 + 5000）＝ 20000 毫秒（即20秒）.
