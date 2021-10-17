@@ -282,7 +282,11 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
 
     this.cacheService.groupSilence$.subscribe((map) => {
       this.mySilence = map.get(this.localUserService.localUserInfo.userId.toString());
-      this.inputAreaService.disableToTime(this.mySilence.banTime);
+      if(this.mySilence && this.mySilence.banTime) {
+        this.inputAreaService.disableToTime(this.mySilence.banTime);
+      } else {
+        this.inputAreaService.enable();
+      }
     });
   }
 
