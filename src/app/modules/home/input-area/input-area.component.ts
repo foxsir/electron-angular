@@ -50,6 +50,7 @@ import {RedPacketInterface} from "@app/interfaces/red-packet.interface";
 import DirectoryType from "@services/file/config/DirectoryType";
 import {Subscription} from "rxjs";
 import {InputAreaService} from "@services/input-area/input-area.service";
+import {GlobalCache} from "@app/config/global-cache";
 
 const { ipcRenderer } = window.require('electron');
 
@@ -222,7 +223,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
       entity.uh = this.localUserService.localUserInfo.userAvatarFileName;
       entity.isOutgoing = false;
       this.sendChatMap.set(file.uid, entity);
-      this.sendMessage.emit({
+        this.sendMessage.emit({
         chat: entity,
         dataContent: this.getDefaultDataContent(MsgType.TYPE_FILE)
       });
@@ -281,7 +282,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
     }
     // 检查是否在敏感词内
     let includeSensitiveWord = false;
-    this.cacheService.sensitiveList.forEach(sensitiveWord=>{
+    GlobalCache.sensitiveList.forEach(sensitiveWord=>{
       if (sensitiveWord.includes(messageText)){
         includeSensitiveWord = true;
       }
@@ -309,7 +310,6 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
     } else if (this.currentChat.metadata.chatType === 'group') {
       this.sendGroupMessage(messageType, messageText, emitToUI, replaceEntity);
     }
-    console.log('289')
 
     return false;
   }
@@ -439,7 +439,6 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
             this.sendMessage.emit({chat: chatMsgEntity, dataContent: res.msgBody});
           }
         });
-
 
         // this.tempList.push({
         //   chatMsgEntity: chatMsgEntity,
@@ -764,8 +763,8 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
   }
 
   startScreenShot() {
-    const winstartScreenShot = window["startScreenShot"];
-    winstartScreenShot();
+    // 发送截图指令
+    ipcRenderer.send("start-screen-capture", "new message");
   }
 
   pasteContent(e: ClipboardEvent) {

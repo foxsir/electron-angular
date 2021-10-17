@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Inject, NgZone, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {DomSanitizer, SafeResourceUrl} from "@angular/platform-browser";
 
@@ -14,7 +14,9 @@ export class ConfirmComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<ConfirmComponent>,
     @Inject(MAT_DIALOG_DATA) public data: {title: string; text: string; confirm: string; cancel: string },
-    private dom: DomSanitizer
+    private dom: DomSanitizer,
+    private zone: NgZone,
+    private changeDetectorRef: ChangeDetectorRef,
   ) { }
 
   ngOnInit(): void {
@@ -26,11 +28,17 @@ export class ConfirmComponent implements OnInit {
   }
 
   confirm() {
-    this.dialogRef.close(true);
-  }
+    this.zone.run(() => {
+      this.dialogRef.close(true);
+      this.changeDetectorRef.detectChanges();
+    });
+  };
 
   cancel() {
-    this.dialogRef.close(false);
+    this.zone.run(() => {
+      this.dialogRef.close(false);
+      this.changeDetectorRef.detectChanges();
+    });
   }
 
 }

@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, NgZone, OnInit} from '@angular/core';
 import {RestService} from "@services/rest/rest.service";
 import {LocalUserService} from "@services/local-user/local-user.service";
 import {HttpService} from "@services/http/http.service";
@@ -25,8 +25,7 @@ interface CollectChatMsg {
   styleUrls: ['./collect.component.scss']
 })
 export class CollectComponent implements OnInit {
-  collectList: CollectModel[] = [];
-
+  private collectList: CollectModel[] = [];
   public collectChatMsg: CollectChatMsg[] = [];
 
   public contextMenu = [
@@ -34,11 +33,13 @@ export class CollectComponent implements OnInit {
       label: "发送给好友",
       action: (item: CollectChatMsg) => {
         this.dialogService.openDialog(SelectFriendContactComponent, {width: '314px'}).then((friend: FriendModel) => {
-          this.cacheService.generateAlarmItem(
-            friend.friendUserUid.toString(), 'friend', item.chatMsg.text, item.chatMsg.msgType
-          ).then(alarm => {
-            this.forwardMessageService.forward(alarm, item.chatMsg);
-          });
+          if(friend) {
+            this.cacheService.generateAlarmItem(
+              friend.friendUserUid.toString(), 'friend', item.chatMsg.text, item.chatMsg.msgType
+            ).then(alarm => {
+              this.forwardMessageService.forward(alarm, item.chatMsg, false);
+            });
+          }
         });
       }
     },
@@ -49,11 +50,12 @@ export class CollectComponent implements OnInit {
         this.dialogService.confirm({
           title: '删除收藏',
           text: '确认将此内容从收藏中删除？'
-        }).then((res: boolean) => {
-          if (res) {
+        }).then((ok: boolean) => {
+          if (ok) {
             this.restService.deleteMissuCollectById(item.collect.id).subscribe(() => {
               this.restService.getMyCollectList().subscribe(res => {
                 this.collectList = res.data;
+                this.pushCollectChatMsg();
               });
             });
           }
@@ -71,23 +73,27 @@ export class CollectComponent implements OnInit {
     private messageEntityService: MessageEntityService,
     private forwardMessageService: ForwardMessageService,
     private cacheService: CacheService,
-    private messageService: MessageService,
   ) {
     this.restService.getMyCollectList().subscribe(res => {
       this.collectList = res.data;
-      this.collectList.forEach(item => {
-        const msgEntity = this.messageEntityService.prepareRecievedMessage(
-          item.fromUserId, item.nickname, item.content, item.createTime, item.type
-        );
-        this.collectChatMsg.push({
-          collect: item,
-          chatMsg: msgEntity,
-        });
-      });
+      this.pushCollectChatMsg();
     });
   }
 
   ngOnInit(): void {
+  }
+
+  pushCollectChatMsg() {
+    this.collectChatMsg = [];
+    this.collectList.forEach(item => {
+      const msgEntity = this.messageEntityService.prepareRecievedMessage(
+        item.fromUserId, item.nickname, item.content, item.createTime, item.type
+      );
+      this.collectChatMsg.push({
+        collect: item,
+        chatMsg: msgEntity,
+      });
+    });
   }
 
   contextMenuForItem(e: MouseEvent, menu: MatMenuTrigger, span: HTMLSpanElement, chat: any) {

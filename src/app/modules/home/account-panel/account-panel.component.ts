@@ -156,6 +156,7 @@ export class AccountPanelComponent implements OnInit {
         this.router.navigate(['/']).then(() => {
           this.restService.loginOut().subscribe(() => {
             this.imService.disconnectSocket();
+            this.windowService.restoreWindow();
             this.windowService.loginWindow();
             // 关闭数据库链接
             this.cacheService.disconnectDB();
