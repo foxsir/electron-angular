@@ -3,6 +3,8 @@ import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 import CommonTools from "@app/common/common.tools";
 import {FileService} from "@services/file/file.service";
 import {DomSanitizer, SafeResourceUrl, SafeUrl} from "@angular/platform-browser";
+import {DialogService} from "@services/dialog/dialog.service";
+import {PreviewMediaComponent} from "@modules/user-dialogs/preview-media/preview-media.component";
 
 @Component({
   selector: 'app-message-image',
@@ -16,6 +18,7 @@ export class MessageImageComponent implements OnInit {
   constructor(
     public fileService: FileService,
     private dom: DomSanitizer,
+    private dialogService: DialogService
   ) { }
 
   ngOnInit(): void {
@@ -25,5 +28,12 @@ export class MessageImageComponent implements OnInit {
   download() {
     CommonTools.downloadLink(this.chatMsg.text, "download.png");
   }
+
+  preview() {
+    this.dialogService.openDialog(PreviewMediaComponent, {
+      data: {type: 'image', url: this.blobUrl},
+    }).then(() => {});
+  }
+
 
 }
