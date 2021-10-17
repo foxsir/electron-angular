@@ -123,14 +123,14 @@
                     </mat-icon>
                 </button>
             </div>
-            <div *ngIf="groupData.gnotice.length > 0 && groupData.gnotice_visible == true" class="moving-group-info mat-primary text hover-item">
+            <div *ngIf="groupData.gnotice.length > 0 && groupData.gnotice_visible == true" (click)="showTopWIn('notice')" class="moving-group-info mat-primary text hover-item">
                 <img class="icon-tip" [src]="gNoticeTip" alt="">
                 <div class="box">
                     <p class="animate {{groupData.gnotice_class}}">{{groupData.gnotice}}</p>
                 </div>
                 <img class="icon-delete" [src]="gNoticeDelete" alt="" (click)="this.groupData.gnotice_visible = false;">
             </div>
-            <div *ngIf="groupData.gtopContent.length > 0 && groupData.gtopContent_visible == true" class="moving-group-info mat-primary text hover-item" style="background-color: #d9efff">
+            <div *ngIf="groupData.gtopContent.length > 0 && groupData.gtopContent_visible === true" (click)="showTopWIn('topContent')" class="moving-group-info mat-primary text hover-item" style="background-color: #d9efff">
                 <img class="icon-tip" [src]="gTopContentTip" alt="">
                 <div class="box">
                     <p class="animate {{groupData.gtopContent_class}}" style="color:#0091ff">{{groupData.gtopContent}}</p>
@@ -260,6 +260,14 @@
             <div class="silence-overlay" *ngIf="mySilence">
               <div fxFill fxLayoutAlign="center center">
                 <app-silence-count-down (silenceDone)="silenceDone($event)" [timestamp]="mySilence.banTime"></app-silence-count-down>
+              </div>
+            </div>
+            <div class="silence-overlay" *ngIf="!mySilence && talkIntervalSwitch && !isAdmin && !isOwner ">
+              <div fxFill fxLayoutAlign="center center" autofocus>
+                <div fxLayout="row" style="width: 300px;" fxLayoutAlign="center center" fxLayoutGap="4px">
+                  <div fxFlex="80px" style="text-align: right">发言间隔：</div>
+                  <div style="text-align: left;">{{talkInterval}} 秒</div>
+                </div>
               </div>
             </div>
             <div class="silence-overlay" *ngIf="currentChat && currentChat.metadata.allSilence && !isAdmin && !isOwner">
