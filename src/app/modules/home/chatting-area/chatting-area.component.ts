@@ -71,6 +71,7 @@ import {Subscription} from "rxjs";
 import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 import {GroupInfoDialogComponent} from "@modules/user-dialogs/group-info-dialog/group-info-dialog.component";
 import {GroupNoticeComponent} from "@modules/user-dialogs/group-notice/group-notice.component";
+import {InputAreaService} from "@services/input-area/input-area.service";
 
 @Component({
   selector: 'app-chatting-area',
@@ -194,7 +195,8 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
     private messageService: MessageService,
     private snackBarService: SnackBarService,
     private zone: NgZone,
-    private changeDetectorRef: ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef,
+    private inputAreaService: InputAreaService,
   ) {
     this.localUserInfo = this.localUserService.localUserInfo;
 
@@ -280,6 +282,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
 
     this.cacheService.groupSilence$.subscribe((map) => {
       this.mySilence = map.get(this.localUserService.localUserInfo.userId.toString());
+      this.inputAreaService.disableToTime(this.mySilence.banTime);
     });
   }
 
@@ -428,12 +431,13 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
         {
           this.checkAdminAndOwner();
           console.dir(this.isAdmin);
-          console.dir(this.isOwner)
+          console.dir(this.isOwner);
 
           if(!this.isOwner && !this.isAdmin){
             this.talkIntervalSwitch=this.groupData.gtalkIntervalSwitch;
             this.talkInterval=this.groupData.gtalkInterval;
 
+            this.inputAreaService.disableToTime(new Date().getTime() / 1000 + this.talkInterval);
             this.timeInterval=setInterval(() => {
               console.log(this.talkInterval);
               if(this.talkInterval<=0){
@@ -1046,6 +1050,8 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
       this.cacheService.getCacheGroupAdmins(this.currentChat.alarmItem.dataId).then(admins => {
         if(admins.get(info.userId.toString())) {
           this.isAdmin = true;
+        } else {
+          this.isAdmin = false;
         }
       });
 
@@ -1053,6 +1059,8 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
         const group = groups.get(this.currentChat.alarmItem.dataId);
         if(group) {
           this.isOwner = group.gownerUserUid.toString() === info.userId.toString();
+        } else {
+          this.isOwner = false;
         }
       });
     }
