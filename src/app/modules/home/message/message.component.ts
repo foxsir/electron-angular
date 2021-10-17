@@ -48,7 +48,6 @@ import GroupCommonMessageModel from "@app/models/group-common-message.model";
 import TopModel from "@app/models/top.model";
 import BlackListModel from "@app/models/black-list.model";
 import BlackMeListModel from "@app/models/black-me-list.model";
-import {IndexComponent} from "@modules/session/index/index.component";
 import NewHttpResponseInterface from "@app/interfaces/new-http-response.interface";
 
 @Component({
@@ -132,7 +131,6 @@ export class MessageComponent implements OnInit, AfterViewInit,OnDestroy {
         private miniUiService: MiniUiService,
         private zone: NgZone,
         private changeDetectorRef: ChangeDetectorRef,
-        private indexComponent:IndexComponent,
     ) {
         this.localUserInfo = this.localUserService.localUserInfo;
 
@@ -150,13 +148,10 @@ export class MessageComponent implements OnInit, AfterViewInit,OnDestroy {
         this.subscribeCommonSystemMessage();
         this.subscribeGroupMemberWasRemoved();
         this.subscribeGroupMemberQuit();
-        // this.subscribeSENSITIVEWordUpdate(); // 敏感词
         // 解散群
         this.subscribeDissolveGroup();
         // 被删除的通知
         this.subscribeDeleteFriend();
-        // 订阅App更新的通知
-        this.subscribeUpdateAppConfig();
     }
 
     ngOnInit(): void {
@@ -378,23 +373,6 @@ export class MessageComponent implements OnInit, AfterViewInit,OnDestroy {
     }
 
     /**
-     * 敏感词更新
-     * @private
-     */
-    private subscribeSENSITIVEWordUpdate() {
-        // this.messageDistributeService.SENSITIVE_WORD_UPDATE$.subscribe((res: ProtocalModel) => {
-        //     // 需要获取敏感词并缓存
-        //     alert("敏感词更新");
-        //   // 缓存我的黑名单
-        //   this.restService.getSensitiveWordList().subscribe((res: NewHttpResponseInterface<string[]>) => {
-        //     if(res.status === 200) {
-        //       this.cacheService.sensitiveList = res.data;
-        //     }
-        //     console.log("敏感词:", this.cacheService.sensitiveList);
-        //   });
-        // });
-    }
-    /**
      * 被好友删除的通知
      */
     private subscribeDeleteFriend() {
@@ -403,8 +381,9 @@ export class MessageComponent implements OnInit, AfterViewInit,OnDestroy {
         const dataContent: any = JSON.parse(res.dataContent);
         const friendId: string = dataContent.userId;
         console.log("收到被好友删除的指令,好友id:"+friendId);
-        // 清空历史消息 先通过群id找到这个会话
+        // 先找的这个会话
         this.cacheService.generateAlarmItem(friendId, 'friend').then(chat => {
+          // 删除所有的聊天记录
           this.cacheService.clearChattingCache(chat).then(() => {});
           // 删除会话
           this.cacheService.deleteChattingCache(friendId).then(() => {});
@@ -413,7 +392,7 @@ export class MessageComponent implements OnInit, AfterViewInit,OnDestroy {
           if (this.currentChat && this.currentChat.alarmItem.dataId == friendId) {
             this.currentChattingChangeService.switchCurrentChatting(null).then();
           }
-          // 从我的会话里删除
+          // 从我好友里里删除
           this.cacheService.deleteData<FriendModel>({model: 'friend', query: {friendUserUid: Number(friendId)}}).then(() => {
             // 更新好友缓存
             this.cacheService.cacheFriends().then();
@@ -428,11 +407,7 @@ export class MessageComponent implements OnInit, AfterViewInit,OnDestroy {
       });
     }
 
-  private subscribeUpdateAppConfig() {
-    // this.messageDistributeService.UPDATE_APP_CONFIG$.subscribe((res: ProtocalModel) => {
-    //     this.indexComponent.getAppConfig();
-    // });
-  }
+
 
   /**
      * 切换聊天对象

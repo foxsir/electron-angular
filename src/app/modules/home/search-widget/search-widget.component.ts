@@ -9,6 +9,7 @@ import {CacheService} from "@services/cache/cache.service";
 import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 import {CurrentChattingChangeService} from "@services/current-chatting-change/current-chatting-change.service";
 import {IndexComponent} from "@modules/session/index/index.component";
+import {GlobalCache} from "@app/config/global-cache";
 
 @Component({
   selector: 'app-search-widget',
@@ -26,13 +27,13 @@ export class SearchWidgetComponent implements OnInit {
 
   public find_friends: any[] = [];
   public find_messages: any[] = [];
+  public globalCache =  GlobalCache;
 
   constructor(
     private dom: DomSanitizer,
     private router: Router,
     private cacheService: CacheService,
     private currentChattingChangeService: CurrentChattingChangeService,
-    private indexComponent:IndexComponent,
   ) {
   }
 
