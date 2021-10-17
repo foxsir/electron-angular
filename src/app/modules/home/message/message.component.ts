@@ -408,13 +408,16 @@ export class MessageComponent implements OnInit, AfterViewInit,OnDestroy {
           this.cacheService.clearChattingCache(chat).then(() => {});
           // 删除会话
           this.cacheService.deleteChattingCache(friendId).then(() => {});
-          // // 删除聊天界面
+          // 删除聊天界面
           console.log("当前会话是:",this.currentChat);
           if (this.currentChat && this.currentChat.alarmItem.dataId == friendId) {
             this.currentChattingChangeService.switchCurrentChatting(null).then();
           }
           // 从我的会话里删除
-          this.cacheService.deleteData<FriendModel>({model: 'friend', query: {friendUserUid: Number(friendId)}}).then();
+          this.cacheService.deleteData<FriendModel>({model: 'friend', query: {friendUserUid: Number(friendId)}}).then(() => {
+            // 更新好友缓存
+            this.cacheService.cacheFriends().then();
+          });
           // 删除置顶
           this.cacheService.deleteData<TopModel>({model:'top',query:{dataId:friendId}}).then();
           // 从我的黑名单里删除
