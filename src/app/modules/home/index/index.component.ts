@@ -161,6 +161,10 @@ export class IndexComponent implements OnInit {
       this.cacheService.sensitiveWordList();
     });
 
+    // 好友请求被同意
+    this.messageDistributeService.MT10_OF_PROCESS_ADD$FRIEND$REQ_FRIEND$INFO$SERVER$TO$CLIENT$.subscribe(() => {
+      this.cacheService.cacheFriends().then();
+    });
     // 监听好友请求
     this.messageDistributeService.MT07_OF_ADD_FRIEND_REQUEST_INFO_SERVER$TO$B$.subscribe(() => {
       this.cacheService.cacheNewFriends();
@@ -168,8 +172,8 @@ export class IndexComponent implements OnInit {
     // 监听好友在线状态的更新
     this.messageDistributeService.USER_ONLINE_STATUS_CHANGE$.subscribe((res: ProtocalModel) => {
       const dataContent: any = JSON.parse(res.dataContent);
-      const friendId :string = dataContent.userId;
-      const onlineStatus : boolean = dataContent.onlineStatus;
+      const friendId: string = dataContent.userId;
+      const onlineStatus: boolean = dataContent.onlineStatus;
       this.cacheService.updateFriendOnlineStatus(friendId,onlineStatus);
     });
 
