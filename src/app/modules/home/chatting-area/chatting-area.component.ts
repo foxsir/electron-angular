@@ -803,8 +803,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
         if(goBottom) {
           this.scrollToBottom("auto");
         }
-        console.dir("拉取缓存消息");
-        console.dir(this.cacheService.chatMsgEntityMap.size);
+        console.dir("拉取缓存消息,缓存消息数量:",this.cacheService.chatMsgEntityMap.size);
       } else if(this.cacheService.chatMsgEntityMap.size > 0) {
         // 从漫游接口获取数据
         const list: ChatmsgEntityModel[] = new Array(...this.cacheService.chatMsgEntityMap.values());
@@ -880,7 +879,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
         //如果是群聊，加载群页签数据
         if (this.currentChat && this.currentChat.alarmItem.chatType === 'group') {
             this.restService.getGroupBaseById(this.currentChat.alarmItem.dataId).subscribe((group_data: NewHttpResponseInterface<GroupModel>) => {
-                if (group_data.data.tabSwitch === 1) {
+                if (group_data.data.tabSwitch && group_data.data.tabSwitch === 1) {
                     /*获取群页签列表*/
                     this.restService.getUserGroupTab(this.currentChat.alarmItem.dataId).subscribe(
                         (tab_data: NewHttpResponseInterface<GroupTabModel[]>
