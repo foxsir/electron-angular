@@ -1,4 +1,4 @@
-import {Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import ChattingModel from "@app/models/chatting.model";
 import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 import { MatDrawer } from "@angular/material/sidenav";
@@ -107,6 +107,8 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
         private messageService: MessageService,
         private currentChattingChangeService: CurrentChattingChangeService,
         private snackBarService: SnackBarService,
+        private zone: NgZone,
+        private changeDetectorRef: ChangeDetectorRef
     ) {
         this.currentSubscription = this.currentChattingChangeService.currentChatting$.subscribe(currentChat => {
           if(currentChat && this.currentChat.alarmItem.dataId !== currentChat.alarmItem.dataId) {
@@ -150,6 +152,7 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
     }
 
     initGroupData() {
+      this.myAvatar = null;
         console.log('currentChat:'+this.currentChat+"当前页面:群组信息页面");
         if (this.currentChat.metadata.chatType === 'friend') {
             return;
@@ -157,24 +160,32 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
 
         /*z获取群基本信息*/
         this.restService.getGroupBaseById(this.currentChat.alarmItem.dataId).subscribe((res: NewHttpResponseInterface<GroupInfoModel>) => {
-            if (res.status !== 200)
+          if (res.status !== 200)
                 return;
 
-            if(res.status === 200 && res.data) {
-              this.groupData = res.data;
-              this.setting_data.gmute = this.groupData.gmute === 1;
-              this.setting_data.invite = this.groupData.invite === 1;
-              this.setting_data.allowPrivateChat = this.groupData.allowPrivateChat === 1;
-              this.setting_data.gnotice = this.groupData.gnotice;
+          if(res.status === 200 && res.data) {
+            this.groupData = res.data;
+            this.groupData.gid=this.currentChat.alarmItem.dataId;
+            this.setting_data.gmute = this.groupData.gmute === 1;
+            this.setting_data.invite = this.groupData.invite === 1;
+            this.setting_data.allowPrivateChat = this.groupData.allowPrivateChat === 1;
+            this.setting_data.gnotice = this.groupData.gnotice;
 
-              console.dir(this.groupData.avatar)
-              if(this.groupData.avatar.length > 0) {
-                this.myAvatar = this.dom.bypassSecurityTrustResourceUrl(this.groupData.avatar);
-              } else {
-                this.myAvatar = this.dom.bypassSecurityTrustResourceUrl(this.avatarService.defaultLocalAvatar);
-              }
+            var avatar;
+            if(this.groupData.avatar.length > 0) {
+              avatar = this.dom.bypassSecurityTrustResourceUrl(this.groupData.avatar);
+            } else {
+              avatar = this.dom.bypassSecurityTrustResourceUrl(this.avatarService.defaultLocalAvatar);
             }
+            console.log(11111111111111111)
+            console.log(this.groupData)
+            //this.zone.run(() => {
+              this.myAvatar=avatar;
+              //this.changeDetectorRef.detectChanges();
+            //});
 
+          }
+          console.log(this.groupData);
         });
 
         /* 获取群成员列表 */
@@ -590,12 +601,19 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
     }
 
   public setAvatar(upload: UploadedFile) {
-      console.dir(upload)
     this.restService.updateGroupBaseById({
       gid: this.currentChat.alarmItem.dataId,
       avatar: upload.url.href,
     }).subscribe(res => {
       this.cacheService.cacheGroups().then();
+      this.cacheService.getChattingList().then(list =>{
+        const item = list.get(this.currentChat.alarmItem.dataId);
+        if(item) {
+          item.alarmData.alarmItem.avatar = upload.url.href;
+          this.cacheService.putChattingCache(item.alarmData).then();
+        }
+
+      })
     });
   }
 }

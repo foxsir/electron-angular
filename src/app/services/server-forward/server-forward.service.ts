@@ -37,12 +37,13 @@ export class ServerForwardService {
 
     this.cacheService.generateAlarmItem(sendId, chatType, msg.msg, dataContent.ty).then(alarm => {
       this.cacheService.getChattingCache(alarm).then(caches => {
-        const chat = caches.get(msg.uuid);
+        const chat = caches.get(msg.uuid); console.dir(chat);
         if(chat) {
           chat.text = msg.msg;
           chat.msgType = MsgType.TYPE_BACK;
           this.cacheService.putChattingCache(alarm, chat).then(() => {
             if(this.cacheService.chatMsgEntityMap.get(chat.fingerPrintOfProtocal)) {
+
               if(msg.showMsg===false){
                 this.cacheService.chatMsgEntityMap.delete(chat.fingerPrintOfProtocal);
               }

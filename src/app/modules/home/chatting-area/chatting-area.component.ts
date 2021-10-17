@@ -242,22 +242,21 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
               /*获取群基本信息*/
               this.restService.getGroupBaseById(this.currentChat.alarmItem.dataId).subscribe(res => {
                   if (res.status === 200 && res.data) {
-                      this.groupData.gnotice = res.data.gnotice == null ? '' : res.data.gnotice;
-                      this.groupData.gtopContent = res.data.gtopContent == null ? '' : res.data.gtopContent;
-                      console.log('group data: ', this.groupData);
+                    this.groupData.gnotice = res.data.gnotice == null ? '' : res.data.gnotice;
+                    this.groupData.gtopContent = res.data.gtopContent == null ? '' : res.data.gtopContent;
+                    console.log('group data: ', this.groupData);
 
-                      let gnotice_length = this.groupData.gnotice.length;
-                      let gtopContent_length = this.groupData.gtopContent.length;
-                      this.groupData.gnotice_class = 'animate-' + parseInt(((gnotice_length >= 150 ? 150 : gnotice_length) / 50).toString());
-                      this.groupData.gtopContent_class = 'animate-' + parseInt(((gtopContent_length >= 150 ? 150 : gtopContent_length) / 50).toString());
+                    let gnotice_length = this.groupData.gnotice.length;
+                    let gtopContent_length = this.groupData.gtopContent.length;
+                    this.groupData.gnotice_class = 'animate-' + parseInt(((gnotice_length >= 150 ? 150 : gnotice_length) / 50).toString());
+                    this.groupData.gtopContent_class = 'animate-' + parseInt(((gtopContent_length >= 150 ? 150 : gtopContent_length) / 50).toString());
 
-                  this.groupData.gnotice_visible = true;
-                  this.groupData.gtopContent_visible = res.data.topContentSwitch===1?true:false;
+                    this.groupData.gnotice_visible = true;
+                    this.groupData.gtopContent_visible = res.data.topContentSwitch===1?true:false;
 
-                  this.groupData.gtalkIntervalSwitch=res.data.talkIntervalSwitch===1?true:false;
-                  this.groupData.gtalkInterval=res.data.talkInterval;
+                    this.groupData.gtalkIntervalSwitch=res.data.talkIntervalSwitch===1?true:false;
+                    this.groupData.gtalkInterval=res.data.talkInterval;
                 }
-
               });
           } else {
               this.groupData = {
@@ -420,15 +419,10 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
         }
 
         //重置发言间隔时间
-        console.log("sssssssssss");
-        console.log(this.groupData);
-        this.talkIntervalSwitch=this.groupData.gtalkIntervalSwitch;
         clearInterval(this.timeInterval);
         if(this.groupData.gtalkIntervalSwitch)
         {
           this.checkAdminAndOwner();
-          console.dir(this.isAdmin);
-          console.dir(this.isOwner)
 
           if(!this.isOwner && !this.isAdmin){
             this.talkIntervalSwitch=this.groupData.gtalkIntervalSwitch;
