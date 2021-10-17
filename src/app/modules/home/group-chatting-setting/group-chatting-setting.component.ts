@@ -99,9 +99,7 @@ export class GroupChattingSettingComponent implements OnInit,OnDestroy {
             this.setting_data.revocationNotice = this.groupData.revocationNotice == 1;
             this.setting_data.kickNotice = this.groupData.kickNotice == 1;
             this.setting_data.talkIntervalSwitch = this.groupData.talkIntervalSwitch == 1;
-
             this.setting_data.talkInterval = this.groupData.talkInterval.toString();
-
             this.setting_data.gtopContent = this.groupData.gtopContent;
         });
 
@@ -129,16 +127,16 @@ export class GroupChattingSettingComponent implements OnInit,OnDestroy {
     }
 
     bySwitch(key) {
-        var data = {
-            gid: this.currentChat.alarmItem.dataId
-        };
-        data[key] = this.setting_data[key] == true ? 1 : 0;
+      var data = {
+          gid: this.currentChat.alarmItem.dataId
+      };
+      data[key] = this.setting_data[key] == true ? 1 : 0;
 
-        this.restService.updateGroupBaseById(data).subscribe(res => {
-          this.currentChattingChangeService.switchCurrentChatting(
-            this.currentChat
-          ).then();
-        });
+      this.restService.updateGroupBaseById(data).subscribe(res => {
+        this.currentChattingChangeService.switchCurrentChatting(
+          this.currentChat
+        ).then();
+      });
     }
 
     /**
@@ -232,15 +230,14 @@ export class GroupChattingSettingComponent implements OnInit,OnDestroy {
             console.log('dialog result: ', res);
 
             if (res.ok == true) {
+              var post_data = {
+                  gid: this.currentChat.alarmItem.dataId,
+                  talkInterval: res.talkInterval
+              };
 
-                var post_data = {
-                    gid: this.currentChat.alarmItem.dataId,
-                    talkInterval: res.talkInterval
-                };
-
-                this.restService.updateGroupBaseById(post_data).subscribe(res => {
-                    this.setting_data.talkInterval = post_data.talkInterval;
-                });
+              this.restService.updateGroupBaseById(post_data).subscribe(res => {
+                  this.setting_data.talkInterval = post_data.talkInterval;
+              });
             }
         });
     }
