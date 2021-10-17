@@ -222,7 +222,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
       entity.uh = this.localUserService.localUserInfo.userAvatarFileName;
       entity.isOutgoing = false;
       this.sendChatMap.set(file.uid, entity);
-        this.sendMessage.emit({
+      this.sendMessage.emit({
         chat: entity,
         dataContent: this.getDefaultDataContent(MsgType.TYPE_FILE)
       });
@@ -309,6 +309,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
     } else if (this.currentChat.metadata.chatType === 'group') {
       this.sendGroupMessage(messageType, messageText, emitToUI, replaceEntity);
     }
+    console.log('289')
 
     return false;
   }
@@ -438,6 +439,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
             this.sendMessage.emit({chat: chatMsgEntity, dataContent: res.msgBody});
           }
         });
+
 
         // this.tempList.push({
         //   chatMsgEntity: chatMsgEntity,
@@ -762,8 +764,8 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
   }
 
   startScreenShot() {
-      const winstartScreenShot = window["startScreenShot"];
-      winstartScreenShot();
+    const winstartScreenShot = window["startScreenShot"];
+    winstartScreenShot();
   }
 
   pasteContent(e: ClipboardEvent) {

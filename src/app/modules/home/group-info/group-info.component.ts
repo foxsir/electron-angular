@@ -590,6 +590,7 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
     }
 
   public setAvatar(upload: UploadedFile) {
+      console.dir(upload)
     this.restService.updateGroupBaseById({
       gid: this.currentChat.alarmItem.dataId,
       avatar: upload.url.href,
