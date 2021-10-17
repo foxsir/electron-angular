@@ -36,6 +36,7 @@ import SilenceUserModel from "@app/models/silence-user.model";
 import LastMessageModel from "@app/models/last-message.model";
 import BlackMeListModel from "@app/models/black-me-list.model";
 import {GlobalCache} from "@app/config/global-cache";
+import GroupInfoModel from "@app/models/group-info.model";
 
 export type AlarmDataMap = Map<string, {alarmData: AlarmItemInterface; message?: Map<string, ChatmsgEntityModel>}>;
 
@@ -518,6 +519,32 @@ export class CacheService extends DatabaseService {
       });
     });
   }
+
+  /**
+   * 缓存群的基本信息
+   * @param gid
+   */
+  cacheGroupModel(gid: string) {
+    this.restService.getGroupBaseById(gid).subscribe((result: NewHttpResponseInterface<GroupInfoModel>) => {
+      if (result.status !== 200) {
+        return;
+      } else {
+        this.saveDataSync<GroupModel>({model: 'group', data: result.data, update: {gid: gid}}).then(()=>{
+          this.queryData({model: 'group', query: {}}).then((res: IpcResponseInterface<GroupModel>) => {
+            const map = new Map();
+            if(res.status === 200) {
+              res.data.forEach(g => {
+                map.set(g.gid, g);
+              });
+              this.cacheSource.next({groupMap: map});
+            }
+          });
+        });
+      }
+    });
+  }
+
+
 
   /**
    * 清空缓存
@@ -1182,4 +1209,6 @@ export class CacheService extends DatabaseService {
       });
     });
   }
+
+
 }

@@ -196,17 +196,12 @@ export class IndexComponent implements OnInit {
 
     this.listenNetStatus();
 
-    this.messageDistributeService.MT46_OF_GROUP$SYSCMD_MYSELF$BE$INVITE_FROM$SERVER$.subscribe((protocol: ProtocalModel) => {
-      const content = JSON.parse(protocol.dataContent);
-      let text: string;
-      if(content.g_owner_user_uid.toString() === this.localUserService.localUserInfo.userId.toString()) {
-        text = "你已经成功创建群聊";
-      } else {
-        text = "你已经被邀请入群";
-      }
-      this.cacheService.saveSystemMessage(content.g_id, text, protocol.sm);
-    });
+
+
+
   }
+
+
 
   //#################################################################### 【1】初始化方面代码 START
   initAll() {

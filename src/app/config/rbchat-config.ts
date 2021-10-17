@@ -218,19 +218,18 @@ const UserProtocalsType = {
   MT19_OF_VIDEO$VOICE$REQUEST_ACCEPT$TO$A: 19,
 
 
-  /** 视频聊天呼叫中：拒绝视频聊天请求(接收方B) */
-  MT20_OF_VIDEO$VOICE$REQUEST_REJECT$TO$A: 20,
-  /** 实时语音聊天呼叫中：请求实时语音聊天(发起方A) */
-  MT31_OF_REAL$TIME$VOICE$REQUEST_REQUESTING$FROM$A: 31,
-  /** 实时语音聊天呼叫中：取消实时语音聊天请求(发起发A) */
-  MT32_OF_REAL$TIME$VOICE$REQUEST_ABRORT$FROM$A: 32,
-  /** 实时语音聊天呼叫中：同意实时语音聊天请求(接收方B) */
-  MT33_OF_REAL$TIME$VOICE$REQUEST_ACCEPT$TO$A: 33,
-  /** 实时语音聊天呼叫中：拒绝实时语音聊天请求(接收方B) */
-  MT34_OF_REAL$TIME$VOICE$REQUEST_REJECT$TO$A: 34,
-
-  /** 实时语音聊天进行中：结束本次实时语音聊天 */
-  MT35_OF_REAL$TIME$VOICE_END$CHATTING: 35,
+  // /** 视频聊天呼叫中：拒绝视频聊天请求(接收方B) */
+  // MT20_OF_VIDEO$VOICE$REQUEST_REJECT$TO$A: 20,
+  // /** 实时语音聊天呼叫中：请求实时语音聊天(发起方A) */
+  // MT31_OF_REAL$TIME$VOICE$REQUEST_REQUESTING$FROM$A: 31,
+  // /** 实时语音聊天呼叫中：取消实时语音聊天请求(发起发A) */
+  // MT32_OF_REAL$TIME$VOICE$REQUEST_ABRORT$FROM$A: 32,
+  // /** 实时语音聊天呼叫中：同意实时语音聊天请求(接收方B) */
+  // MT33_OF_REAL$TIME$VOICE$REQUEST_ACCEPT$TO$A: 33,
+  // /** 实时语音聊天呼叫中：拒绝实时语音聊天请求(接收方B) */
+  // MT34_OF_REAL$TIME$VOICE$REQUEST_REJECT$TO$A: 34,
+  // /** 实时语音聊天进行中：结束本次实时语音聊天 */
+  // MT35_OF_REAL$TIME$VOICE_END$CHATTING: 35,
 
   /** 临时聊天消息：由发送人A发给服务端【步骤1/2】 */
   MT42_OF_TEMP$CHAT$MSG_A$TO$SERVER: 42,
