@@ -194,8 +194,8 @@ export class IndexComponent implements OnInit {
      * 更新个人信息的指令
      */
     this.messageDistributeService.USER_INFO_UPDATE$.subscribe(protocol => {
-      const userInfo : any = JSON.parse(protocol.dataContent)
-      this.cacheService.cacheMyInfo(userInfo.userId);
+      this.cacheService.cacheMyInfo(this.localUserService.localUserInfo.userId).then();
+      this.cacheService.cacheFriends().then();
     });
 
     this.listenNetStatus();
