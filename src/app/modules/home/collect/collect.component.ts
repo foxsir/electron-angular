@@ -34,11 +34,13 @@ export class CollectComponent implements OnInit {
       label: "发送给好友",
       action: (item: CollectChatMsg) => {
         this.dialogService.openDialog(SelectFriendContactComponent, {width: '314px'}).then((friend: FriendModel) => {
-          this.cacheService.generateAlarmItem(
-            friend.friendUserUid.toString(), 'friend', item.chatMsg.text, item.chatMsg.msgType
-          ).then(alarm => {
-            this.forwardMessageService.forward(alarm, item.chatMsg);
-          });
+          if(friend) {
+            this.cacheService.generateAlarmItem(
+              friend.friendUserUid.toString(), 'friend', item.chatMsg.text, item.chatMsg.msgType
+            ).then(alarm => {
+              this.forwardMessageService.forward(alarm, item.chatMsg, false);
+            });
+          }
         });
       }
     },
