@@ -50,6 +50,7 @@ import {RedPacketInterface} from "@app/interfaces/red-packet.interface";
 import DirectoryType from "@services/file/config/DirectoryType";
 import {Subscription} from "rxjs";
 import {InputAreaService} from "@services/input-area/input-area.service";
+import {GlobalCache} from "@app/config/global-cache";
 
 const { ipcRenderer } = window.require('electron');
 
@@ -281,7 +282,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
     }
     // 检查是否在敏感词内
     let includeSensitiveWord = false;
-    this.cacheService.sensitiveList.forEach(sensitiveWord=>{
+    GlobalCache.sensitiveList.forEach(sensitiveWord=>{
       if (sensitiveWord.includes(messageText)){
         includeSensitiveWord = true;
       }
