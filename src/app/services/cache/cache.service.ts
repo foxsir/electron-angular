@@ -35,6 +35,7 @@ import AtMeModel from "@app/models/at-me.model";
 import SilenceUserModel from "@app/models/silence-user.model";
 import LastMessageModel from "@app/models/last-message.model";
 import BlackMeListModel from "@app/models/black-me-list.model";
+import {GlobalCache} from "@app/config/global-cache";
 
 export type AlarmDataMap = Map<string, {alarmData: AlarmItemInterface; message?: Map<string, ChatmsgEntityModel>}>;
 
@@ -74,8 +75,6 @@ export class CacheService extends DatabaseService {
 
   // input draft
   public draftMap: Map<string, string> = new Map<string, string>();
-
-  public sensitiveList: string[] = [];
 
   constructor(
     private messageRoamService: MessageRoamService,
@@ -967,8 +966,8 @@ export class CacheService extends DatabaseService {
     // 缓存我的黑名单
     this.restService.getSensitiveWordList().subscribe((res: NewHttpResponseInterface<string[]>) => {
       if(res.status === 200) {
-        this.sensitiveList = res.data;
-        console.log("敏感词:", this.sensitiveList);
+        GlobalCache.sensitiveList = res.data;
+        console.log("敏感词:", GlobalCache.sensitiveList);
       }
     });
   }
