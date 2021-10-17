@@ -94,6 +94,8 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
 
   public currentSubscription: Subscription;
 
+  private inputEnableStatus = true;
+
   constructor(
     private router: Router,
     private dom: DomSanitizer,
@@ -114,6 +116,10 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
     private forwardMessageService: ForwardMessageService,
     private inputAreaService: InputAreaService,
   ) {
+    this.inputAreaService.inputUpdate$.subscribe((status) => {
+      this.inputEnableStatus = status;
+    });
+    this.inputEnableStatus = this.inputAreaService.enableStatus;
   }
 
   ngOnInit(): void {
@@ -266,7 +272,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
     replaceEntity: ChatmsgEntityModel = null
   ) {
     // 检查输入框是否被禁用
-    if(this.inputAreaService.enable === false) {
+    if(this.inputEnableStatus === false) {
       return false;
     }
     // sendStatus
