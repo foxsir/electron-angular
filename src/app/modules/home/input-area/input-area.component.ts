@@ -763,8 +763,8 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
   }
 
   startScreenShot() {
-      const winstartScreenShot = window["startScreenShot"];
-      winstartScreenShot();
+    // 发送截图指令
+    ipcRenderer.send("start-screen-capture", "new message");
   }
 
   pasteContent(e: ClipboardEvent) {

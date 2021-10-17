@@ -385,42 +385,39 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  /**
-   * 被好友删除的通知
-   */
-  private subscribeDeleteFriend() {
+  public subscribeDeleteFriend() {
     this.messageDistributeService.DELETE_FRIEND$.subscribe((res: ProtocalModel) => {
       // 拿到好友id
       const dataContent: any = JSON.parse(res.dataContent);
       const friendId: string = dataContent.userId;
-      console.log("收到被好友删除的指令,好友id:" + friendId);
+      console.log("收到被好友删除的指令,好友id:"+friendId);
       // 先找的这个会话
       this.cacheService.generateAlarmItem(friendId, 'friend').then(chat => {
         // 删除所有的聊天记录
-        this.cacheService.clearChattingCache(chat).then(() => {
-        });
+        this.cacheService.clearChattingCache(chat).then(() => {});
         // 删除会话
-        this.cacheService.deleteChattingCache(friendId).then(() => {
-        });
-        // // 删除聊天界面
-        console.log("当前会话是:", this.currentChat);
+        this.cacheService.deleteChattingCache(friendId).then(() => {});
+        // 删除聊天界面
+        console.log("当前会话是:",this.currentChat);
         if (this.currentChat && this.currentChat.alarmItem.dataId == friendId) {
           this.currentChattingChangeService.switchCurrentChatting(null).then();
         }
-        // 从我好友里
-        this.cacheService.deleteData<FriendModel>({model: 'friend', query: {friendUserUid: Number(friendId)}}).then();
+        // 从我好友里里删除
+        this.cacheService.deleteData<FriendModel>({model: 'friend', query: {friendUserUid: Number(friendId)}}).then(() => {
+          // 更新好友缓存
+          this.cacheService.cacheFriends().then();
+        });
         // 删除置顶
-        this.cacheService.deleteData<TopModel>({model: 'top', query: {dataId: friendId}}).then();
+        this.cacheService.deleteData<TopModel>({model:'top',query:{dataId:friendId}}).then();
         // 从我的黑名单里删除
-        this.cacheService.deleteData<BlackListModel>({model: 'blackList', query: {userUid: Number(friendId)}}).then();
+        this.cacheService.deleteData<BlackListModel>({model:'blackList',query:{userUid:Number(friendId)}}).then();
         // 从拉黑我的人里删除
-        this.cacheService.deleteData<BlackMeListModel>({
-          model: 'blackMeList',
-          query: {userUid: Number(friendId)}
-        }).then();
+        this.cacheService.deleteData<BlackMeListModel>({model:'blackMeList',query:{userUid:Number(friendId)}}).then();
       });
     });
   }
+
+
 
   /**
    * 订阅群相关的系统消息

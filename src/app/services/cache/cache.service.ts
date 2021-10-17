@@ -44,7 +44,7 @@ interface CacheItem {
   alarmDataMap: AlarmDataMap; // 会话信息
   friendMap: Map<string, FriendModel>; // 好友信息
   groupMap: Map<string, GroupModel>; // 我的群组
-  groupAdminMap: Map<string, Map<string, GroupAdminModel>>; // 群组管理员
+  groupAdminMap: Map<string, GroupAdminModel>; // 群组管理员
   groupMemberMap: Map<string, GroupMemberModel>; // 群组成员
   myInfo: UserModel; // 当前用户信息
   muteMap: Map<string, boolean>; // 静音的会话
@@ -408,11 +408,14 @@ export class CacheService extends DatabaseService {
           const friendList: FriendModel[] = res.data;
           if (friendList.length > 0) {
             const data = new Map<string, FriendModel>();
-            friendList.forEach(f => {
+            friendList.forEach((f, key) => {
               data.set(f.friendUserUid.toString(), f);
-              this.saveData<FriendModel>({model: 'friend', data: f, update: {friendUserUid: f.friendUserUid}});
+              this.saveDataSync<FriendModel>({model: 'friend', data: f, update: {friendUserUid: f.friendUserUid}}).then(() => {
+                if(key === friendList.length - 1) {
+                  this.cacheSource.next({friendMap: data});
+                }
+              });
             });
-            this.cacheSource.next({friendMap: data});
           }
           resolve(true);
         }
@@ -426,14 +429,20 @@ export class CacheService extends DatabaseService {
   cacheGroups(): Promise<boolean> {
     return new Promise(resolve => {
       this.restService.getUserJoinGroup().subscribe((res: NewHttpResponseInterface<GroupModel[]>) => {
+        const groupMap = new Map<string, GroupModel>();
         if(res.status === 200) {
-          const groupMap = new Map<string, GroupModel>();
-          res.data.forEach(g => {
+          res.data.forEach((g, key) => {
             if(g) {
               groupMap.set(g.gid, g);
-              this.saveData<GroupModel>({model: 'group', data: g, update: {gid: g.gid}});
+              this.saveDataSync<GroupModel>({model: 'group', data: g, update: {gid: g.gid}}).then(() => {
+                if(key === res.data.length - 1) {
+                  this.cacheSource.next({groupMap: groupMap});
+                  resolve(true);
+                }
+              });
             }
           });
+        } else {
           this.cacheSource.next({groupMap: groupMap});
           resolve(true);
         }
@@ -444,21 +453,26 @@ export class CacheService extends DatabaseService {
   /**
    * 获取并缓存群管理员Map
    */
-  cacheGroupAdmins(gid: string): Promise<Map<string, Map<string, GroupAdminModel>>> {
+  cacheGroupAdmins(gid: string): Promise<Map<string, GroupAdminModel>> {
     return new Promise(resolve => {
       this.restService.getGroupAdminList(gid).subscribe((res: NewHttpResponseInterface<GroupAdminModel[]>) => {
+        const groupAdminMap = new Map<string, GroupAdminModel>();
         if(res.status === 200) {
-          const groupAdminMap = new Map<string, GroupAdminModel>();
-          res.data.forEach(admin => {
+          res.data.forEach((admin, key) => {
             groupAdminMap.set(admin.userUid.toString(), admin);
             admin.gid = gid;
-            this.saveData<GroupAdminModel>({
+            this.saveDataSync<GroupAdminModel>({
               model: "groupAdmin", data: admin, update: {gid: gid, userUid: admin.userUid}
+            }).then(() => {
+              if(key === res.data.length - 1) {
+                this.cacheSource.next({groupAdminMap: groupAdminMap});
+                resolve(groupAdminMap);
+              }
             });
           });
-          const newData = new Map<string, Map<string, GroupAdminModel>>();
-          this.cacheSource.next({groupAdminMap: newData});
-          resolve(newData);
+        } else {
+          this.cacheSource.next({groupAdminMap: groupAdminMap});
+          resolve(groupAdminMap);
         }
       });
     });
@@ -709,7 +723,7 @@ export class CacheService extends DatabaseService {
       await this.queryData<ChattingModel>({
         model: 'chatting', query: {dataId: dataId}
       }).then((cache: IpcResponseInterface<ChattingModel>)  => {
-        if(cache.status === 200) {
+        if(cache.status === 200 && cache.data && cache.data.length > 0) {
           text = cache.data[0].msgContent;
         }
       });
@@ -880,14 +894,20 @@ export class CacheService extends DatabaseService {
   cacheGroupMembers(gid: string): Promise<Map<string, GroupMemberModel>> {
     return new Promise(resolve => {
       this.restService.submitGetGroupMembersListFromServer(gid).subscribe((res: NewHttpResponseInterface<{list: GroupMemberModel[]}>) => {
+        const groupMemberMap = new Map<string, GroupMemberModel>();
         if(res.status === 200) {
-          const groupMemberMap = new Map<string, GroupMemberModel>();
-          res.data.list.forEach(member => {
+          res.data.list.forEach((member, key) => {
             groupMemberMap.set(member.userUid.toString(), member);
-            this.saveData<GroupMemberModel>({
+            this.saveDataSync<GroupMemberModel>({
               model: "groupMember", data: member, update: {groupId: gid, userUid: member.userUid}
+            }).then(() => {
+              if(key === res.data.list.length - 1) {
+                this.cacheSource.next({groupMemberMap: groupMemberMap});
+                resolve(groupMemberMap);
+              }
             });
           });
+        } else {
           this.cacheSource.next({groupMemberMap: groupMemberMap});
           resolve(groupMemberMap);
         }
