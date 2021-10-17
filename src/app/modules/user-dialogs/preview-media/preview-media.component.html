@@ -1,0 +1,8 @@
+<mat-card class="preview-window">
+  <mat-card-content *ngIf="data.type === 'image'">
+    <img [src]="data.url" alt="" mat-card-image>
+  </mat-card-content>
+  <mat-card-content *ngIf="data.type === 'video'">
+    <video [src]="data.url" mat-card-image controls></video>
+  </mat-card-content>
+</mat-card>
