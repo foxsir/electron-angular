@@ -33,3 +33,5 @@
 <app-message-voice-call *ngIf="chatMsg.msgType ===  msgType.TYPE_VOICE_CALL" [chatMsg]="chatMsg"></app-message-voice-call>
 
 <app-message-quote *ngIf="chatMsg.msgType ===  msgType.TYPE_QUOTE" [chatMsg]="chatMsg"></app-message-quote>
+
+<app-message-notice *ngIf="chatMsg.msgType === 999" [chatMsg]="chatMsg"></app-message-notice>

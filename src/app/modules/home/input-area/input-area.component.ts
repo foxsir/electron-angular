@@ -49,8 +49,7 @@ import {RedPocketComponent} from "@modules/user-dialogs/red-pocket/red-pocket.co
 import {RedPacketInterface} from "@app/interfaces/red-packet.interface";
 import DirectoryType from "@services/file/config/DirectoryType";
 import {Subscription} from "rxjs";
-import Global = WebAssembly.Global;
-import {GlobalCache} from "@app/config/global-cache";
+import {InputAreaService} from "@services/input-area/input-area.service";
 
 const { ipcRenderer } = window.require('electron');
 
@@ -95,6 +94,8 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
 
   public currentSubscription: Subscription;
 
+  private inputEnableStatus = true;
+
   constructor(
     private router: Router,
     private dom: DomSanitizer,
@@ -113,7 +114,12 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
     private dialogService: DialogService,
     private localUserService: LocalUserService,
     private forwardMessageService: ForwardMessageService,
+    private inputAreaService: InputAreaService,
   ) {
+    this.inputAreaService.inputUpdate$.subscribe((status) => {
+      this.inputEnableStatus = status;
+    });
+    this.inputEnableStatus = this.inputAreaService.enableStatus;
   }
 
   ngOnInit(): void {
@@ -265,13 +271,17 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
     emitToUI: boolean = true,
     replaceEntity: ChatmsgEntityModel = null
   ) {
+    // 检查输入框是否被禁用
+    if(this.inputEnableStatus === false) {
+      return false;
+    }
     // sendStatus
     if (!messageText || messageText.trim().length === 0) {
       return false;
     }
     // 检查是否在敏感词内
     let includeSensitiveWord = false;
-    GlobalCache.sensitiveList.forEach(sensitiveWord=>{
+    this.cacheService.sensitiveList.forEach(sensitiveWord=>{
       if (sensitiveWord.includes(messageText)){
         includeSensitiveWord = true;
       }

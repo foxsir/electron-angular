@@ -35,7 +35,6 @@ import AtMeModel from "@app/models/at-me.model";
 import SilenceUserModel from "@app/models/silence-user.model";
 import LastMessageModel from "@app/models/last-message.model";
 import BlackMeListModel from "@app/models/black-me-list.model";
-import {GlobalCache} from "@app/config/global-cache";
 
 export type AlarmDataMap = Map<string, {alarmData: AlarmItemInterface; message?: Map<string, ChatmsgEntityModel>}>;
 
@@ -75,6 +74,8 @@ export class CacheService extends DatabaseService {
 
   // input draft
   public draftMap: Map<string, string> = new Map<string, string>();
+
+  public sensitiveList: string[] = [];
 
   constructor(
     private messageRoamService: MessageRoamService,
@@ -490,9 +491,7 @@ export class CacheService extends DatabaseService {
         const map = new Map();
         if(res.status === 200) {
           res.data.forEach(f => {
-            if (f.friendUserUid) {
-              map.set(f.friendUserUid.toString(), f);
-            }
+            map.set(f.friendUserUid.toString(), f);
           });
           resolve(map);
         } else {
@@ -684,12 +683,8 @@ export class CacheService extends DatabaseService {
       await this.queryData<ChattingModel>({
         model: 'chatting', query: {dataId: dataId}
       }).then((cache: IpcResponseInterface<ChattingModel>)  => {
-        if(cache.status === 200 ) {
-          if (cache.data.length > 0) {
-            text = cache.data[0].msgContent;
-          } else {
-            text = '';
-          }
+        if(cache.status === 200) {
+          text = cache.data[0].msgContent;
         }
       });
     }
@@ -952,8 +947,8 @@ export class CacheService extends DatabaseService {
     // 缓存我的黑名单
     this.restService.getSensitiveWordList().subscribe((res: NewHttpResponseInterface<string[]>) => {
       if(res.status === 200) {
-        GlobalCache.sensitiveList = res.data;
-        console.log("敏感词:", GlobalCache.sensitiveList);
+        this.sensitiveList = res.data;
+        console.log("敏感词:", this.sensitiveList);
       }
     });
   }
@@ -1107,7 +1102,7 @@ export class CacheService extends DatabaseService {
   /**
    * 获取拉黑我的人员列表
    */
-  getBlackMeListCache():Promise<Map<string, BlackMeListModel>>  {
+  getBlackMeListCache(): Promise<Map<string, BlackMeListModel>>  {
     return new Promise((resolve) => {
       this.queryData({model: 'blackMeList', query: null}).then((res: IpcResponseInterface<BlackMeListModel>) => {
         const map = new Map();
@@ -1170,6 +1165,21 @@ export class CacheService extends DatabaseService {
           });
         });
         this.cacheSource.next({alarmDataMap: map});
+      });
+    });
+  }
+
+  saveSystemMessage(dataId: number, content: string, timestamp: number) {
+    const chatMsgEntity: ChatmsgEntityModel = this.messageEntityService.prepareRecievedMessage(
+      dataId.toString(), "", content, timestamp, 0, ""
+    );
+    chatMsgEntity.dataId = dataId.toString();
+    chatMsgEntity.msgType = 999;
+    this.saveDataSync<ChatmsgEntityModel>({
+      model: "chatmsgEntity", data: chatMsgEntity, update: null
+    }).then(() => {
+      this.getChattingList().then(list => {
+        this.cacheSource.next({alarmDataMap: list});
       });
     });
   }

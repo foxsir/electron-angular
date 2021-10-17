@@ -2,7 +2,7 @@ import {Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import ChattingModel from "@app/models/chatting.model";
 import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 import { MatDrawer } from "@angular/material/sidenav";
-import { DomSanitizer } from "@angular/platform-browser";
+import {DomSanitizer, SafeResourceUrl} from "@angular/platform-browser";
 
 import closeIcon from "@app/assets/icons/close.svg";
 import closeActiveIcon from "@app/assets/icons/close-active.svg";
@@ -23,7 +23,9 @@ import NewHttpResponseInterface from "@app/interfaces/new-http-response.interfac
 import GroupInfoModel from "@app/models/group-info.model";
 import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 import {GroupModel} from "@app/models/group.model";
+import {UploadedFile} from "@app/factorys/upload/upload-file/upload-file.component";
 import {Subscription} from "rxjs";
+import {AvatarService} from "@services/avatar/avatar.service";
 
 @Component({
     selector: 'app-group-info',
@@ -40,6 +42,8 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
     public backspaceIcon = this.dom.bypassSecurityTrustResourceUrl(backspaceIcon);
     public backspaceActiveIcon = this.dom.bypassSecurityTrustResourceUrl(backspaceActiveIcon);
     public arrowRightIcon = this.dom.bypassSecurityTrustResourceUrl(arrowRightIcon);
+
+    myAvatar: SafeResourceUrl = null;
 
     public userinfo: any;
     public user_role: string; /*当前用户在这个群的角色：owner, admin, common*/
@@ -96,6 +100,7 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
     constructor(
         private dom: DomSanitizer,
         private restService: RestService,
+        private avatarService: AvatarService,
         private dialogService: DialogService,
         private localUserService: LocalUserService,
         private cacheService: CacheService,
@@ -130,8 +135,7 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-
-        this.initGroupData();
+      this.initGroupData();
     }
 
     loadGroupAdminList() {
@@ -153,7 +157,6 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
 
         /*z获取群基本信息*/
         this.restService.getGroupBaseById(this.currentChat.alarmItem.dataId).subscribe((res: NewHttpResponseInterface<GroupInfoModel>) => {
-            console.log('getGroupBaseById result: ', res);
             if (res.status !== 200)
                 return;
 
@@ -163,6 +166,13 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
               this.setting_data.invite = this.groupData.invite === 1;
               this.setting_data.allowPrivateChat = this.groupData.allowPrivateChat === 1;
               this.setting_data.gnotice = this.groupData.gnotice;
+
+              console.dir(this.groupData.avatar)
+              if(this.groupData.avatar.length > 0) {
+                this.myAvatar = this.dom.bypassSecurityTrustResourceUrl(this.groupData.avatar);
+              } else {
+                this.myAvatar = this.dom.bypassSecurityTrustResourceUrl(this.avatarService.defaultLocalAvatar);
+              }
             }
 
         });
@@ -321,8 +331,6 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
         };
 
         this.dialogService.openDialog(DemoDialogComponent, { data: data }).then((res: any) => {
-            console.log('dialog result: ', res);
-
             if (res.ok == true) {
 
                 var post_data = {
@@ -350,8 +358,6 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
         };
 
         this.dialogService.openDialog(GroupInfoDialogComponent, { data: data }).then((res: any) => {
-            console.log('group info dialog result: ', res);
-
             if (res.ok == false) {
                 return;
             }
@@ -404,8 +410,6 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
             popup_title: popup_title,
         };
         this.dialogService.openDialog(GroupInfoDialogComponent, { data: data,width: '314px',panelClass: "padding-less-dialog" }).then((res: any) => {
-            console.log('group info dialog result: ', res);
-
             if (res.ok == false) {
                 return;
             }
@@ -441,8 +445,6 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
         };
 
         this.dialogService.openDialog(GroupInfoDialogComponent, { data: data }).then((res: any) => {
-            console.log('group info dialog result: ', res);
-
             if (res.ok == false) {
                 return;
             }
@@ -587,4 +589,12 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
       this.currentSubscription.unsubscribe();
     }
 
+  public setAvatar(upload: UploadedFile) {
+    this.restService.updateGroupBaseById({
+      gid: this.currentChat.alarmItem.dataId,
+      avatar: upload.url.href,
+    }).subscribe(res => {
+      this.cacheService.cacheGroups().then();
+    });
+  }
 }

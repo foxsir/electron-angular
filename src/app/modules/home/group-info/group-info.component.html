@@ -26,7 +26,10 @@
             </div>
           </div>
           <div class="user-info-headimg">
-            <img class="img-head" [src]="currentChat.alarmItem.avatar"/>
+              <app-upload-file *ngIf="myAvatar"
+                               directoryType="user_portrait"
+                               [fileTypes]="['image/png', 'image/jpg', 'image/jpeg']"
+                               (fileUploaded)="setAvatar($event)" [options]="{icon: myAvatar, showProgress: true, size: {width: '40px',height:'40px'}}"></app-upload-file>
             <div class="status-bar">
               <span>{{currentChat.alarmItem.title}}</span>
               <span class="persons">人数：{{groupData.gmemberCount}}人</span>

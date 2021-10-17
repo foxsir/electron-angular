@@ -43,7 +43,12 @@ export class ServerForwardService {
           chat.msgType = MsgType.TYPE_BACK;
           this.cacheService.putChattingCache(alarm, chat).then(() => {
             if(this.cacheService.chatMsgEntityMap.get(chat.fingerPrintOfProtocal)) {
-              this.cacheService.chatMsgEntityMap.set(chat.fingerPrintOfProtocal, chat);
+              if(msg.showMsg===false){
+                this.cacheService.chatMsgEntityMap.delete(chat.fingerPrintOfProtocal);
+              }
+              else {
+                this.cacheService.chatMsgEntityMap.set(chat.fingerPrintOfProtocal, chat);
+              }
             }
           });
         }

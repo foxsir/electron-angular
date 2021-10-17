@@ -1,16 +1,18 @@
 import {
   AfterContentInit,
   AfterViewChecked,
-  AfterViewInit, ChangeDetectionStrategy,
+  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef,
   Component,
   ElementRef,
-  Input, OnDestroy,
+  Input, NgZone, OnDestroy,
   OnInit,
   ViewChild
 } from '@angular/core';
 import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 import {DomSanitizer, SafeResourceUrl} from "@angular/platform-browser";
 import {AvatarService} from "@services/avatar/avatar.service";
+
+import {formatDate} from "@app/libs/mobileimsdk-client-common";
 
 import settingIcon from "@app/assets/icons/setting.svg";
 import settingActiveIcon from "@app/assets/icons/setting-active.svg";
@@ -67,6 +69,8 @@ import GroupInfoModel from "@app/models/group-info.model";
 import {convertNodeSourceSpanToLoc} from "@angular-eslint/template-parser/dist/convert-source-span-to-loc";
 import {Subscription} from "rxjs";
 import {SnackBarService} from "@services/snack-bar/snack-bar.service";
+import {GroupInfoDialogComponent} from "@modules/user-dialogs/group-info-dialog/group-info-dialog.component";
+import {GroupNoticeComponent} from "@modules/user-dialogs/group-notice/group-notice.component";
 
 @Component({
   selector: 'app-chatting-area',
@@ -82,6 +86,8 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
   public currentChat: AlarmItemInterface;
 
   public blacked:boolean = false;
+
+  public formatDate = formatDate;
 
   public drawerContent = {
     setting: false,
@@ -150,6 +156,8 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
         gtopContent_visible: true,
         gnotice_class: '',
         gtopContent_class: '',
+        gtalkIntervalSwitch: false,
+        gtalkInterval: 3,
     };
 
   // @我的消息
@@ -161,8 +169,11 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
   public isOwner: boolean = false;
 
   public currentSubscription: Subscription;
-
   public itemSize: number = 0;
+  //发言时间间隔
+  public talkIntervalSwitch: boolean = false;
+  public talkInterval: number = 0;
+  public timeInterval = null;
 
   constructor(
     public cacheService: CacheService, // 模版中要用
@@ -182,6 +193,8 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
     private serverForwardService: ServerForwardService,
     private messageService: MessageService,
     private snackBarService: SnackBarService,
+    private zone: NgZone,
+    private changeDetectorRef: ChangeDetectorRef
   ) {
     this.localUserInfo = this.localUserService.localUserInfo;
 
@@ -238,9 +251,12 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
                       this.groupData.gnotice_class = 'animate-' + parseInt(((gnotice_length >= 150 ? 150 : gnotice_length) / 50).toString());
                       this.groupData.gtopContent_class = 'animate-' + parseInt(((gtopContent_length >= 150 ? 150 : gtopContent_length) / 50).toString());
 
-                      this.groupData.gnotice_visible = true;
-                      this.groupData.gtopContent_visible = true;
-                  }
+                  this.groupData.gnotice_visible = true;
+                  this.groupData.gtopContent_visible = res.data.topContentSwitch===1?true:false;
+
+                  this.groupData.gtalkIntervalSwitch=res.data.talkIntervalSwitch===1?true:false;
+                  this.groupData.gtalkInterval=res.data.talkInterval;
+                }
 
               });
           } else {
@@ -251,6 +267,8 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
                   gtopContent_visible: true,
                   gnotice_class: '',
                   gtopContent_class: '',
+                  gtalkIntervalSwitch: false,
+                  gtalkInterval: 3,
               };
           }
       }
@@ -399,6 +417,40 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
           this.cacheService.chatMsgEntityMap.set(data.chat.fingerPrintOfProtocal, data.chat);
           // this.cacheService.chatMsgEntityList = new Array(...this.cacheService.chatMsgEntityMap).flatMap(t => t[1]);
           this.scrollToBottom();
+        }
+
+        //重置发言间隔时间
+        console.log("sssssssssss");
+        console.log(this.groupData);
+        this.talkIntervalSwitch=this.groupData.gtalkIntervalSwitch;
+        clearInterval(this.timeInterval);
+        if(this.groupData.gtalkIntervalSwitch)
+        {
+          this.checkAdminAndOwner();
+          console.dir(this.isAdmin);
+          console.dir(this.isOwner)
+
+          if(!this.isOwner && !this.isAdmin){
+            this.talkIntervalSwitch=this.groupData.gtalkIntervalSwitch;
+            this.talkInterval=this.groupData.gtalkInterval;
+
+            this.timeInterval=setInterval(() => {
+              console.log(this.talkInterval);
+              if(this.talkInterval<=0){
+                this.zone.run(() => {
+                  this.talkIntervalSwitch=false;
+                  this.changeDetectorRef.detectChanges();
+                });
+                clearInterval(this.timeInterval);
+              }
+              else{
+                this.zone.run(() => {
+                  this.talkInterval--;
+                  this.changeDetectorRef.detectChanges();
+                });
+              }
+            },1000);
+          }
         }
       }
     }
@@ -803,7 +855,8 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
         if(goBottom) {
           this.scrollToBottom("auto");
         }
-        console.dir("拉取缓存消息,缓存消息数量:",this.cacheService.chatMsgEntityMap.size);
+        console.dir("拉取缓存消息");
+        console.dir(this.cacheService.chatMsgEntityMap.size);
       } else if(this.cacheService.chatMsgEntityMap.size > 0) {
         // 从漫游接口获取数据
         const list: ChatmsgEntityModel[] = new Array(...this.cacheService.chatMsgEntityMap.values());
@@ -876,23 +929,27 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
             list: []
         };
 
-        //如果是群聊，加载群页签数据
-        if (this.currentChat && this.currentChat.alarmItem.chatType === 'group') {
-            this.restService.getGroupBaseById(this.currentChat.alarmItem.dataId).subscribe((group_data: NewHttpResponseInterface<GroupModel>) => {
-                if (group_data.data.tabSwitch && group_data.data.tabSwitch === 1) {
-                    /*获取群页签列表*/
-                    this.restService.getUserGroupTab(this.currentChat.alarmItem.dataId).subscribe(
-                        (tab_data: NewHttpResponseInterface<GroupTabModel[]>
-                        ) => {
-                            this.group_tab_data = {
-                                visible: true,
-                                list: tab_data.data
-                            };
-                        });
-                }
-            });
-        }
-    }
+      //如果是群聊，加载群页签数据
+      if (this.currentChat && this.currentChat.alarmItem.chatType === 'group') {
+          this.restService.getGroupBaseById(this.currentChat.alarmItem.dataId).subscribe((group_data: NewHttpResponseInterface<GroupModel>) => {
+              if (group_data.data.tabSwitch === 1) {
+                  /*获取群页签列表*/
+                  this.restService.getUserGroupTab(this.currentChat.alarmItem.dataId).subscribe(
+                      (tab_data: NewHttpResponseInterface<GroupTabModel[]>
+                      ) => {
+                          this.group_tab_data = {
+                              visible: true,
+                              list: tab_data.data
+                          };
+                      });
+              }
+              this.groupData.gtopContent_visible = group_data.data.topContentSwitch===1?true:false;
+
+              this.groupData.gtalkIntervalSwitch=group_data.data.talkIntervalSwitch===1?true:false;
+              this.groupData.gtalkInterval=group_data.data.talkInterval;
+          });
+      }
+  }
 
   /**
    * 临时缓存禁言Map
@@ -1004,4 +1061,25 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
     this.currentSubscription.unsubscribe();
   }
 
+  /* 弹窗群消息和群上屏     */
+  showTopWIn(choose_type) {
+    var data;
+    if (choose_type === 'notice') {
+      data={
+        title:'群组公告',
+        txt:this.groupData.gnotice,
+      }
+    }
+    else if (choose_type === 'topContent') {
+      data={
+        title:'群组上屏',
+        txt:this.groupData.gtopContent,
+      }
+    }
+    this.dialogService.openDialog(GroupNoticeComponent, { data: data,width: '314px',panelClass: "padding-less-dialog" }).then((res: any) => {
+      if (res.ok === false) {
+        return;
+      }
+    });
+  }
 }
