@@ -62,6 +62,7 @@ export class MyFriendsComponent implements OnInit {
 
   showFriend(data: Map<string, FriendModel>) {
     this.friendList = [];
+    this.frienddata = [];
     data.forEach(item => {
       this.friendList.push(item);
     });
