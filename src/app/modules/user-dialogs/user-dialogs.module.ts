@@ -34,6 +34,7 @@ import { MyFriendGroupComponent } from './my-friend-group/my-friend-group.compon
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 import {NzInputNumberModule} from "ng-zorro-antd/input-number";
 import {GroupNoticeComponent} from "./group-notice/group-notice.component";
+import { PreviewMediaComponent } from './preview-media/preview-media.component';
 
 @NgModule({
     declarations: [
@@ -51,7 +52,8 @@ import {GroupNoticeComponent} from "./group-notice/group-notice.component";
         SelectFriendContactComponent,
         RedBagComponent,
         MyFriendGroupComponent,
-        GroupNoticeComponent
+        GroupNoticeComponent,
+        PreviewMediaComponent
     ],
     exports: [
         PrivacySettingComponent
