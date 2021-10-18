@@ -21,7 +21,7 @@ import {GlobalCache} from "@app/config/global-cache";
 export class IndexComponent implements OnInit {
   registerType: number = 0;
   selectedTab: number = 0;
-  public loginProtocol : boolean = true;
+  loginProtocol:boolean = true;
 
   constructor(
     public router: Router,
@@ -38,6 +38,7 @@ export class IndexComponent implements OnInit {
     if(this.router.url === '/session/register') {
       this.selectedTab = 1;
     }
+    this.loginProtocol = GlobalCache.loginProtocol;
   }
 
   /**
@@ -67,7 +68,8 @@ export class IndexComponent implements OnInit {
 
   selectLoginProtocol(event) {
     event.preventDefault();
-    this.loginProtocol = !this.loginProtocol;
+    GlobalCache.loginProtocol = !GlobalCache.loginProtocol;
+    this.loginProtocol = GlobalCache.loginProtocol;
   }
 
   /**

@@ -12,6 +12,7 @@ import {UserModel} from "@app/models/user.model";
 import LocalUserinfoModel from "@app/models/local-userinfo.model";
 import {SessionService} from "@services/session/session.service";
 import {IndexComponent} from "@modules/session/index/index.component";
+import {GlobalCache} from "@app/config/global-cache";
 
 interface Login {
   login: boolean;
@@ -42,9 +43,9 @@ export class LoginComponent implements OnInit {
   }
 
   public onSubmit() {
-    console.log("已阅读服务条款:",this.indexComponent.loginProtocol);
-    if (!this.indexComponent.loginProtocol) {
-      return this.snackBarService.openMessage("请确认已阅读服务条款");
+    console.log("已阅读服务条款:",GlobalCache.loginProtocol);
+    if (!GlobalCache.loginProtocol) {
+      return this.snackBarService.openMessage("登录前请确认已阅读服务条款");
     }
     if (this.loginForm.form.valid) {
       const value = this.loginForm.form.value;
