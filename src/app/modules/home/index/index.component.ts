@@ -32,6 +32,7 @@ import {MiniUiService} from "@services/mini-ui/mini-ui.service";
 import {FriendRequestModel} from "@app/models/friend-request.model";
 import IpcResponseInterface from "@app/interfaces/ipc-response.interface";
 import FriendModel from "@app/models/friend.model";
+const { ipcRenderer } = window.require('electron');
 
 // import svg end
 
@@ -112,6 +113,15 @@ export class IndexComponent implements OnInit {
       }
     });
     this.connectDB();
+
+    ipcRenderer.on("download-completed", (event, msg) => {
+      if(msg) {
+        this.zone.run(() => {
+          this.snackBarService.openMessage("保存完成");
+          this.changeDetectorRef.detectChanges();
+        });
+      }
+    });
 
   }
 

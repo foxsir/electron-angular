@@ -2,6 +2,9 @@ import { Injectable } from '@angular/core';
 import * as OSS from "ali-oss";
 import OssConfig from "@services/file/config/OssConfig";
 import DirectoryType from "@services/file/config/DirectoryType";
+import CommonTools from "@app/common/common.tools";
+import {Subject} from "rxjs";
+const { ipcRenderer } = window.require('electron');
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +19,17 @@ export class FileService {
     endpoint: OssConfig.endpoint,
   });
 
-  constructor() { }
+  private amr2mp3Source = new Subject<any>();
+  private amr2mp3$ = this.amr2mp3Source.asObservable();
+
+  private listen = false;
+
+  constructor() {
+    if(this.listen !== true) {
+      this.listen = true;
+      this.listenReply();
+    }
+  }
 
   /**
    * 可接受数据类型 Buffer/Blob/File
@@ -48,15 +61,27 @@ export class FileService {
     return [OssConfig.bucketDomain, '/', pathname].join("").replace('//', '/');
   }
 
-}
+  listenReply() {
+    ipcRenderer.on('amr2mp3-reply', (event, arg: boolean) => {
+      this.amr2mp3Source.next(arg);
+    });
+  }
 
-//
-// this.client.list(null, {timeout: 3000}).then((result) => {
-//   console.log('objects: %j', result.objects);
-//   return this.client.put('message_file/my-obj.txt', Buffer.from("你好", "utf-8"));
-// }).then((result) => {
-//   console.log('put result: %j', result);
-//   return this.client.get('message_file/my-obj.txt');
-// }).then((result) => {
-//   console.log('get result: %j', result.content.toString());
-// });
+  amr2mp3(url) {
+    return new Promise((resolve) => {
+      const data = {
+        url: url,
+        uuid: CommonTools.uuid()
+      };
+      ipcRenderer.send('amr2mp3', data);
+
+      const subscribe = this.amr2mp3$.subscribe((res) => {
+        if(res.uuid === data.uuid) {
+          resolve(res);
+          subscribe.unsubscribe();
+        }
+      });
+    });
+  }
+
+}
