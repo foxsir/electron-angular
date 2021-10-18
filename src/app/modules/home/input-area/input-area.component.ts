@@ -701,11 +701,14 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
       if(friend) {
         this.dialogService.confirm({title: "消息提示", text: "确认分享联系信息到当前聊天吗？"}).then((ok) => {
           if(ok) {
-            const messageText = JSON.stringify({
-              nickName: friend.nickname,
-              uid: friend.friendUserUid,
+            this.cacheService.getCacheFriends().then(cache => {
+              const messageText = JSON.stringify({
+                nickName: friend.nickname,
+                uid: friend.friendUserUid,
+                userAvatar: cache.get(friend.friendUserUid.toString())?.userAvatarFileName,
+              });
+              this.doSend(messageText, MsgType.TYPE_CONTACT,true);
             });
-            this.doSend(messageText, MsgType.TYPE_CONTACT,true);
           }
         });
       }
