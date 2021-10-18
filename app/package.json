@@ -10,6 +10,8 @@
     "iconv-lite": "^0.6.2",
     "reflect-metadata": "0.1.13",
     "sqlite3": "5.0.2",
-    "typeorm": "0.2.37"
+    "typeorm": "0.2.37",
+    "@ffmpeg-installer/ffmpeg": "1.1.0",
+    "fluent-ffmpeg": "2.1.2"
   }
 }
