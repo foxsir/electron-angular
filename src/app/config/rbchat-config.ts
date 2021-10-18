@@ -287,6 +287,9 @@ const UserProtocalsType = {
   // 踢人时通知客户端删除消息的指令
   DELETE_FRIEND_FOR_TIREN: 78,
 
+  // 删除单聊消息
+  DELETE_CHAT_MESSAGE: 79,
+
   // 群聊/世界频道聊天消息：由服务端转发给所有在线接收人B的【步骤2/2】
   GROUP_DIRECTIVE_FOR_SYSTEM: 100
 };

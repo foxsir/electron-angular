@@ -10,6 +10,11 @@ export default class ChatmsgEntityModel extends BaseEntity {
   /** 消息发起者的uid（用于功能链接中使用） */
   uid: string = null;
 
+  /**
+   * 是群组聊天时,消息发送者id
+   */
+  memberId: number = null;
+
   /** 昵称（用于显示） */
   name: string = null;
   /** 消息时间戳长整数（形如：1525330876101） */

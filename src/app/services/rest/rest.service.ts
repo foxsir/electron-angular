@@ -45,7 +45,7 @@ import {
   UpGroupCustomerService,
   UpUserGroupTab,
   verifyCode, GetFriendInfo, getGroupSilenceById, deleteGroupSilenceById,
-  getBlackDetail, getBlackMeUser, getSensitiveWord
+  getBlackDetail, getBlackMeUser, getSensitiveWord, getUserOfflineInstruct
 } from "@app/config/post-api";
 import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 
@@ -1280,6 +1280,16 @@ export class RestService {
     return this.http.postForm(getBlackDetail, {
       blackUserId: this.localUserService.localUserInfo.userId,
       userId: friendId
+    });
+  }
+
+  /**
+   * 检查我是否被当前会话的好友拉黑
+   * @param friendId
+   */
+  getUserOfflineInstruct(userId: number) {
+    return this.http.get(getUserOfflineInstruct, {
+      userId: userId
     });
   }
 
