@@ -100,6 +100,7 @@ export class RegisterComponent implements OnInit {
         }
         this.registerType = res.data.registerType;
       }
+      this.form.form.reset();
     });
   }
 
