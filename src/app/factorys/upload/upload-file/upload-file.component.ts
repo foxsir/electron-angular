@@ -39,6 +39,7 @@ export class UploadFileComponent implements OnInit {
     size: {width: '100px'},
     icon: this.dom.bypassSecurityTrustResourceUrl(uploadIcon),
     showProgress: true,
+    groupId: '',
   };
 
   constructor(
@@ -92,13 +93,18 @@ export class UploadFileComponent implements OnInit {
         let filename = CommonTools.md5([file.name, file.lastModified].join("-"));
         // 判断是否是头像
         if(this.directoryType === 'user_portrait') {
-          if (this.localUserService.localUserInfo) {
-            filename = this.localUserService.localUserInfo.userId.toString();
+          if(this.options.groupId != ''){
+            filename = this.options.groupId;
             filename = [filename, CommonTools.getFileExt(file.name, file.type)].join(".");
-          } else {
-            filename = file.name;
+          }else {
+            if (this.localUserService.localUserInfo) {
+              filename = this.localUserService.localUserInfo.userId.toString();
+              filename = [filename, CommonTools.getFileExt(file.name, file.type)].join(".");
+            } else {
+              filename = file.name;
+            }
           }
-        } else {
+        }else {
           filename = [filename, CommonTools.getFileExt(file.name, file.type)].join(".");
           filename = [formatDate(new Date().getTime(), 'yyyy-M-d'), filename].join("-");
         }
@@ -111,7 +117,7 @@ export class UploadFileComponent implements OnInit {
           if([ // 上传为图片时
             DirectoryType.OSS_PORTRAIT,
             DirectoryType.OSS_IMAGE,
-            DirectoryType.OSS_PHOTOALBUM
+            DirectoryType.OSS_PHOTOALBUM,
           ].includes(this.directoryType)) {
             this.fileUrl = res.url;
           }

@@ -7,4 +7,5 @@ export default interface uploadOptions {
   };
   icon: SafeResourceUrl | string;
   showProgress: boolean;
+  groupId?: string;
 }
