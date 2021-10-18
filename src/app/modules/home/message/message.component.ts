@@ -50,6 +50,7 @@ import BlackListModel from "@app/models/black-list.model";
 import BlackMeListModel from "@app/models/black-me-list.model";
 import NewHttpResponseInterface from "@app/interfaces/new-http-response.interface";
 import {GroupAdminModel} from "@app/models/group-admin.model";
+import {FriendRequestModel} from "@app/models/friend-request.model";
 
 @Component({
   selector: 'app-message',
@@ -156,6 +157,8 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.subscribeGroupSystemMessage();
     // 订阅群的基本信息
     this.subscribeGroupInfoChange();
+    // 订阅好友请求相关通知
+    this.subscribeFriendRequest();
   }
 
   ngOnInit(): void {
@@ -456,6 +459,53 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
       const text: string = dataContent.m;
       this.snackBarService.openMessage(text);
       this.cacheService.saveSystemMessage(dataContent.t, text, protocol.sm);
+    });
+
+  }
+
+
+  /**
+   * 订阅好友请求相关的通知
+   * @private
+   */
+  private subscribeFriendRequest() {
+    // 添加好友后，收到服务器返回的错误信息
+    this.messageDistributeService.MT06_OF_ADD_FRIEND_REQUEST_RESPONSE$FOR$ERROR_SERVER$TO$A$.subscribe((protocol: ProtocalModel) => {
+      const dataContent: any =protocol.dataContent;
+      this.snackBarService.systemNotification(dataContent);
+    });
+    // 好友请求被同意
+    this.messageDistributeService.MT10_OF_PROCESS_ADD$FRIEND$REQ_FRIEND$INFO$SERVER$TO$CLIENT$.subscribe((protocol: ProtocalModel) => {
+      const dataContent: any = JSON.parse(protocol.dataContent);
+      const beRequestUser: string = dataContent.beRequestUser;
+      const friendInfo:FriendModel = dataContent.friendInfo;
+      this.cacheService.cacheFriends().then(()=>{
+        // 缓存后,清除掉好友请求
+        this.cacheService.updateNewFriendMap(friendInfo.friendUserUid, true);
+        setTimeout(() => {
+          this.cacheService.cacheFriends().then();
+        }, 1000);
+      });
+      this.snackBarService.openMessage(friendInfo.nickname+"同意了你的好友请求");
+    });
+    // 好友请求被拒绝
+    this.messageDistributeService.MT12_OF_PROCESS_ADD$FRIEND$REQ_SERVER$TO$A_REJECT_RESULT$.subscribe((protocol: ProtocalModel) => {
+      const dataContent: any = JSON.parse(protocol.dataContent);
+      const beRequestUser: string = dataContent.beRequestUser;
+      const friendInfo:FriendModel = dataContent.friendInfo;
+      this.cacheService.cacheFriends().then(()=>{
+        // 缓存后,清除掉好友请求
+        this.cacheService.updateNewFriendMap(friendInfo.friendUserUid, false);
+        setTimeout(() => {
+          this.cacheService.cacheFriends().then();
+        }, 1000);
+      });
+      this.snackBarService.openMessage(friendInfo.nickname+"拒绝了你的好友请求");
+    });
+
+    // 监听好友请求
+    this.messageDistributeService.MT07_OF_ADD_FRIEND_REQUEST_INFO_SERVER$TO$B$.subscribe(() => {
+      this.cacheService.cacheNewFriends();
     });
 
   }

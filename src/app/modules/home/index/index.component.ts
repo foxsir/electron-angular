@@ -161,14 +161,6 @@ export class IndexComponent implements OnInit {
       this.cacheService.sensitiveWordList();
     });
 
-    // 好友请求被同意
-    this.messageDistributeService.MT10_OF_PROCESS_ADD$FRIEND$REQ_FRIEND$INFO$SERVER$TO$CLIENT$.subscribe(() => {
-      this.cacheService.cacheFriends().then();
-    });
-    // 监听好友请求
-    this.messageDistributeService.MT07_OF_ADD_FRIEND_REQUEST_INFO_SERVER$TO$B$.subscribe(() => {
-      this.cacheService.cacheNewFriends();
-    });
     // 监听好友在线状态的更新
     this.messageDistributeService.USER_ONLINE_STATUS_CHANGE$.subscribe((res: ProtocalModel) => {
       const dataContent: any = JSON.parse(res.dataContent);
