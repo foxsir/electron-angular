@@ -72,6 +72,7 @@ import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 import {GroupInfoDialogComponent} from "@modules/user-dialogs/group-info-dialog/group-info-dialog.component";
 import {GroupNoticeComponent} from "@modules/user-dialogs/group-notice/group-notice.component";
 import {InputAreaService} from "@services/input-area/input-area.service";
+import ChattingModel from "@app/models/chatting.model";
 
 @Component({
   selector: 'app-chatting-area',
@@ -205,6 +206,10 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
     this.subscribeOfGroupChatMsgServerToB();
     this.subscribeChattingMessage();
     this.subscribeGroupSilence();
+    // 订阅踢人时删除消息的通知
+    this.subscribeDeleteGroupMessage();
+    // 订阅删除单聊消息的通知
+    this.subscribeDeleteFriendMessage();
 
     // 选择消息
     this.elementService.selectMessage$.subscribe((directive) => {
@@ -1086,6 +1091,39 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
       if (res.ok === false) {
         return;
       }
+    });
+  }
+
+  /**
+   * 订阅踢人时,让其他群成员删除消息的指令
+   * @private
+   */
+  private subscribeDeleteGroupMessage() {
+    this.messageDistributeService.DELETE_FRIEND_FOR_TIRENSource$.subscribe((res: ProtocalModel) => {
+      const dataContent: any = JSON.parse(res.dataContent);
+      const groupId: string = dataContent.groupId;
+      const memberIdList:number[] = dataContent.userIds;
+      if(memberIdList.length == 0) {
+        return;
+      }
+      this.cacheService.deleteGroupChattingCache(groupId, memberIdList);
+    });
+  }
+
+  /**
+   * 订阅删除单聊消息的通知
+   * @private
+   */
+  private subscribeDeleteFriendMessage() {
+    this.messageDistributeService.DELETE_CHAT_MESSAGESource$.subscribe((res: ProtocalModel) => {
+      const dataContent: any = JSON.parse(res.dataContent);
+      const dataId: string = dataContent.uuid;
+      const chatType: string = dataContent.chatType;
+      const msgIdList:string[] = dataContent.msgIdList;
+      if(msgIdList.length == 0) {
+        return;
+      }
+      this.cacheService.deleteMessageCacheByFP(dataId, msgIdList);
     });
   }
 }

@@ -1,22 +1,15 @@
-<div fxLayout="column" fxLayoutGap="10px" class="user-card-container" (click)="showContact()">
+<div fxLayout="column" fxLayoutGap="0" class="user-card-container" (click)="showContact()">
   <div fxFlex>
-    <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start center">
-      <div fxFlex="40px">
+    <div fxLayout="row" fxLayoutGap="0" fxLayoutAlign="start center">
+      <div fxFlex="40px" class="avatarArea">
         <img [src]="userAvatar" class="user-avatar" alt="">
       </div>
-      <div fxFlex>
+      <div fxFlex class="user-card-container1">
         {{userContact.nickName}}
       </div>
     </div>
   </div>
-  <div fxFlex>
-    <div fxLayout="column" fxLayoutGap="10px">
-      <div fxFlex>
-        <mat-divider></mat-divider>
-      </div>
-      <div fxFlex style="color: #888888">
-        个人名片
-      </div>
-    </div>
+  <div fxFlex class="user-card-container0">
+      个人名片
   </div>
 </div>

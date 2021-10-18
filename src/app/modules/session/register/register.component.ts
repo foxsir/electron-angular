@@ -26,6 +26,7 @@ import {CacheService} from "@services/cache/cache.service";
 import LocalUserinfoModel from "@app/models/local-userinfo.model";
 import {SessionService} from "@services/session/session.service";
 import {SignupModel} from "@app/models/signup.model";
+import {GlobalCache} from "@app/config/global-cache";
 
 @Component({
   selector: 'app-register',
@@ -72,8 +73,8 @@ export class RegisterComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // 清楚相关信息
-    this.form.form.reset();
+    // 清除相关信息
+    console.log("清理注册信息");
   }
 
   setSex(sex: 0 | 1) {
@@ -103,6 +104,10 @@ export class RegisterComponent implements OnInit {
   }
 
   public nextStep() {
+    // 先检查是否勾选了注册协议
+    if(!GlobalCache.loginProtocol) {
+      return this.snackBarService.openMessage("注册之前请确认已阅读服务条款");
+    }
     if (this.form.form.valid) {
       const data = {
         phone: [this.form.model.area, this.form.form.value.user_phone].join("-"),

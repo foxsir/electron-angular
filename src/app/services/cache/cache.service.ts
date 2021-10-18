@@ -203,6 +203,24 @@ export class CacheService extends DatabaseService {
   }
 
   /**
+   * 通过指纹码删除本地消息缓存
+   * @param alarmData
+   * @param messages
+   */
+  deleteMessageCacheByFP(dataId: string, messages: string[] ): Promise<any> {
+    return new Promise((resolve) => {
+        this.getChattingList().then(list => {
+        messages.forEach(fingerPrint => {
+          this.deleteData<ChatmsgEntityModel>({model: 'chatmsgEntity', query: {fingerPrintOfProtocal: fingerPrint}}).then();
+        });
+        this.cacheSource.next({alarmDataMap: list});
+        resolve(true);
+      });
+    });
+  }
+
+
+  /**
    * 清除会话消息
    * @param alarmData
    */
@@ -242,6 +260,31 @@ export class CacheService extends DatabaseService {
             this.cacheSource.next({alarmDataMap: list});
             resolve(true);
           });
+        }
+      });
+    });
+  }
+
+  /**
+   * 删除群内某个人的所有消息
+   * @param groupId
+   * @param memberIdList
+   */
+  deleteGroupChattingCache(groupId: string, memberIdList: number[]) : Promise<boolean> {
+    return new Promise<boolean>((resolve) => {
+      this.getChattingList().then(list => {
+        if(list.get(groupId)) {
+          if (memberIdList && memberIdList.length > 0) {
+            let count = 0;
+            memberIdList.forEach(memberId => {
+              this.deleteData<ChatmsgEntityModel>({model: 'chatmsgEntity', query: {dataId: groupId,memberId:memberId}}).then();
+              count ++;
+            });
+            if (count == memberIdList.length) {
+              this.cacheSource.next({alarmDataMap: list});
+              resolve(true);
+            }
+          }
         }
       });
     });
@@ -405,19 +448,23 @@ export class CacheService extends DatabaseService {
       this.rosterProviderService.refreshRosterAsync().subscribe((res: NewHttpResponseInterface<any>) => {
         // 服务端返回的是一维RosterElementEntity对象数组
         if(res.status === 200) {
-          const friendList: FriendModel[] = res.data;
-          if (friendList.length > 0) {
-            const data = new Map<string, FriendModel>();
-            friendList.forEach((f, key) => {
-              data.set(f.friendUserUid.toString(), f);
-              this.saveDataSync<FriendModel>({model: 'friend', data: f, update: {friendUserUid: f.friendUserUid}}).then(() => {
-                if(key === friendList.length - 1) {
-                  this.cacheSource.next({friendMap: data});
-                }
+          // 先删除本地的数据,避免出错
+          this.deleteData<FriendModel>({model: 'friend', query: null}).then(()=>{
+            const friendList: FriendModel[] = res.data;
+            if (friendList.length > 0) {
+              const data = new Map<string, FriendModel>();
+              // 先删除
+              friendList.forEach((f, key) => {
+                data.set(f.friendUserUid.toString(), f);
+                this.saveDataSync<FriendModel>({model: 'friend', data: f, update: {friendUserUid: f.friendUserUid}}).then(() => {
+                  if(key === friendList.length - 1) {
+                    this.cacheSource.next({friendMap: data});
+                  }
+                });
               });
-            });
-          }
-          resolve(true);
+            }
+            resolve(true);
+          });
         }
       });
     });
@@ -431,13 +478,18 @@ export class CacheService extends DatabaseService {
       this.restService.getUserJoinGroup().subscribe((res: NewHttpResponseInterface<GroupModel[]>) => {
         const groupMap = new Map<string, GroupModel>();
         if(res.status === 200) {
-          res.data.forEach((g, key) => {
-            if(g) {
-              groupMap.set(g.gid, g);
-              this.saveDataSync<GroupModel>({model: 'group', data: g, update: {gid: g.gid}}).then(() => {
-                if(key === res.data.length - 1) {
-                  this.cacheSource.next({groupMap: groupMap});
-                  resolve(true);
+          // 先清除所有的数据,避免出错
+          this.deleteData<GroupModel>({model: 'group', query: null}).then(()=>{
+            if (res.data && res.data.length > 0){
+              res.data.forEach((g, key) => {
+                if(g) {
+                  groupMap.set(g.gid, g);
+                  this.saveDataSync<GroupModel>({model: 'group', data: g, update: {gid: g.gid}}).then(() => {
+                    if(key === res.data.length - 1) {
+                      this.cacheSource.next({groupMap: groupMap});
+                      resolve(true);
+                    }
+                  });
                 }
               });
             }
@@ -990,7 +1042,6 @@ export class CacheService extends DatabaseService {
    * 缓存我的敏感词
    */
   sensitiveWordList() {
-    // 缓存我的黑名单
     this.restService.getSensitiveWordList().subscribe((res: NewHttpResponseInterface<string[]>) => {
       if(res.status === 200) {
         GlobalCache.sensitiveList = res.data;
@@ -1229,6 +1280,7 @@ export class CacheService extends DatabaseService {
       });
     });
   }
+
 
 
 }
