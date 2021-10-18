@@ -1,4 +1,6 @@
-import { app, BrowserWindow, screen, ipcMain, Menu, globalShortcut, clipboard } from 'electron';
+import {
+  app, BrowserWindow, screen, ipcMain, Menu, globalShortcut, clipboard
+} from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 
@@ -6,6 +8,7 @@ import WindowEventListen from "./windowEventListen";
 import defaultOptions from "./DefaultOptions";
 import * as md5 from "blueimp-md5";
 import Database from "./Database";
+import SaveFile from "./SaveFile";
 
 // Initialize remote module
 require('@electron/remote/main').initialize();
@@ -54,6 +57,31 @@ function createWindow(): BrowserWindow {
       // preload: path.resolve(__dirname, 'agora-renderer.js')
     },
   });
+
+  win.webContents.session.on('will-download', (event, item, webContents) => {
+    // Set the save path, making Electron not to prompt a save dialog.
+    // item.setSavePath('/tmp/save.pdf')
+
+    item.on('updated', (event, state) => {
+      if (state === 'interrupted') {
+        console.log('Download is interrupted but can be resumed')
+      } else if (state === 'progressing') {
+        if (item.isPaused()) {
+          // console.log('Download is paused')
+        } else {
+          // console.log(`Received bytes: ${item.getReceivedBytes()}`)
+        }
+      }
+    })
+    item.once('done', (event, state) => {
+      if (state === 'completed') {
+        win.webContents.send("download-completed", true);
+        // console.log('Download successfully')
+      } else {
+        console.log(`Download failed: ${state}`)
+      }
+    })
+  })
 
   win.once('ready-to-show', () => {
     win.show();
@@ -144,6 +172,7 @@ function runApp() {
       createWindow();
       // 初始化数据库
       new Database().init().then();
+      new SaveFile().init().then();
 
       wel.setWindows(windows);
     });
