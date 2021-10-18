@@ -48,6 +48,7 @@ import {
   getBlackDetail, getBlackMeUser, getSensitiveWord, getUserOfflineInstruct
 } from "@app/config/post-api";
 import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
+import CommonTools from "@app/common/common.tools";
 
 @Injectable({
   providedIn: 'root'
@@ -95,7 +96,7 @@ export class RestService {
       loginName: loginNameStr,
       loginPsw: loginPswStr,
       // deviceInfo: this.deviceInfo,
-      deviceId: process.env.DeviceID,
+      deviceId: CommonTools.md5([process.env.DeviceID, loginNameStr].join("-")),
       osType: 2
     };
 
