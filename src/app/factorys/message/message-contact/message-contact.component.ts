@@ -4,6 +4,7 @@ import {AvatarService} from "@services/avatar/avatar.service";
 import {DomSanitizer, SafeResourceUrl} from "@angular/platform-browser";
 import {DialogService} from "@services/dialog/dialog.service";
 import {UserContactCardComponent} from "@modules/user-dialogs/user-contact-card/user-contact-card.component";
+import {UserInfoComponent} from "@modules/user-dialogs/user-info/user-info.component";
 
 interface UserContact {
   uid: number;
@@ -29,13 +30,17 @@ export class MessageContactComponent implements OnInit {
 
   ngOnInit(): void {
     this.userContact = JSON.parse(this.chatMsg.text);
-
-    this.userAvatar = this.dom.bypassSecurityTrustResourceUrl(this.userContact.userAvatar);
+    if(this.userContact.userAvatar) {
+      this.userAvatar = this.dom.bypassSecurityTrustResourceUrl(this.userContact.userAvatar);
+    } else {
+      this.userAvatar = this.dom.bypassSecurityTrustResourceUrl(this.avatarService.defaultLocalAvatar);
+    }
   }
 
   showContact() {
-    this.dialogService.openDialog(UserContactCardComponent, {
-      data: this.chatMsg
+    this.dialogService.openDialog(UserInfoComponent, {
+      data: {userId: Number(this.userContact.uid)},
+      panelClass: "padding-less-dialog",
     }).then();
   }
 
