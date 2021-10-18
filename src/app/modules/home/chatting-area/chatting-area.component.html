@@ -196,7 +196,7 @@
 <!--                                      [fxShow]="chat.value.isOutgoing === false && chat.value.uid.toString() === localUserInfo.userId.toString()"-->
 <!--                                      [diameter]="20" [strokeWidth]="3" mode="indeterminate"></mat-spinner>-->
                                   </div>
-                                  <div class="message-entity" fxLayout="row" (contextmenu)="contextMenuForMessage($event, createPlanMenuTrigger, span, chat.value)">
+                                  <div class="message-entity-item" fxLayout="row" (contextmenu)="contextMenuForMessage($event, createPlanMenuTrigger, span, chat.value)">
                                     <div #messageContainer>
                                       <app-message-factory [chatMsg]="chat.value"></app-message-factory>
                                     </div>
