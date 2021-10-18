@@ -166,9 +166,9 @@
                              *ngIf="chat.value.msgType !== 999"
                              [id]="chat.value.fingerPrintOfProtocal"
                              [fxLayoutAlign]="chat.value.uid.toString() === localUserInfo.userId.toString() ? 'end' : 'start'">
-                          <div fxLayout="column" class="message-container" fxLayoutGap="5px"
+                          <div fxLayout="column" class="message-container"
                                [fxLayoutAlign]="chat.value.uid.toString() === localUserInfo.userId.toString() ? 'end end' : 'start'">
-                            <div class="message-time">
+                            <div class="message-time" style="{{currentChat.metadata.chatType === 'group'?'margin-right:50px;margin-left:50px':''}}">
                               {{chat.value.date | date}}
                             </div>
                             <!--[fxLayoutAlign]="chat.value.uid === localUserInfo.userId ? 'end' : 'start'"-->
@@ -191,11 +191,6 @@
                                   {{chat.value.name}}
                                 </div>
                                 <div fxLayout="row" [fxLayoutAlign]="chat.value.uid.toString() === localUserInfo.userId.toString() ? 'end' : 'start'">
-                                  <div fxLayoutAlign="center center" style="width: 22px; height: 22px;">
-<!--                                    <mat-spinner-->
-<!--                                      [fxShow]="chat.value.isOutgoing === false && chat.value.uid.toString() === localUserInfo.userId.toString()"-->
-<!--                                      [diameter]="20" [strokeWidth]="3" mode="indeterminate"></mat-spinner>-->
-                                  </div>
                                   <div class="message-entity-item" fxLayout="row" (contextmenu)="contextMenuForMessage($event, createPlanMenuTrigger, span, chat.value)">
                                     <div #messageContainer>
                                       <app-message-factory [chatMsg]="chat.value"></app-message-factory>

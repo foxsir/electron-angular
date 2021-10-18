@@ -124,7 +124,7 @@
   overflow-y: scroll;
   .message-entity-item {
     position: relative;
-    padding: 10px;
+    padding: 0px;
     width: fit-content;
     box-sizing: border-box;
     border-radius: 0px 6px 6px 6px;
@@ -143,6 +143,7 @@
 .message-status {
   font-size: 12px;
   color: #686868;
+  margin-top: 3px;
 }
 
 .message-container {
@@ -153,7 +154,6 @@
     font-size: 12px;
     color: #888888;
     visibility: hidden;
-    margin-right: 50px;
   }
 }
 
@@ -211,6 +211,9 @@
 
 ::ng-deep {
   #chatting-panel {
+    .mat-card-subtitle,.mat-card-content .file-card-container{
+      background-color: #cce4ff;
+    }
     .mat-card-subtitle,.mat-card-content .file-card-container0{
       font-size: 14px;
       border-bottom: 1px solid #FCFCFC;
