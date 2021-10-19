@@ -12,6 +12,7 @@
     "sqlite3": "5.0.2",
     "typeorm": "0.2.37",
     "@ffmpeg-installer/ffmpeg": "1.1.0",
-    "fluent-ffmpeg": "2.1.2"
+    "fluent-ffmpeg": "2.1.2",
+    "node-fetch": "2.6.5"
   }
 }
