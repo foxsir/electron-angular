@@ -251,7 +251,6 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
                   if (res.status === 200 && res.data) {
                     this.groupData.gnotice = res.data.gnotice == null ? '' : res.data.gnotice;
                     this.groupData.gtopContent = res.data.gtopContent == null ? '' : res.data.gtopContent;
-                    console.log('group data: ', this.groupData);
 
                     let gnotice_length = this.groupData.gnotice.length;
                     let gtopContent_length = this.groupData.gtopContent.length;
@@ -432,9 +431,9 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
 
         //重置发言间隔时间
         clearInterval(this.timeInterval);
-        if(this.groupData.gtalkIntervalSwitch)
+        if(this.groupData.gtalkIntervalSwitch && data.dataContent.f.toString() === this.localUserInfo.userId.toString())
         {
-          this.checkAdminAndOwner();
+          //this.checkAdminAndOwner();
 
           if(!this.isOwner && !this.isAdmin){
             this.talkIntervalSwitch=this.groupData.gtalkIntervalSwitch;
@@ -459,6 +458,8 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
             },1000);
           }
         }
+
+        console.dir(data);
       }
     }
     // chatMsg.fingerPrintOfProtocal
