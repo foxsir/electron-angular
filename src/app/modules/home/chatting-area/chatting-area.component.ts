@@ -627,6 +627,9 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
           const chatMsgEntity = this.messageEntityService.prepareRecievedMessage(
             dataContent.f, dataContent.nickName, dataContent.m, res.recvTime, dataContent.ty, res.fp
           );
+          // 设置 发消息的用户id
+          chatMsgEntity.memberId = Number(dataContent.f);
+
           chatMsgEntity.uh = dataContent.uh;
           const chatType = Number(dataContent.cy) === ChatModeType.CHAT_TYPE_FRIEND$CHAT ? 'friend' : 'group';
           const dataId = chatType === 'friend' ? res.to : dataContent.t;

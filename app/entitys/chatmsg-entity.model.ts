@@ -21,7 +21,9 @@ export default class ChatmsgEntityModel extends BaseEntity {
   @Column({nullable: true})
   uid: string = "";
 
-
+  /** 表示在群聊中，发消息的用户id */
+  @Column({nullable: true})
+  memberId: number = 0;
 
 
   /** 昵称（用于显示） */

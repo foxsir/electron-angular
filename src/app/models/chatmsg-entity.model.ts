@@ -13,7 +13,7 @@ export default class ChatmsgEntityModel extends BaseEntity {
   /**
    * 是群组聊天时,消息发送者id
    */
-  memberId: number = null;
+  memberId: number = 0;
 
   /** 昵称（用于显示） */
   name: string = null;
