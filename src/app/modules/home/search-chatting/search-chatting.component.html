@@ -61,7 +61,7 @@
       <ng-template [ngIf]="currentTab === 'media'">
         <div style="padding:0 0 14px 14px;">
           <div *ngFor="let image of imageMap | keyvalue" class="imgv">
-            <app-message-factory [chatMsg]="image.value"></app-message-factory>
+            <app-message-factory [chatMsg]="image.value" style="transform: translateX(0%) translateY(-25%);"></app-message-factory>
           </div>
           <div style="width: 100%; height: 1px; clear:both;"></div>
         </div>
