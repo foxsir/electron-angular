@@ -1,5 +1,8 @@
 <div fxLayout="row" fxFlexFill>
   <div fxFlex="74px" style="background: #F6F7F9">
+    <div style="position: relative;">
+      <app-toolbar [visibilityActions]="false" [stickyTop]="true"></app-toolbar>
+    </div>
     <mat-card class="mat-elevation-z0" id="left-toolbar" style="padding: 16px 0px">
       <mat-card-content class="user-avatar"
                         fxLayoutAlign="center center">
@@ -50,7 +53,7 @@
   </div>
   <div fxFlex="calc(100% - 74px)">
     <mat-drawer-container fxFlexFill autosize>
-      <mat-drawer #drawer mode="over" style="width: 300px" disableClose>
+      <mat-drawer #drawer mode="over" style="width: 300px">
         <app-account-panel [accountDrawer]="drawer"></app-account-panel>
       </mat-drawer>
 

@@ -73,8 +73,8 @@ export class RegisterComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // 清楚相关信息
-    this.form.form.reset();
+    // 清除相关信息
+    console.log("清理注册信息");
   }
 
   setSex(sex: 0 | 1) {
@@ -100,6 +100,7 @@ export class RegisterComponent implements OnInit {
         }
         this.registerType = res.data.registerType;
       }
+      this.form.form.reset();
     });
   }
 

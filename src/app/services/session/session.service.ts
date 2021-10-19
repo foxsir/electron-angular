@@ -42,11 +42,13 @@ export class SessionService {
             // 使用缓存中的头像
             this.cacheService.getMyInfo().then((myInfo: UserModel) => {
               this.updateLocalUserInfo(myInfo);
-
-              this.router.navigate(["/home"]).then(() => {
-                this.snackBarService.openMessage(message);
-                this.windowService.normalWindow();
-              });
+              this.snackBarService.openMessage("正在登录...");
+              setTimeout(() => {
+                this.router.navigate(["/home"]).then(() => {
+                  this.snackBarService.openMessage(message);
+                  this.windowService.normalWindow();
+                });
+              }, 2000);
             });
           });
         });
