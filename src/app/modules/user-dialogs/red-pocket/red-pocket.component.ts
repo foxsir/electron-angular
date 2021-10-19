@@ -77,7 +77,7 @@ export class RedPocketComponent implements OnInit {
       toUserId: this.data.toUserId,
       word: '', // 口令
       type: 1,
-      payKey: this.payPassword,
+      payKey: CommonTools.md5(this.payPassword),
       ok: false,
     };
 
