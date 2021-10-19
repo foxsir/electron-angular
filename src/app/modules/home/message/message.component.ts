@@ -488,6 +488,13 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
       });
       this.snackBarService.openMessage(friendInfo.nickname+"同意了你的好友请求");
     });
+    // 好友请求已经同意
+    this.messageDistributeService.MT10_OF_PROCESS_ADD$FRIEND$REQ_FRIEND$INFO$SERVER$TO$CLIENT$.subscribe((protocol: ProtocalModel) => {
+      const dataContent: any = JSON.parse(protocol.dataContent);
+      const friendInfo: FriendModel = dataContent.friendInfo;
+      this.cacheService.updateNewFriendMap(friendInfo.friendUserUid, true);
+      this.cacheService.cacheFriends().then();
+    });
     // 好友请求被拒绝
     this.messageDistributeService.MT12_OF_PROCESS_ADD$FRIEND$REQ_SERVER$TO$A_REJECT_RESULT$.subscribe((protocol: ProtocalModel) => {
       const dataContent: any = JSON.parse(protocol.dataContent);
