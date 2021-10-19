@@ -1272,6 +1272,13 @@ export class CacheService extends DatabaseService {
     );
     chatMsgEntity.dataId = dataId.toString();
     chatMsgEntity.msgType = 999;
+    chatMsgEntity.fingerPrintOfProtocal = CommonTools.uuid();
+
+    if(this.chatMsgEntityMap.size > 0 && this.chatMsgEntityMap.entries().next().value[1].dataId === chatMsgEntity.dataId) {
+      this.chatMsgEntityMapTemp.set(chatMsgEntity.fingerPrintOfProtocal, chatMsgEntity);
+      this.chatMsgEntityMap.set(chatMsgEntity.fingerPrintOfProtocal, chatMsgEntity);
+    }
+
     this.saveDataSync<ChatmsgEntityModel>({
       model: "chatmsgEntity", data: chatMsgEntity, update: null
     }).then(() => {
