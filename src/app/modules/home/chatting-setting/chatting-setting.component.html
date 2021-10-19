@@ -21,8 +21,8 @@
                     <img class="img-head" src="{{friendInfo.userAvatarFileName}}"/>
                     <div class="status-bar">
                         <span>{{friendInfo.nickname}}</span>
-                        <span mat-line *ngIf="!!friendInfo.onlineStatus === true">在线</span>
-                        <span mat-line *ngIf="!!friendInfo.onlineStatus === false" >离线</span>
+                        <span mat-line *ngIf="!!friendInfo.onlineStatus === true" style="font-size: 12px;padding-top: 3px; color: #0091ff">在线</span>
+                        <span mat-line *ngIf="!!friendInfo.onlineStatus === false" style="font-size: 12px;padding-top: 3px; color: #888" >离线</span>
                     </div>
                 </div>
             </mat-card-content>
