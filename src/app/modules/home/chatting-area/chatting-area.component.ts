@@ -174,7 +174,8 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
   public itemSize: number = 0;
   //发言时间间隔
   public talkIntervalSwitch: boolean = false;
-  public talkInterval: number = 0;
+  // public talkInterval: number = 0;
+  public talkIntervalMap: Map<string, number> = new Map();
   public timeInterval = null;
 
   constructor(
@@ -245,6 +246,18 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
           // this.cacheService.chatMsgEntityList = new Array(...this.cacheService.chatMsgEntityMap).flatMap(t => t[1]);
         }
 
+        // 先清空
+        this.groupData = {
+          gnotice: '',
+          gtopContent: '',
+          gnotice_visible: true,
+          gtopContent_visible: true,
+          gnotice_class: '',
+          gtopContent_class: '',
+          gtalkIntervalSwitch: false,
+          gtalkInterval: 3,
+        };
+
           if (this.currentChat.alarmItem.chatType === 'group') {
               /*获取群基本信息*/
               this.restService.getGroupBaseById(this.currentChat.alarmItem.dataId).subscribe(res => {
@@ -265,17 +278,6 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
                     this.groupData.gtalkInterval=res.data.talkInterval;
                 }
               });
-          } else {
-              this.groupData = {
-                  gnotice: '',
-                  gtopContent: '',
-                  gnotice_visible: true,
-                  gtopContent_visible: true,
-                  gnotice_class: '',
-                  gtopContent_class: '',
-                  gtalkIntervalSwitch: false,
-                  gtalkInterval: 3,
-              };
           }
       }
 
@@ -429,39 +431,50 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
           // this.cacheService.chatMsgEntityList = new Array(...this.cacheService.chatMsgEntityMap).flatMap(t => t[1]);
           this.scrollToBottom();
         }
-
-        //重置发言间隔时间
-        clearInterval(this.timeInterval);
-        if(this.groupData.gtalkIntervalSwitch)
-        {
-          this.checkAdminAndOwner();
-
-          if(!this.isOwner && !this.isAdmin){
-            this.talkIntervalSwitch=this.groupData.gtalkIntervalSwitch;
-            this.talkInterval=this.groupData.gtalkInterval;
-
-            this.inputAreaService.disableToTime(new Date().getTime() / 1000 + this.talkInterval);
-            this.timeInterval=setInterval(() => {
-              console.log(this.talkInterval);
-              if(this.talkInterval<=0){
-                this.zone.run(() => {
-                  this.talkIntervalSwitch=false;
-                  this.changeDetectorRef.detectChanges();
-                });
-                clearInterval(this.timeInterval);
-              }
-              else{
-                this.zone.run(() => {
-                  this.talkInterval--;
-                  this.changeDetectorRef.detectChanges();
-                });
-              }
-            },1000);
-          }
-        }
       }
     }
+    this.setTalkInterval(Number(data.chat.uid));
     // chatMsg.fingerPrintOfProtocal
+  }
+
+  setTalkInterval(chatUid = 0) {
+    // 重置发言间隔时间
+    clearInterval(this.timeInterval);
+    if(this.groupData.gtalkIntervalSwitch && this.currentChat.metadata.chatType === 'group')
+    {
+      this.checkAdminAndOwner();
+      // 只有是自己发消息时才设置发言间隔
+      let duration = this.talkIntervalMap.get(this.currentChat.alarmItem.dataId) || 0;
+      if(!this.isOwner && !this.isAdmin && chatUid.toString() === this.localUserInfo.userId.toString() || chatUid === 0){
+        this.talkIntervalSwitch=this.groupData.gtalkIntervalSwitch;
+        if (duration > 0) {
+          this.inputAreaService.disableToTime(new Date().getTime() / 1000 + duration);
+        } else if(chatUid !== 0) {
+          this.inputAreaService.disableToTime(new Date().getTime() / 1000 + this.groupData.gtalkInterval);
+          this.talkIntervalMap.set(this.currentChat.alarmItem.dataId, this.groupData.gtalkInterval);
+          duration = this.groupData.gtalkInterval;
+        }
+
+
+        this.timeInterval=setInterval(() => {
+          console.log(this.talkIntervalMap);
+          if(duration <= 0){
+            this.zone.run(() => {
+              this.talkIntervalSwitch=false;
+              this.changeDetectorRef.detectChanges();
+            });
+            clearInterval(this.timeInterval);
+          }
+          else{
+            this.zone.run(() => {
+              duration = duration - 1;
+              this.talkIntervalMap.set(this.currentChat.alarmItem.dataId, duration);
+              this.changeDetectorRef.detectChanges();
+            });
+          }
+        },1000);
+      }
+    }
   }
 
   private subscribeQuote() {
@@ -957,6 +970,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
 
               this.groupData.gtalkIntervalSwitch=group_data.data.talkIntervalSwitch===1?true:false;
               this.groupData.gtalkInterval=group_data.data.talkInterval;
+              this.setTalkInterval();
           });
       }
   }
