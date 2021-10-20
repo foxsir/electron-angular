@@ -439,6 +439,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
   setTalkInterval(chatUid = 0) {
     // 重置发言间隔时间
     clearInterval(this.timeInterval);
+    this.inputAreaService.enable();
     if(this.groupData.gtalkIntervalSwitch && this.currentChat.metadata.chatType === 'group')
     {
       this.checkAdminAndOwner();
