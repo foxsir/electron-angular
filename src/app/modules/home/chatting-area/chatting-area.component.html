@@ -257,11 +257,12 @@
                 <app-silence-count-down (silenceDone)="silenceDone($event)" [timestamp]="mySilence.banTime"></app-silence-count-down>
               </div>
             </div>
-            <div class="silence-overlay" *ngIf="!mySilence && talkIntervalSwitch && !isAdmin && !isOwner ">
+            <div class="silence-overlay"
+                 *ngIf="!mySilence && talkIntervalSwitch && !isAdmin && !isOwner && talkIntervalMap.get(currentChat.alarmItem.dataId) > 0">
               <div fxFill fxLayoutAlign="center center" autofocus>
                 <div fxLayout="row" style="width: 300px;" fxLayoutAlign="center center" fxLayoutGap="4px">
                   <div fxFlex="80px" style="text-align: right">发言间隔：</div>
-                  <div style="text-align: left;">{{talkInterval}} 秒</div>
+                  <div style="text-align: left;">{{talkIntervalMap.get(currentChat.alarmItem.dataId)}} 秒</div>
                 </div>
               </div>
             </div>

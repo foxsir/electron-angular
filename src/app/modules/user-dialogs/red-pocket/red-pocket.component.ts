@@ -77,9 +77,11 @@ export class RedPocketComponent implements OnInit {
       toUserId: this.data.toUserId,
       word: '', // 口令
       type: 1,
-      payKey: CommonTools.md5(this.payPassword),
       ok: false,
     };
+    if(this.requirePayPassword) {
+      data.payKey = CommonTools.md5(this.payPassword);
+    }
 
     if(this.requirePayPassword) {
       if(this.payPassword.length === 0) {
@@ -96,7 +98,8 @@ export class RedPocketComponent implements OnInit {
         this.dialogRef.close(data);
       } else {
         // this.dialogRef.close(null);
-        this.snackBarService.openMessage(String(res.data));
+        const msg = res.data || res.msg;
+        this.snackBarService.openMessage(String(msg));
       }
     });
   }

@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
-import {MsgType} from "@app/config/rbchat-config";
+import {ChatModeType, MsgType} from "@app/config/rbchat-config";
 import {ProtocalModel, ProtocalModelDataContent} from "@app/models/protocal.model";
 import {CacheService} from "@services/cache/cache.service";
 import {CurrentChattingChangeService} from "@services/current-chatting-change/current-chatting-change.service";
 import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
+import {MessageEntityService} from "@services/message-entity/message-entity.service";
+import {LocalUserService} from "@services/local-user/local-user.service";
 
 @Injectable({
   providedIn: 'root'
@@ -15,11 +17,14 @@ export class ServerForwardService {
     [MsgType.TYPE_TIREN]: this.tiRenMessage.bind(this),
     [MsgType.TYPE_SYSTEAM$INFO]: this.systemMessage.bind(this),
     [MsgType.TYPE_READED]: this.readStatus.bind(this),
+    [MsgType.TYPE_GETREDBAG]: this.getRedbag.bind(this),
   };
 
   constructor(
     private cacheService: CacheService,
     private currentChattingChangeService: CurrentChattingChangeService,
+    private messageEntityService: MessageEntityService,
+    private localUserService: LocalUserService,
   ) { }
 
   private backMessage(res: ProtocalModel) {
@@ -93,6 +98,48 @@ export class ServerForwardService {
         }
       });
     }
+  }
+
+  private getRedbag(res: ProtocalModel) {
+    const dataContent: ProtocalModelDataContent = JSON.parse(res.dataContent);
+    const chatMsgEntity = this.messageEntityService.prepareRecievedMessage(
+      res.from, dataContent.nickName, dataContent.m, (new Date()).getTime(), dataContent.ty, res.fp
+    );
+
+    const text = JSON.parse(dataContent.m);
+    chatMsgEntity.uh = dataContent.uh;
+    chatMsgEntity.redId = text.redId;
+    // fromUid, nickName, msg, time, msgType, fp = null
+    const chatType = Number(dataContent.cy) === ChatModeType.CHAT_TYPE_FRIEND$CHAT ? 'friend' : 'group';
+    let dataId = chatType === 'friend' ? res.from : dataContent.f;
+
+    // 如果消息来自自己，则为不同终端同步消息
+    if(dataId.toString() === this.localUserService.localUserInfo.userId.toString()) {
+      dataId = res.to;
+    }
+
+    this.cacheService.generateAlarmItem(dataId.toString(), chatType, dataContent.m, dataContent.ty).then(alarm => {
+      chatMsgEntity.xu_isRead_type = true;
+      chatMsgEntity.isOutgoing = true;
+      const currentChat = this.currentChattingChangeService.currentChatting;
+      this.cacheService.queryData<ChatmsgEntityModel>({model: 'chatmsgEntity', query: {redId: chatMsgEntity.redId}}).then((res) => {
+        res.data.forEach(msg => {
+          const t = JSON.parse(msg.text);
+          t.status = '2'; // 修改为已经领取
+          msg.text = JSON.stringify(t);
+          if(this.localUserService.localUserInfo.userId !== dataContent.f && chatType === 'friend') {
+            this.cacheService.putChattingCache(alarm, msg, false).then(() => {
+              this.cacheService.chatMsgEntityMap.set(msg.fingerPrintOfProtocal, msg);
+            });
+          }
+          this.cacheService.putChattingCache(alarm, chatMsgEntity, true).then(() => {
+            if(currentChat && currentChat.alarmItem.dataId === alarm.alarmItem.dataId) {
+              this.cacheService.chatMsgEntityMap.set(chatMsgEntity.fingerPrintOfProtocal, chatMsgEntity);
+            }
+          });
+        });
+      });
+    });
   }
 
 }

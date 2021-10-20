@@ -1,4 +1,5 @@
-<div fxLayout="column" class="red-bag-card" fxLayoutGap="5px" (click)="openRedBag()">
+<div fxLayout="column" class="red-bag-card" fxLayoutGap="5px" (click)="openRedBag()"
+     [ngClass]="{statusNot1: redBag.status?.toString() !== '1'}">
   <div fxFlex>
     <div fxLayout="row" fxLayoutGap="15px">
       <div fxFlex="35px">
@@ -6,7 +7,12 @@
       </div>
       <div fxFlex>
         <div class="greetings">{{redBag.greetings}}</div>
-        <div class="status-text">待领取</div>
+        <div class="status-text">
+          <ng-template [ngIf]="redBag.status.toString() === '1'">待领取</ng-template>
+          <ng-template [ngIf]="redBag.status.toString() === '2'">已领取</ng-template>
+          <ng-template [ngIf]="redBag.status.toString() === '-1'">已退款</ng-template>
+          <ng-template [ngIf]="redBag.status.toString() === '-3'">未领完退款</ng-template>
+        </div>
       </div>
     </div>
   </div>

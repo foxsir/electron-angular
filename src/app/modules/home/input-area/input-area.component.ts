@@ -460,11 +460,16 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
         duration: 0,
         fileLength: 0,
         fileName: "",
+        existReplyMsg: true,
         msg: messageText,
         msgType: this.quoteMessage.msgType,
         reply: this.quoteMessage.text,
-        userName: "普通管理员",
+        replyFriendUid: this.currentChat.alarmItem.dataId,
+        userName: this.currentChat.alarmItem.title,
       };
+      console.dir(replyMsg)
+      console.dir(this.quoteMessage)
+      console.dir(this.quoteMessage.text)
       return JSON.stringify(replyMsg);
     } else {
       return messageText;
@@ -731,13 +736,21 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
           isOpen: 0,
           orderId: res.res.orderId,
           type: res.type,
-          userId: res.toUserId,
+          status: '1',
+          userId: this.localUserService.localUserInfo.userId,
           word: res.word,
         });
-        this.messageService.sendMessage(MsgType.TYPE_REDBAG, this.currentChat.alarmItem.dataId, msgContent).then((send) => {
+
+        const sendMessage = this.currentChat.metadata.chatType === 'friend' ?
+          this.messageService.sendMessage.bind(this.messageService) :
+          this.messageService.sendGroupMessage.bind(this.messageService);
+
+        sendMessage(MsgType.TYPE_REDBAG, this.currentChat.alarmItem.dataId, msgContent).then((send) => {
           const chatMsgEntity = this.messageEntityService.prepareSendedMessage(
-            send.msgBody.m, 0, send.fingerPrint, send.msgBody.ty
+            send.msgBody.m, new Date().getTime(), send.fingerPrint, send.msgBody.ty
           );
+          // 保存红包id
+          chatMsgEntity.redId = res.res.orderId;
           this.tempList.push({
             chatMsgEntity: chatMsgEntity,
             emitToUI: true,

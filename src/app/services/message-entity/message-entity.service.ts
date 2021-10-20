@@ -384,7 +384,7 @@ export class MessageEntityService {
     chatMsgEntityObj.date = time <= 0 ? RBChatUtils.getCurrentUTCTimestamp() : time;
     chatMsgEntityObj.text = message;
     chatMsgEntityObj.fingerPrintOfProtocal = fingerPrint;
-    chatMsgEntityObj.msgType = MsgType.TYPE_REDBAG;
+    chatMsgEntityObj.msgType = MsgType.TYPE_GETREDBAG;
     chatMsgEntityObj.xu_isRead_type = xu_isRead_type;  // 111 新增已读类型
 
     return chatMsgEntityObj;

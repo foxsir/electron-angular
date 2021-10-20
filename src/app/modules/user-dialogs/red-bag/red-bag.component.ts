@@ -64,6 +64,22 @@ export class RedBagComponent implements OnInit {
     });
     this.initInfo();
     this.redBag = JSON.parse(this.data.text);
+
+    const data = {
+      orderId: this.redBag.orderId,
+      userId: this.localUserService.localUserInfo.userId
+    };
+    if(this.redBag.status === '2') {
+      this.httpService.postForm(robRedPacket, data).subscribe((res: NewHttpResponseInterface<FriendRedPacketInterface>) => {
+        if (res.status === 200) {
+          this.openedRedBag = true;
+          this.dialogRef.addPanelClass("open-red-bag-dialog");
+          this.friendRedPacket = res.data;
+        } else {
+          this.snackBarService.openMessage(res.msg);
+        }
+      });
+    }
   }
 
   initInfo() {
@@ -98,13 +114,13 @@ export class RedBagComponent implements OnInit {
       userId: this.localUserService.localUserInfo.userId
     };
 
-    if (this.data.uid.toString() === data.userId.toString()) {
+    if (this.data.uid.toString() === data.userId.toString() && this.currentChatting.metadata.chatType === 'friend') {
       this.selfOpen = true;
       this.httpService.postForm(robRedPacket, data).subscribe((res: NewHttpResponseInterface<MyRedPacketInterface>) => {
         if (res.status === 200) {
-          this.openedRedBag = true;
           this.dialogRef.addPanelClass("open-red-bag");
           this.myRedPacket = res.data;
+          this.openedRedBag = true;
         } else {
           this.snackBarService.openMessage(res.msg);
         }
@@ -115,24 +131,17 @@ export class RedBagComponent implements OnInit {
         if (res.status === 200) {
           this.openedRedBag = true;
           this.dialogRef.addPanelClass("open-red-bag-dialog");
+          console.dir(res.data)
+          console.dir(res.data)
+          console.dir(res.data)
+          console.dir(res.data)
+          console.dir(res.data)
           this.friendRedPacket = res.data;
           this.snackBarService.openMessage("领取成功");
-
-          const msgContent = JSON.stringify({
-            receiveId: data.userId,
-            receiveName: this.localUserService.localUserInfo.nickname,
-            redId: data.orderId,
-            sendName: this.nickName,
-          });
-          this.messageService.sendMessage(MsgType.TYPE_GETREDBAG, this.currentChatting.alarmItem.dataId, msgContent).then((send) => {
-            const chatMsgEntity = this.messageEntityService.prepareSendedMessage(
-              send.msgBody.m, 0, send.fingerPrint, send.msgBody.ty
-            );
-            // this.data.fingerPrintOfProtocal;
-            // this.data.xu_isRead_type = 0;
-          });
-
-
+          this.redBag.status = '2';
+          this.data.text = JSON.stringify(this.redBag);
+          this.cacheService.putChattingCache(this.currentChatting, this.data).then();
+          this.cacheService.chatMsgEntityMap.set(this.data.fingerPrintOfProtocal, this.data);
         } else {
           this.snackBarService.openMessage(res.msg);
         }
