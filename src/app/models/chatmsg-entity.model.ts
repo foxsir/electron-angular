@@ -51,4 +51,7 @@ export default class ChatmsgEntityModel extends BaseEntity {
 
   // 用户头像
   uh: string = "";
+
+  // 红包id
+  redId: string = "";
 }

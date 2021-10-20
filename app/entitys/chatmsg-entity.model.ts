@@ -103,6 +103,10 @@ export default class ChatmsgEntityModel extends BaseEntity {
   // 用户头像
   @Column({nullable: true})
   uh: string = "";
+
+  // 红包id
+  @Column({nullable: true})
+  redId: string = "";
 }
 
 
