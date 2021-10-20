@@ -133,6 +133,9 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
               });
             });
           }
+          if(res.groupMap){
+            this.initGroupData();
+          }
         });
     }
 
@@ -148,7 +151,30 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
                 this.group_admin_list.push(member);
             });
             console.log('群管理员列表 01：', members);
+            this.initUserCluInfo();
         });
+    }
+
+    /* 个人的在群状态 */
+    initUserCluInfo(){
+      this.userinfo = this.localUserService.localUserInfo;
+      this.restService.getUserClusterVo(this.userinfo.userId.toString(), this.currentChat.alarmItem.dataId).subscribe(res => {
+        if (res.status !== 200)
+          return;
+
+        this.user_clu_info = res.data;
+        if (this.user_clu_info.groupOwner == this.userinfo.userId.toString()) {
+          this.user_role = 'owner';
+        }
+        else if (this.user_clu_info.isAdmin == 1) {
+          this.user_role = 'admin';
+        }
+        else {
+          this.user_role = 'common';
+        }
+
+        console.log('当前用户在这个群的角色: ', this.user_role);
+      });
     }
 
     initGroupData() {
@@ -158,7 +184,7 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
             return;
         }
 
-        /*z获取群基本信息*/
+        /*获取群基本信息*/
         this.restService.getGroupBaseById(this.currentChat.alarmItem.dataId).subscribe((res: NewHttpResponseInterface<GroupInfoModel>) => {
           if (res.status !== 200)
                 return;
@@ -171,21 +197,15 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
             this.setting_data.allowPrivateChat = this.groupData.allowPrivateChat === 1;
             this.setting_data.gnotice = this.groupData.gnotice;
 
+            //群头像
             var avatar;
             if(this.groupData.avatar.length > 0) {
               avatar = this.dom.bypassSecurityTrustResourceUrl(this.groupData.avatar);
             } else {
               avatar = this.dom.bypassSecurityTrustResourceUrl(this.avatarService.defaultLocalAvatar);
             }
-            console.log(11111111111111111)
-            console.log(this.groupData)
-            //this.zone.run(() => {
-              this.myAvatar=avatar;
-              //this.changeDetectorRef.detectChanges();
-            //});
-
+            this.myAvatar=avatar;
           }
-          console.log(this.groupData);
         });
 
         /* 获取群成员列表 */
@@ -197,26 +217,7 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
         });
 
         this.loadGroupAdminList();
-
-        /* 个人的在群状态 */
-        this.userinfo = this.localUserService.localUserInfo;
-        this.restService.getUserClusterVo(this.userinfo.userId.toString(), this.currentChat.alarmItem.dataId).subscribe(res => {
-            if (res.status !== 200)
-                return;
-
-            this.user_clu_info = res.data;
-            if (this.user_clu_info.groupOwner == this.userinfo.userId.toString()) {
-                this.user_role = 'owner';
-            }
-            else if (this.user_clu_info.isAdmin == 1) {
-                this.user_role = 'admin';
-            }
-            else {
-                this.user_role = 'common';
-            }
-
-            console.log('当前用户在这个群的角色: ', this.user_role);
-        });
+        //this.initUserCluInfo();
 
         /* 查看免打扰状态 */
         this.restService.noDisturbDetail(this.userinfo.userId.toString(), this.currentChat.alarmItem.dataId).subscribe(res => {

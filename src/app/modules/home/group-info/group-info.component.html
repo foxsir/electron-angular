@@ -59,13 +59,13 @@
             <div fxFlex fxLayoutAlign="space-between center" class="groupFirst">
               <span class="privacy-item-text">信息编辑</span>
             </div>
-            <div fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="editGroupInfo('group_name')">
+            <div *ngIf="user_role != 'common'" fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="editGroupInfo('group_name')">
               <span class="privacy-item-text">群组名称</span>
               <mat-icon class="mat-icon-cus" style="text-align:right;">
                 <img [src]="arrowRightIcon" alt="" class="icon">
               </mat-icon>
             </div>
-            <div fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="changeView('group_notice')">
+            <div *ngIf="user_role != 'common'" fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="changeView('group_notice')">
               <span class="privacy-item-text">群组公告</span>
               <mat-icon class="mat-icon-cus" style="text-align:right;">
                 <img [src]="arrowRightIcon" alt="" class="icon">

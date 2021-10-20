@@ -264,7 +264,6 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
                   if (res.status === 200 && res.data) {
                     this.groupData.gnotice = res.data.gnotice == null ? '' : res.data.gnotice;
                     this.groupData.gtopContent = res.data.gtopContent == null ? '' : res.data.gtopContent;
-                    console.log('group data: ', this.groupData);
 
                     let gnotice_length = this.groupData.gnotice.length;
                     let gtopContent_length = this.groupData.gtopContent.length;
