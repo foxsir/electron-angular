@@ -586,11 +586,11 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
             if (this.currentChat == undefined || parseInt(res.from) != parseInt(this.currentChat.alarmItem.dataId)) {
                 this.cacheService.generateAlarmItem(res.from, 'friend', null, MsgType.TYPE_VOICE_CALL).then(alarm => {
                     this.cacheService.putChattingCache(alarm).then(() => {
-                        this.currentChattingChangeService.switchCurrentChatting(alarm).then(() => {
-                            console.log("聊天会话切换完成...");
-                            this.openEndDrawer('voice', true);
-                            this.appChattingVoice.openPanel(res, dataContent);
-                        });
+                        // this.currentChattingChangeService.switchCurrentChatting(alarm).then(() => {
+                        //     console.log("聊天会话切换完成...");
+                        //     this.openEndDrawer('voice', true);
+                        //     this.appChattingVoice.openPanel(res, dataContent);
+                        // });
                     });
                 });
             }
@@ -969,9 +969,9 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
 
               this.groupData.gtalkIntervalSwitch=group_data.data.talkIntervalSwitch===1?true:false;
               this.groupData.gtalkInterval=group_data.data.talkInterval;
-              this.setTalkInterval();
           });
       }
+      this.setTalkInterval();
   }
 
   /**
