@@ -3,6 +3,7 @@ import {MsgType} from "@app/config/rbchat-config";
 import RBChatUtils from "@app/libs/rbchat-utils";
 import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 import {LocalUserService} from "@services/local-user/local-user.service";
+import LocalUserinfoModel from "@app/models/local-userinfo.model";
 
 /**
  * 聊天消息内容列表中的每个单元数据封装对象（本对像仅用于聊天消息显示界面中的UI显示时，不会用作别的地方）。
@@ -12,11 +13,13 @@ import {LocalUserService} from "@services/local-user/local-user.service";
 })
 export class MessageEntityService {
 
-  private localUserInfo = this.localUserService.localUserInfo;
+  private localUserInfo: LocalUserinfoModel;
 
   constructor(
     private localUserService: LocalUserService,
-  ) {}
+  ) {
+    this.localUserInfo = this.localUserService.localUserInfo;
+  }
 
   /**
    * 为“收到的”消息，构造聊天界面消息内客列表UI的元数据（构建而成的ChatMsgEntity对象仅用于UI显示时，别无它用）。
@@ -230,7 +233,7 @@ export class MessageEntityService {
   createChatMsgEntity_TO_TEXT(message, time, fingerPrint, xu_isRead_type = null) {
     // const chatMsgEntityObj =
     // this.createChatMsgEntity_COME_TEXT(this.localUserInfo.userId, this.localUserInfo.nickname, message, time, fingerPrint);
-    const chatMsgEntityObj = this.createChatMsgEntity_COME_TEXT(this.localUserService.getObj().userId, this.localUserInfo.nickname, message, time, fingerPrint);
+    const chatMsgEntityObj = this.createChatMsgEntity_COME_TEXT(this.localUserInfo.userId, this.localUserInfo.nickname, message, time, fingerPrint);
     // chatMsgEntityObj.isOutgoing = true;
 
     chatMsgEntityObj.xu_isRead_type = xu_isRead_type;  //111 新增已读类型
@@ -381,7 +384,7 @@ export class MessageEntityService {
     chatMsgEntityObj.date = time <= 0 ? RBChatUtils.getCurrentUTCTimestamp() : time;
     chatMsgEntityObj.text = message;
     chatMsgEntityObj.fingerPrintOfProtocal = fingerPrint;
-    chatMsgEntityObj.msgType = MsgType.TYPE_REDBAG;
+    chatMsgEntityObj.msgType = MsgType.TYPE_GETREDBAG;
     chatMsgEntityObj.xu_isRead_type = xu_isRead_type;  // 111 新增已读类型
 
     return chatMsgEntityObj;

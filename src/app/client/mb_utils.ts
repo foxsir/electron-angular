@@ -21,6 +21,7 @@
 
 import MBCore from "./mb_core";
 import {WorkerService} from "@services/worker/worker.service";
+import InstanceFactory from "@app/client/InstanceFactory";
 
 /**
  * 一些MobileIMSDK的H5客户端要用到的实用工具函数等。
@@ -29,7 +30,7 @@ import {WorkerService} from "@services/worker/worker.service";
  */
 export default class MBUtils {
 
-  public static mbCore = new MBCore();
+  public static mbCore = InstanceFactory.getInstance(MBCore);
   private static workerService: WorkerService = WorkerService.getInstance();
 
   /**

@@ -33,7 +33,8 @@ import { RedBagComponent } from './red-bag/red-bag.component';
 import { MyFriendGroupComponent } from './my-friend-group/my-friend-group.component';
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 import {NzInputNumberModule} from "ng-zorro-antd/input-number";
-
+import {GroupNoticeComponent} from "./group-notice/group-notice.component";
+import { PreviewMediaComponent } from './preview-media/preview-media.component';
 
 @NgModule({
     declarations: [
@@ -50,7 +51,9 @@ import {NzInputNumberModule} from "ng-zorro-antd/input-number";
         UserContactCardComponent,
         SelectFriendContactComponent,
         RedBagComponent,
-        MyFriendGroupComponent
+        MyFriendGroupComponent,
+        GroupNoticeComponent,
+        PreviewMediaComponent
     ],
     exports: [
         PrivacySettingComponent

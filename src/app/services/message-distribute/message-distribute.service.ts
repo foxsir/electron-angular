@@ -127,6 +127,14 @@ export class MessageDistributeService {
   private UPDATE_APP_CONFIGSource = new Subject<ProtocalModel>();
   public UPDATE_APP_CONFIG$ = this.UPDATE_APP_CONFIGSource.asObservable();
 
+  // 踢人删除消息的通知
+  private DELETE_FRIEND_FOR_TIRENSource = new Subject<ProtocalModel>();
+  public DELETE_FRIEND_FOR_TIRENSource$ = this.DELETE_FRIEND_FOR_TIRENSource.asObservable();
+
+  // 删除单聊消息
+  private DELETE_CHAT_MESSAGESource = new Subject<ProtocalModel>();
+  public DELETE_CHAT_MESSAGESource$ = this.DELETE_CHAT_MESSAGESource.asObservable();
+
   constructor() { }
 
   inceptMessage(originData: ProtocalModel) {
@@ -217,10 +225,52 @@ export class MessageDistributeService {
       case UserProtocalsType.UPDATE_APP_CONFIG:
         this.UPDATE_APP_CONFIGSource.next(originData);
         break;
+      case UserProtocalsType.DELETE_FRIEND_FOR_TIREN:
+        this.DELETE_FRIEND_FOR_TIRENSource.next(originData);
+        break;
+      case UserProtocalsType.DELETE_CHAT_MESSAGE:
+        this.DELETE_CHAT_MESSAGESource.next(originData);
+        break;
       default:
         this.illegalMessageSource.next(originData);
     }
 
   }
 
+  /**
+   * 处理离线指令
+   * @param originData
+   */
+  processOfflineInstruct(originData: ProtocalModel) {
+    const typeu = originData.typeu;
+
+    switch (typeu) {
+      case UserProtocalsType.MT46_OF_GROUP$SYSCMD_MYSELF$BE$INVITE_FROM$SERVER:
+        this.MT46_OF_GROUP$SYSCMD_MYSELF$BE$INVITE_FROM$SERVERSource.next(originData);
+        break;
+      case UserProtocalsType.MT48_OF_GROUP$SYSCMD_DISMISSED_FROM$SERVER:
+        this.MT48_OF_GROUP$SYSCMD_DISMISSED_FROM$SERVERSource.next(originData);
+        break;
+      case UserProtocalsType.MT49_OF_GROUP$SYSCMD_YOU$BE$KICKOUT_FROM$SERVER:
+        this.MT49_OF_GROUP$SYSCMD_YOU$BE$KICKOUT_FROM$SERVERSource.next(originData);
+        break;
+      case UserProtocalsType.MT10_OF_PROCESS_ADD$FRIEND$REQ_FRIEND$INFO$SERVER$TO$CLIENT:
+        this.MT10_OF_PROCESS_ADD$FRIEND$REQ_FRIEND$INFO$SERVER$TO$CLIENTSource.next(originData);
+        break;
+      case UserProtocalsType.MT12_OF_PROCESS_ADD$FRIEND$REQ_SERVER$TO$A_REJECT_RESULT:
+        this.MT12_OF_PROCESS_ADD$FRIEND$REQ_SERVER$TO$A_REJECT_RESULTSource.next(originData);
+        break;
+      case UserProtocalsType.DELETE_FRIEND:
+        this.DELETE_FRIENDSource.next(originData);
+        break;
+      case UserProtocalsType.DELETE_FRIEND_FOR_TIREN:
+        this.DELETE_FRIEND_FOR_TIRENSource.next(originData);
+        break;
+      case UserProtocalsType.DELETE_CHAT_MESSAGE:
+        this.DELETE_CHAT_MESSAGESource.next(originData);
+        break;
+      default:
+        this.illegalMessageSource.next(originData);
+    }
+  }
 }

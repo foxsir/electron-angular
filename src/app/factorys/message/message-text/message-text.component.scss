@@ -1,16 +1,1 @@
-::ng-deep {
-  .emoji-icon {
-    width: 20px;
-    height: 20px;
-  }
-}
 
-.chat-text {
-  font-size: 14px;
-  font-weight: 400;
-  color: #383838;
-  word-break: break-word;
-  ::ng-deep img {
-    vertical-align: middle;
-  }
-}

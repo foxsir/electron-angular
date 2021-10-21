@@ -57,7 +57,7 @@ export class CreateGroupComponent implements OnInit {
     private restService: RestService,
     private localUserService: LocalUserService,
     private currentChattingChangeService: CurrentChattingChangeService,
-    private snackBarService: SnackBarService,
+    private snackBarService: SnackBarService
   ) { }
 
   ngOnInit(): void {
@@ -166,9 +166,10 @@ export class CreateGroupComponent implements OnInit {
             if (res.success) {
               this.cacheService.cacheGroups().then();
               this.cacheService.putChattingCache(alarmData).then(() => {
-                this.currentChattingChangeService.switchCurrentChatting(alarmData).then();
+                this.currentChattingChangeService.switchCurrentChatting(alarmData).then(() => {
+                  this.snackBarService.openMessage("群创建成功");
+                });
               });
-              this.snackBarService.openMessage("创建成功");
             }
         });
     }

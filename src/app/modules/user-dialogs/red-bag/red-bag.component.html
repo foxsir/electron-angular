@@ -10,7 +10,8 @@
                 <div class="nickName" fxFlex>{{nickName}}的红包</div>
                 <div class="money" *ngIf="openedRedBag" fxFlexAlign="center">
                   <span *ngIf="selfOpen === true">{{myRedPacket.money}}</span>
-                  <span *ngIf="selfOpen === false">{{friendRedPacket.redPackVoList[0].robMoney}}</span>
+                  <span *ngIf="selfOpen === false && friendRedPacket.redPackVoList">{{friendRedPacket.redPackVoList[0].robMoney}}</span>
+                  <span *ngIf="selfOpen === false && friendRedPacket.hasOwnProperty('money')">{{friendRedPacket['money']}}</span>
                 </div>
               </div>
             </div>
@@ -20,7 +21,7 @@
             </div>
           </div>
         </div>
-        <div fxFlex="35" fxLayoutAlign="center center">
+        <div fxFlex="35" fxLayoutAlign="center center" *ngIf="redBag.status === '1'">
           <a class="mat-button" (click)="openRedBag()" tabindex="-1">
             <img [src]="redBagOpenIcon" alt="">
           </a>

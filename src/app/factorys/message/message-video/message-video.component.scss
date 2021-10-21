@@ -1,7 +1,11 @@
 .video-container {
-  width: 400px;
+  height: 350px;
 
   video {
     width: 100%;
   }
+}
+
+.preview {
+  cursor: pointer;
 }

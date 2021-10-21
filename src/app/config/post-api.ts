@@ -183,6 +183,9 @@ export const getBlackDetail = _HTTP_SERVER_URL + "/api/user/blackUserDetail";
 //获取敏感词列表
 export const getSensitiveWord = _HTTP_SERVER_URL + "/api/appConfig/sensitiveWord";
 
+//获取用户的离线指令
+export const getUserOfflineInstruct= _HTTP_SERVER_URL + "/api/appConfig/sensitiveWord";
+
 //
 //  //封装请求函数
 // const xuAjaxMobule = function () {

@@ -7,13 +7,6 @@
     height: 40px;
   }
 }
-
-.message-entity{
-  ::ng-deep{
-
-  }
-}
-
 .container {
   background: #f6f7f9;
 }
@@ -131,27 +124,15 @@
   overflow-y: scroll;
   .message-entity-item {
     position: relative;
-    padding: 10px;
-    background: white;
+    padding: 0px;
     width: fit-content;
     box-sizing: border-box;
     border-radius: 0px 6px 6px 6px;
     word-break: break-word;
-    margin-top: 3px;
-  }
-  .self-message .message-entity-item {
-    background: #CCE4FF;
-    border-radius: 6px 0px 6px 6px;
-    line-height: 22px;
-
-
   }
   .group-avatar {
     position: relative
   }
-
-
-
 }
 .groupName{
   font-size: 12px;
@@ -161,6 +142,7 @@
 .message-status {
   font-size: 12px;
   color: #686868;
+  margin-top: 3px;
 }
 
 .message-container {
@@ -171,7 +153,6 @@
     font-size: 12px;
     color: #888888;
     visibility: hidden;
-    margin-right: 50px;
   }
 }
 
@@ -229,14 +210,20 @@
 
 ::ng-deep {
   #chatting-panel {
+    .mat-card-subtitle,.mat-card-content .file-card-container{
+      background-color: #cce4ff;
+      padding: 10px 10px 10px 10px;
+    }
     .mat-card-subtitle,.mat-card-content .file-card-container0{
       font-size: 14px;
       border-bottom: 1px solid #FCFCFC;
-      margin-bottom: 8px;
-      padding-bottom: 8px;
+      margin-bottom: 6px;
+      padding-bottom: 4px;
+      line-height: 20px;
     }
-    .nickName .mat-card-subtitle,.mat-card-content{
+    .nickName{
       font-size: 12px;
+      padding-bottom: 3px;
     }
     .message-entity-item .mat-focus-indicator, .mat-button, .mat-button-base {
       padding: 0;
@@ -259,16 +246,65 @@
       }
     }
 
-    .mat-card-content .message-entity-item img{
-      width: 120px;
-      height: 120px;
-      display: block;
+    //文本消息樣式
+    .chat-text {
+      font-size: 14px;
+      font-weight: 400;
+      color: #383838;
+      word-break: break-word;
+      ::ng-deep img {
+        vertical-align: middle;
+      }
+    }
+    .message-entity-item{
+      font-size: 12px;
     }
 
-    .mat-card-subtitle,.mat-card-content .file-card-container0{
-      font-size: 14px;
+    .message-entity-item .message-entity-item {
+      position: relative;
+      padding: 10px;
+      width: fit-content;
+      box-sizing: border-box;
+      border-radius: 0px 6px 6px 6px;
+      word-break: break-word;
+      background: #FFF;
+    }
+    .message-entity-item .self-message.message-entity-item {
+      background: #CCE4FF;
+      border-radius: 6px 0px 6px 6px;
       line-height: 22px;
     }
+    //文本消息樣式//
+    //名片消息样式
+    .user-card-container {
+      width: 294px;
+      padding: 10px;
+      border-radius: 6px 6px 6px 6px;
+      background-color: #fff;
+      padding: 10px;
+      box-sizing: border-box;
+
+      .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        overflow: hidden;
+      }
+      .user-card-container1{
+        padding-left: 10px;
+        font-size: 14px;
+      }
+      .user-card-container0{
+        border-top: 1px solid #CCC;
+        margin-top: 6px;
+        padding-top: 6px;
+        font-size: 12px;
+        color: #888;
+      }
+    }
+    //名片消息样式//
+
+
   }
   .video-cover {
     width: 38px;
@@ -276,6 +312,7 @@
     border-radius: 4px;
     object-fit: cover;
   }
+
 
 }
 
@@ -286,9 +323,13 @@
     position: absolute;
     width: 100%;
     height: 100%;
-    background: rgb(0 0 0 / 1%);
+    bottom: 0;
+    background:#DDD;
     z-index: 99999;
     font-weight: 500;
+    font-size: 14px;
+    color:#000;
+    //filter:alpha(Opacity=80);-moz-opacity:0.4;opacity: 0.4;
   }
 }
 

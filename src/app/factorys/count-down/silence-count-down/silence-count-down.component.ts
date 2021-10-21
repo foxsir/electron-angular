@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 import {ProtocalModelDataContent} from "@app/models/protocal.model";
+import {InputAreaService} from "@services/input-area/input-area.service";
 
 @Component({
   selector: 'app-silence-count-down',
@@ -18,11 +19,13 @@ export class SilenceCountDownComponent implements OnInit {
 
   private interval: any;
 
-  constructor() { }
+  constructor(
+    private inputAreaService: InputAreaService,
+  ) { }
 
   ngOnInit(): void {
     this.updateTimer();
-
+    this.inputAreaService.disableToTime(this.timestamp);
     this.interval = setInterval(() => {
       if(this.days + this.hours + this.minutes + this.seconds === 0) {
         clearInterval(this.interval);

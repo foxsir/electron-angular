@@ -3,7 +3,7 @@ import {LocalUserService} from "@services/local-user/local-user.service";
 import {formatDate} from "@app/libs/mobileimsdk-client-common";
 import {GroupChattingCacheService} from "@services/group-chatting-cache/group-chatting-cache.service";
 import {SingleChattingCacheService} from "@services/single-chatting-cache/single-chatting-cache.service";
-import {RBChatConfig} from "@app/config/rbchat-config";
+import {RBChatConfig, UserProtocalsType} from "@app/config/rbchat-config";
 import {RestService} from "@services/rest/rest.service";
 import {MessageService} from "@services/message/message.service";
 import {MessageEntityService} from "@services/message-entity/message-entity.service";
@@ -13,7 +13,7 @@ import {GroupsProviderService} from "@services/groups-provider/groups-provider.s
 import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 import {ImService} from "@services/im/im.service";
 
-import {ProtocalModel} from "@app/models/protocal.model";
+import {ProtocalModel, ProtocalModelDataContent} from "@app/models/protocal.model";
 import {MessageDistributeService} from "@services/message-distribute/message-distribute.service";
 import {ActivatedRoute, NavigationEnd, Router} from "@angular/router";
 import {DomSanitizer, SafeResourceUrl} from "@angular/platform-browser";
@@ -32,6 +32,9 @@ import {MiniUiService} from "@services/mini-ui/mini-ui.service";
 import {FriendRequestModel} from "@app/models/friend-request.model";
 import IpcResponseInterface from "@app/interfaces/ipc-response.interface";
 import FriendModel from "@app/models/friend.model";
+const { ipcRenderer } = window.require('electron');
+import NewHttpResponseInterface from "@app/interfaces/new-http-response.interface";
+import {GlobalCache} from "@app/config/global-cache";
 
 // import svg end
 
@@ -113,6 +116,15 @@ export class IndexComponent implements OnInit {
     });
     this.connectDB();
 
+    ipcRenderer.on("download-completed", (event, msg) => {
+      if(msg) {
+        this.zone.run(() => {
+          this.snackBarService.openMessage("保存完成");
+          this.changeDetectorRef.detectChanges();
+        });
+      }
+    });
+
   }
 
   connectDB() {
@@ -125,77 +137,12 @@ export class IndexComponent implements OnInit {
   ngOnInit(): void {
     this.initAll();
     this.doLoginIMServer();
-
-    // 缓存个人信息
-    this.cacheService.cacheMyInfo().then(() => {
-      // 使用缓存中的头像
-      this.cacheService.getMyInfo().then((data: UserModel) => {
-        console.dir(data);
-        if(data.userAvatarFileName.length > 0) {
-          this.myAvatar = this.dom.bypassSecurityTrustResourceUrl(data.userAvatarFileName);
-        }
-      });
-    });
-
-    this.messageDistributeService.MT03_OF_CHATTING_MESSAGE$.subscribe(data => {
-      this.massageBadges.set("message", 1);
-    });
-    this.messageDistributeService.MT45_OF_GROUP$CHAT$MSG_SERVER$TO$B$.subscribe(data => {
-      this.massageBadges.set("message", 1);
-    });
-
-    // 获取并缓存好友列表
-    this.cacheService.cacheFriends().then();
-    // 获取并缓存群列表
-    this.cacheService.cacheGroups().then();
-    // 缓存黑名单
-    this.cacheService.cacheBlackList();
-    // 监听黑名单变化
-    this.messageDistributeService.PULLED_BLACK_LIST$.subscribe(() => {
-      this.cacheService.cacheBlackList();
-    });
-    // 缓存敏感词
-    this.cacheService.sensitiveWordList();
-    // 监听敏感词变化
-    this.messageDistributeService.SENSITIVE_WORD_UPDATE$.subscribe(() => {
-      this.cacheService.sensitiveWordList();
-    });
-
-    // 监听好友请求
-    this.messageDistributeService.MT07_OF_ADD_FRIEND_REQUEST_INFO_SERVER$TO$B$.subscribe(() => {
-      this.cacheService.cacheNewFriends();
-    });
-    // 监听好友在线状态的更新
-    this.messageDistributeService.USER_ONLINE_STATUS_CHANGE$.subscribe((res: ProtocalModel) => {
-      const dataContent: any = JSON.parse(res.dataContent);
-      const friendId :string = dataContent.userId;
-      const onlineStatus : boolean = dataContent.onlineStatus;
-      this.cacheService.updateFriendOnlineStatus(friendId,onlineStatus);
-    });
-
-    // 缓存通讯录角标数量
-    this.updateFriendRequestNumber();
-
-    // 订阅新的好友通知
-    this.cacheService.cacheUpdate$.subscribe(cacheData => {
-      if (cacheData.newFriendMap) {
-        this.updateFriendRequestNumber();
-      }
-      if (cacheData.myInfo) {
-        this.myAvatar = cacheData.myInfo.userAvatarFileName;
-      }
-    });
-
-    /**
-     * 更新个人信息的指令
-     */
-    this.messageDistributeService.USER_INFO_UPDATE$.subscribe(protocol => {
-      const userInfo : any = JSON.parse(protocol.dataContent)
-      this.cacheService.cacheMyInfo(userInfo.userId);
-    });
-
-    this.listenNetStatus();
+    this.initUserData();
+    // 处理离线离线指令
+    this.processOfflineInstruct();
   }
+
+
 
   //#################################################################### 【1】初始化方面代码 START
   initAll() {
@@ -547,8 +494,12 @@ export class IndexComponent implements OnInit {
    * 载入相关数据。
    */
   loadAllDatas() {
-    //loadOnchatVisitorsFromServer();
-    //loadHistorychatVisitorsFromServer();
+    // 初始化用户相关数据
+    this.initUserData();
+
+    // 处理离线指令
+    // loadOnchatVisitorsFromServer();
+    // loadHistorychatVisitorsFromServer();
 
     // 刷新本地用户信息的UI显示
     // RBChatLocalUserUI.refresh();
@@ -652,4 +603,97 @@ export class IndexComponent implements OnInit {
     });
   }
 
+  /**
+   * 初始化用户数据
+   * @private
+   */
+  private initUserData() {
+    // 缓存个人信息
+    this.cacheService.cacheMyInfo().then(() => {
+      // 使用缓存中的头像
+      this.cacheService.getMyInfo().then((data: UserModel) => {
+        console.dir(data);
+        if(data.userAvatarFileName.length > 0) {
+          this.myAvatar = this.dom.bypassSecurityTrustResourceUrl(data.userAvatarFileName);
+        }
+      });
+    });
+
+    this.messageDistributeService.MT03_OF_CHATTING_MESSAGE$.subscribe(data => {
+      this.massageBadges.set("message", 1);
+    });
+    this.messageDistributeService.MT45_OF_GROUP$CHAT$MSG_SERVER$TO$B$.subscribe(data => {
+      this.massageBadges.set("message", 1);
+    });
+
+    // 获取并缓存好友列表
+    this.cacheService.cacheFriends().then();
+    // 缓存新的好友请求
+    this.cacheService.cacheNewFriends();
+    // 获取并缓存群列表
+    this.cacheService.cacheGroups().then();
+    // 缓存黑名单
+    this.cacheService.cacheBlackList();
+    // 监听黑名单变化
+    this.messageDistributeService.PULLED_BLACK_LIST$.subscribe(() => {
+      this.cacheService.cacheBlackList();
+    });
+    // 缓存敏感词
+    this.cacheService.sensitiveWordList();
+    // 监听敏感词变化
+    this.messageDistributeService.SENSITIVE_WORD_UPDATE$.subscribe(() => {
+      this.cacheService.sensitiveWordList();
+    });
+    // 监听好友在线状态的更新
+    this.messageDistributeService.USER_ONLINE_STATUS_CHANGE$.subscribe((res: ProtocalModel) => {
+      const dataContent: any = JSON.parse(res.dataContent);
+      const friendId: string = dataContent.userId;
+      const onlineStatus: boolean = dataContent.onlineStatus;
+      this.cacheService.updateFriendOnlineStatus(friendId,onlineStatus);
+    });
+
+    // 缓存通讯录角标数量
+    this.updateFriendRequestNumber();
+
+    // 订阅新的好友通知
+    this.cacheService.cacheUpdate$.subscribe(cacheData => {
+      if (cacheData.newFriendMap) {
+        this.updateFriendRequestNumber();
+      }
+      if (cacheData.myInfo) {
+        this.myAvatar = cacheData.myInfo.userAvatarFileName;
+      }
+    });
+
+    /**
+     * 更新个人信息的指令
+     */
+    this.messageDistributeService.USER_INFO_UPDATE$.subscribe(protocol => {
+      this.cacheService.cacheMyInfo(this.localUserService.localUserInfo.userId).then();
+    });
+
+    this.listenNetStatus();
+
+  }
+
+  /**
+   * 处理离线指令
+   * @private
+   */
+  private processOfflineInstruct() {
+    this.restService.getUserOfflineInstruct(this.localUserService.localUserInfo.userId).subscribe((res: NewHttpResponseInterface<string[]>) => {
+      if(res.status === 200) {
+        const offlineInstruct :string[]  = res.data;
+        if (!offlineInstruct || offlineInstruct.length ==0 ) {
+          return;
+        }
+        offlineInstruct.forEach((item)=>{
+          const protocol:ProtocalModel = JSON.parse(item);
+          const dataContent:any = JSON.parse(protocol.dataContent);
+          this.messageDistributeService.processOfflineInstruct(protocol);
+        });
+      }
+    });
+
+  }
 }

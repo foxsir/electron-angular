@@ -8,6 +8,7 @@ import {DatabaseService} from "@services/database/database.service";
 import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 import {MessageDistributeService} from "@services/message-distribute/message-distribute.service";
 import {ProtocalModel} from "@app/models/protocal.model";
+import {GlobalCache} from "@app/config/global-cache";
 
 @Component({
   selector: 'app-index',
@@ -20,9 +21,7 @@ import {ProtocalModel} from "@app/models/protocal.model";
 export class IndexComponent implements OnInit {
   registerType: number = 0;
   selectedTab: number = 0;
-  public loginProtocol : boolean = true;
-
-  public appConfig: appConfigInterface;
+  loginProtocol:boolean = true;
 
   constructor(
     public router: Router,
@@ -39,6 +38,7 @@ export class IndexComponent implements OnInit {
     if(this.router.url === '/session/register') {
       this.selectedTab = 1;
     }
+    this.loginProtocol = GlobalCache.loginProtocol;
   }
 
   /**
@@ -56,20 +56,20 @@ export class IndexComponent implements OnInit {
 
   getAppConfig() {
     this.restService.getAppConfig().subscribe((res: NewHttpResponseInterface<appConfigInterface>) => {
-      this.appConfig = res.data;
+      GlobalCache.appConfig = res.data;
     });
   }
 
   openPrivacyPolicyUrl() {
-    if(this.appConfig) {
-      this.windowService.openUrl(this.appConfig.privacyPolicyUrl);
+    if(GlobalCache.appConfig) {
+      this.windowService.openUrl(GlobalCache.appConfig.privacyPolicyUrl);
     }
   }
 
   selectLoginProtocol(event) {
     event.preventDefault();
-    this.loginProtocol = !this.loginProtocol;
-    alert(this.loginProtocol);
+    GlobalCache.loginProtocol = !GlobalCache.loginProtocol;
+    this.loginProtocol = GlobalCache.loginProtocol;
   }
 
   /**

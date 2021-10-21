@@ -29,6 +29,7 @@ import MBQoS4ReciveDaemon from "./mb_daemon_qos_recieve";
 import MBQoS4SendDaemon from "./mb_daemon_qos_send";
 import MBProtocalFactory from "./MBProtocalFactory";
 import MBDataSender from "./mb_data_sender";
+import InstanceFactory from "@app/client/InstanceFactory";
 
 /**
  * 数据接收辅助类（因html5的websocket的数据接收不需要像经典的BIO那样需开发者自已启动单独
@@ -44,14 +45,14 @@ import MBDataSender from "./mb_data_sender";
 export default class MBDataReciever {
 
   readonly TAG = "MBDataReciever";
-  private mbCore = new MBCore;
-  private mbKeepAliveDaemon = new MBKeepAliveDaemon();
-  private mbAutoReLoginDaemon = new MBAutoReLoginDaemon();
-  private mbSocketProvider = new MBSocketProvider();
-  private mbQoS4ReciveDaemon = new MBQoS4ReciveDaemon();
-  private mbQoS4SendDaemon = new MBQoS4SendDaemon();
-  private mbProtocalFactory = new MBProtocalFactory();
-  private mbDataSender = new MBDataSender();
+  private mbCore = InstanceFactory.getInstance(MBCore);
+  private mbKeepAliveDaemon = InstanceFactory.getInstance(MBKeepAliveDaemon);
+  private mbAutoReLoginDaemon = InstanceFactory.getInstance(MBAutoReLoginDaemon);
+  private mbSocketProvider = InstanceFactory.getInstance(MBSocketProvider);
+  private mbQoS4ReciveDaemon = InstanceFactory.getInstance(MBQoS4ReciveDaemon);
+  private mbQoS4SendDaemon = InstanceFactory.getInstance(MBQoS4SendDaemon);
+  private mbProtocalFactory = InstanceFactory.getInstance(MBProtocalFactory);
+  private mbDataSender = InstanceFactory.getInstance(MBDataSender);
 
   /**
    * 处理通过WebSocket收到的原始数据包，将根据定义的协议类型进入相应的处理逻辑。

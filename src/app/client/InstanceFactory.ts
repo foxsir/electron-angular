@@ -12,7 +12,13 @@
 import MBCore from "@app/client/mb_core";
 
 export default class InstanceFactory {
+  private static classMap = new Map();
   static getInstance<T>(classRef: { new(): T }): T {
-    return new classRef();
+    if(InstanceFactory.classMap.get(classRef.name)) {
+      return InstanceFactory.classMap.get(classRef.name);
+    } else {
+      InstanceFactory.classMap.set(classRef.name, new classRef());
+      return InstanceFactory.classMap.get(classRef.name);
+    }
   }
 }

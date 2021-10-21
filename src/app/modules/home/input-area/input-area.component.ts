@@ -49,6 +49,8 @@ import {RedPocketComponent} from "@modules/user-dialogs/red-pocket/red-pocket.co
 import {RedPacketInterface} from "@app/interfaces/red-packet.interface";
 import DirectoryType from "@services/file/config/DirectoryType";
 import {Subscription} from "rxjs";
+import {InputAreaService} from "@services/input-area/input-area.service";
+import {GlobalCache} from "@app/config/global-cache";
 
 const { ipcRenderer } = window.require('electron');
 
@@ -93,6 +95,8 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
 
   public currentSubscription: Subscription;
 
+  private inputEnableStatus = true;
+
   constructor(
     private router: Router,
     private dom: DomSanitizer,
@@ -111,7 +115,12 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
     private dialogService: DialogService,
     private localUserService: LocalUserService,
     private forwardMessageService: ForwardMessageService,
+    private inputAreaService: InputAreaService,
   ) {
+    this.inputAreaService.inputUpdate$.subscribe((status) => {
+      this.inputEnableStatus = status;
+    });
+    this.inputEnableStatus = this.inputAreaService.enableStatus;
   }
 
   ngOnInit(): void {
@@ -263,13 +272,17 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
     emitToUI: boolean = true,
     replaceEntity: ChatmsgEntityModel = null
   ) {
+    // 检查输入框是否被禁用
+    if(this.inputEnableStatus === false) {
+      return false;
+    }
     // sendStatus
     if (!messageText || messageText.trim().length === 0) {
       return false;
     }
     // 检查是否在敏感词内
     let includeSensitiveWord = false;
-    this.cacheService.sensitiveList.forEach(sensitiveWord=>{
+    GlobalCache.sensitiveList.forEach(sensitiveWord=>{
       if (sensitiveWord.includes(messageText)){
         includeSensitiveWord = true;
       }
@@ -447,11 +460,16 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
         duration: 0,
         fileLength: 0,
         fileName: "",
+        existReplyMsg: true,
         msg: messageText,
         msgType: this.quoteMessage.msgType,
         reply: this.quoteMessage.text,
-        userName: "普通管理员",
+        replyFriendUid: this.currentChat.alarmItem.dataId,
+        userName: this.currentChat.alarmItem.title,
       };
+      console.dir(replyMsg)
+      console.dir(this.quoteMessage)
+      console.dir(this.quoteMessage.text)
       return JSON.stringify(replyMsg);
     } else {
       return messageText;
@@ -688,11 +706,14 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
       if(friend) {
         this.dialogService.confirm({title: "消息提示", text: "确认分享联系信息到当前聊天吗？"}).then((ok) => {
           if(ok) {
-            const messageText = JSON.stringify({
-              nickName: friend.nickname,
-              uid: friend.friendUserUid,
+            this.cacheService.getCacheFriends().then(cache => {
+              const messageText = JSON.stringify({
+                nickName: friend.nickname,
+                uid: friend.friendUserUid,
+                userAvatar: cache.get(friend.friendUserUid.toString())?.userAvatarFileName,
+              });
+              this.doSend(messageText, MsgType.TYPE_CONTACT,true);
             });
-            this.doSend(messageText, MsgType.TYPE_CONTACT,true);
           }
         });
       }
@@ -715,13 +736,21 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
           isOpen: 0,
           orderId: res.res.orderId,
           type: res.type,
-          userId: res.toUserId,
+          status: '1',
+          userId: this.localUserService.localUserInfo.userId,
           word: res.word,
         });
-        this.messageService.sendMessage(MsgType.TYPE_REDBAG, this.currentChat.alarmItem.dataId, msgContent).then((send) => {
+
+        const sendMessage = this.currentChat.metadata.chatType === 'friend' ?
+          this.messageService.sendMessage.bind(this.messageService) :
+          this.messageService.sendGroupMessage.bind(this.messageService);
+
+        sendMessage(MsgType.TYPE_REDBAG, this.currentChat.alarmItem.dataId, msgContent).then((send) => {
           const chatMsgEntity = this.messageEntityService.prepareSendedMessage(
-            send.msgBody.m, 0, send.fingerPrint, send.msgBody.ty
+            send.msgBody.m, new Date().getTime(), send.fingerPrint, send.msgBody.ty
           );
+          // 保存红包id
+          chatMsgEntity.redId = res.res.orderId;
           this.tempList.push({
             chatMsgEntity: chatMsgEntity,
             emitToUI: true,
@@ -750,8 +779,8 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
   }
 
   startScreenShot() {
-      const winstartScreenShot = window["startScreenShot"];
-      winstartScreenShot();
+    // 发送截图指令
+    ipcRenderer.send("start-screen-capture", "new message");
   }
 
   pasteContent(e: ClipboardEvent) {

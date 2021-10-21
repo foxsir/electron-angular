@@ -35,6 +35,8 @@ import AtMeModel from "@app/models/at-me.model";
 import SilenceUserModel from "@app/models/silence-user.model";
 import LastMessageModel from "@app/models/last-message.model";
 import BlackMeListModel from "@app/models/black-me-list.model";
+import {GlobalCache} from "@app/config/global-cache";
+import GroupInfoModel from "@app/models/group-info.model";
 
 export type AlarmDataMap = Map<string, {alarmData: AlarmItemInterface; message?: Map<string, ChatmsgEntityModel>}>;
 
@@ -42,7 +44,7 @@ interface CacheItem {
   alarmDataMap: AlarmDataMap; // 会话信息
   friendMap: Map<string, FriendModel>; // 好友信息
   groupMap: Map<string, GroupModel>; // 我的群组
-  groupAdminMap: Map<string, Map<string, GroupAdminModel>>; // 群组管理员
+  groupAdminMap: Map<string, GroupAdminModel>; // 群组管理员
   groupMemberMap: Map<string, GroupMemberModel>; // 群组成员
   myInfo: UserModel; // 当前用户信息
   muteMap: Map<string, boolean>; // 静音的会话
@@ -74,8 +76,6 @@ export class CacheService extends DatabaseService {
 
   // input draft
   public draftMap: Map<string, string> = new Map<string, string>();
-
-  public sensitiveList : string[] = [];
 
   constructor(
     private messageRoamService: MessageRoamService,
@@ -129,7 +129,8 @@ export class CacheService extends DatabaseService {
         ...alarmData.metadata,
       };
       chatting.date = lastTime || alarmData.alarmItem.date;
-      chatting.lastFp = lastFp || alarmData.alarmItem.lastFp;
+      chatting.lastFp = lastFp || alarmData.alarmItem.lastFp || "";
+
       this.saveDataSync<ChattingModel>({model: "chatting", data: chatting, update: {dataId: chatting.dataId}}).then(() => {
         if(cache.size === 0) {
           if (subscription) {
@@ -202,6 +203,24 @@ export class CacheService extends DatabaseService {
   }
 
   /**
+   * 通过指纹码删除本地消息缓存
+   * @param alarmData
+   * @param messages
+   */
+  deleteMessageCacheByFP(dataId: string, messages: string[] ): Promise<any> {
+    return new Promise((resolve) => {
+        this.getChattingList().then(list => {
+        messages.forEach(fingerPrint => {
+          this.deleteData<ChatmsgEntityModel>({model: 'chatmsgEntity', query: {fingerPrintOfProtocal: fingerPrint}}).then();
+        });
+        this.cacheSource.next({alarmDataMap: list});
+        resolve(true);
+      });
+    });
+  }
+
+
+  /**
    * 清除会话消息
    * @param alarmData
    */
@@ -241,6 +260,31 @@ export class CacheService extends DatabaseService {
             this.cacheSource.next({alarmDataMap: list});
             resolve(true);
           });
+        }
+      });
+    });
+  }
+
+  /**
+   * 删除群内某个人的所有消息
+   * @param groupId
+   * @param memberIdList
+   */
+  deleteGroupChattingCache(groupId: string, memberIdList: number[]) : Promise<boolean> {
+    return new Promise<boolean>((resolve) => {
+      this.getChattingList().then(list => {
+        if(list.get(groupId)) {
+          if (memberIdList && memberIdList.length > 0) {
+            let count = 0;
+            memberIdList.forEach(memberId => {
+              this.deleteData<ChatmsgEntityModel>({model: 'chatmsgEntity', query: {dataId: groupId,memberId:memberId}}).then();
+              count ++;
+            });
+            if (count == memberIdList.length) {
+              this.cacheSource.next({alarmDataMap: list});
+              resolve(true);
+            }
+          }
         }
       });
     });
@@ -404,16 +448,23 @@ export class CacheService extends DatabaseService {
       this.rosterProviderService.refreshRosterAsync().subscribe((res: NewHttpResponseInterface<any>) => {
         // 服务端返回的是一维RosterElementEntity对象数组
         if(res.status === 200) {
-          const friendList: FriendModel[] = res.data;
-          if (friendList.length > 0) {
-            const data = new Map<string, FriendModel>();
-            friendList.forEach(f => {
-              data.set(f.friendUserUid.toString(), f);
-              this.saveData<FriendModel>({model: 'friend', data: f, update: {friendUserUid: f.friendUserUid}});
-            });
-            this.cacheSource.next({friendMap: data});
-          }
-          resolve(true);
+          // 先删除本地的数据,避免出错
+          this.deleteData<FriendModel>({model: 'friend', query: null}).then(()=>{
+            const friendList: FriendModel[] = res.data;
+            if (friendList.length > 0) {
+              const data = new Map<string, FriendModel>();
+              // 先删除
+              friendList.forEach((f, key) => {
+                data.set(f.friendUserUid.toString(), f);
+                this.saveDataSync<FriendModel>({model: 'friend', data: f, update: {friendUserUid: f.friendUserUid}}).then(() => {
+                  if(key === friendList.length - 1) {
+                    this.cacheSource.next({friendMap: data});
+                  }
+                });
+              });
+            }
+            resolve(true);
+          });
         }
       });
     });
@@ -425,14 +476,25 @@ export class CacheService extends DatabaseService {
   cacheGroups(): Promise<boolean> {
     return new Promise(resolve => {
       this.restService.getUserJoinGroup().subscribe((res: NewHttpResponseInterface<GroupModel[]>) => {
+        const groupMap = new Map<string, GroupModel>();
         if(res.status === 200) {
-          const groupMap = new Map<string, GroupModel>();
-          res.data.forEach(g => {
-            if(g) {
-              groupMap.set(g.gid, g);
-              this.saveData<GroupModel>({model: 'group', data: g, update: {gid: g.gid}});
+          // 先清除所有的数据,避免出错
+          this.deleteData<GroupModel>({model: 'group', query: null}).then(()=>{
+            if (res.data && res.data.length > 0){
+              res.data.forEach((g, key) => {
+                if(g) {
+                  groupMap.set(g.gid, g);
+                  this.saveDataSync<GroupModel>({model: 'group', data: g, update: {gid: g.gid}}).then(() => {
+                    if(key === res.data.length - 1) {
+                      this.cacheSource.next({groupMap: groupMap});
+                      resolve(true);
+                    }
+                  });
+                }
+              });
             }
           });
+        } else {
           this.cacheSource.next({groupMap: groupMap});
           resolve(true);
         }
@@ -443,21 +505,26 @@ export class CacheService extends DatabaseService {
   /**
    * 获取并缓存群管理员Map
    */
-  cacheGroupAdmins(gid: string): Promise<Map<string, Map<string, GroupAdminModel>>> {
+  cacheGroupAdmins(gid: string): Promise<Map<string, GroupAdminModel>> {
     return new Promise(resolve => {
       this.restService.getGroupAdminList(gid).subscribe((res: NewHttpResponseInterface<GroupAdminModel[]>) => {
+        const groupAdminMap = new Map<string, GroupAdminModel>();
         if(res.status === 200) {
-          const groupAdminMap = new Map<string, GroupAdminModel>();
-          res.data.forEach(admin => {
+          res.data.forEach((admin, key) => {
             groupAdminMap.set(admin.userUid.toString(), admin);
             admin.gid = gid;
-            this.saveData<GroupAdminModel>({
+            this.saveDataSync<GroupAdminModel>({
               model: "groupAdmin", data: admin, update: {gid: gid, userUid: admin.userUid}
+            }).then(() => {
+              if(key === res.data.length - 1) {
+                this.cacheSource.next({groupAdminMap: groupAdminMap});
+                resolve(groupAdminMap);
+              }
             });
           });
-          const newData = new Map<string, Map<string, GroupAdminModel>>();
-          this.cacheSource.next({groupAdminMap: newData});
-          resolve(newData);
+        } else {
+          this.cacheSource.next({groupAdminMap: groupAdminMap});
+          resolve(groupAdminMap);
         }
       });
     });
@@ -518,6 +585,32 @@ export class CacheService extends DatabaseService {
       });
     });
   }
+
+  /**
+   * 缓存群的基本信息
+   * @param gid
+   */
+  cacheGroupModel(gid: string) {
+    this.restService.getGroupBaseById(gid).subscribe((result: NewHttpResponseInterface<GroupInfoModel>) => {
+      if (result.status !== 200) {
+        return;
+      } else {
+        this.saveDataSync<GroupModel>({model: 'group', data: result.data, update: {gid: gid}}).then(()=>{
+          this.queryData({model: 'group', query: {}}).then((res: IpcResponseInterface<GroupModel>) => {
+            const map = new Map();
+            if(res.status === 200) {
+              res.data.forEach(g => {
+                map.set(g.gid, g);
+              });
+              this.cacheSource.next({groupMap: map});
+            }
+          });
+        });
+      }
+    });
+  }
+
+
 
   /**
    * 清空缓存
@@ -682,7 +775,7 @@ export class CacheService extends DatabaseService {
       await this.queryData<ChattingModel>({
         model: 'chatting', query: {dataId: dataId}
       }).then((cache: IpcResponseInterface<ChattingModel>)  => {
-        if(cache.status === 200) {
+        if(cache.status === 200 && cache.data && cache.data.length > 0) {
           text = cache.data[0].msgContent;
         }
       });
@@ -853,14 +946,20 @@ export class CacheService extends DatabaseService {
   cacheGroupMembers(gid: string): Promise<Map<string, GroupMemberModel>> {
     return new Promise(resolve => {
       this.restService.submitGetGroupMembersListFromServer(gid).subscribe((res: NewHttpResponseInterface<{list: GroupMemberModel[]}>) => {
+        const groupMemberMap = new Map<string, GroupMemberModel>();
         if(res.status === 200) {
-          const groupMemberMap = new Map<string, GroupMemberModel>();
-          res.data.list.forEach(member => {
+          res.data.list.forEach((member, key) => {
             groupMemberMap.set(member.userUid.toString(), member);
-            this.saveData<GroupMemberModel>({
+            this.saveDataSync<GroupMemberModel>({
               model: "groupMember", data: member, update: {groupId: gid, userUid: member.userUid}
+            }).then(() => {
+              if(key === res.data.list.length - 1) {
+                this.cacheSource.next({groupMemberMap: groupMemberMap});
+                resolve(groupMemberMap);
+              }
             });
           });
+        } else {
           this.cacheSource.next({groupMemberMap: groupMemberMap});
           resolve(groupMemberMap);
         }
@@ -943,11 +1042,10 @@ export class CacheService extends DatabaseService {
    * 缓存我的敏感词
    */
   sensitiveWordList() {
-    // 缓存我的黑名单
     this.restService.getSensitiveWordList().subscribe((res: NewHttpResponseInterface<string[]>) => {
       if(res.status === 200) {
-        this.sensitiveList = res.data;
-        console.log("敏感词:", this.sensitiveList);
+        GlobalCache.sensitiveList = res.data;
+        console.log("敏感词:", GlobalCache.sensitiveList);
       }
     });
   }
@@ -1101,7 +1199,7 @@ export class CacheService extends DatabaseService {
   /**
    * 获取拉黑我的人员列表
    */
-  getBlackMeListCache():Promise<Map<string, BlackMeListModel>>  {
+  getBlackMeListCache(): Promise<Map<string, BlackMeListModel>>  {
     return new Promise((resolve) => {
       this.queryData({model: 'blackMeList', query: null}).then((res: IpcResponseInterface<BlackMeListModel>) => {
         const map = new Map();
@@ -1167,4 +1265,29 @@ export class CacheService extends DatabaseService {
       });
     });
   }
+
+  saveSystemMessage(dataId: number, content: string, timestamp: number) {
+    const chatMsgEntity: ChatmsgEntityModel = this.messageEntityService.prepareRecievedMessage(
+      dataId.toString(), "", content, timestamp, 0, ""
+    );
+    chatMsgEntity.dataId = dataId.toString();
+    chatMsgEntity.msgType = 999;
+    chatMsgEntity.fingerPrintOfProtocal = CommonTools.uuid();
+
+    if(this.chatMsgEntityMap.size > 0 && this.chatMsgEntityMap.entries().next().value[1].dataId === chatMsgEntity.dataId) {
+      this.chatMsgEntityMapTemp.set(chatMsgEntity.fingerPrintOfProtocal, chatMsgEntity);
+      this.chatMsgEntityMap.set(chatMsgEntity.fingerPrintOfProtocal, chatMsgEntity);
+    }
+
+    this.saveDataSync<ChatmsgEntityModel>({
+      model: "chatmsgEntity", data: chatMsgEntity, update: null
+    }).then(() => {
+      this.getChattingList().then(list => {
+        this.cacheSource.next({alarmDataMap: list});
+      });
+    });
+  }
+
+
+
 }

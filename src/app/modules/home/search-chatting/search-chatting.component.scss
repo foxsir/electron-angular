@@ -2,7 +2,13 @@
 
 .filev{
   width:calc(100% - 40px);
-  padding: 0px 0px 0px 10px;
+  padding: 0 0 0 10px;
+
+  .fileMessageTitle{
+    position: relative;
+    top: 6px;
+    border: 1px solid red;
+  }
 
   ::ng-deep{
     .mat-button, .mat-icon-button, .mat-stroked-button, .mat-flat-button{
@@ -38,6 +44,8 @@
       height: 120px;
       margin: 14px 14px 0 0;
       float: left;
+      overflow: hidden;
+      border-radius: 4px;
     }
     .imgv img{
       display: block;
@@ -45,14 +53,13 @@
       height: 100%;
       object-fit:cover
     }
-
+    .mat-button-wrapper{ font-size: 12px;}
     .mat-list-base .mat-list-item {
       font-size: 14px;
     }
 
     .mat-button-wrapper {
       font-size: 12px;
-      color: #888;
     }
     .mat-list-base .mat-list-item .mat-divider, .mat-list-base .mat-list-option .mat-divider{
       display: none;
@@ -68,3 +75,11 @@
 
 }
 
+.filev div{
+  ::ng-deep {
+    div {
+      padding-top: 0;
+      padding-bottom: 0
+    }
+  }
+}

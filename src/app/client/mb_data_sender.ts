@@ -26,6 +26,7 @@ import MBProtocalFactory from "./MBProtocalFactory";
 import MBSocketProvider from "./mb_socket_provider";
 import MBQoS4SendDaemon from "./mb_daemon_qos_send";
 import {WorkerService} from "@services/worker/worker.service";
+import InstanceFactory from "@app/client/InstanceFactory";
 
 /**
  * 数据发送处理实用类。
@@ -36,10 +37,10 @@ import {WorkerService} from "@services/worker/worker.service";
 export default class MBDataSender {
 
   readonly TAG = "MBDataSender";
-  private mbCore = new MBCore();
-  private mbProtocalFactory = new MBProtocalFactory();
-  private mbSocketProvider = new MBSocketProvider();
-  private mbQoS4SendDaemon = new MBQoS4SendDaemon();
+  private mbCore = InstanceFactory.getInstance(MBCore);
+  private mbProtocalFactory = InstanceFactory.getInstance(MBProtocalFactory);
+  private mbSocketProvider = InstanceFactory.getInstance(MBSocketProvider);
+  private mbQoS4SendDaemon = InstanceFactory.getInstance(MBQoS4SendDaemon);
   private workerService: WorkerService = WorkerService.getInstance();
 
   // /**

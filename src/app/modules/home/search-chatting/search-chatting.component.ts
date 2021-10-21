@@ -80,7 +80,7 @@ export class SearchChattingComponent implements OnInit ,OnDestroy{
     this.fileMap.clear();
     this.cacheService.getChattingCache(this.chatting).then(data => {
       data.forEach((msg) => {
-        if(msg.msgType === MsgType.TYPE_IMAGE) {
+        if(msg.msgType === MsgType.TYPE_IMAGE || msg.msgType === MsgType.TYPE_SHORTVIDEO) {
           this.imageMap.set(msg.fingerPrintOfProtocal, msg);
         } else if(msg.msgType === MsgType.TYPE_FILE) {
           this.fileMap.set(msg.fingerPrintOfProtocal, msg);

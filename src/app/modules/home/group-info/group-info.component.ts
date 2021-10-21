@@ -1,8 +1,8 @@
-import {Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import ChattingModel from "@app/models/chatting.model";
 import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 import { MatDrawer } from "@angular/material/sidenav";
-import { DomSanitizer } from "@angular/platform-browser";
+import {DomSanitizer, SafeResourceUrl} from "@angular/platform-browser";
 
 import closeIcon from "@app/assets/icons/close.svg";
 import closeActiveIcon from "@app/assets/icons/close-active.svg";
@@ -23,7 +23,9 @@ import NewHttpResponseInterface from "@app/interfaces/new-http-response.interfac
 import GroupInfoModel from "@app/models/group-info.model";
 import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 import {GroupModel} from "@app/models/group.model";
+import {UploadedFile} from "@app/factorys/upload/upload-file/upload-file.component";
 import {Subscription} from "rxjs";
+import {AvatarService} from "@services/avatar/avatar.service";
 
 @Component({
     selector: 'app-group-info',
@@ -40,6 +42,8 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
     public backspaceIcon = this.dom.bypassSecurityTrustResourceUrl(backspaceIcon);
     public backspaceActiveIcon = this.dom.bypassSecurityTrustResourceUrl(backspaceActiveIcon);
     public arrowRightIcon = this.dom.bypassSecurityTrustResourceUrl(arrowRightIcon);
+
+    myAvatar: SafeResourceUrl = null;
 
     public userinfo: any;
     public user_role: string; /*当前用户在这个群的角色：owner, admin, common*/
@@ -96,12 +100,15 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
     constructor(
         private dom: DomSanitizer,
         private restService: RestService,
+        private avatarService: AvatarService,
         private dialogService: DialogService,
         private localUserService: LocalUserService,
         private cacheService: CacheService,
         private messageService: MessageService,
         private currentChattingChangeService: CurrentChattingChangeService,
         private snackBarService: SnackBarService,
+        private zone: NgZone,
+        private changeDetectorRef: ChangeDetectorRef
     ) {
         this.currentSubscription = this.currentChattingChangeService.currentChatting$.subscribe(currentChat => {
           if(currentChat && this.currentChat.alarmItem.dataId !== currentChat.alarmItem.dataId) {
@@ -126,12 +133,14 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
               });
             });
           }
+          if(res.groupMap){
+            this.initGroupData();
+          }
         });
     }
 
     ngOnInit(): void {
-
-        this.initGroupData();
+      this.initGroupData();
     }
 
     loadGroupAdminList() {
@@ -142,29 +151,61 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
                 this.group_admin_list.push(member);
             });
             console.log('群管理员列表 01：', members);
+            this.initUserCluInfo();
         });
     }
 
+    /* 个人的在群状态 */
+    initUserCluInfo(){
+      this.userinfo = this.localUserService.localUserInfo;
+      this.restService.getUserClusterVo(this.userinfo.userId.toString(), this.currentChat.alarmItem.dataId).subscribe(res => {
+        if (res.status !== 200)
+          return;
+
+        this.user_clu_info = res.data;
+        if (this.user_clu_info.groupOwner == this.userinfo.userId.toString()) {
+          this.user_role = 'owner';
+        }
+        else if (this.user_clu_info.isAdmin == 1) {
+          this.user_role = 'admin';
+        }
+        else {
+          this.user_role = 'common';
+        }
+
+        console.log('当前用户在这个群的角色: ', this.user_role);
+      });
+    }
+
     initGroupData() {
+      this.myAvatar = null;
         console.log('currentChat:'+this.currentChat+"当前页面:群组信息页面");
         if (this.currentChat.metadata.chatType === 'friend') {
             return;
         }
 
-        /*z获取群基本信息*/
+        /*获取群基本信息*/
         this.restService.getGroupBaseById(this.currentChat.alarmItem.dataId).subscribe((res: NewHttpResponseInterface<GroupInfoModel>) => {
-            console.log('getGroupBaseById result: ', res);
-            if (res.status !== 200)
+          if (res.status !== 200)
                 return;
 
-            if(res.status === 200 && res.data) {
-              this.groupData = res.data;
-              this.setting_data.gmute = this.groupData.gmute === 1;
-              this.setting_data.invite = this.groupData.invite === 1;
-              this.setting_data.allowPrivateChat = this.groupData.allowPrivateChat === 1;
-              this.setting_data.gnotice = this.groupData.gnotice;
-            }
+          if(res.status === 200 && res.data) {
+            this.groupData = res.data;
+            this.groupData.gid=this.currentChat.alarmItem.dataId;
+            this.setting_data.gmute = this.groupData.gmute === 1;
+            this.setting_data.invite = this.groupData.invite === 1;
+            this.setting_data.allowPrivateChat = this.groupData.allowPrivateChat === 1;
+            this.setting_data.gnotice = this.groupData.gnotice;
 
+            //群头像
+            var avatar;
+            if(this.groupData.avatar.length > 0) {
+              avatar = this.dom.bypassSecurityTrustResourceUrl(this.groupData.avatar);
+            } else {
+              avatar = this.dom.bypassSecurityTrustResourceUrl(this.avatarService.defaultLocalAvatar);
+            }
+            this.myAvatar=avatar;
+          }
         });
 
         /* 获取群成员列表 */
@@ -176,26 +217,7 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
         });
 
         this.loadGroupAdminList();
-
-        /* 个人的在群状态 */
-        this.userinfo = this.localUserService.localUserInfo;
-        this.restService.getUserClusterVo(this.userinfo.userId.toString(), this.currentChat.alarmItem.dataId).subscribe(res => {
-            if (res.status !== 200)
-                return;
-
-            this.user_clu_info = res.data;
-            if (this.user_clu_info.groupOwner == this.userinfo.userId.toString()) {
-                this.user_role = 'owner';
-            }
-            else if (this.user_clu_info.isAdmin == 1) {
-                this.user_role = 'admin';
-            }
-            else {
-                this.user_role = 'common';
-            }
-
-            console.log('当前用户在这个群的角色: ', this.user_role);
-        });
+        //this.initUserCluInfo();
 
         /* 查看免打扰状态 */
         this.restService.noDisturbDetail(this.userinfo.userId.toString(), this.currentChat.alarmItem.dataId).subscribe(res => {
@@ -321,8 +343,6 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
         };
 
         this.dialogService.openDialog(DemoDialogComponent, { data: data }).then((res: any) => {
-            console.log('dialog result: ', res);
-
             if (res.ok == true) {
 
                 var post_data = {
@@ -350,8 +370,6 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
         };
 
         this.dialogService.openDialog(GroupInfoDialogComponent, { data: data }).then((res: any) => {
-            console.log('group info dialog result: ', res);
-
             if (res.ok == false) {
                 return;
             }
@@ -404,8 +422,6 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
             popup_title: popup_title,
         };
         this.dialogService.openDialog(GroupInfoDialogComponent, { data: data,width: '314px',panelClass: "padding-less-dialog" }).then((res: any) => {
-            console.log('group info dialog result: ', res);
-
             if (res.ok == false) {
                 return;
             }
@@ -441,8 +457,6 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
         };
 
         this.dialogService.openDialog(GroupInfoDialogComponent, { data: data }).then((res: any) => {
-            console.log('group info dialog result: ', res);
-
             if (res.ok == false) {
                 return;
             }
@@ -587,4 +601,20 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
       this.currentSubscription.unsubscribe();
     }
 
+  public setAvatar(upload: UploadedFile) {
+    this.restService.updateGroupBaseById({
+      gid: this.currentChat.alarmItem.dataId,
+      avatar: upload.url.href,
+    }).subscribe(res => {
+      this.cacheService.cacheGroups().then();
+      this.cacheService.getChattingList().then(list =>{
+        const item = list.get(this.currentChat.alarmItem.dataId);
+        if(item) {
+          item.alarmData.alarmItem.avatar = upload.url.href;
+          this.cacheService.putChattingCache(item.alarmData).then();
+        }
+
+      })
+    });
+  }
 }

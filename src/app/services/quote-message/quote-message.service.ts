@@ -3,6 +3,9 @@ import {Subject} from "rxjs";
 import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 import {ReplyMessageType} from "@app/interfaces/reply-message.interface";
 import {ReplyContentType} from "@app/interfaces/reply-content.interface";
+import {MsgType} from "@app/config/rbchat-config";
+import CommonTools from "@app/common/common.tools";
+import {MessageEntityService} from "@services/message-entity/message-entity.service";
 
 /**
  * 允许被回复的消息类型：文本，图片，视频，语音，名片
@@ -17,7 +20,9 @@ export class QuoteMessageService {
   // Observable string streams
   message$ = this.messageSource.asObservable();
 
-  constructor() { }
+  constructor(
+    private messageEntityService: MessageEntityService
+  ) { }
 
   setQuoteMessage(message: ChatmsgEntityModel) {
     if(message === null) {
@@ -26,6 +31,14 @@ export class QuoteMessageService {
       const chat = this.checkMessageIsPureText(message.text as string);
       if (chat === true) {
         this.messageSource.next(message);
+      } else if(message.msgType === MsgType.TYPE_QUOTE) {
+        // 如果是回复消息，需要构建新消息体
+        const newChat = chat as ReplyMessageType;
+        const msg = JSON.parse(newChat.msg);
+        const entity: ChatmsgEntityModel = this.messageEntityService.createChatMsgEntity_TO_TEXT(
+          msg.msgContent, message.date, message.fingerPrintOfProtocal, 1
+        );
+        this.messageSource.next(entity);
       } else {
         // 如果是回复消息，需要构建新消息体
         const newChat = chat as ReplyMessageType;

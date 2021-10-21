@@ -24,7 +24,7 @@ export class TransmitMessageComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<TransmitMessageComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: ChatmsgEntityModel[],
+    @Inject(MAT_DIALOG_DATA) public data: {title: string; chatmsgEntityModel: ChatmsgEntityModel []},
     private cacheService: CacheService,
     private messageService: MessageService,
     private messageEntityService: MessageEntityService,
@@ -60,7 +60,7 @@ export class TransmitMessageComponent implements OnInit {
     });
 
     // const merge: ReplyMessageChildMessage[] = [];
-    await this.data.forEach(msg => {
+    await this.data.chatmsgEntityModel.forEach(msg => {
       const newMsg: ReplyMessageChildMessage = {
         date: msg.date,
         sendId: msg.uid,

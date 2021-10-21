@@ -1,6 +1,6 @@
 <mat-drawer-container fxFlexFill>
   <app-toolbar [visibilityActions]="false"></app-toolbar>
-  <mat-drawer fxFlexFill disableClose #privacySettingDrawer class="privacySetting" mode="over">
+  <mat-drawer fxFlexFill #privacySettingDrawer class="privacySetting" mode="over">
     <app-privacy-setting [drawer]="privacySettingDrawer"></app-privacy-setting>
   </mat-drawer>
 
@@ -24,7 +24,7 @@
               <app-upload-file *ngIf="myAvatar"
                 directoryType="user_portrait"
                 [fileTypes]="['image/png', 'image/jpg', 'image/jpeg']"
-                (fileUploaded)="setAvatar($event)" [options]="{icon: myAvatar, showProgress: true, size: {width: '60px'}}"></app-upload-file>
+                (fileUploaded)="setAvatar($event)" [options]="{icon: myAvatar, showProgress: true, size: {width: '60px',height:'60px'}}"></app-upload-file>
             </div>
           </mat-card-content>
           <mat-card-content>

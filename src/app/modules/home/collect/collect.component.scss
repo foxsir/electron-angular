@@ -71,5 +71,19 @@
     .mat-focus-indicator, .collect .mat-button, .collect .mat-button-base .chat-text{
       line-height: 22px;
     }
+    //名片消息样式
+    .user-card-container {
+      width: 294px;
+      .avatarArea{
+        display:none;
+      }
+      .user-avatar {
+        display: none;
+      }
+      .user-card-container0{
+        font-size: 12px;
+      }
+    }
+    //名片消息样式//
   }
 }

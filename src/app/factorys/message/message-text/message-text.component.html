@@ -1,1 +1,3 @@
-<div class="chat-text" [innerHTML]="showEmoji(chatMsg.text)"></div>
+<div class="message-entity-item" [ngClass]="{'self-message': chatMsg.uid.toString() === localUserInfo.userId.toString()}">
+  <div class="chat-text" [innerHTML]="showEmoji(chatMsg.text)"></div>
+</div>

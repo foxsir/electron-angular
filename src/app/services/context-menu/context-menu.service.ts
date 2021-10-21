@@ -314,7 +314,7 @@ export class ContextMenuService {
         return true;
       },
       action: (chat: ChatmsgEntityModel, messageContainer: HTMLDivElement) => {
-        this.dialogService.openDialog(TransmitMessageComponent, {data: [chat], width: '314px'}).then();
+        this.dialogService.openDialog(TransmitMessageComponent, {data: [chat], width: '314px',panelClass: "padding-less-dialog"}).then();
       }
     },
     delete: {
@@ -649,6 +649,13 @@ export class ContextMenuService {
       this.actionCollection.transmit,
       this.actionCollection.select,
       this.actionCollection.collect,
+    ];
+
+    this.contextMenuForMessage[this.msgType.TYPE_QUOTE] = [
+      this.actionCollection.copyText,
+      this.actionCollection.quote,
+      this.actionCollection.repeal,
+      ...com,
     ];
 
     this.contextMenuForMessage[this.msgType.TYPE_TEXT] = [

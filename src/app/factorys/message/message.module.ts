@@ -22,6 +22,7 @@ import {MatButtonModule} from "@angular/material/button";
 import { MessageMergeMultipleComponent } from './message-merge-multiple/message-merge-multiple.component';
 import { MessageVoiceCallComponent } from './message-voice-call/message-voice-call.component';
 import { MessageQuoteComponent } from './message-quote/message-quote.component';
+import { MessageNoticeComponent } from './message-notice/message-notice.component';
 
 @NgModule({
   declarations: [
@@ -43,7 +44,8 @@ import { MessageQuoteComponent } from './message-quote/message-quote.component';
     MessageBackComponent,
     MessageMergeMultipleComponent,
     MessageVoiceCallComponent,
-    MessageQuoteComponent
+    MessageQuoteComponent,
+    MessageNoticeComponent
   ],
   exports: [
     MessageFactoryComponent,

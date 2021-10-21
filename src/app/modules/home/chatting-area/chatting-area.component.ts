@@ -1,10 +1,10 @@
 import {
   AfterContentInit,
   AfterViewChecked,
-  AfterViewInit, ChangeDetectionStrategy,
+  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef,
   Component,
   ElementRef,
-  Input, OnDestroy,
+  Input, NgZone, OnDestroy,
   OnInit,
   ViewChild
 } from '@angular/core';
@@ -69,6 +69,10 @@ import GroupInfoModel from "@app/models/group-info.model";
 import {convertNodeSourceSpanToLoc} from "@angular-eslint/template-parser/dist/convert-source-span-to-loc";
 import {Subscription} from "rxjs";
 import {SnackBarService} from "@services/snack-bar/snack-bar.service";
+import {GroupInfoDialogComponent} from "@modules/user-dialogs/group-info-dialog/group-info-dialog.component";
+import {GroupNoticeComponent} from "@modules/user-dialogs/group-notice/group-notice.component";
+import {InputAreaService} from "@services/input-area/input-area.service";
+import ChattingModel from "@app/models/chatting.model";
 
 @Component({
   selector: 'app-chatting-area',
@@ -154,6 +158,8 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
         gtopContent_visible: true,
         gnotice_class: '',
         gtopContent_class: '',
+        gtalkIntervalSwitch: false,
+        gtalkInterval: 3,
     };
 
   // @我的消息
@@ -165,6 +171,12 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
   public isOwner: boolean = false;
 
   public currentSubscription: Subscription;
+  public itemSize: number = 0;
+  //发言时间间隔
+  public talkIntervalSwitch: boolean = false;
+  // public talkInterval: number = 0;
+  public talkIntervalMap: Map<string, number> = new Map();
+  public timeInterval = null;
 
   constructor(
     public cacheService: CacheService, // 模版中要用
@@ -184,6 +196,9 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
     private serverForwardService: ServerForwardService,
     private messageService: MessageService,
     private snackBarService: SnackBarService,
+    private zone: NgZone,
+    private changeDetectorRef: ChangeDetectorRef,
+    private inputAreaService: InputAreaService,
   ) {
     this.localUserInfo = this.localUserService.localUserInfo;
 
@@ -192,6 +207,10 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
     this.subscribeOfGroupChatMsgServerToB();
     this.subscribeChattingMessage();
     this.subscribeGroupSilence();
+    // 订阅踢人时删除消息的通知
+    this.subscribeDeleteGroupMessage();
+    // 订阅删除单聊消息的通知
+    this.subscribeDeleteFriendMessage();
 
     // 选择消息
     this.elementService.selectMessage$.subscribe((directive) => {
@@ -227,33 +246,37 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
           // this.cacheService.chatMsgEntityList = new Array(...this.cacheService.chatMsgEntityMap).flatMap(t => t[1]);
         }
 
+        // 先清空
+        this.groupData = {
+          gnotice: '',
+          gtopContent: '',
+          gnotice_visible: true,
+          gtopContent_visible: true,
+          gnotice_class: '',
+          gtopContent_class: '',
+          gtalkIntervalSwitch: false,
+          gtalkInterval: 3,
+        };
+
           if (this.currentChat.alarmItem.chatType === 'group') {
               /*获取群基本信息*/
               this.restService.getGroupBaseById(this.currentChat.alarmItem.dataId).subscribe(res => {
                   if (res.status === 200 && res.data) {
-                      this.groupData.gnotice = res.data.gnotice == null ? '' : res.data.gnotice;
-                      this.groupData.gtopContent = res.data.gtopContent == null ? '' : res.data.gtopContent;
-                      console.log('group data: ', this.groupData);
+                    this.groupData.gnotice = res.data.gnotice == null ? '' : res.data.gnotice;
+                    this.groupData.gtopContent = res.data.gtopContent == null ? '' : res.data.gtopContent;
 
-                      let gnotice_length = this.groupData.gnotice.length;
-                      let gtopContent_length = this.groupData.gtopContent.length;
-                      this.groupData.gnotice_class = 'animate-' + parseInt(((gnotice_length >= 150 ? 150 : gnotice_length) / 50).toString());
-                      this.groupData.gtopContent_class = 'animate-' + parseInt(((gtopContent_length >= 150 ? 150 : gtopContent_length) / 50).toString());
+                    let gnotice_length = this.groupData.gnotice.length;
+                    let gtopContent_length = this.groupData.gtopContent.length;
+                    this.groupData.gnotice_class = 'animate-' + parseInt(((gnotice_length >= 150 ? 150 : gnotice_length) / 50).toString());
+                    this.groupData.gtopContent_class = 'animate-' + parseInt(((gtopContent_length >= 150 ? 150 : gtopContent_length) / 50).toString());
 
-                      this.groupData.gnotice_visible = true;
-                      this.groupData.gtopContent_visible = true;
-                  }
+                    this.groupData.gnotice_visible = true;
+                    this.groupData.gtopContent_visible = res.data.topContentSwitch===1?true:false;
 
+                    this.groupData.gtalkIntervalSwitch=res.data.talkIntervalSwitch===1?true:false;
+                    this.groupData.gtalkInterval=res.data.talkInterval;
+                }
               });
-          } else {
-              this.groupData = {
-                  gnotice: '',
-                  gtopContent: '',
-                  gnotice_visible: true,
-                  gtopContent_visible: true,
-                  gnotice_class: '',
-                  gtopContent_class: '',
-              };
           }
       }
 
@@ -264,6 +287,11 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
 
     this.cacheService.groupSilence$.subscribe((map) => {
       this.mySilence = map.get(this.localUserService.localUserInfo.userId.toString());
+      if(this.mySilence && this.mySilence.banTime) {
+        this.inputAreaService.disableToTime(this.mySilence.banTime);
+      } else {
+        this.inputAreaService.enable();
+      }
     });
   }
 
@@ -291,9 +319,9 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
       this.searching = false;
       this.blacked = false;
       // === 为刷新聊天列表，只更新数据
-      this.loadTabData();
       if (currentChat && this.currentChat !== currentChat) {
         this.currentChat = currentChat;
+        this.loadTabData();
         this.showAtSheet();
         this.getSilenceUsers();
         this.getGroupMembers();
@@ -384,9 +412,8 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
       if(data.dataContent.cy === ChatModeType.CHAT_TYPE_FRIEND$CHAT) { // 单聊
         if(this.currentChat && chatActive) {
           this.virtualScrollViewport.scrollTo({
-              bottom: 1,
-              behavior: 'auto',
-            });
+            bottom: 0,
+          });
           this.cacheService.chatMsgEntityMap.set(data.chat.fingerPrintOfProtocal, data.chat);
           // this.cacheService.chatMsgEntityList = new Array(...this.cacheService.chatMsgEntityMap).flatMap(t => t[1]);
           this.scrollToBottom();
@@ -405,7 +432,62 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
         }
       }
     }
+    this.setTalkInterval(Number(data.chat.uid));
     // chatMsg.fingerPrintOfProtocal
+  }
+
+  setTalkInterval(chatUid = 0) {
+    // 重置发言间隔时间
+    clearInterval(this.timeInterval);
+    this.inputAreaService.enable();
+
+    if(this.groupData.gtalkIntervalSwitch && this.currentChat.metadata.chatType === 'group')
+    {
+
+
+      console.dir(this.groupData.gtalkIntervalSwitch)
+      console.dir(this.groupData.gtalkIntervalSwitch)
+      console.dir(this.groupData.gtalkIntervalSwitch)
+      console.dir(this.currentChat.metadata.chatType)
+
+      this.checkAdminAndOwner();
+      // 只有是自己发消息时才设置发言间隔
+      let duration = this.talkIntervalMap.get(this.currentChat.alarmItem.dataId) || 0;
+      if(!this.isOwner && !this.isAdmin && chatUid.toString() === this.localUserInfo.userId.toString() || chatUid === 0){
+
+        console.dir(duration)
+        console.dir(duration)
+        console.dir(duration)
+
+        this.talkIntervalSwitch=this.groupData.gtalkIntervalSwitch;
+        if (duration > 0) {
+          this.inputAreaService.disableToTime(new Date().getTime() / 1000 + duration);
+        } else if(chatUid !== 0) {
+          this.inputAreaService.disableToTime(new Date().getTime() / 1000 + this.groupData.gtalkInterval);
+          this.talkIntervalMap.set(this.currentChat.alarmItem.dataId, this.groupData.gtalkInterval);
+          duration = this.groupData.gtalkInterval;
+        }
+
+
+        this.timeInterval=setInterval(() => {
+          console.log(this.talkIntervalMap);
+          if(duration <= 0){
+            this.zone.run(() => {
+              this.talkIntervalSwitch=false;
+              this.changeDetectorRef.detectChanges();
+            });
+            clearInterval(this.timeInterval);
+          }
+          else{
+            this.zone.run(() => {
+              duration = duration - 1;
+              this.talkIntervalMap.set(this.currentChat.alarmItem.dataId, duration);
+              this.changeDetectorRef.detectChanges();
+            });
+          }
+        },1000);
+      }
+    }
   }
 
   private subscribeQuote() {
@@ -518,11 +600,11 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
             if (this.currentChat == undefined || parseInt(res.from) != parseInt(this.currentChat.alarmItem.dataId)) {
                 this.cacheService.generateAlarmItem(res.from, 'friend', null, MsgType.TYPE_VOICE_CALL).then(alarm => {
                     this.cacheService.putChattingCache(alarm).then(() => {
-                        this.currentChattingChangeService.switchCurrentChatting(alarm).then(() => {
-                            console.log("聊天会话切换完成...");
-                            this.openEndDrawer('voice', true);
-                            this.appChattingVoice.openPanel(res, dataContent);
-                        });
+                        // this.currentChattingChangeService.switchCurrentChatting(alarm).then(() => {
+                        //     console.log("聊天会话切换完成...");
+                        //     this.openEndDrawer('voice', true);
+                        //     this.appChattingVoice.openPanel(res, dataContent);
+                        // });
                     });
                 });
             }
@@ -571,6 +653,9 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
           const chatMsgEntity = this.messageEntityService.prepareRecievedMessage(
             dataContent.f, dataContent.nickName, dataContent.m, res.recvTime, dataContent.ty, res.fp
           );
+          // 设置 发消息的用户id
+          chatMsgEntity.memberId = Number(dataContent.f);
+
           chatMsgEntity.uh = dataContent.uh;
           const chatType = Number(dataContent.cy) === ChatModeType.CHAT_TYPE_FRIEND$CHAT ? 'friend' : 'group';
           const dataId = chatType === 'friend' ? res.to : dataContent.t;
@@ -614,46 +699,33 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
     this.imService.callback_messagesBeReceived = this.updateDataForUI.bind(this);
   }
 
-  private scrollEnd = true;
-
   /**
    * 消息列表滚动底部
    * @param behavior
    */
   scrollToBottom(behavior: "auto" | "smooth" = "smooth") {
+    this.itemSize = 0;
     if(this.virtualScrollViewport) {
       const sb = () => {
-        if(this.scrollEnd) {
-          this.scrollEnd = false;
-          setTimeout(() => {
-            this.virtualScrollViewport.scrollTo({
-              bottom: 0,
-              behavior: behavior,
-            });
-            this.scrollEnd = true;
-          }, 50);
-          setTimeout(() => {
-            if(this.virtualScrollViewport.measureScrollOffset('bottom') > 0) {
-              this.scrollToBottom('auto');
-            }
-          }, 500);
-        }
+        this.virtualScrollViewport.scrollTo({
+          bottom: 0,
+          behavior: behavior,
+        });
       };
+      setTimeout(() => {
+        this.itemSize = 50;
+      }, 100);
 
       this.chattingAreaOnScroll();
       if(this.chattingContainer) {
-        const images = this.chattingContainer.nativeElement.querySelectorAll("img");
-        images.forEach(img => {
-          img.onload = () => {
-            sb();
-          };
-        });
-        sb();
+        setTimeout(() => {
+          sb();
+        }, 10);
       }
     } else {
       setTimeout(() => {
         this.scrollToBottom(behavior);
-      }, 500);
+      }, 100);
     }
   }
 
@@ -727,7 +799,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
    */
   transmitSelectMessage() {
     if(this.selectMessageList.length > 0) {
-      this.dialogService.openDialog(TransmitMessageComponent, {data: this.selectMessageList, width: '314px'}).then((ok) => {
+      this.dialogService.openDialog(TransmitMessageComponent, {data: this.selectMessageList, width: '314px',panelClass: "padding-less-dialog"}).then((ok) => {
         if(ok) {
           this.cancelSelectMessage();
         }
@@ -893,23 +965,30 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
             list: []
         };
 
-        //如果是群聊，加载群页签数据
-        if (this.currentChat && this.currentChat.alarmItem.chatType === 'group') {
-            this.restService.getGroupBaseById(this.currentChat.alarmItem.dataId).subscribe((group_data: NewHttpResponseInterface<GroupModel>) => {
-                if (group_data.data.tabSwitch === 1) {
-                    /*获取群页签列表*/
-                    this.restService.getUserGroupTab(this.currentChat.alarmItem.dataId).subscribe(
-                        (tab_data: NewHttpResponseInterface<GroupTabModel[]>
-                        ) => {
-                            this.group_tab_data = {
-                                visible: true,
-                                list: tab_data.data
-                            };
-                        });
-                }
-            });
-        }
-    }
+      //如果是群聊，加载群页签数据
+      if (this.currentChat && this.currentChat.alarmItem.chatType === 'group') {
+          this.restService.getGroupBaseById(this.currentChat.alarmItem.dataId).subscribe((group_data: NewHttpResponseInterface<GroupModel>) => {
+              if (group_data.data.tabSwitch === 1) {
+                  /*获取群页签列表*/
+                  this.restService.getUserGroupTab(this.currentChat.alarmItem.dataId).subscribe(
+                      (tab_data: NewHttpResponseInterface<GroupTabModel[]>
+                      ) => {
+                          this.group_tab_data = {
+                              visible: true,
+                              list: tab_data.data
+                          };
+                      });
+              }
+              this.groupData.gtopContent_visible = group_data.data.topContentSwitch===1?true:false;
+
+              this.groupData.gtalkIntervalSwitch=group_data.data.talkIntervalSwitch===1?true:false;
+              this.groupData.gtalkInterval=group_data.data.talkInterval;
+            this.setTalkInterval();
+          });
+      } else {
+        this.setTalkInterval();
+      }
+  }
 
   /**
    * 临时缓存禁言Map
@@ -1006,6 +1085,8 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
       this.cacheService.getCacheGroupAdmins(this.currentChat.alarmItem.dataId).then(admins => {
         if(admins.get(info.userId.toString())) {
           this.isAdmin = true;
+        } else {
+          this.isAdmin = false;
         }
       });
 
@@ -1013,6 +1094,8 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
         const group = groups.get(this.currentChat.alarmItem.dataId);
         if(group) {
           this.isOwner = group.gownerUserUid.toString() === info.userId.toString();
+        } else {
+          this.isOwner = false;
         }
       });
     }
@@ -1021,4 +1104,58 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
     this.currentSubscription.unsubscribe();
   }
 
+  /* 弹窗群消息和群上屏     */
+  showTopWIn(choose_type) {
+    var data;
+    if (choose_type === 'notice') {
+      data={
+        title:'群组公告',
+        txt:this.groupData.gnotice,
+      }
+    }
+    else if (choose_type === 'topContent') {
+      data={
+        title:'群组上屏消息',
+        txt:this.groupData.gtopContent,
+      }
+    }
+    this.dialogService.openDialog(GroupNoticeComponent, { data: data,width: '314px',panelClass: "padding-less-dialog" }).then((res: any) => {
+      if (res.ok === false) {
+        return;
+      }
+    });
+  }
+
+  /**
+   * 订阅踢人时,让其他群成员删除消息的指令
+   * @private
+   */
+  private subscribeDeleteGroupMessage() {
+    this.messageDistributeService.DELETE_FRIEND_FOR_TIRENSource$.subscribe((res: ProtocalModel) => {
+      const dataContent: any = JSON.parse(res.dataContent);
+      const groupId: string = dataContent.groupId;
+      const memberIdList:number[] = dataContent.userIds;
+      if(memberIdList.length == 0) {
+        return;
+      }
+      this.cacheService.deleteGroupChattingCache(groupId, memberIdList);
+    });
+  }
+
+  /**
+   * 订阅删除单聊消息的通知
+   * @private
+   */
+  private subscribeDeleteFriendMessage() {
+    this.messageDistributeService.DELETE_CHAT_MESSAGESource$.subscribe((res: ProtocalModel) => {
+      const dataContent: any = JSON.parse(res.dataContent);
+      const dataId: string = dataContent.uuid;
+      const chatType: string = dataContent.chatType;
+      const msgIdList:string[] = dataContent.msgIdList;
+      if(msgIdList.length == 0) {
+        return;
+      }
+      this.cacheService.deleteMessageCacheByFP(dataId, msgIdList);
+    });
+  }
 }
