@@ -4,4 +4,5 @@ export class GlobalCache {
   public static  appConfig:appConfigInterface;
   public static sensitiveList : string[] = [];
   public static loginProtocol : boolean = true;
+  public static messageNumber:number = 0;
 }

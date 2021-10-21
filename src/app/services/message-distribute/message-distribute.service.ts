@@ -135,6 +135,10 @@ export class MessageDistributeService {
   private DELETE_CHAT_MESSAGESource = new Subject<ProtocalModel>();
   public DELETE_CHAT_MESSAGESource$ = this.DELETE_CHAT_MESSAGESource.asObservable();
 
+  // 让用户退出的指令
+  private LOG_OUTSource = new Subject<ProtocalModel>();
+  public LOG_OUTSourceSource$ = this.LOG_OUTSource.asObservable();
+
   constructor() { }
 
   inceptMessage(originData: ProtocalModel) {
