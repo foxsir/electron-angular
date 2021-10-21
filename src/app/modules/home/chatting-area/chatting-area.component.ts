@@ -799,7 +799,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
    */
   transmitSelectMessage() {
     if(this.selectMessageList.length > 0) {
-      this.dialogService.openDialog(TransmitMessageComponent, {data: this.selectMessageList, width: '314px'}).then((ok) => {
+      this.dialogService.openDialog(TransmitMessageComponent, {data: this.selectMessageList, width: '314px',panelClass: "padding-less-dialog"}).then((ok) => {
         if(ok) {
           this.cancelSelectMessage();
         }
@@ -1115,7 +1115,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
     }
     else if (choose_type === 'topContent') {
       data={
-        title:'群组上屏',
+        title:'群组上屏消息',
         txt:this.groupData.gtopContent,
       }
     }
