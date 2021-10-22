@@ -26,6 +26,11 @@ import {GroupModel} from "@app/models/group.model";
 import {UploadedFile} from "@app/factorys/upload/upload-file/upload-file.component";
 import {Subscription} from "rxjs";
 import {AvatarService} from "@services/avatar/avatar.service";
+import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
+import {RBChatConfig, MsgType,UserProtocalsType} from "@app/config/rbchat-config";
+
+import {InputAreaComponent} from "@app/modules/home/input-area/input-area.component";
+import {ProtocalModel} from "@app/models/protocal.model";
 
 @Component({
     selector: 'app-group-info',
@@ -48,32 +53,30 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
     public userinfo: any;
     public user_role: string; /*当前用户在这个群的角色：owner, admin, common*/
     public groupData: Partial<GroupInfoModel> = {
-        gmute: 0,
-        invite: 0,
-        allowPrivateChat: 0,
-        gmemberCount: 0,
-        createTime: '',
-        gownerUserUid: 0,
-        gnotice: '',
+      gmute: 0,
+      invite: 0,
+      allowPrivateChat: 0,
+      gmemberCount: 0,
+      createTime: '',
+      gownerUserUid: 0,
+      gnotice: '',
     };
     public user_clu_info = {
-        groupOwnerName: '',
-        showNickname: '',
-        groupOwner: '',
-        isAdmin: 0,
+      groupOwnerName: '',
+      showNickname: '',
+      groupOwner: '',
+      isAdmin: 0,
     };
 
     public setting_data = {
-        gmute: false, /*全体禁言*/
-        allowPrivateChat: false, /*成员互相添加好友*/
-        no_disturb: false, /*消息免打扰*/
-        top_chat: false, /*置顶聊天*/
-        invite: false, /*普通成员邀请好友入群*/
-
-        talkInterval: 3, /*发言时间间隔*/
-
-        gnotice: '', /*群公告*/
-        gnotice_temp: '', /*群公告，编辑，临时存放*/
+      gmute: false, /*全体禁言*/
+      allowPrivateChat: false, /*成员互相添加好友*/
+      no_disturb: false, /*消息免打扰*/
+      top_chat: false, /*置顶聊天*/
+      invite: false, /*普通成员邀请好友入群*/
+      talkInterval: 3, /*发言时间间隔*/
+      gnotice: '', /*群公告*/
+      gnotice_temp: '', /*群公告，编辑，临时存放*/
     };
 
     /*
@@ -96,6 +99,7 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
     public group_admin_list: any[] = [];
 
     public currentSubscription: Subscription;
+    public oriNotice=""; //存储初始群公告，用于比对编辑后是否有变化
 
     constructor(
         private dom: DomSanitizer,
@@ -196,6 +200,7 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
             this.setting_data.invite = this.groupData.invite === 1;
             this.setting_data.allowPrivateChat = this.groupData.allowPrivateChat === 1;
             this.setting_data.gnotice = this.groupData.gnotice;
+            this.oriNotice = this.setting_data.gnotice;
 
             //群头像
             var avatar;
@@ -293,46 +298,41 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
     }
 
     saveGroupNotice() {
-        //console.log('userinfo: ', this.userinfo);
-        //return;
+      this.group_notice_view_mode = 'view';
+      if (this.oriNotice === this.setting_data.gnotice_temp) return;
 
-        var post_data = {
-            g_notice: this.setting_data.gnotice_temp,
-            g_notice_updateuid: this.userinfo.userId,
-            g_id: this.currentChat.alarmItem.dataId,
-        };
+      var post_data = {
+          g_notice: this.setting_data.gnotice_temp,
+          g_notice_updateuid: this.userinfo.userId,
+          g_id: this.currentChat.alarmItem.dataId,
+      };
 
-        this.restService.changeGroupNotice(post_data).subscribe(res => {
-            if (res.success == false) {
-                return;
-            }
-            console.log('修改群公告成功，发送通知消息...');
-            this.group_notice_view_mode = 'view';
-            this.setting_data.gnotice = this.setting_data.gnotice_temp;
+      this.restService.changeGroupNotice(post_data).subscribe(res => {
+        if (res.success === false) {
+            return;
+        }
+        this.cacheService.putChattingCache(this.currentChat).then(() => {});
+        this.setting_data.gnotice = this.setting_data.gnotice_temp;
+        this.oriNotice=this.setting_data.gnotice;
 
-            this.dialogService.confirm({ title: '通知确认', text: '群公告修改成功，是否通知全部群成员？' }).then((ok) => {
-                if (ok) {
-                    console.log('确认通知...');
+        if (this.setting_data.gnotice_temp ==="") return;
 
-                    var imdata = {
-                        bridge: false,
-                        dataContent: {
-                            "time": 0, "uh": this.userinfo.userAvatarFileName,
-                            "nickName": this.userinfo.nickname, "cy": 2, "f": this.userinfo.userId,
-                            "m": "@所有人【群公告】" + this.setting_data.gnotice_temp,
-                            "m3": "pc", "t": "0000005019", "ty": this.currentChat.alarmItem.dataId
-                        },
-                        fp: '', from: this.userinfo.userId, to: this.currentChat.alarmItem.dataId,
-                        QoS: true, sm: 0, type: 2, typeu: 44,
-                    };
-                    this.messageService.sendCustomerMessage(imdata).then(res => {
-                        if (res.success === true) {
+        console.log('修改群公告成功，发送通知消息...');
+        this.dialogService.confirm({ title: '通知确认', text: '群公告修改成功，是否通知全部群成员？' }).then((ok) => {
+          if (ok) {
+            console.log('确认通知...');
 
-                        }
-                    });
+            var msgContent="@所有人【群消息】"+this.setting_data.gnotice;
+            this.messageService.sendGroupMessage(MsgType.TYPE_AITE,
+              this.currentChat.alarmItem.dataId,
+              msgContent,
+              ["ALL"]).then( res => {
+                if (res.success === true) {
                 }
             });
+          }
         });
+      });
     }
 
     /*修改发言间隔*/
@@ -514,31 +514,34 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
         });
         this.dialogService.openDialog(SelectFriendContactComponent, { width: '314px',panelClass: "padding-less-dialog", data : filterFriendId}).then((friend) => {
             if (friend) {
-                console.log('选择的好友：', friend);
-                //return;
+              this.dialogService.confirm({ title: "消息提示", text: "确定邀请好友入群吗？" }).then((ok) => {
+                if (ok == false) {
+                  return;
+                }
 
-                this.dialogService.confirm({ title: "消息提示", text: "确定邀请该好友入群？" }).then((ok) => {
-                    if (ok == false) {
-                      return;
-                    }
-                    var post_data = {
-                        invite_to_gid: this.currentChat.alarmItem.dataId,
-                        invite_uid: this.userinfo.userId,
-                        invite_nickname: this.userinfo.nickname,
-                        members: [[this.currentChat.alarmItem.dataId, friend.friendUserUid.toString(), friend.nickname]]
-                    };
-
-                    this.restService.inviteFriendToGroup(post_data).subscribe(res => {
-                        if (res.success == false) {
-                          return this.snackBarService.openMessage(res.msg);
-                        }
-                        this.dialogService.alert({ title: '邀请成功！'}).then(() => {
-                          setTimeout(() => {
-                            return this.cacheService.cacheGroupMembers(this.currentChat.alarmItem.dataId).then();
-                          }, 1000);
-                        });
-                    });
+                var members=new Array();
+                friend.selectfriends.forEach(data => {
+                  members.push([this.currentChat.alarmItem.dataId, data.friendUserUid.toString(), data.nickname]);
                 });
+
+                var post_data = {
+                    invite_to_gid: this.currentChat.alarmItem.dataId,
+                    invite_uid: this.userinfo.userId,
+                    invite_nickname: this.userinfo.nickname,
+                    members: members
+                };
+
+                this.restService.inviteFriendToGroup(post_data).subscribe(res => {
+                  if (res.success == false) {
+                    return this.snackBarService.openMessage(res.msg);
+                  }
+                  this.dialogService.alert({ title: '邀请成功！'}).then(() => {
+                    setTimeout(() => {
+                      return this.cacheService.cacheGroupMembers(this.currentChat.alarmItem.dataId).then();
+                    }, 1000);
+                  });
+                });
+              });
             }
         });
     }

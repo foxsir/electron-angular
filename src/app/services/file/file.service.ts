@@ -4,7 +4,7 @@ import OssConfig from "@services/file/config/OssConfig";
 import DirectoryType from "@services/file/config/DirectoryType";
 import CommonTools from "@app/common/common.tools";
 import {Subject} from "rxjs";
-const { ipcRenderer } = window.require('electron');
+import {ElectronService} from "@app/core/services";
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +24,9 @@ export class FileService {
 
   private listen = false;
 
-  constructor() {
+  constructor(
+    private electronService: ElectronService
+  ) {
     if(this.listen !== true) {
       this.listen = true;
       this.listenReply();
@@ -62,7 +64,7 @@ export class FileService {
   }
 
   listenReply() {
-    ipcRenderer.on('amr2mp3-reply', (event, arg: boolean) => {
+    this.electronService.ipcRendererOn('amr2mp3-reply', (event, arg: boolean) => {
       this.amr2mp3Source.next(arg);
     });
   }
@@ -73,7 +75,7 @@ export class FileService {
         url: url,
         uuid: CommonTools.uuid()
       };
-      ipcRenderer.send('amr2mp3', data);
+      this.electronService.ipcRendererSend('amr2mp3', data);
 
       const subscribe = this.amr2mp3$.subscribe((res) => {
         if(res.uuid === data.uuid) {

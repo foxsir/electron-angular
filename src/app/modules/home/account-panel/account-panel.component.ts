@@ -7,6 +7,7 @@ import {MatDrawer} from "@angular/material/sidenav";
 import {LocalUserService} from "@services/local-user/local-user.service";
 import {AvatarService} from "@services/avatar/avatar.service";
 import LocalUserinfoModel from "@app/models/local-userinfo.model";
+const { ipcRenderer } = window.require("electron");
 
 // import icons
 import qrIcon from "@app/assets/icons/qr.svg";
@@ -165,7 +166,8 @@ export class AccountPanelComponent implements OnInit {
             // 关闭数据库链接
             this.cacheService.disconnectDB();
             this.currentChattingChangeService.switchCurrentChatting(null).then();
-            localStorage.removeItem(RBChatUtils.COOKIE_KEY_AUTHED_LOCAL_USER_INFO_ID);
+            sessionStorage.removeItem(RBChatUtils.COOKIE_KEY_AUTHED_LOCAL_USER_INFO_ID);
+            ipcRenderer.removeAllListeners();
           });
         });
       }

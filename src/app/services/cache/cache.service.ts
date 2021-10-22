@@ -37,6 +37,7 @@ import LastMessageModel from "@app/models/last-message.model";
 import BlackMeListModel from "@app/models/black-me-list.model";
 import {GlobalCache} from "@app/config/global-cache";
 import GroupInfoModel from "@app/models/group-info.model";
+import {ElectronService} from "@app/core/services";
 
 export type AlarmDataMap = Map<string, {alarmData: AlarmItemInterface; message?: Map<string, ChatmsgEntityModel>}>;
 
@@ -88,7 +89,7 @@ export class CacheService extends DatabaseService {
     private soundService: SoundService,
     private avatarService: AvatarService,
   ) {
-    super();
+    super(new ElectronService());
   }
 
   /**

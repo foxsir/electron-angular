@@ -3,7 +3,7 @@ import {BaseEntity} from 'typeorm';
 import IpcResponseInterface from "@app/interfaces/ipc-response.interface";
 import CommonTools from "@app/common/common.tools";
 import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
-const { ipcRenderer } = window.require('electron');
+import {ElectronService} from "@app/core/services";
 
 interface QueryParams<T> {
   model: string;
@@ -40,7 +40,9 @@ export abstract class DatabaseService {
   private deleteDataSource = new Subject<any>();
   private deleteDataUpdate$ = this.deleteDataSource.asObservable();
 
-  constructor() {
+  constructor(
+    protected electronService: ElectronService,
+  ) {
     if(this.isConnected !== true) {
       this.listenReply();
     }
@@ -54,7 +56,7 @@ export abstract class DatabaseService {
           resolve(connected);
           subscribe.unsubscribe();
         });
-        ipcRenderer.send('connectionDB', name);
+        this.electronService.ipcRendererSend('connectionDB', name);
       } else {
         resolve(true);
       }
@@ -63,31 +65,31 @@ export abstract class DatabaseService {
 
   disconnectDB() {
     this.isConnected = false;
-    ipcRenderer.send('closeDB');
+    this.electronService.ipcRendererSend('closeDB');
   }
 
 
   listenReply() {
-    ipcRenderer.on('connectionDB-reply', (event, arg: boolean) => {
+    this.electronService.ipcRendererOn('connectionDB-reply', (event, arg: boolean) => {
       this.connectedSource.next(arg);
     });
 
-    ipcRenderer.on('sendData-reply', (event, data) => {
+    this.electronService.ipcRendererOn('sendData-reply', (event, data) => {
       this.sendDataSource.next(data);
     });
 
-    ipcRenderer.on('queryData-reply', (event, data) => {
+    this.electronService.ipcRendererOn('queryData-reply', (event, data) => {
       this.queryDataSource.next(data);
     });
 
-    ipcRenderer.on('deleteData-reply', (event, data) => {
+    this.electronService.ipcRendererOn('deleteData-reply', (event, data) => {
       this.deleteDataSource.next(data);
     });
   }
 
   saveData<T extends BaseEntity>(data: SaveParams<T>): void {
     data.uuid = CommonTools.uuid();
-    ipcRenderer.send('sendData', data);
+    this.electronService.ipcRendererSend('sendData', data);
   }
 
   /**
@@ -97,7 +99,7 @@ export abstract class DatabaseService {
   saveDataSync<T extends BaseEntity>(data: SaveParams<T>): Promise<T> {
     return new Promise((resolve) => {
       data.uuid = CommonTools.uuid();
-      ipcRenderer.send('sendData', data);
+      this.electronService.ipcRendererSend('sendData', data);
 
       const subscribe = this.sendDataUpdate$.subscribe((res) => {
         if(res.uuid === data.uuid) {
@@ -115,7 +117,7 @@ export abstract class DatabaseService {
   queryData<T extends BaseEntity>(data: QueryParams<T>): Promise<IpcResponseInterface<T>> {
     return new Promise((resolve) => {
       data.uuid = CommonTools.uuid();
-      ipcRenderer.send('queryData', data);
+      this.electronService.ipcRendererSend('queryData', data);
 
       const subscribe = this.queryDataUpdate$.subscribe((res: IpcResponseInterface<T>) => {
         if(res.uuid === data.uuid) {
@@ -133,7 +135,7 @@ export abstract class DatabaseService {
   deleteData<T extends BaseEntity>(data: DeleteParams<T>): Promise<IpcResponseInterface<T>> {
     return new Promise((resolve) => {
       data.uuid = CommonTools.uuid();
-      ipcRenderer.send('deleteData', data);
+      this.electronService.ipcRendererSend('deleteData', data);
 
       const subscribe = this.deleteDataUpdate$.subscribe((res: IpcResponseInterface<T>) => {
         if(res.uuid === data.uuid) {
@@ -151,7 +153,7 @@ export abstract class DatabaseService {
     return new Promise((resolve) => {
       this.deleteData<ChatmsgEntityModel>({model: 'chatmsgEntity', query: null}).then(() => {
         resolve(true);
-      })
+      });
     });
   }
 

@@ -51,8 +51,7 @@ import DirectoryType from "@services/file/config/DirectoryType";
 import {Subscription} from "rxjs";
 import {InputAreaService} from "@services/input-area/input-area.service";
 import {GlobalCache} from "@app/config/global-cache";
-
-const { ipcRenderer } = window.require('electron');
+import {ElectronService} from "@app/core/services";
 
 @Component({
   selector: 'app-input-area',
@@ -116,6 +115,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
     private localUserService: LocalUserService,
     private forwardMessageService: ForwardMessageService,
     private inputAreaService: InputAreaService,
+    private electronService: ElectronService
   ) {
     this.inputAreaService.inputUpdate$.subscribe((status) => {
       this.inputEnableStatus = status;
@@ -131,7 +131,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
 
     this.chattingChange();
     this.subscribeAtMember();
-    ipcRenderer.on('screenshot-finished', (event, base64) => {
+    this.electronService.ipcRendererOn('screenshot-finished', (event, base64) => {
       const base64Data = base64.replace(/^data:image\/\w+;base64,/, "");
       const buffer = new Buffer(base64Data, 'base64');
       const filename = new Date().getTime() + ".png";
@@ -467,9 +467,6 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
         replyFriendUid: this.currentChat.alarmItem.dataId,
         userName: this.currentChat.alarmItem.title,
       };
-      console.dir(replyMsg)
-      console.dir(this.quoteMessage)
-      console.dir(this.quoteMessage.text)
       return JSON.stringify(replyMsg);
     } else {
       return messageText;
@@ -780,7 +777,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
 
   startScreenShot() {
     // 发送截图指令
-    ipcRenderer.send("start-screen-capture", "new message");
+    this.electronService.ipcRendererSend("start-screen-capture", "new message");
   }
 
   pasteContent(e: ClipboardEvent) {
