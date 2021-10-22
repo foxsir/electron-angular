@@ -194,7 +194,7 @@ export class IndexComponent implements OnInit {
    */
   log(message, toConsole) {
     //添加系统消息
-    var html = '[' + formatDate(new Date(), 'hh:mm:ss.S') + '] ' + message;
+    const html = '[' + formatDate(new Date(), 'hh:mm:ss.S') + '] ' + message;
     console.info(html);
   }
 
@@ -210,8 +210,8 @@ export class IndexComponent implements OnInit {
    * @param chatMsgEntity 聊天界面中的一条消息，对应的数据封装对象（即ChatMsgEntity对象）
    */
   processRecivedMessage(isme, isGroupChatting, alarmMessageDTO, chatMsgEntity, xuNoShow = null) {
-    var needInsertToContentPane = false;
-    var needShowUnreadNum = false;
+    let needInsertToContentPane = false;
+    let needShowUnreadNum = false;
     //// 这是列表中的首个到来的在线用户消息
     //var firstOnlineUser = false;
 
@@ -427,11 +427,11 @@ export class IndexComponent implements OnInit {
     }
 
     /**
-    * 掉线重连成功时要调用的函数。
-    *
-    * 【补充说明】：在当前的代码中，本函数将被MobileIMSDK-Web框架回调，请见this.imService.callback_reconnectSucess 回调函数的设置。
-    * 【建议用途】：开发者可在此回调中处理掉线重连成功后的界面状态更新等，比如设置将界面上的“离线”文字更新成“在线”。
-    */
+     * 掉线重连成功时要调用的函数。
+     *
+     * 【补充说明】：在当前的代码中，本函数将被MobileIMSDK-Web框架回调，请见this.imService.callback_reconnectSucess 回调函数的设置。
+     * 【建议用途】：开发者可在此回调中处理掉线重连成功后的界面状态更新等，比如设置将界面上的“离线”文字更新成“在线”。
+     */
     onIMReconnectSucess() {
         this.leftMenuNet.isOnline = true;
         this.log('[IM] 掉线自动重连成功了！', true);
@@ -554,7 +554,7 @@ export class IndexComponent implements OnInit {
    * 当前收到的Protocal，是否是当前正在聊天中的On chat访客发出的。
    *
    * @param p
-   * @returns {*|boolean}
+   * @returns
    */
   isCurrentSelectedAlarm(alarmType, dataId) {
     return (this.mCurrentSelectedAlarmType === alarmType)
@@ -609,6 +609,7 @@ export class IndexComponent implements OnInit {
    * @private
    */
   private initUserData() {
+    console.log("初始化用户数据");
     // 缓存个人信息
     this.cacheService.cacheMyInfo().then(() => {
       // 使用缓存中的头像
@@ -618,13 +619,6 @@ export class IndexComponent implements OnInit {
           this.myAvatar = this.dom.bypassSecurityTrustResourceUrl(data.userAvatarFileName);
         }
       });
-    });
-
-    this.messageDistributeService.MT03_OF_CHATTING_MESSAGE$.subscribe(data => {
-      this.massageBadges.set("message", 1);
-    });
-    this.messageDistributeService.MT45_OF_GROUP$CHAT$MSG_SERVER$TO$B$.subscribe(data => {
-      this.massageBadges.set("message", 1);
     });
 
     // 获取并缓存好友列表
@@ -664,6 +658,14 @@ export class IndexComponent implements OnInit {
       if (cacheData.myInfo) {
         this.myAvatar = cacheData.myInfo.userAvatarFileName;
       }
+      // 更改未读数
+      if (cacheData.alarmDataMap) {
+        let messageNumber = 0;
+        cacheData.alarmDataMap.forEach((item)=>{
+          messageNumber += item.alarmData.metadata.unread;
+        });
+        this.massageBadges.set("message", messageNumber);
+      }
     });
 
     /**
@@ -684,17 +686,15 @@ export class IndexComponent implements OnInit {
   private processOfflineInstruct() {
     this.restService.getUserOfflineInstruct(this.localUserService.localUserInfo.userId).subscribe((res: NewHttpResponseInterface<string[]>) => {
       if(res.status === 200) {
-        const offlineInstruct :string[]  = res.data;
+        const offlineInstruct: string[]  = res.data;
         if (!offlineInstruct || offlineInstruct.length ==0 ) {
           return;
         }
         offlineInstruct.forEach((item)=>{
-          const protocol:ProtocalModel = JSON.parse(item);
-          const dataContent:any = JSON.parse(protocol.dataContent);
+          const protocol: ProtocalModel = JSON.parse(item);
           this.messageDistributeService.processOfflineInstruct(protocol);
         });
       }
     });
-
   }
 }

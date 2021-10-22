@@ -45,7 +45,7 @@ import {
   UpGroupCustomerService,
   UpUserGroupTab,
   verifyCode, GetFriendInfo, getGroupSilenceById, deleteGroupSilenceById,
-  getBlackDetail, getBlackMeUser, getSensitiveWord, getUserOfflineInstruct
+  getBlackDetail, getBlackMeUser, getSensitiveWord, getUserOfflineInstruct, getDeleteFriend
 } from "@app/config/post-api";
 import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 import CommonTools from "@app/common/common.tools";
@@ -1294,5 +1294,17 @@ export class RestService {
     });
   }
 
+  /**
+   * 删除好友
+   * @param friendId
+   */
+  deleteFriend(friendId: number) {
+    const localUserInfo = this.localUserService.localUserInfo;
+    const data = {
+      userId: localUserInfo.userId,
+      friendId: friendId
+    };
+    return this.http.post(getDeleteFriend, data);
+  }
 }
 

@@ -5,6 +5,8 @@ import FriendModel from "@app/models/friend.model";
 import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 import {CurrentChattingChangeService} from "@services/current-chatting-change/current-chatting-change.service";
 import {Router} from "@angular/router";
+import {ContextMenuChattingModel} from "@app/models/context-menu.model";
+import {MatMenuTrigger} from "@angular/material/menu";
 
 const iconv = window.require('iconv-lite');
 
@@ -23,6 +25,8 @@ export class MyFriendsComponent implements OnInit {
 
   public friendList: FriendModel[] = [];
   public frienddata: FriendData[] = [];
+  public contextMenuChatting: ContextMenuChattingModel[] = [];
+
 
   public numbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
   public letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
@@ -140,5 +144,7 @@ export class MyFriendsComponent implements OnInit {
       this.currentChattingChangeService.switchCurrentChatting(alarm).then();
     });
   }
+
+
 
 }

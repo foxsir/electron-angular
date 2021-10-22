@@ -36,6 +36,8 @@ import {UserModel} from "@app/models/user.model";
 import {DatabaseService} from "@services/database/database.service";
 import {ImService} from "@services/im/im.service";
 import {CurrentChattingChangeService} from "@services/current-chatting-change/current-chatting-change.service";
+import {ProtocalModel} from "@app/models/protocal.model";
+import {MessageDistributeService} from "@services/message-distribute/message-distribute.service";
 // import icons end
 
 @Component({
@@ -111,7 +113,9 @@ export class AccountPanelComponent implements OnInit {
     private imService: ImService,
     private cacheService: CacheService,
     private currentChattingChangeService: CurrentChattingChangeService,
+    private messageDistributeService: MessageDistributeService,
   ) {
+    this.subscribeLogOutMessage();
   }
 
   ngOnInit(): void {
@@ -175,6 +179,26 @@ export class AccountPanelComponent implements OnInit {
       userAvatarFileName: upload.url.href,
     }).subscribe(res => {
       this.cacheService.cacheMyInfo().then();
+    });
+  }
+
+  /**
+   * 订阅删除单聊消息的通知
+   * @private
+   */
+  private subscribeLogOutMessage() {
+    this.messageDistributeService.LOG_OUTSourceSource$.subscribe((res: ProtocalModel) => {
+      this.router.navigate(['/']).then(() => {
+        this.restService.loginOut().subscribe(() => {
+          this.imService.disconnectSocket();
+          this.windowService.restoreWindow();
+          this.windowService.loginWindow();
+          // 关闭数据库链接
+          this.cacheService.disconnectDB();
+          this.currentChattingChangeService.switchCurrentChatting(null).then();
+          localStorage.removeItem(RBChatUtils.COOKIE_KEY_AUTHED_LOCAL_USER_INFO_ID);
+        });
+      });
     });
   }
 

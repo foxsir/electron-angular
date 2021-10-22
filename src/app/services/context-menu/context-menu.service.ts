@@ -314,7 +314,7 @@ export class ContextMenuService {
         return true;
       },
       action: (chat: ChatmsgEntityModel, messageContainer: HTMLDivElement) => {
-        this.dialogService.openDialog(TransmitMessageComponent, {data: [chat], width: '314px'}).then();
+        this.dialogService.openDialog(TransmitMessageComponent, {data: [chat], width: '314px',panelClass: "padding-less-dialog"}).then();
       }
     },
     delete: {
