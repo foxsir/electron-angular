@@ -63,6 +63,12 @@ export class LoginForm {
             field.formControl.markAsUntouched();
           }
         },
+        keyup: (field: FormlyFieldConfig, event?: any) => {
+          if (field.formControl.value.length > field.formControl.value.trim().length ) {
+            field.formControl.reset(field.formControl.value.trim());
+            document.execCommand("undo");
+          }
+        }
       },
       validators: {
         // pattern: {

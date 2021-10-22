@@ -29,11 +29,13 @@ export class UpdatePasswordComponent implements OnInit {
         newPwd: this.form.model.user_psw
       };
       this.restService.updatePassword(data).subscribe((res: NewHttpResponseInterface<any>) => {
-        this.form.fields.forEach(item => {
-          item.formControl.setValue("");
-          item.formControl.markAsUntouched();
-        });
-        this.dialogRef.close();
+        if (res.status == 200) {
+          this.dialogRef.close();
+          this.form.fields.forEach(item => {
+            item.formControl.setValue("");
+            item.formControl.markAsUntouched();
+          });
+        }
         this.snackBarService.openMessage(res.msg);
       });
     }
