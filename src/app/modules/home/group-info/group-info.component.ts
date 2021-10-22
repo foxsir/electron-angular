@@ -548,7 +548,8 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
           filterFriendId.push(Number(item.userUid));
         });
         this.dialogService.openDialog(SelectFriendContactComponent, { width: '314px',panelClass: "padding-less-dialog", data : filterFriendId}).then((friend) => {
-            if (friend) {
+          if(friend.selectfriends.length==0) return;
+          if (friend.ok) {
               this.dialogService.confirm({ title: "消息提示", text: "确定邀请好友入群吗？" }).then((ok) => {
                 if (ok == false) {
                   return;

@@ -52,6 +52,7 @@ import {Subscription} from "rxjs";
 import {InputAreaService} from "@services/input-area/input-area.service";
 import {GlobalCache} from "@app/config/global-cache";
 import {ElectronService} from "@app/core/services";
+import FriendModel from "@app/models/friend.model";
 
 @Component({
   selector: 'app-input-area',
@@ -401,7 +402,9 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
     emitToUI: boolean = true,
     replaceEntity: ChatmsgEntityModel = null
   ) {
-    this.messageService.sendGroupMessage(messageType, this.currentChat.alarmItem.dataId, messageText, this.atTargetMember).then(res => {
+    console.dir(this.memberMap);
+
+    this.messageService.sendGroupMessage(messageType, this.currentChat.alarmItem.dataId, messageText, this.atTargetMember,this.memberMap.get(this.imService.getLoginInfo().loginUserId).showNickname).then(res => {
       if(res.success === true) {
         const friendUid = this.currentChat.alarmItem.dataId;
         const ree = this.rosterProviderService.getFriendInfoByUid(friendUid);
@@ -698,19 +701,24 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
   selectFriend() {
     this.dialogService.openDialog(SelectFriendContactComponent, {
       width: '314px',
-      maxHeight: '600px',
-    }).then((friend) => {
-      if(friend) {
+      panelClass: "padding-less-dialog",
+    }).then((friend: {ok: boolean;selectfriends: FriendModel[]}) => {
+      if(friend.selectfriends.length === 0) return;
+      if(friend.ok) {
         this.dialogService.confirm({title: "消息提示", text: "确认分享联系信息到当前聊天吗？"}).then((ok) => {
           if(ok) {
-            this.cacheService.getCacheFriends().then(cache => {
-              const messageText = JSON.stringify({
-                nickName: friend.nickname,
-                uid: friend.friendUserUid,
-                userAvatar: cache.get(friend.friendUserUid.toString())?.userAvatarFileName,
+              this.cacheService.getCacheFriends().then(cache => {
+                friend.selectfriends.forEach(fri => {
+                  const messageText = JSON.stringify({
+                    nickName: fri.nickname,
+                    uid: fri.friendUserUid,
+                    userAvatar: cache.get(fri.friendUserUid.toString())?.userAvatarFileName,
+                  });
+                  console.dir(messageText)
+                  this.doSend(messageText, MsgType.TYPE_CONTACT,true);
+                });
+
               });
-              this.doSend(messageText, MsgType.TYPE_CONTACT,true);
-            });
           }
         });
       }

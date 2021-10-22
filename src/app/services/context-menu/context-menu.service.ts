@@ -119,22 +119,25 @@ export class ContextMenuService {
       action: (chatting: AlarmItemInterface) => {
         this.dialogService.openDialog(SelectFriendContactComponent, {
           width: '314px',
-          maxHeight: '600px',
           panelClass: "padding-less-dialog"
-        }).then((friend: FriendModel) => {
-          if(friend) {
+        }).then((friend: {ok: boolean;selectfriends: FriendModel[]}) => {
+          if(friend.selectfriends.length === 0) return;
+          if(friend.ok) {
             this.dialogService.confirm({title: "消息提示", text: "确认分享联系信息到当前聊天吗？"}).then((ok) => {
               if(ok) {
-                const messageText = JSON.stringify({
-                  nickName: friend.nickname,
-                  uid: friend.friendUserUid,
-                  userAvatar: friend.userAvatarFileName,
+                friend.selectfriends.forEach(fri => {
+                  const messageText = JSON.stringify({
+                    nickName: fri.nickname,
+                    uid: fri.friendUserUid,
+                    userAvatar: fri.userAvatarFileName,
+                  });
+                  const chatMsgEntity: ChatmsgEntityModel = this.messageEntityService.prepareSendedMessage(
+                    messageText, new Date().getTime(), null, MsgType.TYPE_CONTACT
+                  );
+                  console.dir(1111111111111111111111)
+                  console.dir(chatMsgEntity)
+                  this.forwardMessageService.forward(chatting, chatMsgEntity);
                 });
-                const chatMsgEntity: ChatmsgEntityModel = this.messageEntityService.prepareSendedMessage(
-                  messageText, new Date().getTime(), null, MsgType.TYPE_CONTACT
-                );
-                // chatMsgEntity.uh = this.localUserService.localUserInfo.userAvatarFileName;
-                this.forwardMessageService.forward(chatting, chatMsgEntity);
               }
             });
           }
