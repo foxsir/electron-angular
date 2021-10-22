@@ -184,7 +184,10 @@ export const getBlackDetail = _HTTP_SERVER_URL + "/api/user/blackUserDetail";
 export const getSensitiveWord = _HTTP_SERVER_URL + "/api/appConfig/sensitiveWord";
 
 //获取用户的离线指令
-export const getUserOfflineInstruct= _HTTP_SERVER_URL + "/api/appConfig/offlineInstruct";
+export const getUserOfflineInstruct= _HTTP_SERVER_URL + "/api/user/offlineInstruct";
+
+//删除好友
+export const getDeleteFriend= _HTTP_SERVER_URL + "/api/friend/delete";
 
 //
 //  //封装请求函数
