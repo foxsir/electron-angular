@@ -440,24 +440,12 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
     // 重置发言间隔时间
     clearInterval(this.timeInterval);
     this.inputAreaService.enable();
-
     if(this.groupData.gtalkIntervalSwitch && this.currentChat.metadata.chatType === 'group')
     {
-
-
-      console.dir(this.groupData.gtalkIntervalSwitch)
-      console.dir(this.groupData.gtalkIntervalSwitch)
-      console.dir(this.groupData.gtalkIntervalSwitch)
-      console.dir(this.currentChat.metadata.chatType)
-
       this.checkAdminAndOwner();
       // 只有是自己发消息时才设置发言间隔
       let duration = this.talkIntervalMap.get(this.currentChat.alarmItem.dataId) || 0;
       if(!this.isOwner && !this.isAdmin && chatUid.toString() === this.localUserInfo.userId.toString() || chatUid === 0){
-
-        console.dir(duration)
-        console.dir(duration)
-        console.dir(duration)
 
         this.talkIntervalSwitch=this.groupData.gtalkIntervalSwitch;
         if (duration > 0) {
@@ -468,6 +456,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
           duration = this.groupData.gtalkInterval;
         }
 
+        console.dir('setTalkInterval');
 
         this.timeInterval=setInterval(() => {
           console.log(this.talkIntervalMap);

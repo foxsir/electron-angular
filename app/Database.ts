@@ -3,7 +3,6 @@ import {ipcMain} from 'electron';
 
 import {BaseEntity, Connection, createConnection} from "typeorm";
 import ModelMap from "./entitys/model-map";
-const fs = require('fs')
 
 interface QueryParams {
   model: string;
@@ -62,7 +61,8 @@ export default class Database {
         database: [__dirname, "databases", database].join("/"),
         entities: models,
         synchronize: true,
-        logging: false
+        logging: false,
+        name: database
       }).then(async connection => {
         this.connection = connection;
         resolve(true);
@@ -82,15 +82,19 @@ export default class Database {
   }
 
   onConnectionDB() {
-    ipcMain.on('connectionDB', async (event, database: string) => {
+    const connectionDB = ['connectionDB', process.env.appID].join(":");
+    const connectionDBReply = ['connectionDB-reply', process.env.appID].join(":");
+    ipcMain.on(connectionDB, async (event, database: string) => {
       this.createConnect(database).then(ok => {
-        event.sender.send('connectionDB-reply', ok);
+        event.sender.send(connectionDBReply, ok);
       });
     });
   }
 
   onSendData() {
-    ipcMain.on('sendData', async (event, msg: SaveParams) => {
+    const sendData = ['sendData', process.env.appID].join(":");
+    const sendDataReply = ['sendData-reply', process.env.appID].join(":");
+    ipcMain.on(sendData, async (event, msg: SaveParams) => {
       const name = ModelMap.get(msg.model);
       name.useConnection(this.connection);
 
@@ -105,16 +109,18 @@ export default class Database {
         }
         Object.assign(model, msg.data);
         await model.save().then((res) => {
-          event.sender.send('sendData-reply', {status: 200, data: res, uuid: msg.uuid});
+          event.sender.send(sendDataReply, {status: 200, data: res, uuid: msg.uuid});
         });
       } else {
-        event.sender.send('sendData-reply', {status: 500, error: "modelMap no have " + msg.model, uuid: msg.uuid});
+        event.sender.send(sendDataReply, {status: 500, error: "modelMap no have " + msg.model, uuid: msg.uuid});
       }
     })
   }
 
   onQueryData() {
-    ipcMain.on('queryData', async (event, msg: QueryParams) => {
+    const queryData = ['queryData', process.env.appID].join(":");
+    const queryDataReply = ['queryData-reply', process.env.appID].join(":");
+    ipcMain.on(queryData, async (event, msg: QueryParams) => {
       const name = ModelMap.get(msg.model);
       name.useConnection(this.connection);
       if (name) {
@@ -139,35 +145,38 @@ export default class Database {
         }
         const data = await query.getMany();
 
-        event.sender.send('queryData-reply', {status: 200, data: data, uuid: msg.uuid});
+        event.sender.send(queryDataReply, {status: 200, data: data, uuid: msg.uuid});
       } else {
-        event.sender.send('queryData-reply', {status: 500, error: "query error " + msg.model, uuid: msg.uuid});
+        event.sender.send(queryDataReply, {status: 500, error: "query error " + msg.model, uuid: msg.uuid});
       }
     })
   }
 
   onDeleteData() {
-    ipcMain.on('deleteData', async (event, msg: DeleteParams) => {
+    const deleteData = ['deleteData', process.env.appID].join(":");
+    const deleteDataReply = ['deleteData-reply', process.env.appID].join(":");
+    ipcMain.on(deleteData, async (event, msg: DeleteParams) => {
       const name = ModelMap.get(msg.model);
       name.useConnection(this.connection);
       if (name) {
         if(msg.query) {
           await name.delete(msg.query).then(del => {
-            event.sender.send('deleteData-reply', {status: 200, data: del, uuid: msg.uuid});
+            event.sender.send(deleteDataReply, {status: 200, data: del, uuid: msg.uuid});
           });
         } else {
           await name.clear().then(() => {
-            event.sender.send('deleteData-reply', {status: 200, data: true, uuid: msg.uuid});
+            event.sender.send(deleteDataReply, {status: 200, data: true, uuid: msg.uuid});
           });
         }
       } else {
-        event.sender.send('deleteData-reply', {status: 500, error: "query error " + msg.model, uuid: msg.uuid});
+        event.sender.send(deleteDataReply, {status: 500, error: "query error " + msg.model, uuid: msg.uuid});
       }
     });
   }
 
   onCloseDB() {
-    ipcMain.on('closeDB', async (event, msg) => {
+    const closeDB = ['closeDB', process.env.appID].join(":");
+    ipcMain.on(closeDB, async (event, msg) => {
       if(this.connection) {
         await this.connection.close();
       }

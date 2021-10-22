@@ -2,7 +2,6 @@ import {Component, Input, OnInit} from '@angular/core';
 import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 import {DomSanitizer, SafeResourceUrl} from "@angular/platform-browser";
 import {FileService} from "@services/file/file.service";
-const { ipcRenderer } = window.require('electron');
 
 @Component({
   selector: 'app-message-voice',

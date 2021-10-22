@@ -51,9 +51,8 @@ import DirectoryType from "@services/file/config/DirectoryType";
 import {Subscription} from "rxjs";
 import {InputAreaService} from "@services/input-area/input-area.service";
 import {GlobalCache} from "@app/config/global-cache";
+import {ElectronService} from "@app/core/services";
 import FriendModel from "@app/models/friend.model";
-
-const { ipcRenderer } = window.require('electron');
 
 @Component({
   selector: 'app-input-area',
@@ -117,6 +116,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
     private localUserService: LocalUserService,
     private forwardMessageService: ForwardMessageService,
     private inputAreaService: InputAreaService,
+    private electronService: ElectronService
   ) {
     this.inputAreaService.inputUpdate$.subscribe((status) => {
       this.inputEnableStatus = status;
@@ -132,7 +132,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
 
     this.chattingChange();
     this.subscribeAtMember();
-    ipcRenderer.on('screenshot-finished', (event, base64) => {
+    this.electronService.ipcRendererOn('screenshot-finished', (event, base64) => {
       const base64Data = base64.replace(/^data:image\/\w+;base64,/, "");
       const buffer = new Buffer(base64Data, 'base64');
       const filename = new Date().getTime() + ".png";
@@ -390,15 +390,6 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
     });
   }
 
-  public imitateSendGroupMessage(
-    messageType: number, messageText: string,
-    emitToUI: boolean = true,
-    replaceEntity: ChatmsgEntityModel = null,
-    atTargetMember: string[],
-  ){
-    this.atTargetMember=atTargetMember;
-    this.sendGroupMessage(messageType,messageText,emitToUI,replaceEntity);
-  };
   /**
    * 发送群消息
    * @param messageType
@@ -428,7 +419,6 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
           message, 0, res.fingerPrint, messageType
         );
         chatMsgEntity.uh = this.localUserService.localUserInfo.userAvatarFileName;
-
         // if (replaceEntity) {
         //   replaceEntity.fingerPrintOfProtocal = chatMsgEntity.fingerPrintOfProtocal;
         // }
@@ -478,9 +468,6 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
         replyFriendUid: this.currentChat.alarmItem.dataId,
         userName: this.currentChat.alarmItem.title,
       };
-      console.dir(replyMsg);
-      console.dir(this.quoteMessage);
-      console.dir(this.quoteMessage.text);
       return JSON.stringify(replyMsg);
     } else {
       return messageText;
@@ -796,7 +783,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
 
   startScreenShot() {
     // 发送截图指令
-    ipcRenderer.send("start-screen-capture", "new message");
+    this.electronService.ipcRendererSend("start-screen-capture", "new message");
   }
 
   pasteContent(e: ClipboardEvent) {
@@ -846,7 +833,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
 
     for (let i = 0; i < items.length; i++) {
       // Skip content if not image
-      if (items[i].type.indexOf("image") === -1) {continue;}
+      if (items[i].type.indexOf("image") === -1) continue;
       // Retrieve image on clipboard as blob
       const file = items[i].getAsFile();
 

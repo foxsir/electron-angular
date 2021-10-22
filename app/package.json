@@ -5,14 +5,14 @@
   "private": true,
   "dependencies": {
     "@electron/remote": "1.2.0",
+    "@ffmpeg-installer/ffmpeg": "1.1.0",
     "agora-electron-sdk": "^3.5.0-rc.3-build.907",
     "blueimp-md5": "2.18.0",
+    "fluent-ffmpeg": "2.1.2",
     "iconv-lite": "^0.6.2",
+    "node-fetch": "2.6.5",
     "reflect-metadata": "0.1.13",
     "sqlite3": "5.0.2",
-    "typeorm": "0.2.37",
-    "@ffmpeg-installer/ffmpeg": "1.1.0",
-    "fluent-ffmpeg": "2.1.2",
-    "node-fetch": "2.6.5"
+    "typeorm": "0.2.37"
   }
 }

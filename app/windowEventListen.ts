@@ -2,42 +2,30 @@ import {ipcMain, BrowserWindow} from 'electron';
 import defaultOptions from "./DefaultOptions";
 
 export default class WindowEventListen {
-  private windows: Set<BrowserWindow> = new Set();
+  private window: BrowserWindow;
 
-  public setWindows(windows: Set<BrowserWindow>) {
-    this.windows = windows;
+  public setWindows(window: BrowserWindow) {
+    this.window = window;
     this.listen();
   }
 
   private getFocusedWindow(): Promise<BrowserWindow> {
     return new Promise<Electron.BrowserWindow>((resolve) => {
-      let window: BrowserWindow;
-      this.windows.forEach(win => {
-        if (win.isFocused()) {
-          window = win;
-        }
-      });
-      if(window && window.setSize) {
-        resolve(window)
-      } else {
-        setTimeout(() => {
-          return this.getFocusedWindow().then(win => {
-            resolve(win);
-          });
-        }, 100);
-      }
+      resolve(this.window)
     });
   }
 
   private listen() {
-    ipcMain.on("fullScreen", (event, arg) => {
+    const fullScreen = ['fullScreen', process.env.appID].join(":");
+    ipcMain.on(fullScreen, (event, arg) => {
       this.getFocusedWindow().then(win => {
         win.setFullScreen(true);
         win.setMinimumSize(defaultOptions.size.width, defaultOptions.size.height);
       });
     });
 
-    ipcMain.on("maximizeWindow", (event, arg) => {
+    const maximizeWindow = ['maximizeWindow', process.env.appID].join(":");
+    ipcMain.on(maximizeWindow, (event, arg) => {
       this.getFocusedWindow().then(win => {
         if(win.isResizable()) {
           if(win.isMaximized()) {
@@ -51,7 +39,8 @@ export default class WindowEventListen {
       });
     });
 
-    ipcMain.on("unmaximizeWindow", (event, arg) => {
+    const unmaximizeWindow = ['unmaximizeWindow', process.env.appID].join(":");
+    ipcMain.on(unmaximizeWindow, (event, arg) => {
       this.getFocusedWindow().then(win => {
         win.unmaximize();
         win.setResizable(true);
@@ -59,14 +48,16 @@ export default class WindowEventListen {
       });
     });
 
-    ipcMain.on("minimizeWindow", (event, arg) => {
+    const minimizeWindow = ['minimizeWindow', process.env.appID].join(":");
+    ipcMain.on(minimizeWindow, (event, arg) => {
       this.getFocusedWindow().then(win => {
         win.minimize();
         win.setMinimumSize(defaultOptions.size.width, defaultOptions.size.height);
       });
     });
 
-    ipcMain.on("restoreWindow", (event, arg) => {
+    const restoreWindow = ['restoreWindow', process.env.appID].join(":");
+    ipcMain.on(restoreWindow, (event, arg) => {
       this.getFocusedWindow().then(win => {
         win.restore();
         win.setResizable(true);
@@ -74,7 +65,8 @@ export default class WindowEventListen {
       });
     });
 
-    ipcMain.on("loginWindow", (event, arg) => {
+    const loginWindow = ['loginWindow', process.env.appID].join(":");
+    ipcMain.on(loginWindow, (event, arg) => {
       this.getFocusedWindow().then(win => {
         win.setMinimumSize(400, 460);
         win.setSize(400, 460);
@@ -83,7 +75,8 @@ export default class WindowEventListen {
       });
     });
 
-    ipcMain.on("normalWindow", (event, arg) => {
+    const normalWindow = ['normalWindow', process.env.appID].join(":");
+    ipcMain.on(normalWindow, (event, arg) => {
       this.getFocusedWindow().then(win => {
         win.setSize(800, 600);
         win.setResizable(true);
@@ -92,15 +85,17 @@ export default class WindowEventListen {
       });
     });
 
-    ipcMain.on("closeWindow", (event, arg) => {
+    const closeWindow = ['closeWindow', process.env.appID].join(":");
+    ipcMain.on(closeWindow, (event, arg) => {
       this.getFocusedWindow().then(win => {
-        this.windows.delete(win);
+        // this.windows.delete(win);
         win.destroy();
         win = null;
       });
     });
 
-    ipcMain.on("openDevTools", (event, arg) => {
+    const openDevTools = ['openDevTools', process.env.appID].join(":");
+    ipcMain.on(openDevTools, (event, arg) => {
       this.getFocusedWindow().then(win => {
         win.webContents.openDevTools();
         win.setMinimumSize(defaultOptions.size.width, defaultOptions.size.height);
@@ -108,7 +103,8 @@ export default class WindowEventListen {
       });
     });
 
-    ipcMain.on("openUrl", (event, arg) => {
+    const openUrl = ['openUrl', process.env.appID].join(":");
+    ipcMain.on(openUrl, (event, arg) => {
       const win: BrowserWindow = new BrowserWindow({
         frame: true,
       });

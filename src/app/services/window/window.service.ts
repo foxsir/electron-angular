@@ -1,53 +1,53 @@
 import { Injectable } from '@angular/core';
-
-const { ipcRenderer } = window.require("electron");
-
+import {ElectronService} from "@app/core/services";
 
 @Injectable({
   providedIn: 'root'
 })
 export class WindowService {
 
-  constructor() { }
+  constructor(
+    private electronService: ElectronService
+  ) { }
 
   fullScreen() {
-    ipcRenderer.send("fullScreen");
+    this.electronService.ipcRendererSend("fullScreen");
   }
 
   minimizeWindow() {
-    ipcRenderer.send("minimizeWindow");
+    this.electronService.ipcRendererSend("minimizeWindow");
   }
 
   restoreWindow() {
-    ipcRenderer.send("restoreWindow");
+    this.electronService.ipcRendererSend("restoreWindow");
   }
 
   maximizeWindow() {
-    ipcRenderer.send("maximizeWindow");
+    this.electronService.ipcRendererSend("maximizeWindow");
   }
 
   unmaximizeWindow() {
-    ipcRenderer.send("unmaximizeWindow");
+    this.electronService.ipcRendererSend("unmaximizeWindow");
   }
 
   loginWindow() {
-    ipcRenderer.send("loginWindow");
+    this.electronService.ipcRendererSend("loginWindow");
   }
 
   normalWindow() {
-    ipcRenderer.send("normalWindow");
+    this.electronService.ipcRendererSend("normalWindow");
   }
 
   closeWindow() {
-    ipcRenderer.send("closeWindow");
+    this.electronService.ipcRendererSend("closeWindow");
   }
 
   openDevTools() {
-    ipcRenderer.send("openDevTools");
+    this.electronService.ipcRendererSend("openDevTools");
   }
 
   openUrl(url: string) {
-    ipcRenderer.send("openUrl", url);
+    this.electronService.ipcRendererSend("openUrl", url);
   }
 
 }

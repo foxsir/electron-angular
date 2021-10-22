@@ -265,14 +265,14 @@ export default class RBChatUtils {
     //    RBChatUtils.logToConsole('>>>>>>>>>>>>>>>>>>>>>>>>>>> '+localUerInfo.whatsUp);
 
 
-    //    1111为了适应electron 改造成localstorage
+    //    1111为了适应electron 改造成sessionStorage
     if (userInfoObj) {
 
       const expireDateTime = new Date();
       expireDateTime.setTime(expireDateTime.getTime() + RBChatUtils.COOKIE_KEY_AUTHED_LOCAL_USER_INFO_$EXPIRETIME);
       // 保存至cookie
 
-      localStorage.setItem(RBChatUtils.COOKIE_KEY_AUTHED_LOCAL_USER_INFO_ID, JSON.stringify(userInfoObj));
+      sessionStorage.setItem(RBChatUtils.COOKIE_KEY_AUTHED_LOCAL_USER_INFO_ID, JSON.stringify(userInfoObj));
 
 
       //111 获取个人信息
@@ -285,7 +285,7 @@ export default class RBChatUtils {
     else {
       // $.removeCookie(COOKIE_KEY_AUTHED_LOCAL_USER_INFO_ID, { path: '/' });
 
-      localStorage.removeItem(RBChatUtils.COOKIE_KEY_AUTHED_LOCAL_USER_INFO_ID);
+      sessionStorage.removeItem(RBChatUtils.COOKIE_KEY_AUTHED_LOCAL_USER_INFO_ID);
       window.location.href = "/";
 
       //location.reload();
@@ -307,8 +307,8 @@ export default class RBChatUtils {
   public static getAuthedLocalUserInfoFromCookie() {
     // var localUserInfoJSONString = $.cookie(COOKIE_KEY_AUTHED_LOCAL_USER_INFO_ID);
 
-    //1111为了适应electron 改造成localstorage
-    const localUserInfoJSONString = localStorage.getItem(RBChatUtils.COOKIE_KEY_AUTHED_LOCAL_USER_INFO_ID);
+    //1111为了适应electron 改造成sessionStorage
+    const localUserInfoJSONString = sessionStorage.getItem(RBChatUtils.COOKIE_KEY_AUTHED_LOCAL_USER_INFO_ID);
 
     if (localUserInfoJSONString)
       {return JSON.parse(localUserInfoJSONString);}
@@ -329,8 +329,8 @@ export default class RBChatUtils {
     // expireDateTime.setTime(expireDateTime.getTime() + COOKIE_KEY_MSG_TONE_$EXPIRETIME);
     // 保存至cookie
     // $.cookie(COOKIE_KEY_MSG_TONE_ID, msgToneOpen?'1':'0', { expires: expireDateTime, path: '/' }); // 所有路径都能读取
-    //1111为了适应electron 改造成localstorage
-    localStorage.setItem("COOKIE_KEY_MSG_TONE_ID", msgToneOpen ? '1' : '0');
+    //1111为了适应electron 改造成sessionStorage
+    sessionStorage.setItem("COOKIE_KEY_MSG_TONE_ID", msgToneOpen ? '1' : '0');
 
   }
 
@@ -343,8 +343,8 @@ export default class RBChatUtils {
   public static isMsgToneOpenFromCookie() {
     // var toneString = $.cookie(COOKIE_KEY_MSG_TONE_ID);
 
-    //1111为了适应electron 改造成localstorage
-    const toneString = localStorage.getItem("COOKIE_KEY_MSG_TONE_ID");
+    //1111为了适应electron 改造成sessionStorage
+    const toneString = sessionStorage.getItem("COOKIE_KEY_MSG_TONE_ID");
 
     if (toneString)
       {return '1' === toneString;}
