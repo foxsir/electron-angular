@@ -235,7 +235,9 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.messageDistributeService.GROUP_INFO_UPDATE$.subscribe((protocol: ProtocalModel) => {
       const dataContent: any = JSON.parse(protocol.dataContent);
       const gid: string = dataContent.groupId;
+      this.cacheService.getCacheGroups().then();
       this.cacheService.cacheGroupModel(gid);
+
       // this.cacheService.cacheGroupModel(gid).then();
     });
   }
@@ -247,6 +249,7 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.messageDistributeService.UPDATE_GROUP_ADMIN$.subscribe((protocol: ProtocalModel) => {
       const dataContent: any = JSON.parse(protocol.dataContent);
       const gid: string = dataContent.groupId;
+      this.cacheService.getCacheGroupAdmins(gid).then();
       this.cacheService.cacheGroupAdmins(gid).then();
     });
   }
@@ -274,6 +277,8 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
       if (this.currentChat && this.currentChat.alarmItem.dataId == groupId) {
         this.currentChattingChangeService.switchCurrentChatting(null).then();
       }
+
+      this.ngOnInit();
     });
   }
 
@@ -460,7 +465,6 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
       this.snackBarService.openMessage(text);
       this.cacheService.saveSystemMessage(dataContent.t, text, protocol.sm);
     });
-
   }
 
 
