@@ -258,26 +258,9 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
           gtalkInterval: 3,
         };
 
-          if (this.currentChat.alarmItem.chatType === 'group') {
-              /*获取群基本信息*/
-              this.restService.getGroupBaseById(this.currentChat.alarmItem.dataId).subscribe(res => {
-                  if (res.status === 200 && res.data) {
-                    this.groupData.gnotice = res.data.gnotice == null ? '' : res.data.gnotice;
-                    this.groupData.gtopContent = res.data.gtopContent == null ? '' : res.data.gtopContent;
-
-                    let gnotice_length = this.groupData.gnotice.length;
-                    let gtopContent_length = this.groupData.gtopContent.length;
-                    this.groupData.gnotice_class = 'animate-' + parseInt(((gnotice_length >= 150 ? 150 : gnotice_length) / 50).toString());
-                    this.groupData.gtopContent_class = 'animate-' + parseInt(((gtopContent_length >= 150 ? 150 : gtopContent_length) / 50).toString());
-
-                    this.groupData.gnotice_visible = true;
-                    this.groupData.gtopContent_visible = res.data.topContentSwitch===1?true:false;
-
-                    this.groupData.gtalkIntervalSwitch=res.data.talkIntervalSwitch===1?true:false;
-                    this.groupData.gtalkInterval=res.data.talkInterval;
-                }
-              });
-          }
+        if (this.currentChat.alarmItem.chatType === 'group') {
+          this.loadGroupData();
+        }
       }
 
       if(cache.atMe) {
@@ -353,9 +336,6 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
     });
 
   }
-
-
-
 
   /**
    * 获取群成员
@@ -946,39 +926,57 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
     }
   }
 
-    loadTabData() {
-        console.log('显示消息组件数据打印：', this.currentChat);
+  loadTabData() {
+    console.log('显示消息组件数据打印：', this.currentChat);
 
-        this.group_tab_data = {
-            visible: false,
-            list: []
-        };
+    this.group_tab_data = {
+      visible: false,
+      list: []
+    };
 
-      //如果是群聊，加载群页签数据
-      if (this.currentChat && this.currentChat.alarmItem.chatType === 'group') {
-          this.restService.getGroupBaseById(this.currentChat.alarmItem.dataId).subscribe((group_data: NewHttpResponseInterface<GroupModel>) => {
-              if (group_data.data.tabSwitch === 1) {
-                  /*获取群页签列表*/
-                  this.restService.getUserGroupTab(this.currentChat.alarmItem.dataId).subscribe(
-                      (tab_data: NewHttpResponseInterface<GroupTabModel[]>
-                      ) => {
-                          this.group_tab_data = {
-                              visible: true,
-                              list: tab_data.data
-                          };
-                      });
-              }
-              this.groupData.gtopContent_visible = group_data.data.topContentSwitch===1?true:false;
-
-              this.groupData.gtalkIntervalSwitch=group_data.data.talkIntervalSwitch===1?true:false;
-              this.groupData.gtalkInterval=group_data.data.talkInterval;
-            this.setTalkInterval();
-          });
-      } else {
-        this.setTalkInterval();
-      }
+    //如果是群聊，加载群页签数据
+    if (this.currentChat && this.currentChat.alarmItem.chatType === 'group') {
+      this.loadGroupData();
+    } else {
+      this.setTalkInterval();
+    }
   }
 
+  loadGroupData(){
+    this.restService.getGroupBaseById(this.currentChat.alarmItem.dataId).subscribe((group_data: NewHttpResponseInterface<GroupModel>) => {
+      if (group_data.data.tabSwitch === 1) {
+        /*获取群页签列表*/
+        this.restService.getUserGroupTab(this.currentChat.alarmItem.dataId).subscribe(
+          (tab_data: NewHttpResponseInterface<GroupTabModel[]>
+          ) => {
+            this.group_tab_data = {
+              visible: true,
+              list: tab_data.data
+            };
+          });
+      }
+      else{
+        this.group_tab_data = {
+          visible: false,
+          list: []
+        };
+      }
+      this.groupData.gnotice = group_data.data.gnotice == null ? '' : group_data.data.gnotice;
+      this.groupData.gnotice_visible = true;
+
+      this.groupData.gtopContent = group_data.data.gtopContent == null ? '' : group_data.data.gtopContent;
+      this.groupData.gtopContent_visible = group_data.data.topContentSwitch===1?true:false;
+
+      let gnotice_length = this.groupData.gnotice.length;
+      let gtopContent_length = this.groupData.gtopContent.length;
+      this.groupData.gnotice_class = 'animate-' + parseInt(((gnotice_length >= 150 ? 150 : gnotice_length) / 50).toString());
+      this.groupData.gtopContent_class = 'animate-' + parseInt(((gtopContent_length >= 150 ? 150 : gtopContent_length) / 50).toString());
+
+      this.groupData.gtalkIntervalSwitch=group_data.data.talkIntervalSwitch===1?true:false;
+      this.groupData.gtalkInterval=group_data.data.talkInterval;
+      this.setTalkInterval();
+    });
+  }
   /**
    * 临时缓存禁言Map
    */

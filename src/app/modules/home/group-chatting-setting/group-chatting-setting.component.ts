@@ -14,6 +14,7 @@ import { DemoDialogComponent } from "@modules/setting-dialogs/demo-dialog/demo-d
 import { DialogService } from "@services/dialog/dialog.service";
 import { CurrentChattingChangeService } from "@services/current-chatting-change/current-chatting-change.service";
 import {Subscription} from "rxjs";
+import {CacheService} from "@services/cache/cache.service";
 
 @Component({
     selector: 'app-group-chatting-setting',
@@ -70,6 +71,7 @@ export class GroupChattingSettingComponent implements OnInit,OnDestroy {
         private restService: RestService,
         private dialogService: DialogService,
         private currentChattingChangeService: CurrentChattingChangeService,
+        private cacheService: CacheService,
     ) {
        this.currentSubscription =  this.currentChattingChangeService.currentChatting$.subscribe(currentChat => {
           if(currentChat && this.currentChat.alarmItem.dataId !== currentChat.alarmItem.dataId) {
@@ -136,6 +138,7 @@ export class GroupChattingSettingComponent implements OnInit,OnDestroy {
         this.currentChattingChangeService.switchCurrentChatting(
           this.currentChat
         ).then();
+        this.cacheService.putChattingCache(this.currentChat).then(() => {});
       });
     }
 
@@ -175,6 +178,7 @@ export class GroupChattingSettingComponent implements OnInit,OnDestroy {
           this.currentChattingChangeService.switchCurrentChatting(
             this.currentChat
           ).then();
+          this.cacheService.putChattingCache(this.currentChat).then(() => {});
         });
     }
 
