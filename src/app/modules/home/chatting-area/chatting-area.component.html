@@ -163,7 +163,7 @@
                           </div>
                         </div>
                         <div fxFlex="65" fxFlex.sm="95"
-                             *ngIf="chat.value.msgType !== 999"
+                             *ngIf="chat.value.msgType !== 999 && chat.value.msgType !== 12"
                              [id]="chat.value.fingerPrintOfProtocal"
                              [fxLayoutAlign]="chat.value.uid.toString() === localUserInfo.userId.toString() ? 'end' : 'start'">
                           <div fxLayout="column" class="message-container"
