@@ -4,7 +4,7 @@
 }
 
 .red-bag-card {
-  width: 309px;
+  width: 262px;
   background: #FB9D3B;
   border-radius: 6px;
   cursor: pointer;
@@ -15,6 +15,7 @@
     font-weight: 500;
     color: #FFFFFF;
     line-height: 24px;
+    padding: 19px 0 0 16px;
   }
   .status-text {
     height: 20px;
@@ -22,6 +23,7 @@
     font-weight: 400;
     color: #FFFFFF;
     line-height: 20px;
+    padding: 0 0 0 16px ;
   }
   .red-bag-type {
     height: 17px;
@@ -29,10 +31,19 @@
     font-weight: 400;
     color: #FFFFFF;
     line-height: 17px;
+    padding: 0 0 0 16px;
   }
 
   .mat-divider {
-    margin-top: 10px;
-    border-top-color: rgb(255 255 255);
+    //margin-top: 10px;
+    border-top-color: rgb(255,255,255,0.5);
   }
+}
+
+.red-bag-img {
+  padding: 20px 10px 10px 16px;
+}
+.red-line {
+  width: 230px;
+  padding-left: 16px;
 }
