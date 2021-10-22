@@ -39,13 +39,11 @@ export class ElectronService {
 
   ipcRendererSend(channel: string, data: any = null) {
     channel = [channel, process.env.appID].join(":");
-    console.dir(channel);
     this.ipcRenderer.send(channel, data);
   }
 
   ipcRendererOn(channel: string, fn: (event: Event, data: any) => void) {
     channel = [channel, process.env.appID].join(":");
-    console.dir(channel);
     this.ipcRenderer.on(channel, fn);
   }
 }
