@@ -2,12 +2,14 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {RestService} from "@services/rest/rest.service";
 import GroupInfoModel from "@app/models/group-info.model";
 import {CacheService} from "@services/cache/cache.service";
+import groupOwner from "@app/assets/icons/group-owner.svg";
 import {Subscription} from "rxjs";
 import {CurrentChattingChangeService} from "@services/current-chatting-change/current-chatting-change.service";
 import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 import {Router} from "@angular/router";
 import ChattingModel from "@app/models/chatting.model";
 import {LocalUserService} from "@services/local-user/local-user.service";
+import {DomSanitizer} from "@angular/platform-browser";
 
 @Component({
   selector: 'app-group',
@@ -17,6 +19,7 @@ import {LocalUserService} from "@services/local-user/local-user.service";
 export class GroupComponent implements OnInit, OnDestroy {
   public chattingGroup: GroupInfoModel[] = [];
   private subscribe: Subscription;
+  public groupOwnerIcon =  this.dom.bypassSecurityTrustResourceUrl(groupOwner);
 
 
   constructor(
@@ -25,6 +28,7 @@ export class GroupComponent implements OnInit, OnDestroy {
     private cacheService: CacheService,
     private currentChattingChangeService: CurrentChattingChangeService,
     public localUserService : LocalUserService,
+    private dom: DomSanitizer,
   ) {
     this.cacheService.getCacheGroups().then(data => {
       if(data) {
