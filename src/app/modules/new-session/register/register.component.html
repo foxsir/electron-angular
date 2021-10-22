@@ -1,2 +1,25 @@
-<p>register works!</p>
-<button routerLink="/login">登录</button>
+<div fxLayout="column" fxLayoutAlign="center  center" class="session-container" fxFlexFill>
+  <div fxLayout="column" fxFill >
+    <div fxFlex="30px">
+      <app-toolbar></app-toolbar>
+    </div>
+    <div fxFlex="calc(100-30px)">
+      <div fxLayout="row" fxFill fxLayoutGap="50px" >
+        <div fxFlex="50" class="login-container">
+          <div fxLayout="column" fxFill>
+            <div fxFlex="20" fxFill class="title-text">
+              欢迎注册草莓
+            </div>
+            <div fxFlex="70">
+              注册表单
+          </div>
+        </div>
+        <div fxFlex="50">
+          <div class="login-img">
+            <img src="./assets/login.png">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

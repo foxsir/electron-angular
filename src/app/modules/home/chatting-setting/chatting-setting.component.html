@@ -62,6 +62,13 @@
                         <div class="info-item">个性签名</div>
                         <div class="info-item">{{friendInfo.whatSUp}}</div>
                     </div>
+                  <!--删除好友-->
+                  <div  fxFlex fxLayoutAlign="space-between center" class="group-pointer groupLast" (click)="deleteFriend(friendInfo.friendUserUid,friendInfo.nickname)">
+                    <span class="privacy-item-text" style="color:red;">删除好友</span>
+                    <mat-icon class="mat-icon-cus" style="text-align:right;">
+                      <img [src]="arrowRightIcon" alt="" class="icon">
+                    </mat-icon>
+                  </div>
                 </div>
             </mat-card-content>
         </mat-card>

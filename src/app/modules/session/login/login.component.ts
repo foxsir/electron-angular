@@ -35,7 +35,6 @@ export class LoginComponent implements OnInit {
     private windowService: WindowService,
     private cacheService: CacheService,
     private sessionService: SessionService,
-    private indexComponent: IndexComponent,
   ) {
   }
 
@@ -43,7 +42,6 @@ export class LoginComponent implements OnInit {
   }
 
   public onSubmit() {
-    console.log("已阅读服务条款:",GlobalCache.loginProtocol);
     if (!GlobalCache.loginProtocol) {
       return this.snackBarService.openMessage("登录前请确认已阅读服务条款");
     }

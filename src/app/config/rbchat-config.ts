@@ -291,7 +291,11 @@ const UserProtocalsType = {
   DELETE_CHAT_MESSAGE: 79,
 
   // 群聊/世界频道聊天消息：由服务端转发给所有在线接收人B的【步骤2/2】
-  GROUP_DIRECTIVE_FOR_SYSTEM: 100
+  GROUP_DIRECTIVE_FOR_SYSTEM: 100,
+
+  // 让用户退出登录的指令
+  LOG_OUT: 20
+
 };
 
 // 聊天模式类型常量对象定义，请勿修改各常量值！

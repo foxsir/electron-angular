@@ -16,6 +16,7 @@ import {Subscription} from "rxjs";
 import FriendModel from "../../../../../app/entitys/friend.model";
 import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 import {CacheService} from "@services/cache/cache.service";
+import NewHttpResponseInterface from "@app/interfaces/new-http-response.interface";
 
 @Component({
     selector: 'app-chatting-setting',
@@ -131,4 +132,22 @@ export class ChattingSettingComponent implements OnInit,OnDestroy {
     // 返回
     return result;
   }
+
+  /**
+   * 删除好友
+   */
+  deleteFriend(friendId:number,nickname:string) {
+    this.dialogService.confirm({text: ['确认删除：',nickname , ''].join("")}).then(ok => {
+      console.log(ok);
+      if(ok) {
+        this.restService.deleteFriend(friendId).subscribe((res: NewHttpResponseInterface<any>) => {
+          if(res.status == 200) {
+            this.snackBarService.openMessage("删除成功");
+          }
+        });
+      }
+    });
+
+  }
+
 }
