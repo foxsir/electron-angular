@@ -51,6 +51,7 @@ import DirectoryType from "@services/file/config/DirectoryType";
 import {Subscription} from "rxjs";
 import {InputAreaService} from "@services/input-area/input-area.service";
 import {GlobalCache} from "@app/config/global-cache";
+import FriendModel from "@app/models/friend.model";
 
 const { ipcRenderer } = window.require('electron');
 
@@ -389,6 +390,15 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
     });
   }
 
+  public imitateSendGroupMessage(
+    messageType: number, messageText: string,
+    emitToUI: boolean = true,
+    replaceEntity: ChatmsgEntityModel = null,
+    atTargetMember: string[],
+  ){
+    this.atTargetMember=atTargetMember;
+    this.sendGroupMessage(messageType,messageText,emitToUI,replaceEntity);
+  };
   /**
    * 发送群消息
    * @param messageType
@@ -418,6 +428,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
           message, 0, res.fingerPrint, messageType
         );
         chatMsgEntity.uh = this.localUserService.localUserInfo.userAvatarFileName;
+
         // if (replaceEntity) {
         //   replaceEntity.fingerPrintOfProtocal = chatMsgEntity.fingerPrintOfProtocal;
         // }
@@ -467,9 +478,9 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
         replyFriendUid: this.currentChat.alarmItem.dataId,
         userName: this.currentChat.alarmItem.title,
       };
-      console.dir(replyMsg)
-      console.dir(this.quoteMessage)
-      console.dir(this.quoteMessage.text)
+      console.dir(replyMsg);
+      console.dir(this.quoteMessage);
+      console.dir(this.quoteMessage.text);
       return JSON.stringify(replyMsg);
     } else {
       return messageText;
@@ -701,19 +712,24 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
   selectFriend() {
     this.dialogService.openDialog(SelectFriendContactComponent, {
       width: '314px',
-      maxHeight: '600px',
-    }).then((friend) => {
-      if(friend) {
+      panelClass: "padding-less-dialog",
+    }).then((friend: {ok: boolean;selectfriends: FriendModel[]}) => {
+      if(friend.selectfriends.length === 0) return;
+      if(friend.ok) {
         this.dialogService.confirm({title: "消息提示", text: "确认分享联系信息到当前聊天吗？"}).then((ok) => {
           if(ok) {
-            this.cacheService.getCacheFriends().then(cache => {
-              const messageText = JSON.stringify({
-                nickName: friend.nickname,
-                uid: friend.friendUserUid,
-                userAvatar: cache.get(friend.friendUserUid.toString())?.userAvatarFileName,
+              this.cacheService.getCacheFriends().then(cache => {
+                friend.selectfriends.forEach(fri => {
+                  const messageText = JSON.stringify({
+                    nickName: fri.nickname,
+                    uid: fri.friendUserUid,
+                    userAvatar: cache.get(fri.friendUserUid.toString())?.userAvatarFileName,
+                  });
+                  console.dir(messageText)
+                  this.doSend(messageText, MsgType.TYPE_CONTACT,true);
+                });
+
               });
-              this.doSend(messageText, MsgType.TYPE_CONTACT,true);
-            });
           }
         });
       }
@@ -830,7 +846,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
 
     for (let i = 0; i < items.length; i++) {
       // Skip content if not image
-      if (items[i].type.indexOf("image") === -1) continue;
+      if (items[i].type.indexOf("image") === -1) {continue;}
       // Retrieve image on clipboard as blob
       const file = items[i].getAsFile();
 

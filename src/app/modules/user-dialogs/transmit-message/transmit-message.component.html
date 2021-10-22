@@ -2,14 +2,14 @@
   <div fxFlex style="padding:20px 0 0 20px"><label>选择接收者</label></div>
   <div fxFlex style="height:40px;">
     <mat-form-field fxFlex="100" floatLabel="never" style="height:40px;">
-      <input type="text" tabindex="-1" matInput [(ngModel)]="filterFriend" (ngModelChange)="filter()" placeholder="搜索" style="font-size:14px;margin: 0 0 5px 0;width:274px; padding-left: 20px;box-sizing: border-box " />
+      <input type="text" tabindex="-1" matInput [(ngModel)]="filterFriend" placeholder="搜索" style="font-size:14px;margin: 0 0 5px 0;width:274px; padding-left: 20px;box-sizing: border-box " />
     </mat-form-field>
   </div>
   <div class="scrollbar" style=" max-height: 400px;">
     <mat-selection-list class="friend-list" #friendSelect disableRipple color="primary">
-      <mat-list-option class="friend-list-item" *ngFor="let friend of friendMap | keyvalue" [value]="friend.value">
+      <mat-list-option class="friend-list-item" *ngFor="let friend of friendMap | keyvalue" [fxHide]="!friend.value.nickname.includes(filterFriend)" [value]="friend.value">
         <mat-icon mat-list-icon class="friend-avatar">
-          <img [src]="friend.value.base64Avatar || friend.value.userAvatarFileName" alt="">
+          <img [src]="friend.value.base64Avatar || friend.value.userAvatarFileName">
         </mat-icon>
         <div mat-line style="font-size: 14px">{{friend.value.nickname}}</div>
         <div mat-line *ngIf="!!friend.value.onlineStatus === true" style="color: #0091FF;font-size: 12px; padding-bottom: 3px;">[在线]</div>

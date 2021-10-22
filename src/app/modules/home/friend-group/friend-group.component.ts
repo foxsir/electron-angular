@@ -116,16 +116,17 @@ export class FriendGroupComponent implements OnInit {
     this.friendListMap.get(group.groupId).list.forEach(item=>{
       filterFriendId.push(item.friendId);
     });
-    this.dialogService.openDialog(SelectFriendContactComponent,{data:filterFriendId}).then((friend: FriendModel) => {
-      if(friend) {
-        this.dialogService.confirm({text: ['添加好友：', friend.nickname, ' 到组中'].join("")}).then(ok => {
-          if(ok) {
-            this.restService.updateFriendGroupMembers(group.groupId, 'add', [friend.friendUserUid]).subscribe((res: NewHttpResponseInterface<any>) => {
-              this.snackBarService.openMessage(res.msg);
-              this.loadFriendList(group.groupId);
-              this.getGroupList();
-            });
-          }
+    this.dialogService.openDialog(SelectFriendContactComponent,{data:filterFriendId,width: '314px',panelClass: "padding-less-dialog"}).then((friend:{ok: boolean,selectfriends:FriendModel[]}) => {
+      if(friend.selectfriends.length==0) return;
+      if(friend.ok) {
+        const friList=new Array();
+        friend.selectfriends.forEach(fri => {
+          friList.push(fri.friendUserUid);
+        });
+        this.restService.updateFriendGroupMembers(group.groupId, 'add', friList).subscribe((res: NewHttpResponseInterface<any>) => {
+          this.snackBarService.openMessage(res.msg);
+          this.loadFriendList(group.groupId);
+          this.getGroupList();
         });
       }
     });

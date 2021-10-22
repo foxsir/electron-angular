@@ -1,8 +1,8 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 import FriendModel from "@app/models/friend.model";
 import {CacheService} from "@services/cache/cache.service";
+
 
 @Component({
   selector: 'app-select-friend-contact',
@@ -46,4 +46,19 @@ export class SelectFriendContactComponent implements OnInit {
     this.dialogRef.close();
   }
 
+  confirmSelectMember(selectMember: any) {
+    const selectfriends = [];
+    selectMember.selectedOptions.selected.forEach(item => {
+      console.log('item: ', item.friendUserUid);
+      selectfriends.push(item.value);
+    });
+
+    console.log('选中的数据：', selectfriends);
+
+    const result = {
+      ok: true,
+      selectfriends: selectfriends,
+    }; console.dir(result);
+    this.dialogRef.close(result);
+  }
 }
