@@ -383,7 +383,6 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
   private subscribeOfGroupChatMsgServerToB() {
     this.messageDistributeService.MT45_OF_GROUP$CHAT$MSG_SERVER$TO$B$.subscribe((res: ProtocalModel) => {
       const dataContent: ProtocalModelDataContent = JSON.parse(res.dataContent);
-      // alert("群组" + dataContent.t);
       const ty = Number(dataContent.ty);
       switch (ty) {
         case MsgType.TYPE_AITE: // 处理@

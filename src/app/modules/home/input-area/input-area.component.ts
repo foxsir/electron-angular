@@ -402,7 +402,9 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
     emitToUI: boolean = true,
     replaceEntity: ChatmsgEntityModel = null
   ) {
-    this.messageService.sendGroupMessage(messageType, this.currentChat.alarmItem.dataId, messageText, this.atTargetMember).then(res => {
+    console.dir(this.memberMap);
+
+    this.messageService.sendGroupMessage(messageType, this.currentChat.alarmItem.dataId, messageText, this.atTargetMember,this.memberMap.get(this.imService.getLoginInfo().loginUserId).showNickname).then(res => {
       if(res.success === true) {
         const friendUid = this.currentChat.alarmItem.dataId;
         const ree = this.rosterProviderService.getFriendInfoByUid(friendUid);
