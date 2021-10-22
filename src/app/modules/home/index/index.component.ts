@@ -32,9 +32,9 @@ import {MiniUiService} from "@services/mini-ui/mini-ui.service";
 import {FriendRequestModel} from "@app/models/friend-request.model";
 import IpcResponseInterface from "@app/interfaces/ipc-response.interface";
 import FriendModel from "@app/models/friend.model";
-const { ipcRenderer } = window.require('electron');
 import NewHttpResponseInterface from "@app/interfaces/new-http-response.interface";
 import {GlobalCache} from "@app/config/global-cache";
+import {ElectronService} from "@app/core/services";
 
 // import svg end
 
@@ -108,6 +108,7 @@ export class IndexComponent implements OnInit {
     private miniUiService: MiniUiService,
     private zone: NgZone,
     private changeDetectorRef: ChangeDetectorRef,
+    private electronService: ElectronService
   ) {
     this.router.events.subscribe(e => {
       if (e instanceof NavigationEnd) {
@@ -116,7 +117,7 @@ export class IndexComponent implements OnInit {
     });
     this.connectDB();
 
-    ipcRenderer.on("download-completed", (event, msg) => {
+    this.electronService.ipcRendererOn("download-completed", (event, msg) => {
       if(msg) {
         this.zone.run(() => {
           this.snackBarService.openMessage("保存完成");

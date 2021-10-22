@@ -70,7 +70,7 @@ export class ImageTypeComponent extends FieldType implements OnInit, AfterViewIn
     private snackBar: SnackBarService
   ) {
     super();
-    this.Authorization = window.localStorage.getItem('Authorization');
+    this.Authorization = window.sessionStorage.getItem('Authorization');
   }
 
   ngOnInit() {

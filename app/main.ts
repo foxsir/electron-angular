@@ -1,5 +1,6 @@
 import {
-  app, BrowserWindow, screen, ipcMain, Menu, globalShortcut, clipboard
+  app, BrowserWindow, screen, ipcMain, Menu, globalShortcut, clipboard,
+  Tray
 } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -9,6 +10,7 @@ import defaultOptions from "./DefaultOptions";
 import * as md5 from "blueimp-md5";
 import Database from "./Database";
 import SaveFile from "./SaveFile";
+import {exec} from "child_process";
 
 // Initialize remote module
 require('@electron/remote/main').initialize();
@@ -20,28 +22,28 @@ const DeviceID = md5([os.hostname(), os.arch(), os.platform(), os.userInfo().use
 
 process.env.DeviceID = DeviceID;
 
-
-// 声网：如果使用 Electron 9.x 及以上版本，需要将 allowRendererProcessReuse 设为 false
-// app.allowRendererProcessReuse = false;
+let registerGlobal = false;
 
 const args = process.argv.slice(1),
   serve = args.some(val => val === '--serve');
 
 const windows: Set<BrowserWindow> = new Set();
-const wel = new WindowEventListen();
 
 function createWindow(): BrowserWindow {
+  // 用来区分多个标签
+  process.env.appID = new Date().getTime().toString();
 
-  // const electronScreen = screen;
-  // const size = electronScreen.getPrimaryDisplay().workAreaSize;
+  const electronScreen = screen;
+  const size = electronScreen.getPrimaryDisplay().workAreaSize;
+
   // Create the browser window.
-  const win: BrowserWindow = new BrowserWindow({
+  let win: BrowserWindow = new BrowserWindow({
     // x: 0,
     // y: 0,
     // width: size.width,
     // height: size.height,
     backgroundColor: "#F1F1F1;",
-    show: false,
+    show: true,
     resizable: false,
     width: 400,
     height: 460,
@@ -53,10 +55,11 @@ function createWindow(): BrowserWindow {
       nodeIntegration: true,
       allowRunningInsecureContent: (serve) ? true : false,
       contextIsolation: false,  // false if you want to run e2e test with Spectron
-      // enableRemoteModule : true, // true if you want to run e2e test with Spectron or use remote module in renderer context (ie. Angular)
+      enableRemoteModule : true, // true if you want to run e2e test with Spectron or use remote module in renderer context (ie. Angular)
       // preload: path.resolve(__dirname, 'agora-renderer.js')
     },
   });
+
 
   win.webContents.session.on('will-download', (event, item, webContents) => {
     // Set the save path, making Electron not to prompt a save dialog.
@@ -95,12 +98,15 @@ function createWindow(): BrowserWindow {
       win.webContents.openDevTools();
     });
   } else {
-    registerGlobalShortcut();
+    if(registerGlobal === false) {
+      registerGlobalShortcut();
+      registerGlobal = true;
+    }
     // Path when running electron executable
     let pathIndex = './index.html';
 
     if (fs.existsSync(path.join(__dirname, '../dist/index.html'))) {
-       // Path when running electron in local folder
+      // Path when running electron in local folder
       pathIndex = '../dist/index.html';
     }
 
@@ -109,49 +115,68 @@ function createWindow(): BrowserWindow {
     //   protocol: 'file:',
     //   slashes: true
     // }));
+
     win.loadFile(path.join(__dirname, pathIndex)).then(res => {
       // console.dir(res);
     });
   }
 
   // Emitted when the window is closed.
-  // win.on('closed', () => {
-  //   // Dereference the window object, usually you would store window
-  //   // in an array if your app supports multi windows, this is the time
-  //   // when you should delete the corresponding element.
-  //   win = null;
-  // });
+  win.on('closed', () => {
+    // Dereference the window object, usually you would store window
+    // in an array if your app supports multi windows, this is the time
+    // when you should delete the corresponding element.
+    win = null;
+    windows.delete(win);
+  });
 
-  let template = [
-    {
-      label: "调试",
-      submenu: [
-        {
-          label: "打开控制台",
-          click: function () {
-            win.webContents.openDevTools();
-          }
-        },
-        {
-          label: "退出",
-          click: function () {
-            app.exit();
-          }
-        }
-      ]
-    }
-  ];
+  // 初始化数据库
+  new Database().init().then();
+  new SaveFile().init().then();
 
-  // let menu = Menu.buildFromTemplate(template)
-  //
-  // // 3.设置菜单到应用中
-  // Menu.setApplicationMenu(menu)
+  const wel = new WindowEventListen();
+  wel.setWindows(win);
+
+  const startScreenCapture = ['start-screen-capture', process.env.appID].join(":");
+  const screenshotFinished = ['screenshot-finished', process.env.appID].join(":");
+  ipcMain.on(startScreenCapture, (event, message) => {
+    console.log('start-screen-capture...');
+
+    const exec = require("child_process").exec;
+    exec(path.resolve(__dirname, 'screen-capture/screencapture.exe'), (error, stdout, stderr) => {
+      console.log('screen shot finished: ', JSON.stringify(error, stdout, stderr));
+
+      let nativeImage = clipboard.readImage();
+      if (!nativeImage.isEmpty()) {
+        let base64 = nativeImage.toDataURL();
+        event.sender.send(screenshotFinished, base64);
+      }
+    });
+  });
+
+  // 设置托盘
+  /*const tray = new Tray(path.resolve(__dirname, 'favicon.ico'))
+  const contextMenu = Menu.buildFromTemplate([
+    { label: 'Item1', type: 'radio' },
+    { label: 'Item2', type: 'radio' },
+    { label: 'Item3', type: 'radio', checked: true },
+    { label: 'Item4', type: 'radio' }
+  ])
+  tray.setToolTip('This is my application.')
+  tray.setContextMenu(contextMenu)*/
+  // tray.destroy()
+
+
   windows.add(win);
+
   return win;
 }
 
 function registerGlobalShortcut() {
   globalShortcut.register('Alt+CommandOrControl+I', () => {
+    console.log('open devtool')
+  })
+  globalShortcut.register('Ctrl+CommandOrControl+I', () => {
     console.log('open devtool')
   })
   globalShortcut.register('CommandOrControl+R', () => {
@@ -162,71 +187,42 @@ function registerGlobalShortcut() {
   })
 }
 
-function runApp() {
-  try {
-    // This method will be called when Electron has finished
-    // initialization and is ready to create browser windows.
-    // Some APIs can only be used after this event occurs.
-    // Added 400 ms to fix the black background issue while using transparent window. More detais at https://github.com/electron/electron/issues/15947
-    app.on('ready', () => {
-      createWindow();
-      // 初始化数据库
-      new Database().init().then();
-      new SaveFile().init().then();
+try {
+  // This method will be called when Electron has finished
+  // initialization and is ready to create browser windows.
+  // Some APIs can only be used after this event occurs.
+  // Added 400 ms to fix the black background issue while using transparent window. More detais at https://github.com/electron/electron/issues/15947
+  app.on('ready', () => setTimeout(createWindow, 500));
 
-      wel.setWindows(windows);
-    });
-
-    // Quit when all windows are closed.
-    app.on('window-all-closed', () => {
-      // On OS X it is common for applications and their menu bar
-      // to stay active until the user quits explicitly with Cmd + Q
-      if (process.platform !== 'darwin') {
-        app.quit();
-      }
-    });
-
-    app.on('activate', () => {
-      // On OS X it's common to re-create a window in the app when the
-      // dock icon is clicked and there are no other windows open.
-      if (windows.size === 0) {
-        createWindow();
-      } else {
-        // windows[0].show();
-        app.show();
-      }
-    });
-
-    // 使用单例模式打开多个窗口
-    const gotTheLock = app.requestSingleInstanceLock()
-    if (!gotTheLock) {
-      app.quit()
-    } else {
-      app.on('second-instance', (event, commandLine, workingDirectory) => {
-        // 当运行第二个实例时,将会聚焦到myWindow这个窗口
-        createWindow();
-      })
+  // Quit when all windows are closed.
+  app.on('window-all-closed', () => {
+    // On OS X it is common for applications and their menu bar
+    // to stay active until the user quits explicitly with Cmd + Q
+    if (process.platform !== 'darwin') {
+      app.quit();
     }
+  });
 
-    ipcMain.on("start-screen-capture", (event, message) => {
-      console.log('start-screen-capture...');
-
-      const exec = require("child_process").exec;
-      exec(path.resolve(__dirname, 'screen-capture/screencapture.exe'), (error, stdout, stderr) => {
-        console.log('screen shot finished: ', JSON.stringify(error, stdout, stderr));
-
-        let nativeImage = clipboard.readImage();
-        if (!nativeImage.isEmpty()) {
-          let base64 = nativeImage.toDataURL();
-          event.sender.send('screenshot-finished', base64);
-        }
-      });
-    });
-
-  } catch (e) {
-    // Catch Error
-    // throw e;
+  // 使用单例模式打开多个窗口
+  const gotTheLock = app.requestSingleInstanceLock()
+  if (!gotTheLock) {
+    app.quit()
+  } else {
+    app.on('second-instance', (event, commandLine, workingDirectory) => {
+      // 当运行第二个实例时,将会聚焦到myWindow这个窗口
+      createWindow();
+    })
   }
-}
 
-runApp();
+  app.on('activate', () => {
+    // On OS X it's common to re-create a window in the app when the
+    // dock icon is clicked and there are no other windows open.
+    if (windows.size === 0) {
+      createWindow();
+    }
+  });
+
+} catch (e) {
+  // Catch Error
+  // throw e;
+}
