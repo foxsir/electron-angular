@@ -53,10 +53,11 @@ export class VirtualScrollComponent implements OnInit {
 
   private observed(entries: any[]) {
     entries.forEach(entry => {
-      if (entry.isIntersecting)
+      if (entry.isIntersecting) {
         entry.target.classList.remove("offscreen");
-      else
+      } else {
         entry.target.classList.add("offscreen");
+      }
     });
   }
 
