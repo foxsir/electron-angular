@@ -25,6 +25,7 @@ export class MyFriendsComponent implements OnInit {
 
   public friendList: FriendModel[] = [];
   public frienddata: FriendData[] = [];
+  public other:FriendModel[] = [];
   public contextMenuChatting: ContextMenuChattingModel[] = [];
 
 
@@ -44,9 +45,6 @@ export class MyFriendsComponent implements OnInit {
     // 好友使用缓存中的数据
     // 我的群组组件有点击切换到聊天的示例 group.component.ts
     //const buf = iconv.encode("你", 'gb2312');
-    //console.dir(buf);
-    //console.log('gb2312: ', this.getLetter('你'));
-
     this.cacheService.getCacheFriends().then(data => {
       if(data) {
         this.showFriend(data);
@@ -70,14 +68,16 @@ export class MyFriendsComponent implements OnInit {
     data.forEach(item => {
       this.friendList.push(item);
     });
-    console.log('我的好友 data：', data);
-    console.log('我的好友 list：', this.friendList);
-
     for (let item of this.friendList) {
       var first_char = item.nickname[0].toString().toUpperCase();
 
-      if (this.numbers.indexOf(first_char) == -1 && this.letters.indexOf(first_char) == -1) {
+      if (this.numbers.indexOf(first_char) === -1 && this.letters.indexOf(first_char) === -1) {
         first_char = this.getLetter(first_char);
+
+        if (this.numbers.indexOf(first_char) === -1 && this.letters.indexOf(first_char) === -1) {
+          this.other.push(item);
+          continue;
+        }
       }
 
       var results = this.frienddata.filter(t => t.char == first_char);
@@ -101,7 +101,13 @@ export class MyFriendsComponent implements OnInit {
       return flag;
     });
 
-    console.log('我的好友 list 格式化之后：', this.frienddata);
+
+    var modelOther = new FriendData();
+    modelOther.char = '#';
+    this.other.forEach(item => {
+      modelOther.list.set(item.friendUserUid, item);
+    });
+    this.frienddata.push(modelOther);
   }
 
   getLetter(str) {
