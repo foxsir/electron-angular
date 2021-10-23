@@ -1,4 +1,14 @@
-import {AfterViewInit, ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  NgZone,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild
+} from '@angular/core';
 import {AlarmsProviderService} from "@services/alarms-provider/alarms-provider.service";
 import {MsgType} from "@app/config/rbchat-config";
 import {LocalUserService} from "@services/local-user/local-user.service";
@@ -48,9 +58,6 @@ import GroupCommonMessageModel from "@app/models/group-common-message.model";
 import TopModel from "@app/models/top.model";
 import BlackListModel from "@app/models/black-list.model";
 import BlackMeListModel from "@app/models/black-me-list.model";
-import NewHttpResponseInterface from "@app/interfaces/new-http-response.interface";
-import {GroupAdminModel} from "@app/models/group-admin.model";
-import {FriendRequestModel} from "@app/models/friend-request.model";
 
 @Component({
   selector: 'app-message',
@@ -60,7 +67,7 @@ import {FriendRequestModel} from "@app/models/friend-request.model";
 export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild("chattingPanel") chattingPanel: MatDrawer;
   readonly Infinity = 9999999999;
-
+  @Output() sendMessage = new EventEmitter<{chat: ChatmsgEntityModel; dataContent: ProtocalModelDataContent}>();
   public drawerMode: 'side' | 'over' = 'side';
   public isMiniUI: boolean = false;
 
@@ -189,12 +196,12 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     this.currentSubscription = this.currentChattingChangeService.currentChatting$.subscribe((alarm: AlarmItemInterface) => {
-      console.log("在message组件发送已读消息");
-      this.currentChat = alarm;
-      if (alarm) {
-        // 发送已读
-        this.messageService.alreadyRead(this.currentChat.alarmItem.dataId, this.currentChat.metadata.chatType);
-      }
+      // console.log("在message组件发送已读消息");
+      // this.currentChat = alarm;
+      // if (alarm) {
+      //   // 发送已读
+      //   this.messageService.alreadyRead(this.currentChat.alarmItem.dataId, this.currentChat.metadata.chatType);
+      // }
     });
     this.currentChat = this.currentChattingChangeService.currentChatting;
   }
@@ -398,33 +405,40 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
       // 拿到好友id
       const dataContent: any = JSON.parse(res.dataContent);
       const friendId: string = dataContent.userId;
-      console.log("收到被好友删除的指令,好友id:"+friendId);
+      console.log("收到被好友删除的指令,好友id:" + friendId);
       // 先找的这个会话
       this.cacheService.generateAlarmItem(friendId, 'friend').then(chat => {
         // 删除所有的聊天记录
-        this.cacheService.clearChattingCache(chat).then(() => {});
+        this.cacheService.clearChattingCache(chat).then(() => {
+        });
         // 删除会话
-        this.cacheService.deleteChattingCache(friendId).then(() => {});
+        this.cacheService.deleteChattingCache(friendId).then(() => {
+        });
         // 删除聊天界面
-        console.log("当前会话是:",this.currentChat);
+        console.log("当前会话是:", this.currentChat);
         if (this.currentChat && this.currentChat.alarmItem.dataId == friendId) {
           this.currentChattingChangeService.switchCurrentChatting(null).then();
         }
         // 从我好友里里删除
-        this.cacheService.deleteData<FriendModel>({model: 'friend', query: {friendUserUid: Number(friendId)}}).then(() => {
+        this.cacheService.deleteData<FriendModel>({
+          model: 'friend',
+          query: {friendUserUid: Number(friendId)}
+        }).then(() => {
           // 更新好友缓存
           this.cacheService.cacheFriends().then();
         });
         // 删除置顶
-        this.cacheService.deleteData<TopModel>({model:'top',query:{dataId:friendId}}).then();
+        this.cacheService.deleteData<TopModel>({model: 'top', query: {dataId: friendId}}).then();
         // 从我的黑名单里删除
-        this.cacheService.deleteData<BlackListModel>({model:'blackList',query:{userUid:Number(friendId)}}).then();
+        this.cacheService.deleteData<BlackListModel>({model: 'blackList', query: {userUid: Number(friendId)}}).then();
         // 从拉黑我的人里删除
-        this.cacheService.deleteData<BlackMeListModel>({model:'blackMeList',query:{userUid:Number(friendId)}}).then();
+        this.cacheService.deleteData<BlackMeListModel>({
+          model: 'blackMeList',
+          query: {userUid: Number(friendId)}
+        }).then();
       });
     });
   }
-
 
 
   /**
@@ -442,7 +456,26 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
         text = "你已经被邀请入群";
       }
       this.cacheService.saveSystemMessage(content.g_id, text, protocol.sm);
-      // todo 生成一个新的会话
+      // 生成一个新的会话
+      const alarmData: AlarmItemInterface = {
+        alarmItem: {
+          alarmMessageType: 0,
+          dataId: content.g_id,
+          date: protocol.sm,
+          msgContent: "",
+          title: content.g_name,
+          avatar: content.avatar,
+        },
+        metadata: {
+          chatType: 'group'
+        }
+      };
+      this.cacheService.cacheGroups().then();
+      this.cacheService.putChattingCache(alarmData).then(() => {
+        this.currentChattingChangeService.switchCurrentChatting(alarmData).then(() => {
+        });
+      });
+
     });
     // 处理通用的群系统指令
     this.messageDistributeService.MT47_OF_GROUP$SYSCMD_COMMON$INFO_FROM$SERVER$.subscribe((protocol: ProtocalModel) => {
@@ -475,22 +508,58 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
   private subscribeFriendRequest() {
     // 添加好友后，收到服务器返回的错误信息
     this.messageDistributeService.MT06_OF_ADD_FRIEND_REQUEST_RESPONSE$FOR$ERROR_SERVER$TO$A$.subscribe((protocol: ProtocalModel) => {
-      const dataContent: any =protocol.dataContent;
+      const dataContent: any = protocol.dataContent;
       this.snackBarService.systemNotification(dataContent);
     });
     // 好友请求被同意
     this.messageDistributeService.MT10_OF_PROCESS_ADD$FRIEND$REQ_FRIEND$INFO$SERVER$TO$CLIENT$.subscribe((protocol: ProtocalModel) => {
       const dataContent: any = JSON.parse(protocol.dataContent);
       const beRequestUser: string = dataContent.beRequestUser;
-      const friendInfo:FriendModel = dataContent.friendInfo;
-      this.cacheService.cacheFriends().then(()=>{
+      const friendInfo: FriendModel = dataContent.friendInfo;
+      this.cacheService.cacheFriends().then(() => {
         // 缓存后,清除掉好友请求
         this.cacheService.updateNewFriendMap(friendInfo.friendUserUid, true);
         setTimeout(() => {
           this.cacheService.cacheFriends().then();
         }, 1000);
       });
-      this.snackBarService.openMessage(friendInfo.nickname+"同意了你的好友请求");
+      if (beRequestUser == this.localUserService.localUserInfo.userId.toString()) {
+        this.snackBarService.openMessage("你已经和" + friendInfo.nickname + "成为好友了");
+        // 在这里发送消息,生成新的会话
+        // 然后发送一条消息
+        const alarm: AlarmItemInterface = {
+          alarmItem: {
+            alarmMessageType: 0, // 0单聊 1临时聊天/陌生人聊天 2群聊
+            dataId: friendInfo.friendUserUid.toString(),
+            date: new Date().getTime(),
+            msgContent: "",
+            title: friendInfo.remark?friendInfo.remark:friendInfo.nickname,
+            avatar: friendInfo.userAvatarFileName,
+          },
+          // 聊天元数据
+          metadata: {
+            chatType: "friend", // "friend" | "group"
+          },
+        };
+        this.cacheService.putChattingCache(alarm).then(() => {
+          this.currentChattingChangeService.switchCurrentChatting(alarm).then().then(()=> {
+            this.messageService.sendMessage(MsgType.TYPE_TEXT,friendInfo.friendUserUid,"我们已经是好友了,开始聊天吧！").then(res => {
+              if(res.success === true) {
+                // 自已发出的消息，也要显示在相应的UI界面上
+                const message = res.msgBody.m;
+                //111 新增指纹码 he 消息类型msgType
+                const chatMsgEntity: ChatmsgEntityModel = this.messageEntityService.prepareSendedMessage(
+                  message, new Date().getTime(), res.fingerPrint, MsgType.TYPE_TEXT
+                );
+                chatMsgEntity.uh = this.localUserService.localUserInfo.userAvatarFileName;
+                this.sendMessage.emit({chat: chatMsgEntity, dataContent: res.msgBody});
+              }
+            });
+        });
+        });
+      } else {
+        this.snackBarService.openMessage(friendInfo.nickname + "同意了你的好友请求");
+      }
     });
     // 好友请求已经同意
     this.messageDistributeService.MT10_OF_PROCESS_ADD$FRIEND$REQ_FRIEND$INFO$SERVER$TO$CLIENT$.subscribe((protocol: ProtocalModel) => {
@@ -503,15 +572,15 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.messageDistributeService.MT12_OF_PROCESS_ADD$FRIEND$REQ_SERVER$TO$A_REJECT_RESULT$.subscribe((protocol: ProtocalModel) => {
       const dataContent: any = JSON.parse(protocol.dataContent);
       const beRequestUser: string = dataContent.beRequestUser;
-      const friendInfo:FriendModel = dataContent.friendInfo;
-      this.cacheService.cacheFriends().then(()=>{
+      const friendInfo: FriendModel = dataContent.friendInfo;
+      this.cacheService.cacheFriends().then(() => {
         // 缓存后,清除掉好友请求
         this.cacheService.updateNewFriendMap(friendInfo.friendUserUid, false);
         setTimeout(() => {
           this.cacheService.cacheFriends().then();
         }, 1000);
       });
-      this.snackBarService.openMessage(friendInfo.nickname+"拒绝了你的好友请求");
+      this.snackBarService.openMessage(friendInfo.nickname + "拒绝了你的好友请求");
     });
 
     // 监听好友请求
@@ -527,7 +596,8 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
    * @param alarm
    */
   switchChat(alarm: AlarmItemInterface) {
-    if (!this.currentChat || this.currentChat.alarmItem.dataId !== alarm.alarmItem.dataId) {
+    // 如果是第一次进入会话
+    if (!this.currentChat) {
       this.currentChat = alarm;
       this.currentChattingChangeService.switchCurrentChatting(this.currentChat).then(() => {
         // 缓存群管理员列表
@@ -537,10 +607,25 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       });
     } else {
-      // 如果是当前会话，只清除badges
-      this.cacheService.setChattingBadges(this.currentChat, 0);
+      // 离开之前的会话时,也要发送已读消息
+      console.log("离开上次会话时发送已读消息", this.currentChat);
+      this.messageService.alreadyRead(this.currentChat.alarmItem.dataId, this.currentChat.metadata.chatType);
+      if (this.currentChat.alarmItem.dataId !== alarm.alarmItem.dataId) {
+        this.currentChat = alarm;
+        this.currentChattingChangeService.switchCurrentChatting(this.currentChat).then(() => {
+          // 缓存群管理员列表
+          if (this.currentChat.metadata.chatType === 'group') {
+            this.cacheService.cacheGroupAdmins(this.currentChat.alarmItem.dataId).then();
+            this.cacheService.cacheGroupMembers(this.currentChat.alarmItem.dataId).then();
+          }
+        });
+      } else {
+        // 如果是当前会话，只清除badges
+        this.cacheService.setChattingBadges(this.currentChat, 0);
+      }
     }
-    // 发送已读
+    // 最后发送新会话的已读消息
+    console.log("进入新会话时发送已读消息", this.currentChat);
     this.messageService.alreadyRead(this.currentChat.alarmItem.dataId, this.currentChat.metadata.chatType);
   }
 

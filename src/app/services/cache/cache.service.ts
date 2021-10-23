@@ -1296,7 +1296,7 @@ export class CacheService extends DatabaseService {
       // this.chatMsgEntityMap.set(chatMsgEntity.fingerPrintOfProtocal, chatMsgEntity);
       this.putMsgEntityMap(chatMsgEntity);
     }
-
+    console.log(chatMsgEntity);
     this.saveDataSync<ChatmsgEntityModel>({
       model: "chatmsgEntity", data: chatMsgEntity, update: null
     }).then(() => {

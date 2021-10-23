@@ -25,6 +25,7 @@ export class CurrentChattingChangeService {
 
   switchCurrentChatting(currentChatting: AlarmItemInterface): Promise<boolean> {
     return new Promise((resolve) => {
+      console.log("当前会话:",currentChatting);
       if(currentChatting !== null) {
         this.router.navigate(['/home/message']).then(() => {
           currentChatting.metadata.unread = 0;

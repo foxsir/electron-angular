@@ -315,7 +315,6 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
         // 切换会话清空列表
         this.cacheService.chatMsgEntityMapTemp.clear();
         this.cacheService.chatMsgEntityMap.clear();
-
         this.openEndDrawer('setting', false);
         this.cacheService.getChattingCache(this.currentChat).then(data => {
           if(!!data) {
@@ -324,14 +323,15 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
             this.loadMessage(true);
           }
         });
-        this.restService.getUserBaseById(this.currentChat.alarmItem.dataId).subscribe(res => {
-          if (res.data !== null) {
-            this.currentChatSubtitle = [res.data.latestLoginAddres, res.data.latestLoginIp].join(": ");
-          } else {
-            this.currentChatSubtitle = null;
-          }
-        });
-
+        if ( this.currentChat.metadata.chatType === 'friend') {
+          this.restService.getUserBaseById(this.currentChat.alarmItem.dataId).subscribe(res => {
+            if (res.data !== null) {
+              this.currentChatSubtitle = [res.data.latestLoginAddres, res.data.latestLoginIp].join(": ");
+            } else {
+              this.currentChatSubtitle = null;
+            }
+          });
+        }
       } else {
         this.currentChat = currentChat;
       }
@@ -350,10 +350,13 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
     }
   }
 
+  /**
+   * 检查好友的拉黑状态
+   */
   checkBlackStatus() {
     this.cacheService.getBlackMeListCache().then(cache=>{
       let isBlack = false;
-      if(cache && this.currentChat) {
+      if(cache && this.currentChat && this.currentChat.metadata.chatType === 'friend') {
         console.log("拉黑我的好友:",cache);
         cache.forEach(item => {
           if (item.userUid.toString() == this.currentChat.alarmItem.dataId) {
@@ -361,7 +364,6 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
           }
         });
       };
-      console.log("是否被好友" + this.currentChat.alarmItem.dataId + "拉黑", isBlack);
       if(isBlack) {
         this.snackBarService.openMessage("您已经被对方拉入黑名单");
       }
@@ -968,7 +970,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
    * 显示at提示
    */
   showAtSheet() {
-    if(this.currentChat) {
+    if(this.currentChat && this.currentChat.metadata.chatType === 'group' ) {
       this.cacheService.getAtMessage(this.currentChat.alarmItem.dataId).then((at) => {
         if(at.length > 0) {
           this.atMsg = at[0];
@@ -976,6 +978,8 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
           this.atMsg = null;
         }
       });
+    } else {
+      this.atMsg = null;
     }
   }
 
