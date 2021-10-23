@@ -375,7 +375,7 @@ export class IndexComponent implements OnInit {
     // console.dir(pFromServer);
     // const msgBody = JSON.parse(pFromServer.dataContent);
     // console.dir(msgBody);
-
+    console.log("接收到来自服务器的消息:", pFromServer);
     this.messageDistributeService.inceptMessage(pFromServer);
   }
 

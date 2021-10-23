@@ -200,6 +200,7 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
     }
 
     initGroupData() {
+      this.userinfo = this.localUserService.localUserInfo
       this.myAvatar = null;
         console.log('currentChat:'+this.currentChat+"当前页面:群组信息页面");
         if (this.currentChat.metadata.chatType === 'friend') {
@@ -605,7 +606,7 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
                 if (res.success == false) {
                     return this.snackBarService.openMessage("退群失败,请重试");
                 }else {
-                  this.snackBarService.openMessage("退群成功,请重试");
+                  this.snackBarService.openMessage("退群成功");
                   // 删除会话
                   this.cacheService.deleteChattingCache(this.currentChat.alarmItem.dataId).then(() => {});
                   // 清空历史消息
