@@ -57,8 +57,7 @@ export class SmsCodeTypeComponent extends FieldType implements OnInit {
     private http: HttpService,
     private snackBar: SnackBarService,
     private restService: RestService,
-    private snackBarService: SnackBarService,
-    private indexComponent: IndexComponent
+    private snackBarService: SnackBarService
   ) {
     super();
   }

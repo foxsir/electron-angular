@@ -15,13 +15,10 @@ import {GlobalCache} from "@app/config/global-cache";
   templateUrl: './index.component.html',
   styleUrls: ['./index.component.scss']
 })
-@Injectable({
-  providedIn: 'root'
-})
 export class IndexComponent implements OnInit {
   registerType: number = 0;
   selectedTab: number = 0;
-  loginProtocol:boolean = true;
+  loginProtocol: boolean = true;
 
   constructor(
     public router: Router,
@@ -38,7 +35,7 @@ export class IndexComponent implements OnInit {
     if(this.router.url === '/session/register') {
       this.selectedTab = 1;
     }
-    this.loginProtocol = GlobalCache.loginProtocol;
+    this.loginProtocol = GlobalCache.getAll().loginProtocol;
   }
 
   /**
@@ -56,19 +53,21 @@ export class IndexComponent implements OnInit {
 
   getAppConfig() {
     this.restService.getAppConfig().subscribe((res: NewHttpResponseInterface<appConfigInterface>) => {
-      GlobalCache.appConfig = res.data;
+      if(res.status === 200) {
+        GlobalCache.setAppConfig(res.data);
+      }
     });
   }
 
   openPrivacyPolicyUrl() {
-    if(GlobalCache.appConfig) {
-      this.windowService.openUrl(GlobalCache.appConfig.privacyPolicyUrl);
+    if(GlobalCache.getAll().appConfig) {
+      this.windowService.openUrl(GlobalCache.getAll().appConfig.privacyPolicyUrl);
     }
   }
 
   selectLoginProtocol(event) {
     event.preventDefault();
-    GlobalCache.loginProtocol = !GlobalCache.loginProtocol;
+    GlobalCache.setLoginProtocol(!GlobalCache.loginProtocol);
     this.loginProtocol = GlobalCache.loginProtocol;
   }
 

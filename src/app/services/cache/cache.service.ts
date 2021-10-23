@@ -1045,7 +1045,7 @@ export class CacheService extends DatabaseService {
   sensitiveWordList() {
     this.restService.getSensitiveWordList().subscribe((res: NewHttpResponseInterface<string[]>) => {
       if(res.status === 200) {
-        GlobalCache.sensitiveList = res.data;
+        GlobalCache.setSensitiveList(res.data);
         console.log("敏感词:", GlobalCache.sensitiveList);
       }
     });

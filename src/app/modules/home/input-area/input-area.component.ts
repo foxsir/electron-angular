@@ -283,7 +283,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
     }
     // 检查是否在敏感词内
     let includeSensitiveWord = false;
-    GlobalCache.sensitiveList.forEach(sensitiveWord=>{
+    GlobalCache.getAll().sensitiveList.forEach(sensitiveWord=>{
       if (sensitiveWord.includes(messageText)){
         includeSensitiveWord = true;
       }
