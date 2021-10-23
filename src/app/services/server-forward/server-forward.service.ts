@@ -51,9 +51,11 @@ export class ServerForwardService {
 
               if(msg.showMsg===false){
                 this.cacheService.chatMsgEntityMap.delete(chat.fingerPrintOfProtocal);
+                this.cacheService.putMsgEntityMap();
               }
               else {
-                this.cacheService.chatMsgEntityMap.set(chat.fingerPrintOfProtocal, chat);
+                this.cacheService.putMsgEntityMap(chat);
+                // this.cacheService.chatMsgEntityMap.set(chat.fingerPrintOfProtocal, chat);
               }
             }
           });
@@ -85,7 +87,8 @@ export class ServerForwardService {
               chat.isOutgoing = true;
               this.cacheService.putChattingCache(chatting, chat).then(() => {
                 if(this.cacheService.chatMsgEntityMap.get(chat.fingerPrintOfProtocal)) {
-                  this.cacheService.chatMsgEntityMap.set(chat.fingerPrintOfProtocal, chat);
+                  // this.cacheService.chatMsgEntityMap.set(chat.fingerPrintOfProtocal, chat);
+                  this.cacheService.putMsgEntityMap(chat);
                 }
                 const value = entries.next().value;
                 if(value) {
@@ -129,12 +132,14 @@ export class ServerForwardService {
           msg.text = JSON.stringify(t);
           if(this.localUserService.localUserInfo.userId !== dataContent.f && chatType === 'friend') {
             this.cacheService.putChattingCache(alarm, msg, false).then(() => {
-              this.cacheService.chatMsgEntityMap.set(msg.fingerPrintOfProtocal, msg);
+              // this.cacheService.chatMsgEntityMap.set(msg.fingerPrintOfProtocal, msg);
+              this.cacheService.putMsgEntityMap(msg);
             });
           }
           this.cacheService.putChattingCache(alarm, chatMsgEntity, true).then(() => {
             if(currentChat && currentChat.alarmItem.dataId === alarm.alarmItem.dataId) {
-              this.cacheService.chatMsgEntityMap.set(chatMsgEntity.fingerPrintOfProtocal, chatMsgEntity);
+              // this.cacheService.chatMsgEntityMap.set(chatMsgEntity.fingerPrintOfProtocal, chatMsgEntity);
+              this.cacheService.putMsgEntityMap(chatMsgEntity);
             }
           });
         });

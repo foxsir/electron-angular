@@ -213,13 +213,31 @@
         <mat-card-content>
           <div fxLayout="column" fxLayoutGap="10px">
             <mat-list>
-              <mat-list-item *ngFor="let item of group_member_list" class="list-box">
+              <mat-list-item *ngFor="let item of group_member_list" [fxHide]="item.userUid != this.groupData.gownerUserUid" class="list-box">
                 <img src="{{item.userAvatarFileName}}" mat-list-icon />
                 <div mat-line class="matLine nickName">{{item.showNickname}}</div>
                 <div mat-line class="matLine">
-                  <span *ngIf="item.userUid == this.groupData.gownerUserUid" class="role-group role-group-owner">群主</span>
-                  <span *ngIf="item.userUid != this.groupData.gownerUserUid && item.isAdmin == 1" class="role-group role-group-admin">管理</span>
-                  <span *ngIf="item.userUid != this.groupData.gownerUserUid && item.isAdmin == 0 && item.userUid == this.userinfo.userId" class="role-group role-group-self">本人</span>
+                  <span class="role-group role-group-owner">群主</span>
+                  <span *ngIf="item.userUid == this.userinfo.userId" class="role-group role-group-self">我</span>
+                </div>
+                <mat-divider></mat-divider>
+              </mat-list-item>
+
+              <mat-list-item *ngFor="let item of group_member_list" [fxHide]="item.userUid === this.groupData.gownerUserUid || item.isAdmin != 1" class="list-box">
+                <img src="{{item.userAvatarFileName}}" mat-list-icon />
+                <div mat-line class="matLine nickName">{{item.showNickname}}</div>
+                <div mat-line class="matLine">
+                  <span class="role-group role-group-admin">管理</span>
+                  <span *ngIf="item.userUid == this.userinfo.userId" class="role-group role-group-self">我</span>
+                </div>
+                <mat-divider></mat-divider>
+              </mat-list-item>
+
+              <mat-list-item *ngFor="let item of group_member_list" [fxHide]="item.userUid == this.groupData.gownerUserUid || item.isAdmin != 0" class="list-box">
+                <img src="{{item.userAvatarFileName}}" mat-list-icon />
+                <div mat-line class="matLine nickName">{{item.showNickname}}</div>
+                <div mat-line class="matLine">
+                  <span *ngIf="item.userUid == this.userinfo.userId" class="role-group role-group-self">我</span>
                 </div>
                 <mat-divider></mat-divider>
               </mat-list-item>

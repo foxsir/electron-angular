@@ -5,8 +5,8 @@
 
 
     .virtual-scroll-item.offscreen {
-      visibility: collapse;
-      content-visibility: hidden;
+      visibility: hidden !important;
+      content-visibility: auto !important;
     }
     .virtual-scroll-item {
       contain-intrinsic-size: 100px 75px;

@@ -131,17 +131,13 @@ export class RedBagComponent implements OnInit {
         if (res.status === 200) {
           this.openedRedBag = true;
           this.dialogRef.addPanelClass("open-red-bag-dialog");
-          console.dir(res.data)
-          console.dir(res.data)
-          console.dir(res.data)
-          console.dir(res.data)
-          console.dir(res.data)
           this.friendRedPacket = res.data;
           this.snackBarService.openMessage("领取成功");
           this.redBag.status = '2';
           this.data.text = JSON.stringify(this.redBag);
           this.cacheService.putChattingCache(this.currentChatting, this.data).then();
-          this.cacheService.chatMsgEntityMap.set(this.data.fingerPrintOfProtocal, this.data);
+          // this.cacheService.chatMsgEntityMap.set(this.data.fingerPrintOfProtocal, this.data);
+          this.cacheService.putMsgEntityMap(this.data);
         } else {
           this.snackBarService.openMessage(res.msg);
         }

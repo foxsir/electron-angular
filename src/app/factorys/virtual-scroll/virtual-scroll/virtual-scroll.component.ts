@@ -16,7 +16,6 @@ export class VirtualScrollComponent implements OnInit {
   offsetTop: number;
   offsetBottom: number;
 
-
   constructor() { }
 
   ngOnInit(): void {
