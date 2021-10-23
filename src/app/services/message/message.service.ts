@@ -614,6 +614,8 @@ export class MessageService {
 
   alreadyRead(to: string, chatType: string) {
     const localUserInfo = this.localUserService.localUserInfo;
+    // 如果是群组的,to应该是"0"代表服务器
+    const t :string = chatType === 'friend'?to:'0';
     const msgBody = {
       cy: 0,
       f: localUserInfo.userId,
@@ -624,7 +626,7 @@ export class MessageService {
     };
     const typeu = chatType === 'friend' ? UserProtocalsType.MT03_OF_CHATTING_MESSAGE : UserProtocalsType.MT44_OF_GROUP$CHAT$MSG_A$TO$SERVER
     const p: any = createCommonData2(
-      JSON.stringify(msgBody), localUserInfo.userId.toString(), to, typeu
+      JSON.stringify(msgBody), localUserInfo.userId.toString(), t, typeu
     );
 
     p.QoS = true;
