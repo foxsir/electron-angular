@@ -258,7 +258,7 @@ export class MessageService {
 
           const message = msgBody.m;
           const chatMsgEntity: ChatmsgEntityModel = this.messageEntityService.prepareSendedMessage(
-            message, new Date().getTime(), p.fp, msgType
+            message, new Date().getTime() / 1000, p.fp, msgType
           );
           chatMsgEntity.uh = this.localUserService.localUserInfo.userAvatarFileName;
           this.cacheService.putChattingCache(this.currentChattingChangeService.currentChatting, chatMsgEntity, true).then(() => {
@@ -277,7 +277,7 @@ export class MessageService {
   }
 
 
-  sendGroupMessage(msgType, toGid, msgContent, userIds: string[] = []): Promise<SendMessageResponse> {
+  sendGroupMessage(msgType, toGid, msgContent, userIds: string[] = [],nickName:string = null): Promise<SendMessageResponse> {
     return new Promise((resolve, reject) => {
       let atTargetMember = null;
       if(userIds.length > 0) {
@@ -312,8 +312,7 @@ export class MessageService {
 
       const localAuthedUserInfo = this.localUserService.getObj();
 
-      let fromNickname = localAuthedUserInfo.nickname;
-      fromNickname = (fromNickname ? fromNickname : fromUid);
+      let fromNickname = (nickName === null?(localAuthedUserInfo.nickname?localAuthedUserInfo.nickname:fromUid):nickName);
 
       // console.log(fromNickname);
       // debugger
@@ -614,6 +613,8 @@ export class MessageService {
 
   alreadyRead(to: string, chatType: string) {
     const localUserInfo = this.localUserService.localUserInfo;
+    // 如果是群组的,to应该是"0"代表服务器
+    const t :string = chatType === 'friend'?to:'0';
     const msgBody = {
       cy: 0,
       f: localUserInfo.userId,
@@ -624,7 +625,7 @@ export class MessageService {
     };
     const typeu = chatType === 'friend' ? UserProtocalsType.MT03_OF_CHATTING_MESSAGE : UserProtocalsType.MT44_OF_GROUP$CHAT$MSG_A$TO$SERVER
     const p: any = createCommonData2(
-      JSON.stringify(msgBody), localUserInfo.userId.toString(), to, typeu
+      JSON.stringify(msgBody), localUserInfo.userId.toString(), t, typeu
     );
 
     p.QoS = true;

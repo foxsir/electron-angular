@@ -189,6 +189,7 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     this.currentSubscription = this.currentChattingChangeService.currentChatting$.subscribe((alarm: AlarmItemInterface) => {
+      console.log("在message组件发送已读消息");
       this.currentChat = alarm;
       if (alarm) {
         // 发送已读
