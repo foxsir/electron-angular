@@ -110,17 +110,7 @@
   }
 }
 
-.role-group{
-    padding: 5px 10px;
-    color:white;
-    font-size:12px;
-    border-radius:16px;
-    display:inline-block;
-}
 
-.role-group-owner{
-    background-color:#ffa701;
-}
 
 .role-group-admin{
     background-color:#b0c8db;
@@ -147,16 +137,16 @@
     margin: 0;
   }
   .role-group{
-    width: 36px;
-    height: 18px;
-    line-height: 18px;
+    line-height: 12px;
     border-radius: 10px;
     color: #FFF;
-    font-size: 12px;
-    text-align: center;
-    padding: 0;
-    margin: 0;
+    font-size: 10px;
+    margin-right:5px;
+    padding: 2px 6px;
+    color:white;
+    display:inline-block;
   }
+
   .role-group-owner{
     background-color: #fdab02;
   }
