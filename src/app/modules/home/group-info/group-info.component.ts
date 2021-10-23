@@ -1,14 +1,4 @@
-import {
-  ChangeDetectorRef,
-  Component,
-  EventEmitter,
-  Input,
-  NgZone,
-  OnDestroy,
-  OnInit,
-  Output,
-  ViewChild
-} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import ChattingModel from "@app/models/chatting.model";
 import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 import { MatDrawer } from "@angular/material/sidenav";
@@ -40,10 +30,8 @@ import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 import {RBChatConfig, MsgType,UserProtocalsType} from "@app/config/rbchat-config";
 
 import {InputAreaComponent} from "@app/modules/home/input-area/input-area.component";
-import {ProtocalModel, ProtocalModelDataContent} from "@app/models/protocal.model";
-import {AlarmsProviderService} from "@services/alarms-provider/alarms-provider.service";
-import {MessageEntityService} from "@services/message-entity/message-entity.service";
-import * as uuid from "uuid";
+import {ProtocalModel} from "@app/models/protocal.model";
+import {GroupMemberModel} from "@app/models/group-member.model";
 
 @Component({
     selector: 'app-group-info',
@@ -54,10 +42,8 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
     @Input() currentChat: AlarmItemInterface; // 测试群ID：0000000642
     @Input() drawer: MatDrawer;
     @ViewChild('groupConfig') private groupConfig: MatDrawer;
-    @Output() sendMessage = new EventEmitter<{chat: ChatmsgEntityModel; dataContent: ProtocalModelDataContent}>();
 
-
-  public closeIcon = this.dom.bypassSecurityTrustResourceUrl(closeIcon);
+    public closeIcon = this.dom.bypassSecurityTrustResourceUrl(closeIcon);
     public closeActiveIcon = this.dom.bypassSecurityTrustResourceUrl(closeActiveIcon);
     public backspaceIcon = this.dom.bypassSecurityTrustResourceUrl(backspaceIcon);
     public backspaceActiveIcon = this.dom.bypassSecurityTrustResourceUrl(backspaceActiveIcon);
@@ -115,7 +101,6 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
 
     public currentSubscription: Subscription;
     public oriNotice=""; //存储初始群公告，用于比对编辑后是否有变化
-    private alarmsProviderService: AlarmsProviderService;
 
     constructor(
         private dom: DomSanitizer,
@@ -128,9 +113,7 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
         private currentChattingChangeService: CurrentChattingChangeService,
         private snackBarService: SnackBarService,
         private zone: NgZone,
-        private changeDetectorRef: ChangeDetectorRef,
-        private messageEntityService: MessageEntityService,
-
+        private changeDetectorRef: ChangeDetectorRef
     ) {
         this.currentSubscription = this.currentChattingChangeService.currentChatting$.subscribe(currentChat => {
           if(currentChat && this.currentChat.alarmItem.dataId !== currentChat.alarmItem.dataId) {
@@ -168,12 +151,16 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
     loadGroupAdminList() {
         /* 获取群管理员列表 */
         this.cacheService.getCacheGroupAdmins(this.currentChat.alarmItem.dataId).then(members => {
+          console.dir(members)
+          // this.zone.run(() => {
             this.group_admin_list = [];
             members.forEach(member => {
-                this.group_admin_list.push(member);
+              this.group_admin_list.push(member);
             });
             console.log('群管理员列表 01：', members);
             this.initUserCluInfo();
+          //   this.changeDetectorRef.detectChanges();
+          // })
         });
     }
 
@@ -218,6 +205,8 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
             this.setting_data.invite = this.groupData.invite === 1;
             this.setting_data.allowPrivateChat = this.groupData.allowPrivateChat === 1;
             this.setting_data.gnotice = this.groupData.gnotice;
+
+            this.currentChat.alarmItem.title=this.groupData.gname;
             this.oriNotice = this.setting_data.gnotice;
 
             //群头像
@@ -279,23 +268,6 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
             data[key] = this.setting_data[key] == true ? 1 : 0,
 
             this.restService.updateGroupBaseById(data).subscribe();
-            // 如果开启了全体禁言,需要单独发个消息
-            if (key == 'gmute') {
-              const notificationContent = this.setting_data[key]?"全体已被禁言了":"全体已被解禁了";
-              const messageText = {
-                isBanned:this.setting_data[key],
-                banTime:0,
-                sendId: this.localUserService.localUserInfo.userId,
-                msg:this.setting_data[key]?"全体已被禁言了":"全体已被解禁了",
-                adminId:this.localUserService.localUserInfo.userId,
-                uuid:0
-              };
-              this.messageService.sendGroupMessage(MsgType.TYPE_NOTALK, this.currentChat.alarmItem.dataId, JSON.stringify(messageText), []).then(res => {
-                if(res.success === true) {
-                  // 暂时不做任何处理
-                }
-              });
-            }
         }
     }
 
@@ -415,31 +387,12 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
             }
             else if (column == 'group_nickname') {
                 this.user_clu_info.showNickname = res.new_name;
+                this.cacheService.saveDataSync<GroupMemberModel>({model: 'groupMember', data: this.user_clu_info, update: {groupId: this.currentChat.alarmItem.dataId, userUid:this.userinfo.userid}}).then(() => {
+                  setTimeout(() => {
+                    return this.cacheService.cacheGroupMembers(this.currentChat.alarmItem.dataId).then();
+                  }, 100);
+                })
             }
-
-            //if (column == 'group_name') {
-            //    this.dialogService.confirm({ title: '通知确认', text: '群名称已修改成功，是否通知全部群成员？' }).then((ok) => {
-            //        if (ok) {
-            //            console.log('确认通知...');
-
-            //            var imdata = {
-            //                bridge: false,
-            //                dataContent: {
-            //                    changedByUid: this.userinfo.userId,
-            //                    nnewGroupName: res.new_name,
-            //                    notificationContent: this.userinfo.nickname + '修改群名为：' + res.new_name,
-            //                    gid: this.currentChat.alarmItem.dataId,
-            //                },
-            //                fp: '', from: 0, qoS: true, sm: -1, sync: 0, type: 2, typeu: 51,
-            //            };
-            //            this.messageService.sendCustomerMessage(imdata).then(res => {
-            //                if (res.success === true) {
-
-            //                }
-            //            });
-            //        }
-            //    });
-            //}
         });
     }
 
@@ -460,7 +413,6 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
             if (res.ok == false) {
                 return;
             }
-
 
             if (choose_type == 'add_group_admin') {
                 this.restService.updateGroupAdmin(this.currentChat.alarmItem.dataId, [res.item.userUid], 1).subscribe(res => {
@@ -492,16 +444,18 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
         };
 
         this.dialogService.openDialog(GroupInfoDialogComponent, { data: data }).then((res: any) => {
-            if (res.ok == false) {
+            if (res.ok === false) {
                 return;
             }
-            this.restService.updateGroupAdmin(this.currentChat.alarmItem.dataId, res.selectfriends, 0).subscribe(res => {
-                setTimeout(() => {
-                    this.cacheService.cacheGroupAdmins(this.currentChat.alarmItem.dataId).then(members => {
-                        this.loadGroupAdminList();
-                        console.log('更新管理员缓存，并重新加载');
-                    });
-                }, 1000);
+
+            this.restService.updateGroupAdmin(this.currentChat.alarmItem.dataId, res.selectfriends, 0).subscribe(re => {
+              setTimeout(() => {
+                console.dir(re)
+                this.cacheService.cacheGroupAdmins(this.currentChat.alarmItem.dataId).then(members => {
+                  this.loadGroupAdminList();
+                  console.log('更新管理员缓存，并重新加载');
+                });
+              }, 1000);
             });
         });
     }
@@ -525,17 +479,17 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
             };
 
             this.restService.jieSangGroup(post_data).subscribe(res => {
-                if (res.success == false) {
-                    return this.snackBarService.openMessage("解散失败,请重试") ;
-                } else {
-                  this.dialogService.alert({ title: '解散成功！', text: '输入框不能为空！' }).then(() => {});
-                  // 删除会话
-                  this.cacheService.deleteChattingCache(this.currentChat.alarmItem.dataId).then(() => {});
-                  // 清空历史消息
-                  this.cacheService.clearChattingCache(this.currentChat).then(() => {});
-                  // 从我的群组列表中删除
-                  this.cacheService.deleteData<GroupModel>({model: 'group', query: {gid: this.currentChat.alarmItem.dataId}}).then();
-                }
+              if (res.success === false) {
+                  return this.snackBarService.openMessage("解散失败,请重试") ;
+              } else {
+                this.dialogService.alert({ title: '解散成功！', text: '输入框不能为空！' }).then(() => {});
+                // 删除会话
+                this.cacheService.deleteChattingCache(this.currentChat.alarmItem.dataId).then(() => {});
+                // 清空历史消息
+                this.cacheService.clearChattingCache(this.currentChat).then(() => {});
+                // 从我的群组列表中删除
+                this.cacheService.deleteData<GroupModel>({model: 'group', query: {gid: this.currentChat.alarmItem.dataId}}).then();
+              }
             });
         });
     }
@@ -603,17 +557,34 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
 
             this.restService.exitGroup(post_data).subscribe(res => {
                 if (res.success == false) {
-                    return this.snackBarService.openMessage("退群失败,请重试");
-                }else {
-                  this.snackBarService.openMessage("退群成功,请重试");
-                  // 删除会话
-                  this.cacheService.deleteChattingCache(this.currentChat.alarmItem.dataId).then(() => {});
-                  // 清空历史消息
-                  this.cacheService.clearChattingCache(this.currentChat).then(() => {});
-                  // 从我的群组列表中删除
-                  this.cacheService.deleteData<GroupModel>({model: 'group', query: {gid: this.currentChat.alarmItem.dataId}}).then();
+                    return;
                 }
+                console.log('退出成功，发送通知消息...');
 
+                var imdata = {
+                    bridge: false,
+                    dataContent: {
+                        "nickName": this.userinfo.nickname,
+                        "uh": this.userinfo.userAvatarFileName, "f": this.userinfo.userId,
+                        "t": alarmItem.dataId,
+                        "m": this.userinfo.nickname + "已退出本群",
+                        "cy": 2, "ty": 90, "sync": "0"
+                    },
+                    fp: '', from: this.userinfo.userId, to: alarmItem.dataId,
+                    QoS: true, sm: -1, type: 2, typeu: 50,
+                    recvTime: 0, "sync": "0"
+                };
+                this.messageService.sendCustomerMessage(imdata).then(res2 => {
+                    if (res2.success === true) {
+                        this.dialogService.alert({ title: '退出成功！'}).then((done) => {
+                          this.cacheService.deleteData<ChattingModel>({model: "chatting", query: {dataId: alarmItem.dataId}}).then(() => {
+                            this.cacheService.deleteChattingCache(alarmItem.dataId).then(() => {
+                              return this.currentChattingChangeService.switchCurrentChatting(null);
+                            });
+                          });
+                        });
+                    }
+                });
 
             });
         });

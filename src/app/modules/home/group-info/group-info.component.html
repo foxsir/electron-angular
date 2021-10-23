@@ -128,7 +128,7 @@
                 <img [src]="arrowRightIcon" alt="" class="icon">
               </mat-icon>
             </div>
-            <div *ngIf="user_role != 'common'" fxFlex fxLayoutAlign="space-between center" class="group-pointer groupLast" (click)="changeView('manage_group_admin')">
+            <div *ngIf="user_role === 'owner'" fxFlex fxLayoutAlign="space-between center" class="group-pointer groupLast" (click)="changeView('manage_group_admin')">
               <span class="privacy-item-text">管理员管理</span>
               <mat-icon class="mat-icon-cus" style="text-align:right;">
                 <img [src]="arrowRightIcon" alt="" class="icon">
