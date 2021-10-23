@@ -65,6 +65,9 @@ export default class Database {
         name: database
       }).then(async connection => {
         this.connection = connection;
+        await this.connection.query('PRAGMA synchronous = OFF');
+        await this.connection.query('PRAGMA count_changes = OFF');
+        await this.connection.query('PRAGMA journal_mode = OFF');
         resolve(true);
       }).catch(error => {
         console.error(error);
