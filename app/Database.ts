@@ -179,6 +179,7 @@ export default class Database {
     ipcMain.on(closeDB, async (event, msg) => {
       if(this.connection) {
         await this.connection.close();
+        this.connection = null;
       }
     });
   }

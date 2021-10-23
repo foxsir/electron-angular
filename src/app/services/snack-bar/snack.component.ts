@@ -4,14 +4,14 @@ import {MAT_SNACK_BAR_DATA, MatSnackBarRef} from '@angular/material/snack-bar';
 @Component({
   selector: 'snack-bar-component',
   template: `
-    <div fxLayout="row" style="flex: 1 1 100%; display: flex;">
+    <div fxLayout="row" style="flex: 1 1 100%; display: flex; justify-content: center;">
       <button [class]="'mat-button ' + data.color">
         <span class="mat-button-wrapper">{{data.text}}</span>
       </button>
-      <span style="flex: 1 1 auto"></span>
-      <button class="mat-button" (click)="snackBarRef.dismiss()">
-        <span class="mat-button-wrapper">OK</span>
-      </button>
+<!--      <span style="flex: 1 1 auto"></span>-->
+<!--      <button class="mat-button" (click)="snackBarRef.dismiss()">-->
+<!--        <span class="mat-button-wrapper">OK</span>-->
+<!--      </button>-->
     </div>`,
   styles: [
     `.mat-button {

@@ -1,17 +1,17 @@
 <h2 mat-dialog-title fxFlexAlign="center">我的二维码</h2>
 <ng-template [ngIf]="myInfo">
-    <mat-dialog-content class="mat-typography">
+    <mat-dialog-content class="mat-typography" style="margin:0">
         <div style="text-align:center;">
-            <img [src]="avatar" alt="" style="width:40px;border-radius:40px;">
+            <img [src]="avatar" alt="" style="width:60px;height:60px;border-radius:50%; object-fit: cover;">
         </div>
-        <div style="text-align:center;margin:5px 0 33px 0;">
-            <span>{{myInfo.whatSUp}}</span>
+        <div style="text-align:center;margin:5px 0 20px 0;">
+            <span>{{myInfo.nickname}}</span>
         </div>
         <div style="text-align:center;">
             <ngx-qrcode #qrcode [value]="myInfo.userUid.toString()" [margin]="1" cssClass="qrcode-box" qrc-errorCorrectionLevel="L" [width]="180"></ngx-qrcode>
         </div>
     </mat-dialog-content>
-    <mat-dialog-actions fxLayoutAlign="end center">
+    <mat-dialog-actions fxLayoutAlign="center center">
         <button mat-button mat-dialog-close tabindex="-1" color="primary">取消</button>
         <button mat-button (click)="download(qrcode)" tabindex="-1" color="primary">另存为</button>
         <button mat-button (click)="copy(qrcode)" tabindex="-1" color="primary">复制</button>

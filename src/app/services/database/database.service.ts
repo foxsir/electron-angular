@@ -43,12 +43,12 @@ export abstract class DatabaseService {
   constructor(
     protected electronService: ElectronService,
   ) {
-    if(this.isConnected !== true) {
-      this.listenReply();
-    }
   }
 
   connectionDB(name: string): Promise<boolean> {
+    if(this.isConnected !== true) {
+      this.listenReply();
+    }
     return new Promise((resolve) => {
       if(this.isConnected !== true) {
         const subscribe = this.connectedUpdate$.subscribe((connected: boolean) => {
