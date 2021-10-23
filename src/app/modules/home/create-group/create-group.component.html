@@ -13,12 +13,11 @@
         选择用户
       </div>
       <div fxFlex="100px" fxLayoutAlign="center" [fxShow]="step === 'one'">
-        <button [disabled]="friendSelect.selectedOptions.selected.length === 0"
-                (click)="nextStep(friendSelect)" mat-button color="primary">
-          下一步
+        <button (click)="nextStep(friendSelect)" mat-button color="primary">
+          创建
         </button>
       </div>
-      <div fxFlex="100px" fxLayoutAlign="center" [fxShow]="step === 'two'">
+      <div fxFlex="100px" fxLayoutAlign="center" [fxShow]="step === 'two'" style="display: none">
         <button (click)="doCreate()" mat-button color="primary">
           创建
         </button>

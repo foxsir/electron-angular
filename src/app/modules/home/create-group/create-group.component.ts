@@ -20,6 +20,7 @@ import HttpResponseInterface from "@app/interfaces/http-response.interface";
 import {CurrentChattingChangeService} from "@services/current-chatting-change/current-chatting-change.service";
 import {GroupModel} from "@app/models/group.model";
 import {SnackBarService} from "@services/snack-bar/snack-bar.service";
+import {DialogService} from "@services/dialog/dialog.service";
 
 interface GroupMember {
   groupUserId: string;
@@ -57,7 +58,8 @@ export class CreateGroupComponent implements OnInit {
     private restService: RestService,
     private localUserService: LocalUserService,
     private currentChattingChangeService: CurrentChattingChangeService,
-    private snackBarService: SnackBarService
+    private snackBarService: SnackBarService,
+    private dialogService: DialogService,
   ) { }
 
   ngOnInit(): void {
@@ -104,8 +106,16 @@ export class CreateGroupComponent implements OnInit {
       this.selectedFriends.push(item.value);
       names.push(item.value.nickname);
     });
+
+    if(names.length<=0){
+      this.dialogService.alert({ title: '请选择群成员!',text: '请选择群成员！' }).then(() => {});
+      return;
+    }
+
     this.defaultGroupName = names.join("&");
-    this.step = 'two';
+    //this.step = 'two';
+
+    this.doCreate();
   }
 
   /**

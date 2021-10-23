@@ -148,7 +148,6 @@
                     <mat-spinner [diameter]="20" [strokeWidth]="3" mode="indeterminate"></mat-spinner>
                   </div>
                   <div fxFlex="100" fxFill>
-                    {{this.cacheService.chatMsgEntityList.length}}
                     <app-virtual-scroll #virtualScroll>
                       <div fxLayout="row" class="virtual-scroll-item" *ngFor="let chat of cacheService.chatMsgEntityList"
                            (click)="selectMessage ? collectMessage(chat, msgCheckbox) : false"

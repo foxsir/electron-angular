@@ -1,4 +1,14 @@
-import {ChangeDetectorRef, Component, Input, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  NgZone,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild
+} from '@angular/core';
 import ChattingModel from "@app/models/chatting.model";
 import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 import { MatDrawer } from "@angular/material/sidenav";
@@ -30,7 +40,10 @@ import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 import {RBChatConfig, MsgType,UserProtocalsType} from "@app/config/rbchat-config";
 
 import {InputAreaComponent} from "@app/modules/home/input-area/input-area.component";
-import {ProtocalModel} from "@app/models/protocal.model";
+import {ProtocalModel, ProtocalModelDataContent} from "@app/models/protocal.model";
+import {AlarmsProviderService} from "@services/alarms-provider/alarms-provider.service";
+import {MessageEntityService} from "@services/message-entity/message-entity.service";
+import * as uuid from "uuid";
 
 @Component({
     selector: 'app-group-info',
@@ -41,8 +54,10 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
     @Input() currentChat: AlarmItemInterface; // 测试群ID：0000000642
     @Input() drawer: MatDrawer;
     @ViewChild('groupConfig') private groupConfig: MatDrawer;
+    @Output() sendMessage = new EventEmitter<{chat: ChatmsgEntityModel; dataContent: ProtocalModelDataContent}>();
 
-    public closeIcon = this.dom.bypassSecurityTrustResourceUrl(closeIcon);
+
+  public closeIcon = this.dom.bypassSecurityTrustResourceUrl(closeIcon);
     public closeActiveIcon = this.dom.bypassSecurityTrustResourceUrl(closeActiveIcon);
     public backspaceIcon = this.dom.bypassSecurityTrustResourceUrl(backspaceIcon);
     public backspaceActiveIcon = this.dom.bypassSecurityTrustResourceUrl(backspaceActiveIcon);
@@ -100,6 +115,7 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
 
     public currentSubscription: Subscription;
     public oriNotice=""; //存储初始群公告，用于比对编辑后是否有变化
+    private alarmsProviderService: AlarmsProviderService;
 
     constructor(
         private dom: DomSanitizer,
@@ -112,7 +128,9 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
         private currentChattingChangeService: CurrentChattingChangeService,
         private snackBarService: SnackBarService,
         private zone: NgZone,
-        private changeDetectorRef: ChangeDetectorRef
+        private changeDetectorRef: ChangeDetectorRef,
+        private messageEntityService: MessageEntityService,
+
     ) {
         this.currentSubscription = this.currentChattingChangeService.currentChatting$.subscribe(currentChat => {
           if(currentChat && this.currentChat.alarmItem.dataId !== currentChat.alarmItem.dataId) {
@@ -261,6 +279,23 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
             data[key] = this.setting_data[key] == true ? 1 : 0,
 
             this.restService.updateGroupBaseById(data).subscribe();
+            // 如果开启了全体禁言,需要单独发个消息
+            if (key == 'gmute') {
+              const notificationContent = this.setting_data[key]?"全体已被禁言了":"全体已被解禁了";
+              const messageText = {
+                isBanned:this.setting_data[key],
+                banTime:0,
+                sendId: this.localUserService.localUserInfo.userId,
+                msg:this.setting_data[key]?"全体已被禁言了":"全体已被解禁了",
+                adminId:this.localUserService.localUserInfo.userId,
+                uuid:0
+              };
+              this.messageService.sendGroupMessage(MsgType.TYPE_NOTALK, this.currentChat.alarmItem.dataId, JSON.stringify(messageText), []).then(res => {
+                if(res.success === true) {
+                  // 暂时不做任何处理
+                }
+              });
+            }
         }
     }
 
@@ -513,7 +548,8 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
           filterFriendId.push(Number(item.userUid));
         });
         this.dialogService.openDialog(SelectFriendContactComponent, { width: '314px',panelClass: "padding-less-dialog", data : filterFriendId}).then((friend) => {
-            if (friend) {
+          if(friend.selectfriends.length==0) return;
+          if (friend.ok) {
               this.dialogService.confirm({ title: "消息提示", text: "确定邀请好友入群吗？" }).then((ok) => {
                 if (ok == false) {
                   return;
@@ -567,34 +603,17 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
 
             this.restService.exitGroup(post_data).subscribe(res => {
                 if (res.success == false) {
-                    return;
+                    return this.snackBarService.openMessage("退群失败,请重试");
+                }else {
+                  this.snackBarService.openMessage("退群成功,请重试");
+                  // 删除会话
+                  this.cacheService.deleteChattingCache(this.currentChat.alarmItem.dataId).then(() => {});
+                  // 清空历史消息
+                  this.cacheService.clearChattingCache(this.currentChat).then(() => {});
+                  // 从我的群组列表中删除
+                  this.cacheService.deleteData<GroupModel>({model: 'group', query: {gid: this.currentChat.alarmItem.dataId}}).then();
                 }
-                console.log('退出成功，发送通知消息...');
 
-                var imdata = {
-                    bridge: false,
-                    dataContent: {
-                        "nickName": this.userinfo.nickname,
-                        "uh": this.userinfo.userAvatarFileName, "f": this.userinfo.userId,
-                        "t": alarmItem.dataId,
-                        "m": this.userinfo.nickname + "已退出本群",
-                        "cy": 2, "ty": 90, "sync": "0"
-                    },
-                    fp: '', from: this.userinfo.userId, to: alarmItem.dataId,
-                    QoS: true, sm: -1, type: 2, typeu: 50,
-                    recvTime: 0, "sync": "0"
-                };
-                this.messageService.sendCustomerMessage(imdata).then(res2 => {
-                    if (res2.success === true) {
-                        this.dialogService.alert({ title: '退出成功！'}).then((done) => {
-                          this.cacheService.deleteData<ChattingModel>({model: "chatting", query: {dataId: alarmItem.dataId}}).then(() => {
-                            this.cacheService.deleteChattingCache(alarmItem.dataId).then(() => {
-                              return this.currentChattingChangeService.switchCurrentChatting(null);
-                            });
-                          });
-                        });
-                    }
-                });
 
             });
         });

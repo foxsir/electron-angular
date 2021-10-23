@@ -3,7 +3,7 @@
   <div fxFlex>
     <div fxLayout="row" fxLayoutGap="15px">
       <div fxFlex="35px">
-        <img [src]="redBagIcon" alt="" style="width: 100%">
+        <img [src]="redBagIcon" class="red-bag-img" alt="" style="width: 100%">
       </div>
       <div fxFlex>
         <div class="greetings">{{redBag.greetings}}</div>
@@ -11,7 +11,7 @@
       </div>
     </div>
   </div>
-  <div fxFlex>
+  <div fxFlex class="red-line">
     <mat-divider inset></mat-divider>
   </div>
   <div fxFlex class="red-bag-type">

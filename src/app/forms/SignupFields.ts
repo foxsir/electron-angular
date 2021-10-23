@@ -60,6 +60,12 @@ class SignupFields {
               }
             }
           },
+          keyup: (field: FormlyFieldConfig, event?: any) => {
+            if (field.formControl.value.length > field.formControl.value.trim().length ) {
+              field.formControl.reset(field.formControl.value.trim());
+              document.execCommand("undo");
+            }
+          }
         },
         validators: {
           pattern: {
@@ -85,6 +91,12 @@ class SignupFields {
               field.form.controls.user_psw.markAsTouched();
             }
           },
+          keyup: (field: FormlyFieldConfig, event?: any) => {
+            if (field.formControl.value.length > field.formControl.value.trim().length ) {
+              field.formControl.reset(field.formControl.value.trim());
+              document.execCommand("undo");
+            }
+          }
         },
         validators: {
           pattern: {

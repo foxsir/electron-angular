@@ -17,14 +17,14 @@ import {CurrentChattingChangeService} from "@services/current-chatting-change/cu
   styleUrls: ['./transmit-message.component.scss']
 })
 export class TransmitMessageComponent implements OnInit {
-  public filterFriend: string;
+  public filterFriend: string = "";
   public friendMap: Map<string, FriendModel> = new Map();
 
   public selectedFriends: FriendModel[] = [];
 
   constructor(
     public dialogRef: MatDialogRef<TransmitMessageComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: {title: string; chatmsgEntityModel: ChatmsgEntityModel []},
+    @Inject(MAT_DIALOG_DATA) public data: ChatmsgEntityModel[],
     private cacheService: CacheService,
     private messageService: MessageService,
     private messageEntityService: MessageEntityService,
@@ -36,11 +36,13 @@ export class TransmitMessageComponent implements OnInit {
       if(data) {
         this.friendMap = data;
       }
+      console.dir(this.friendMap)
     });
   }
 
   filter() {
     this.cacheService.getCacheFriends().then(data => {
+      console.log(this.filterFriend)
       if(data) {
         data.forEach((friend: FriendModel) => {
           if(friend.nickname.includes(this.filterFriend)) {
@@ -48,6 +50,7 @@ export class TransmitMessageComponent implements OnInit {
           }
         });
       }
+      console.log(this.friendMap)
     });
   }
 
@@ -60,7 +63,7 @@ export class TransmitMessageComponent implements OnInit {
     });
 
     // const merge: ReplyMessageChildMessage[] = [];
-    await this.data.chatmsgEntityModel.forEach(msg => {
+    await this.data.forEach(msg => {
       const newMsg: ReplyMessageChildMessage = {
         date: msg.date,
         sendId: msg.uid,
