@@ -1,0 +1,18 @@
+::ng-deep {
+  .virtual-scroll-viewport {
+    height: 100%;
+    overflow-y: scroll;
+
+
+    .virtual-scroll-item.offscreen {
+      visibility: collapse;
+      content-visibility: hidden;
+    }
+    .virtual-scroll-item {
+      contain-intrinsic-size: 100px 75px;
+      align-self: center;
+      justify-self: center;
+    }
+
+  }
+}
