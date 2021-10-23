@@ -177,6 +177,9 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
   public talkIntervalMap: Map<string, number> = new Map();
   public timeInterval = null;
 
+  // 是否已经监听过聊天区域滚动
+  private listenChattingAreaOnScroll = false;
+
   constructor(
     public cacheService: CacheService, // 模版中要用
     private avatarService: AvatarService,
@@ -383,7 +386,8 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
     // this.messageService.alreadyRead(this.currentChat.alarmItem.dataId, this.currentChat.metadata.chatType);
     if(!data.dataContent) {
       if(this.cacheService.chatMsgEntityMap.size > 0) {
-        this.cacheService.chatMsgEntityMap.set(data.chat.fingerPrintOfProtocal, data.chat);
+        this.cacheService.putMsgEntityMap(data.chat);
+        // this.cacheService.chatMsgEntityMap.set(data.chat.fingerPrintOfProtocal, data.chat);
         // this.cacheService.chatMsgEntityList = new Array(...this.cacheService.chatMsgEntityMap).flatMap(t => t[1]);
         this.scrollToBottom();
       }
@@ -391,19 +395,22 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
       if(data.dataContent.cy === ChatModeType.CHAT_TYPE_FRIEND$CHAT) { // 单聊
         if(this.currentChat && chatActive) {
           // this.cacheService.chatMsgEntityMap.set(data.chat.fingerPrintOfProtocal, data.chat);
-          this.cacheService.chatMsgEntityList.push(data.chat); // = new Array(...this.cacheService.chatMsgEntityMap).flatMap(t => t[1]);
+          // this.cacheService.chatMsgEntityList.push(data.chat); // = new Array(...this.cacheService.chatMsgEntityMap).flatMap(t => t[1]);
+          this.cacheService.putMsgEntityMap(data.chat);
           this.scrollToBottom();
         }
       } else if(data.dataContent.cy === ChatModeType.CHAT_TYPE_GUEST$CHAT) { // 临时聊天/陌生人聊天
         if(this.currentChat && chatActive) {
-          this.cacheService.chatMsgEntityMap.set(data.chat.fingerPrintOfProtocal, data.chat);
-          // this.cacheService.chatMsgEntityList = new Array(...this.cacheService.chatMsgEntityMap).flatMap(t => t[1]);
+          // this.cacheService.chatMsgEntityMap.set(data.chat.fingerPrintOfProtocal, data.chat);
+          // this.cacheService.chatMsgEntityList.push(data.chat); // = new Array(...this.cacheService.chatMsgEntityMap).flatMap(t => t[1]);
+          this.cacheService.putMsgEntityMap(data.chat);
           this.scrollToBottom();
         }
       } else if(data.dataContent.cy === ChatModeType.CHAT_TYPE_GROUP$CHAT) { // 是群
         if(this.currentChat && this.currentChat.alarmItem.dataId.toString() === data.dataContent.t.toString()) {
-          this.cacheService.chatMsgEntityMap.set(data.chat.fingerPrintOfProtocal, data.chat);
-          // this.cacheService.chatMsgEntityList = new Array(...this.cacheService.chatMsgEntityMap).flatMap(t => t[1]);
+          // this.cacheService.chatMsgEntityMap.set(data.chat.fingerPrintOfProtocal, data.chat);
+          // this.cacheService.chatMsgEntityList.push(data.chat); // = new Array(...this.cacheService.chatMsgEntityMap).flatMap(t => t[1]);
+          this.cacheService.putMsgEntityMap(data.chat);
           this.scrollToBottom();
         }
       }
@@ -650,7 +657,8 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
     const chat = this.cacheService.chatMsgEntityMap.get(fingerPrint);
     if(chat) {
       chat.isOutgoing = true;
-      this.cacheService.chatMsgEntityMap.set(fingerPrint, chat);
+      // this.cacheService.chatMsgEntityMap.set(fingerPrint, chat);
+      this.cacheService.putMsgEntityMap(chat);
       const data = {model: 'chatmsgEntity', data: {isOutgoing: true}, update: {fingerPrintOfProtocal: fingerPrint}};
       return this.cacheService.saveData<ChatmsgEntityModel>(data);
     }
@@ -670,8 +678,13 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
    */
   scrollToBottom(behavior: "auto" | "smooth" = "auto") {
     if(this.virtualScroll) {
-      // this.chattingAreaOnScroll();
-      this.virtualScroll.scrollToBottom(behavior);
+      if(this.listenChattingAreaOnScroll === false) {
+        this.chattingAreaOnScroll();
+        this.listenChattingAreaOnScroll = true;
+      }
+      setTimeout(() => {
+        this.virtualScroll.scrollToBottom(behavior);
+      }, 10);
     }
   }
 
@@ -856,7 +869,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
             });
             this.loadingMessage = false;
             this.cacheService.chatMsgEntityMap = new Map([...msgMap, ...this.cacheService.chatMsgEntityMap]);
-            // this.cacheService.chatMsgEntityList = new Array(...this.cacheService.chatMsgEntityMap).flatMap(t => t[1]);
+            this.cacheService.chatMsgEntityList = new Array(...this.cacheService.chatMsgEntityMap).flatMap(t => t[1]);
             if(goBottom) {
               this.scrollToBottom("auto");
             }
