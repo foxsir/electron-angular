@@ -132,6 +132,7 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
         private messageEntityService: MessageEntityService,
 
     ) {
+      this.userinfo = this.localUserService.localUserInfo;
         this.currentSubscription = this.currentChattingChangeService.currentChatting$.subscribe(currentChat => {
           if(currentChat && this.currentChat.alarmItem.dataId !== currentChat.alarmItem.dataId) {
             console.log('群聊会话切换...');
@@ -247,7 +248,7 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
             if (res.status !== 200)
                 return;
 
-            this.setting_data.no_disturb = parseInt(res.data) == 1;
+            this.setting_data.no_disturb = parseInt(res.data, 10) === 1;
         });
 
         /* 查看置顶状态 */
@@ -255,7 +256,7 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
             if (res.status !== 200)
                 return;
 
-            this.setting_data.top_chat = parseInt(res.data) == 1;
+            this.setting_data.top_chat = parseInt(res.data, 10) === 1;
         });
     }
 
