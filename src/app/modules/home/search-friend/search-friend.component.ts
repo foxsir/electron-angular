@@ -80,9 +80,8 @@ export class SearchFriendComponent implements OnInit {
           if(res.data !== null) {
             this.searchFriendInfo = res.data;
             // 和本地匹配一下，看看是不是好友
-            const userId = this.localUserService.getObj().userId.toString();
             this.cacheService.getCacheFriends().then(data => {
-              if(data.get(this.searchFriendInfo.friendUserUid.toString()) || userId ==this.searchFriendInfo.friendUserUid.toString()  ) {
+              if(data.get(this.searchFriendInfo.friendUserUid.toString())  ) {
                 this.searchFriendInfo.isFriend = 1;
               }
             });
@@ -97,7 +96,9 @@ export class SearchFriendComponent implements OnInit {
   friendRequest() {
     this.cacheService.getCacheFriends().then(data => {
       console.log("搜索到的好友信息:" , this.searchFriendInfo);
-      if(data[this.searchFriendInfo.friendUserUid.toString()]) {
+      if (this.searchFriendInfo.friendUserUid.toString() === this.localUserService.localUserInfo.userId.toString()) {
+        this.snackBarService.openMessage("不能添加自己为好友");
+      } else if(data[this.searchFriendInfo.friendUserUid.toString()]) {
         this.snackBarService.openMessage("已经是好友");
       } else {
         this.messageService.addFriend(FriendAddWay.search, {
