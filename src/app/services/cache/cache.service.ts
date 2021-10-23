@@ -1136,8 +1136,15 @@ export class CacheService extends DatabaseService {
     });
   }
 
-  putMsgEntityMap(msg: ChatmsgEntityModel) {
-    this.chatMsgEntityMap.set(msg.fingerPrintOfProtocal, msg);
+  /**
+   * 修改chatMsgEntityMap, 并重新赋值chatMsgEntityList
+   * @param msg
+   */
+  putMsgEntityMap(msg: ChatmsgEntityModel = null) {
+    if(msg !== null) {
+      this.chatMsgEntityMap.set(msg.fingerPrintOfProtocal, msg);
+    }
+    this.chatMsgEntityList = new Array(...this.chatMsgEntityMap).flatMap(t => t[1]);
   }
 
   /**
@@ -1277,7 +1284,8 @@ export class CacheService extends DatabaseService {
 
     if(this.chatMsgEntityMap.size > 0 && this.chatMsgEntityMap.entries().next().value[1].dataId === chatMsgEntity.dataId) {
       this.chatMsgEntityMapTemp.set(chatMsgEntity.fingerPrintOfProtocal, chatMsgEntity);
-      this.chatMsgEntityMap.set(chatMsgEntity.fingerPrintOfProtocal, chatMsgEntity);
+      // this.chatMsgEntityMap.set(chatMsgEntity.fingerPrintOfProtocal, chatMsgEntity);
+      this.putMsgEntityMap(chatMsgEntity);
     }
 
     this.saveDataSync<ChatmsgEntityModel>({
@@ -1288,7 +1296,5 @@ export class CacheService extends DatabaseService {
       });
     });
   }
-
-
 
 }
