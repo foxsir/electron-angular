@@ -1284,13 +1284,20 @@ export class CacheService extends DatabaseService {
     });
   }
 
-  saveSystemMessage(dataId: number, content: string, timestamp: number) {
+  /**
+   * 保存系统消息
+   * @param dataId 会话id
+   * @param content 消息文本
+   * @param timestamp 时间戳
+   * @param fp 消息指纹
+   */
+  saveSystemMessage(dataId: number, content: string, timestamp: number, fp: string) {
     const chatMsgEntity: ChatmsgEntityModel = this.messageEntityService.prepareRecievedMessage(
       dataId.toString(), "", content, timestamp, 0, ""
     );
     chatMsgEntity.dataId = dataId.toString();
     chatMsgEntity.msgType = 999;
-    chatMsgEntity.fingerPrintOfProtocal = CommonTools.uuid();
+    chatMsgEntity.fingerPrintOfProtocal = fp;
 
     if(this.chatMsgEntityMap.size > 0 && this.chatMsgEntityMap.entries().next().value[1].dataId === chatMsgEntity.dataId) {
       this.chatMsgEntityMapTemp.set(chatMsgEntity.fingerPrintOfProtocal, chatMsgEntity);
