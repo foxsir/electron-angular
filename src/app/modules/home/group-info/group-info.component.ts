@@ -639,6 +639,7 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
                 };
                 this.messageService.sendCustomerMessage(imdata).then(res2 => {
                     if (res2.success === true) {
+                      this.drawer.close().then();
                         this.dialogService.alert({ title: '退出成功！'}).then((done) => {
                           this.cacheService.deleteData<ChattingModel>({model: "chatting", query: {dataId: alarmItem.dataId}}).then(() => {
                             this.cacheService.deleteChattingCache(alarmItem.dataId).then(() => {
