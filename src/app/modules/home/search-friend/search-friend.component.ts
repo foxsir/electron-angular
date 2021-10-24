@@ -17,6 +17,7 @@ import {MessageService} from "@services/message/message.service";
 import {FriendAddWay} from "@app/config/friend-add-way";
 import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 import {CurrentChattingChangeService} from "@services/current-chatting-change/current-chatting-change.service";
+import CommonTools from "@app/common/common.tools";
 
 interface SearchFriend {
   isFriend: number;
@@ -125,7 +126,7 @@ export class SearchFriendComponent implements OnInit {
       alarmItem: {
         alarmMessageType: 0, // 0单聊 1临时聊天/陌生人聊天 2群聊
         dataId: item.friendUserUid.toString(),
-        date: new Date().getTime(),
+        date: CommonTools.getTimestamp(),
         msgContent: "",
         title: item.remark?item.remark:item.nickname,
         avatar: item.userAvatarFileName,

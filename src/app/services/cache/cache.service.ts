@@ -800,7 +800,7 @@ export class CacheService extends DatabaseService {
         alarmItem: {
           alarmMessageType: chatType === 'friend' ? ChatModeType.CHAT_TYPE_FRIEND$CHAT : ChatModeType.CHAT_TYPE_GROUP$CHAT,
           dataId: dataId,
-          date: new Date().getTime(),
+          date: CommonTools.getTimestamp(),
           msgContent: MessageService.parseMessageForShow(text, msgType),
           title: title,
           avatar: avatar,
@@ -853,7 +853,7 @@ export class CacheService extends DatabaseService {
       const data: Partial<MuteModel> = {
         dataId: dataId,
         mute: mute,
-        updated_at: new Date().getTime(),
+        updated_at: CommonTools.getTimestamp(),
       };
       this.saveDataSync<MuteModel>({model: "mute", data: data, update: {dataId: dataId}}).then(() => {
         const res = new Map([[dataId, mute]]);

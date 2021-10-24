@@ -432,9 +432,9 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
 
         this.talkIntervalSwitch=this.groupData.gtalkIntervalSwitch;
         if (duration > 0) {
-          this.inputAreaService.disableToTime(new Date().getTime() / 1000 + duration);
+          this.inputAreaService.disableToTime(CommonTools.getTime() + duration);
         } else if(chatUid !== 0) {
-          this.inputAreaService.disableToTime(new Date().getTime() / 1000 + this.groupData.gtalkInterval);
+          this.inputAreaService.disableToTime(CommonTools.getTime() + this.groupData.gtalkInterval);
           this.talkIntervalMap.set(this.currentChat.alarmItem.dataId, this.groupData.gtalkInterval);
           duration = this.groupData.gtalkInterval;
         }

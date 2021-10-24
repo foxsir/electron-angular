@@ -135,7 +135,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
     this.electronService.ipcRendererOn('screenshot-finished', (event, base64) => {
       const base64Data = base64.replace(/^data:image\/\w+;base64,/, "");
       const buffer = new Buffer(base64Data, 'base64');
-      const filename = new Date().getTime() + ".png";
+      const filename = CommonTools.getTimestamp() + ".png";
       this.fileService.upload(buffer, filename, DirectoryType.OSS_IMAGE).then(res => {
         console.log('剪贴板图片地址：', res);
         this.dialogService.confirm({title: "发送图片", text: res.url, height: '200px'}).then((ok) => {
@@ -342,7 +342,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
         //111 新增指纹码 he 消息类型msgType
         // debugger
         const chatMsgEntity: ChatmsgEntityModel = this.messageEntityService.prepareSendedMessage(
-          message, new Date().getTime(), res.fingerPrint, messageType
+          message, CommonTools.getTimestamp(), res.fingerPrint, messageType
         );
         chatMsgEntity.uh = this.localUserService.localUserInfo.userAvatarFileName;
         // if (replaceEntity) {
@@ -753,7 +753,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
 
         sendMessage(MsgType.TYPE_REDBAG, this.currentChat.alarmItem.dataId, msgContent).then((send) => {
           const chatMsgEntity = this.messageEntityService.prepareSendedMessage(
-            send.msgBody.m, new Date().getTime(), send.fingerPrint, send.msgBody.ty
+            send.msgBody.m, CommonTools.getTimestamp(), send.fingerPrint, send.msgBody.ty
           );
           // 保存红包id
           chatMsgEntity.redId = res.res.orderId;

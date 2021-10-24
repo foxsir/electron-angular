@@ -106,7 +106,7 @@ export class UploadFileComponent implements OnInit {
           }
         }else {
           filename = [filename, CommonTools.getFileExt(file.name, file.type)].join(".");
-          filename = [formatDate(new Date().getTime(), 'yyyy-M-d'), filename].join("-");
+          filename = [formatDate(CommonTools.getTimestamp(), 'yyyy-M-d'), filename].join("-");
         }
         this.fileService.upload(buffer, filename, this.directoryType).then(res => {
           this.fileUploaded.emit({
