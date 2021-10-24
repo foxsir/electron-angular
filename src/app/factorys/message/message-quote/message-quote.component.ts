@@ -6,6 +6,8 @@ import {AlarmMessageType, MsgType} from "@app/config/rbchat-config";
 import FileMetaInterface from "@app/interfaces/file-meta.interface";
 import {MessageService} from "@services/message/message.service";
 import {MessageEntityService} from "@services/message-entity/message-entity.service";
+import {DialogService} from "@services/dialog/dialog.service";
+import {PreviewMediaComponent} from "@modules/user-dialogs/preview-media/preview-media.component";
 
 @Component({
   selector: 'app-message-quote',
@@ -31,7 +33,8 @@ export class MessageQuoteComponent implements OnInit {
   public msgParse: {msgType: number; msgContent: string} = null;
 
   constructor(
-      private messageEntityService: MessageEntityService
+      private messageEntityService: MessageEntityService,
+      private dialogService: DialogService
   ) {
   }
 
@@ -65,4 +68,10 @@ export class MessageQuoteComponent implements OnInit {
     }
   }
 
+  previewImage(url: string) {
+    this.dialogService.openDialog(PreviewMediaComponent, {
+      data: {type: 'image', url: url},
+      panelClass: "padding-less-dialog",
+    }).then(() => {});
+  }
 }

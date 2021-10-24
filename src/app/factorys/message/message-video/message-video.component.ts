@@ -39,6 +39,7 @@ export class MessageVideoComponent implements OnInit {
   preview() {
     this.dialogService.openDialog(PreviewMediaComponent, {
       data: {type: 'video', url: this.videoInfo.ossFilePath},
+      panelClass: "padding-less-dialog",
     }).then(() => {});
   }
 

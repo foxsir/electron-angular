@@ -32,6 +32,7 @@ export class MessageImageComponent implements OnInit {
   preview() {
     this.dialogService.openDialog(PreviewMediaComponent, {
       data: {type: 'image', url: this.blobUrl},
+      panelClass: "padding-less-dialog",
     }).then(() => {});
   }
 
