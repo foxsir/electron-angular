@@ -780,8 +780,13 @@ export class CacheService extends DatabaseService {
   public async generateAlarmItem(
     dataId: string, chatType: 'friend' | 'group', text: string = null, msgType: number = MsgType.TYPE_TEXT
   ): Promise<AlarmItemInterface> {
-    const friends = await this.getCacheFriends().then(res => res);
+    let friends = await this.getCacheFriends().then(res => res);
     const groups = await this.getCacheGroups().then(res => res);
+    // 如果找不到重新获取一次缓存
+    if(!friends.get(dataId)) {
+      await this.cacheFriends().then(res => res);
+      friends = await this.getCacheFriends().then(res => res);
+    }
     if(!text) {
       await this.queryData<ChattingModel>({
         model: 'chatting', query: {dataId: dataId}
