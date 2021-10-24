@@ -625,8 +625,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
    */
   textareaKeydown(event: KeyboardEvent) {
     if(this.currentChat.metadata.chatType === 'group') {
-      console.dir(event.key)
-      if(event.key === '@' || event.key === 'Process') {
+      if(event.code === 'Digit2' && event.key !== '2') {
         setTimeout(() => this.textareaChange());
         setTimeout(() => this.toggleAt());
       }
