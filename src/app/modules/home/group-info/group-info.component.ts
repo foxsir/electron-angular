@@ -393,6 +393,7 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
             }
             else if (column == 'group_nickname') {
                 this.user_clu_info.showNickname = res.new_name;
+                console.dir(this.user_clu_info.showNickname)
                 this.cacheService.saveDataSync<GroupMemberModel>({model: 'groupMember', data: this.user_clu_info, update: {groupId: this.currentChat.alarmItem.dataId, userUid:this.userinfo.userid}}).then(() => {
                   setTimeout(() => {
                     return this.cacheService.cacheGroupMembers(this.currentChat.alarmItem.dataId).then();

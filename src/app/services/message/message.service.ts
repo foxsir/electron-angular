@@ -317,6 +317,8 @@ export class MessageService {
       const localAuthedUserInfo = this.localUserService.getObj();
 
       let fromNickname = (nickName === null?(localAuthedUserInfo.nickname?localAuthedUserInfo.nickname:fromUid):nickName);
+      console.dir(nickName)
+      console.dir(fromNickname)
 
       // console.log(fromNickname);
       // debugger
