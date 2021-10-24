@@ -421,6 +421,7 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
             }
 
             if (choose_type == 'transfer') {
+              this.drawer.close().then();
                 this.restService.submitTransferGroupToServer(this.userinfo.userId.toString(), res.item.userUid, res.item.showNickname, this.currentChat.alarmItem.dataId).subscribe(res => {
                     this.user_role = 'common';
                 });
@@ -545,6 +546,7 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
               if (res.success === false) {
                   return this.snackBarService.openMessage("解散失败,请重试") ;
               } else {
+                this.drawer.close().then();
                 this.dialogService.alert({ title: '解散成功！', text: '输入框不能为空！' }).then(() => {});
                 // 删除会话
                 this.cacheService.deleteChattingCache(this.currentChat.alarmItem.dataId).then(() => {});
