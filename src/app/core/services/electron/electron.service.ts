@@ -44,6 +44,7 @@ export class ElectronService {
 
   ipcRendererOn(channel: string, fn: (event: Event, data: any) => void) {
     channel = [channel, process.env.appID].join(":");
+    this.ipcRenderer.removeAllListeners(channel);
     this.ipcRenderer.on(channel, fn);
   }
 }
