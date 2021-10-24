@@ -1197,13 +1197,13 @@ export class RestService {
    * @param del_opr_uid
    * @param members
    */
-  removeGroupMembers(gid: string, del_opr_uid: string, members: unknown[]) {
+  removeGroupMembers(gid: string, del_opr_uid: string, del_opr_name: string, members: unknown[]) {
     const post = {
-      // del_opr_nickname: '', // 操作人昵称
-      gid: gid, // 群id
-      doInput: true,
-      members: members,
       del_opr_uid: del_opr_uid, // 操作人id
+      del_opr_nickname: del_opr_name, // 操作人昵称
+      gid: gid,                 // 群id
+      deleteMsg: true,
+      members: members,
     };
     return this.restServer(
       MyProcessorConst.PROCESSOR_GROUP_CHAT, JobDispatchConst.LOGIC_GROUP_BASE_MGR, SysActionConst.ACTION_APPEND5, JSON.stringify(post)
