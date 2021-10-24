@@ -409,11 +409,12 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
      */
     chooseGroupPeople(choose_type,popup_title) {
         var data = {
-            dialog_type: 'choose_group_member',
-            toUserId: this.currentChat.alarmItem.dataId,
-            chatType: this.currentChat.metadata.chatType,
-            count: '',
-            popup_title: popup_title,
+          dialog_type: 'choose_group_member',
+          toUserId: this.currentChat.alarmItem.dataId,
+          chatType: this.currentChat.metadata.chatType,
+          count: '',
+          popup_title: popup_title,
+          choose_type:choose_type
         };
         this.dialogService.openDialog(GroupInfoDialogComponent, { data: data,width: '314px',panelClass: "padding-less-dialog" }).then((res: any) => {
             if (res.ok == false) {
@@ -439,6 +440,7 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
       chatType: this.currentChat.metadata.chatType,
       count: '',
       popup_title: popup_title,
+      choose_type:choose_type,
     };
     this.dialogService.openDialog(GroupInfoDialogComponent, { data: data,width: '314px',panelClass: "padding-less-dialog" }).then((res: any) => {
       if (res.ok === false) {
@@ -467,7 +469,8 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
       if(ok) {
         const userId = Number(item.userUid);
         this.restService.removeGroupMembers(this.currentChat.alarmItem.dataId, this.userinfo.userUid,
-          [[this.currentChat.alarmItem.dataId, userId, item.showNickname]]
+          this.userinfo.showNickname,
+          [[this.currentChat.alarmItem.dataId, userId.toString(), item.showNickname]]
         ).subscribe((res: HttpResponseInterface) => {
           if(res.success === true) {
             this.snackBarService.openMessage('删除成功');
