@@ -17,7 +17,7 @@ export class RedPocketComponent implements OnInit {
 
   public defaultGreetings = "恭喜发财，大吉大利";
 
-  public requirePayPassword = false;
+  public requirePayPassword = true; // 密码必填
   public payPassword: string = "";
 
   constructor(
