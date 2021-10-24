@@ -17,7 +17,7 @@ export class RedPocketComponent implements OnInit {
 
   public defaultGreetings = "恭喜发财，大吉大利";
 
-  public requirePayPassword = false;
+  public requirePayPassword = true; // 密码必填
   public payPassword: string = "";
 
   constructor(
@@ -32,10 +32,10 @@ export class RedPocketComponent implements OnInit {
   ngOnInit(): void {
     this.dialogRef.addPanelClass("send-red-bag-dialog");
     /*是否设置支付密码*/
-    this.restService.checkPayKeyIsExist().subscribe((res: NewHttpResponseInterface<number>) => {
-      console.log('是否设置支付密码：', res.data);
-      this.requirePayPassword = res.data === 1;
-    });
+    // this.restService.checkPayKeyIsExist().subscribe((res: NewHttpResponseInterface<number>) => {
+    //   console.log('是否设置支付密码：', res.data);
+    //   this.requirePayPassword = res.data === 1;
+    // });
     this.data.count = 1; // 设置默认红包个数
     console.log('红包弹出框初始化 data：', this.data);
   }

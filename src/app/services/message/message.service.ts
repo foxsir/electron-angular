@@ -120,6 +120,9 @@ export class MessageService {
       case MsgType.TYPE_NOTALK: //111 禁言
         messageContentForShow = JSON.parse(messageContent).msg;
         break;
+      case MsgType.TYPE_QUOTE: //111 禁言
+        messageContentForShow = '[回复消息]';
+        break;
       default:
         messageContentForShow = messageContent;
         break;

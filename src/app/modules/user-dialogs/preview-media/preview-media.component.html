@@ -1,8 +1,11 @@
-<mat-card class="preview-window mat-elevation-z0">
-  <mat-card-content *ngIf="data.type === 'image'">
-    <img [src]="data.url" alt="" mat-card-image style="display: block">
-  </mat-card-content>
-  <mat-card-content *ngIf="data.type === 'video'">
+<mat-card>
+  <ng-template [ngIf]="data.type === 'image'">
+    <img [src]="data.url" mat-card-image alt="">
+  </ng-template>
+  <ng-template [ngIf]="data.type === 'video'">
     <video [src]="data.url" mat-card-image controls></video>
-  </mat-card-content>
+  </ng-template>
+  <mat-card-actions fxLayoutAlign="end center">
+    <button mat-button mat-dialog-close>关闭</button>
+  </mat-card-actions>
 </mat-card>
