@@ -515,6 +515,7 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.messageDistributeService.MT10_OF_PROCESS_ADD$FRIEND$REQ_FRIEND$INFO$SERVER$TO$CLIENT$.subscribe((protocol: ProtocalModel) => {
       const dataContent: any = JSON.parse(protocol.dataContent);
       const beRequestUser: string = dataContent.beRequestUser;
+      const token: string = dataContent.token;
       const friendInfo: FriendModel = dataContent.friendInfo;
       this.cacheService.cacheFriends().then(() => {
         // 缓存后,清除掉好友请求
@@ -525,38 +526,40 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
       });
       if (beRequestUser == this.localUserService.localUserInfo.userId.toString()) {
         this.snackBarService.openMessage("你已经和" + friendInfo.nickname + "成为好友了");
-        // 在这里发送消息,生成新的会话
-        // 然后发送一条消息
-        const alarm: AlarmItemInterface = {
-          alarmItem: {
-            alarmMessageType: 0, // 0单聊 1临时聊天/陌生人聊天 2群聊
-            dataId: friendInfo.friendUserUid.toString(),
-            date: new Date().getTime(),
-            msgContent: "",
-            title: friendInfo.remark?friendInfo.remark:friendInfo.nickname,
-            avatar: friendInfo.userAvatarFileName,
-          },
-          // 聊天元数据
-          metadata: {
-            chatType: "friend", // "friend" | "group"
-          },
-        };
-        this.cacheService.putChattingCache(alarm).then(() => {
-          this.currentChattingChangeService.switchCurrentChatting(alarm).then().then(()=> {
-            this.messageService.sendMessage(MsgType.TYPE_TEXT,friendInfo.friendUserUid,"我们已经是好友了,开始聊天吧！").then(res => {
-              if(res.success === true) {
-                // 自已发出的消息，也要显示在相应的UI界面上
-                const message = res.msgBody.m;
-                //111 新增指纹码 he 消息类型msgType
-                const chatMsgEntity: ChatmsgEntityModel = this.messageEntityService.prepareSendedMessage(
-                  message, new Date().getTime(), res.fingerPrint, MsgType.TYPE_TEXT
-                );
-                chatMsgEntity.uh = this.localUserService.localUserInfo.userAvatarFileName;
-                this.sendMessage.emit({chat: chatMsgEntity, dataContent: res.msgBody});
-              }
+        if (token && token == this.localUserService.localUserInfo.token) {
+          // 在这里发送消息,生成新的会话
+          // 然后发送一条消息
+          const alarm: AlarmItemInterface = {
+            alarmItem: {
+              alarmMessageType: 0, // 0单聊 1临时聊天/陌生人聊天 2群聊
+              dataId: friendInfo.friendUserUid.toString(),
+              date: new Date().getTime(),
+              msgContent: "",
+              title: friendInfo.remark?friendInfo.remark:friendInfo.nickname,
+              avatar: friendInfo.userAvatarFileName,
+            },
+            // 聊天元数据
+            metadata: {
+              chatType: "friend", // "friend" | "group"
+            },
+          };
+          this.cacheService.putChattingCache(alarm).then(() => {
+            this.currentChattingChangeService.switchCurrentChatting(alarm).then().then(()=> {
+              this.messageService.sendMessage(MsgType.TYPE_TEXT,friendInfo.friendUserUid,"我们已经是好友了,开始聊天吧！").then(res => {
+                if(res.success === true) {
+                  // 自已发出的消息，也要显示在相应的UI界面上
+                  const message = res.msgBody.m;
+                  //111 新增指纹码 he 消息类型msgType
+                  const chatMsgEntity: ChatmsgEntityModel = this.messageEntityService.prepareSendedMessage(
+                    message, new Date().getTime(), res.fingerPrint, MsgType.TYPE_TEXT
+                  );
+                  chatMsgEntity.uh = this.localUserService.localUserInfo.userAvatarFileName;
+                  this.sendMessage.emit({chat: chatMsgEntity, dataContent: res.msgBody});
+                }
+              });
             });
-        });
-        });
+          });
+        }
       } else {
         this.snackBarService.openMessage(friendInfo.nickname + "同意了你的好友请求");
       }

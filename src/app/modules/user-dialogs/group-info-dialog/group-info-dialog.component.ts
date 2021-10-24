@@ -114,6 +114,23 @@ export class GroupInfoDialogComponent implements OnInit {
         this.dialogRef.close(result);
     }
 
+    /* 群成员多选 */
+  confirmMulChoose(selectMember: any) {
+    const selectfriends = [];
+    selectMember.selectedOptions.selected.forEach(item => {
+      console.dir(item.value)
+      selectfriends.push(item.value.userUid);
+    });
+
+    console.log('选中的数据：', selectfriends);
+
+    const result = {
+      ok: true,
+      selectfriends: selectfriends,
+    }; console.dir(result);
+    this.dialogRef.close(result);
+  }
+
     /**
      * 删除管理员
      * @param friendSelect
