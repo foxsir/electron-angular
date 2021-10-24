@@ -249,17 +249,22 @@ export class CacheService extends DatabaseService {
     return new Promise<boolean>((resolve) => {
       this.getChattingList().then(list => {
         if(list.get(dataId)) {
+          const lastFp = list.get(dataId).alarmData.alarmItem.lastFp;
+          /*
+          this.saveData<LastMessageModel>({
+            model: 'lastMessage',
+            data: {
+              dataId: dataId, fp: lastFp
+            },
+            update: {dataId: dataId}
+          });
+          *
+           */
+          //list.delete(dataId);
+          this.cacheSource.next({alarmDataMap: list});
+
           this.deleteData<ChattingModel>({model: "chatting", query: {dataId: dataId}}).then(() => {
-            const lastFp = list.get(dataId).alarmData.alarmItem.lastFp;
-            this.saveData<LastMessageModel>({
-              model: 'lastMessage',
-              data: {
-               dataId: dataId, fp: lastFp
-              },
-              update: {dataId: dataId}
-            });
-            list.delete(dataId);
-            this.cacheSource.next({alarmDataMap: list});
+
             resolve(true);
           });
         }
