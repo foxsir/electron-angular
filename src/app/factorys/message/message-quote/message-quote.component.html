@@ -75,7 +75,7 @@
         <ng-template [ngIf]="msgParse">
           <div *ngIf="msgParse.msgType === msgType.TYPE_TEXT">{{msgParse.msgContent}}</div>
           <div  *ngIf="msgParse.msgType === msgType.TYPE_IMAGE">
-            <img [src]="msgParse.msgContent" alt="">
+            <img [src]="msgParse.msgContent" (click)="previewImage(msgParse.msgContent)" alt="" class="image-message">
           </div>
         </ng-template>
       </div>
