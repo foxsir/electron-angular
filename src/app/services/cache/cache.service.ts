@@ -113,14 +113,15 @@ export class CacheService extends DatabaseService {
           });
           const lastItem = messages.slice(-1)[0];
           if(lastItem && lastItem[0]) {
-            alarmData.alarmItem.msgContent = messages.slice(-1)[0]?.text;
+
+            alarmData.alarmItem.msgContent = MessageService.parseMessageForShow(lastItem.text, lastItem.msgType);
             lastTime = lastItem.date;
             lastFp = lastItem.fingerPrintOfProtocal;
           }
         } else {
           messages  = messages as ChatmsgEntityModel;
           cache.set(messages.fingerPrintOfProtocal, messages);
-          alarmData.alarmItem.msgContent = messages.text;
+          alarmData.alarmItem.msgContent = MessageService.parseMessageForShow(messages.text, messages.msgType);
           lastTime = messages.date;
           lastFp = messages.fingerPrintOfProtocal;
         }
