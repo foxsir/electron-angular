@@ -402,8 +402,8 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
 
 
     /**
-     * 选择群成员 / 群管理员
-     * @param choose_type: transfer, add_group_admin
+     * 单选群成员 / 群转让
+     * @param choose_type: transfer
      */
     chooseGroupPeople(choose_type,popup_title) {
         var data = {
@@ -418,23 +418,44 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
                 return;
             }
 
-            if (choose_type == 'add_group_admin') {
-                this.restService.updateGroupAdmin(this.currentChat.alarmItem.dataId, [res.item.userUid], 1).subscribe(res => {
-                    setTimeout(() => {
-                        this.cacheService.cacheGroupAdmins(this.currentChat.alarmItem.dataId).then(members => {
-                            this.loadGroupAdminList();
-                            console.log('更新管理员缓存，并重新加载');
-                        });
-                    }, 1000);
-                });
-            }
-            else if (choose_type == 'transfer') {
+            if (choose_type == 'transfer') {
                 this.restService.submitTransferGroupToServer(this.userinfo.userId.toString(), res.item.userUid, res.item.showNickname, this.currentChat.alarmItem.dataId).subscribe(res => {
                     this.user_role = 'common';
                 });
             }
         });
     }
+
+  /**
+   * 多选群成员/增加管理员
+   * @param choose_type: transfer, add_group_admin
+   */
+  mulChooseGroupPeople(choose_type,popup_title) {
+    var data = {
+      dialog_type: 'mul_choose_group_member',
+      toUserId: this.currentChat.alarmItem.dataId,
+      chatType: this.currentChat.metadata.chatType,
+      count: '',
+      popup_title: popup_title,
+    };
+    this.dialogService.openDialog(GroupInfoDialogComponent, { data: data,width: '314px',panelClass: "padding-less-dialog" }).then((res: any) => {
+      if (res.ok === false) {
+        return;
+      }
+
+      if(res.selectfriends.length <= 0) return;
+
+      if (choose_type === 'add_group_admin') {
+        this.restService.updateGroupAdmin(this.currentChat.alarmItem.dataId, res.selectfriends, 1).subscribe(res => {
+          setTimeout(() => {
+            this.cacheService.cacheGroupAdmins(this.currentChat.alarmItem.dataId).then(members => {
+              this.loadGroupAdminList();
+            });
+          }, 1000);
+        });
+      }
+    });
+  }
 
     /*
      * 删除管理员
