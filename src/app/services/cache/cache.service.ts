@@ -508,24 +508,33 @@ export class CacheService extends DatabaseService {
    */
   cacheGroupAdmins(gid: string): Promise<Map<string, GroupAdminModel>> {
     return new Promise(resolve => {
+      this.deleteData<GroupAdminModel>({model: 'groupAdmin', query: {gid: gid}}).then();
       this.restService.getGroupAdminList(gid).subscribe((res: NewHttpResponseInterface<GroupAdminModel[]>) => {
         const groupAdminMap = new Map<string, GroupAdminModel>();
         if(res.status === 200) {
-          res.data.forEach((admin, key) => {
-            groupAdminMap.set(admin.userUid.toString(), admin);
-            admin.gid = gid;
-            this.saveDataSync<GroupAdminModel>({
-              model: "groupAdmin", data: admin, update: {gid: gid, userUid: admin.userUid}
-            }).then(() => {
-              if(key === res.data.length - 1) {
-                this.cacheSource.next({groupAdminMap: groupAdminMap});
-                resolve(groupAdminMap);
-              }
+          if(res.data.length === 0){
+            resolve(groupAdminMap);
+          }else {
+            res.data.forEach((admin, key) => {
+              groupAdminMap.set(admin.userUid.toString(), admin);
+              admin.gid = gid;
+              this.saveDataSync<GroupAdminModel>({
+                model: "groupAdmin", data: admin, update: {gid: gid, userUid: admin.userUid}
+              }).then(() => {
+                if (key === res.data.length - 1) {
+                  this.cacheSource.next({groupAdminMap: groupAdminMap});
+                  setTimeout(() => {
+                    resolve(groupAdminMap);
+                  }, 100);
+                }
+              });
             });
-          });
+          }
         } else {
           this.cacheSource.next({groupAdminMap: groupAdminMap});
-          resolve(groupAdminMap);
+          setTimeout(() => {
+            resolve(groupAdminMap);
+          }, 100);
         }
       });
     });
@@ -538,13 +547,13 @@ export class CacheService extends DatabaseService {
   getCacheGroupAdmins(gid: string): Promise<Map<string, GroupAdminModel>> {
     return new Promise<Map<string, GroupAdminModel>>((resolve) => {
       this.queryData<GroupAdminModel>({model: 'groupAdmin', query: {gid: gid}}).then((res: IpcResponseInterface<GroupAdminModel>) => {
+        const map = new Map();
         if(res.status === 200) {
-          const map = new Map();
           res.data.forEach(admin => {
             map.set(admin.userUid.toString(), admin);
           });
-          resolve(map);
         }
+        resolve(map);
       });
     });
   }
@@ -1287,7 +1296,7 @@ export class CacheService extends DatabaseService {
       // this.chatMsgEntityMap.set(chatMsgEntity.fingerPrintOfProtocal, chatMsgEntity);
       this.putMsgEntityMap(chatMsgEntity);
     }
-
+    console.log(chatMsgEntity);
     this.saveDataSync<ChatmsgEntityModel>({
       model: "chatmsgEntity", data: chatMsgEntity, update: null
     }).then(() => {
