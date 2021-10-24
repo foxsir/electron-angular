@@ -17,8 +17,6 @@ export class ElectronService {
   childProcess: typeof childProcess;
   fs: typeof fs;
 
-  private channelMap: Map<string, boolean> = new Map();
-
   get isElectron(): boolean {
     return !!(window && window.process && window.process.type);
   }
@@ -46,9 +44,7 @@ export class ElectronService {
 
   ipcRendererOn(channel: string, fn: (event: Event, data: any) => void) {
     channel = [channel, process.env.appID].join(":");
-    if(this.channelMap.get(channel) !== true) {
-      this.channelMap.set(channel, true);
-      this.ipcRenderer.on(channel, fn);
-    }
+    this.ipcRenderer.removeAllListeners(channel);
+    this.ipcRenderer.on(channel, fn);
   }
 }
