@@ -188,6 +188,17 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
       });
     }
 
+    /*
+    载入群成员信息
+     */
+  loadGroupMember(){
+    this.cacheService.getGroupMembers(this.currentChat.alarmItem.dataId).then(members => {
+      this.group_member_list = [];
+      members.forEach(member => {
+        this.group_member_list.push(member);
+      });
+    });
+  }
     initGroupData() {
       this.myAvatar = null;
         console.log('currentChat:'+this.currentChat+"当前页面:群组信息页面");
@@ -504,6 +515,7 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
      * 删除管理员
      */
     deleteGroupAdmin() {
+        if(this.group_admin_list.length===0) return;
         var data = {
             dialog_type: 'delete_group_admin',
             toUserId: this.currentChat.alarmItem.dataId,
@@ -550,10 +562,11 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
                   return this.snackBarService.openMessage("解散失败,请重试") ;
               } else {
                 this.dialogService.alert({ title: '解散成功！', text: '输入框不能为空！' }).then(() => {});
-                // 删除会话
-                this.cacheService.deleteChattingCache(this.currentChat.alarmItem.dataId).then(() => {});
                 // 清空历史消息
                 this.cacheService.clearChattingCache(this.currentChat).then(() => {});
+                // 删除会话
+                this.cacheService.deleteChattingCache(this.currentChat.alarmItem.dataId).then(() => {});
+
                 // 从我的群组列表中删除
                 this.cacheService.deleteData<GroupModel>({model: 'group', query: {gid: this.currentChat.alarmItem.dataId}}).then();
               }
