@@ -82,8 +82,10 @@ export class SearchFriendComponent implements OnInit {
             this.searchFriendInfo = res.data;
             // 和本地匹配一下，看看是不是好友
             this.cacheService.getCacheFriends().then(data => {
-              if(data.get(this.searchFriendInfo.friendUserUid.toString())  ) {
+              if(data.get(this.searchFriendInfo.friendUserUid.toString())) {
                 this.searchFriendInfo.isFriend = 1;
+              } else {
+                this.searchFriendInfo.isFriend = 0;
               }
             });
           } else {
