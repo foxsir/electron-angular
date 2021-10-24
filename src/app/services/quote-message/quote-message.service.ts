@@ -6,6 +6,7 @@ import {ReplyContentType} from "@app/interfaces/reply-content.interface";
 import {MsgType} from "@app/config/rbchat-config";
 import CommonTools from "@app/common/common.tools";
 import {MessageEntityService} from "@services/message-entity/message-entity.service";
+import {ENTER} from "@angular/cdk/keycodes";
 
 /**
  * 允许被回复的消息类型：文本，图片，视频，语音，名片
@@ -35,9 +36,36 @@ export class QuoteMessageService {
         // 如果是回复消息，需要构建新消息体
         const newChat = chat as ReplyMessageType;
         const msg = JSON.parse(newChat.msg);
-        const entity: ChatmsgEntityModel = this.messageEntityService.createChatMsgEntity_TO_TEXT(
-          msg.msgContent, message.date, message.fingerPrintOfProtocal, 1
-        );
+        let entity: ChatmsgEntityModel;
+
+        switch (newChat.msgType) {
+          case MsgType.TYPE_TEXT:
+            entity = this.messageEntityService.createChatMsgEntity_TO_TEXT(
+              msg.msgContent, message.date, message.fingerPrintOfProtocal, 1
+            );
+            break;
+          case MsgType.TYPE_IMAGE:
+            entity = this.messageEntityService.createChatMsgEntity_TO_IMAGE(
+              msg.msgContent, message.date, message.fingerPrintOfProtocal, 1
+            );
+            break;
+          case MsgType.TYPE_SHORTVIDEO:
+            entity = this.messageEntityService.createChatMsgEntity_TO_SHORTVIDEO(
+              msg.msgContent, message.date, message.fingerPrintOfProtocal, 1
+            );
+            break;
+          case MsgType.TYPE_VOICE:
+            entity = this.messageEntityService.createChatMsgEntity_TO_VOICE(
+              msg.msgContent, message.date, message.fingerPrintOfProtocal, 1
+            )
+            break;
+          case MsgType.TYPE_CONTACT:
+            entity = this.messageEntityService.createChatMsgEntity_TO_CONTACT(
+              msg.msgContent, message.date, message.fingerPrintOfProtocal, 1
+            );
+            break;
+        }
+
         this.messageSource.next(entity);
       } else {
         // 如果是回复消息，需要构建新消息体
