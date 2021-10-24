@@ -481,8 +481,8 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
     this.dialogService.confirm({title: '成员移除', text: "确定要將「 "+item.showNickname+" 」移出群吗？"}).then(ok => {
       if(ok) {
         const userId = Number(item.userUid);
-        this.restService.removeGroupMembers(this.currentChat.alarmItem.dataId, this.userinfo.userUid,
-          this.userinfo.showNickname,
+        this.restService.removeGroupMembers(this.currentChat.alarmItem.dataId, userId.toString(),
+          item.showNickname,
           [[this.currentChat.alarmItem.dataId, userId.toString(), item.showNickname]]
         ).subscribe((res: HttpResponseInterface) => {
           if(res.success === true) {

@@ -503,8 +503,8 @@ export class ContextMenuService {
             if(ok) {
               const userId = Number(chat.uid);
               const localUserInfo: LocalUserinfoModel = RBChatUtils.getAuthedLocalUserInfoFromCookie();
-              this.restService.removeGroupMembers(alarmItem.alarmItem.dataId, localUserInfo.userId.toString(),
-                localUserInfo.nickname, [
+              this.restService.removeGroupMembers(alarmItem.alarmItem.dataId, chat.uid,
+                chat.name, [
                 [alarmItem.alarmItem.dataId, chat.uid, chat.name]
               ]).subscribe((res: HttpResponseInterface) => {
                 if(res.success === true) {
