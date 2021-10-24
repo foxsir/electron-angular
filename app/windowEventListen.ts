@@ -88,9 +88,7 @@ export default class WindowEventListen {
     const closeWindow = ['closeWindow', process.env.appID].join(":");
     ipcMain.on(closeWindow, (event, arg) => {
       this.getFocusedWindow().then(win => {
-        // this.windows.delete(win);
-        win.destroy();
-        win = null;
+        win.close();
       });
     });
 
