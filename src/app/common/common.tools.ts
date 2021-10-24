@@ -26,7 +26,7 @@ export default class CommonTools {
   }
 
   /**
-   * 获取时间戳
+   * 获取时间戳：秒
    */
   public static getTime(): number {
     return (new Date()).getTime() / 1000;
@@ -74,4 +74,12 @@ export default class CommonTools {
   public static formatFileSize(length: number): string {
     return filesize(length);
   }
+
+  /**
+   * 毫秒
+   */
+  public static getTimestamp(): number {
+    return new Date().getTime();
+  }
+
 }
