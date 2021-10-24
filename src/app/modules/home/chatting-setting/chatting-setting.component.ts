@@ -142,6 +142,7 @@ export class ChattingSettingComponent implements OnInit,OnDestroy {
       if(ok) {
         this.restService.deleteFriend(friendId).subscribe((res: NewHttpResponseInterface<any>) => {
           if(res.status == 200) {
+            this.drawer.close().then();
             this.snackBarService.openMessage("删除成功");
           }
         });
