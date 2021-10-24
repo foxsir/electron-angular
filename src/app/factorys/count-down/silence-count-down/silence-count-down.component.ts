@@ -2,6 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 import {ProtocalModelDataContent} from "@app/models/protocal.model";
 import {InputAreaService} from "@services/input-area/input-area.service";
+import CommonTools from "@app/common/common.tools";
 
 @Component({
   selector: 'app-silence-count-down',
@@ -38,7 +39,7 @@ export class SilenceCountDownComponent implements OnInit {
 
   updateTimer() {
     const future = new Date(this.timestamp).getTime();
-    const now = new Date().getTime();
+    const now = CommonTools.getTimestamp();
     const diff = future - now;
 
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));

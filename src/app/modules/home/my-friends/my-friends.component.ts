@@ -7,6 +7,7 @@ import {CurrentChattingChangeService} from "@services/current-chatting-change/cu
 import {Router} from "@angular/router";
 import {ContextMenuChattingModel} from "@app/models/context-menu.model";
 import {MatMenuTrigger} from "@angular/material/menu";
+import CommonTools from "@app/common/common.tools";
 
 const iconv = window.require('iconv-lite');
 
@@ -136,7 +137,7 @@ export class MyFriendsComponent implements OnInit {
       alarmItem: {
         alarmMessageType: 0, // 0单聊 1临时聊天/陌生人聊天 2群聊
         dataId: item.friendUserUid.toString(),
-        date: new Date().getTime(),
+        date: CommonTools.getTimestamp(),
         msgContent: "",
         title: item.remark?item.remark:item.nickname,
         avatar: item.userAvatarFileName,

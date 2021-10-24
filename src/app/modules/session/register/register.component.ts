@@ -106,7 +106,7 @@ export class RegisterComponent implements OnInit {
 
   public nextStep() {
     // 先检查是否勾选了注册协议
-    if(!GlobalCache.loginProtocol) {
+    if(!GlobalCache.getAll().loginProtocol) {
       return this.snackBarService.openMessage("注册之前请确认已阅读服务条款");
     }
     if (this.form.form.valid) {

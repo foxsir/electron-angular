@@ -14,6 +14,7 @@ import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 import {CacheService} from "@services/cache/cache.service";
 import {CurrentChattingChangeService} from "@services/current-chatting-change/current-chatting-change.service";
 import {MessageEntityService} from "@services/message-entity/message-entity.service";
+import CommonTools from "@app/common/common.tools";
 
 interface SendMessageResponse {
   success: boolean;
@@ -258,7 +259,7 @@ export class MessageService {
 
           const message = msgBody.m;
           const chatMsgEntity: ChatmsgEntityModel = this.messageEntityService.prepareSendedMessage(
-            message, new Date().getTime() / 1000, p.fp, msgType
+            message, CommonTools.getTimestamp(), p.fp, msgType
           );
           chatMsgEntity.uh = this.localUserService.localUserInfo.userAvatarFileName;
           this.cacheService.putChattingCache(this.currentChattingChangeService.currentChatting, chatMsgEntity, true).then(() => {
