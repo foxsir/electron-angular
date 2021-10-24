@@ -552,7 +552,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
             if(this.currentChat && this.currentChat.alarmItem.dataId === alarm.alarmItem.dataId) {
               this.pushMessageToPanel({chat: chatMsgEntity, dataContent: dataContent}, 'incept');
             }
-            if(this.localUserService.localUserInfo.userId !== dataContent.f) {
+            if(this.localUserService.localUserInfo.userId.toString() !== dataContent.f.toString()) {
               this.cacheService.setChattingBadges(alarm, 1);
             }
           });
@@ -641,7 +641,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
               if(this.currentChat && this.currentChat.alarmItem.dataId === alarm.alarmItem.dataId) {
                 this.pushMessageToPanel({chat: chatMsgEntity, dataContent: dataContent}, 'incept');
               }
-              if(this.localUserService.localUserInfo.userId !== dataContent.f) {
+              if(this.localUserService.localUserInfo.userId.toString() !== dataContent.f.toString()) {
                 this.cacheService.setChattingBadges(alarm, 1);
               }
             });
