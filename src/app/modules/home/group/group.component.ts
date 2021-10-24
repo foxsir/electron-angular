@@ -10,6 +10,7 @@ import {Router} from "@angular/router";
 import ChattingModel from "@app/models/chatting.model";
 import {LocalUserService} from "@services/local-user/local-user.service";
 import {DomSanitizer} from "@angular/platform-browser";
+import CommonTools from "@app/common/common.tools";
 
 @Component({
   selector: 'app-group',
@@ -57,7 +58,7 @@ export class GroupComponent implements OnInit, OnDestroy {
       alarmItem: {
         alarmMessageType: 2, // 0单聊 1临时聊天/陌生人聊天 2群聊
         dataId: item.gid,
-        date: new Date().getTime(),
+        date: CommonTools.getTimestamp(),
         msgContent: "",
         title: item.gname,
         avatar: item.avatar,

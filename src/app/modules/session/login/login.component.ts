@@ -42,7 +42,7 @@ export class LoginComponent implements OnInit {
   }
 
   public onSubmit() {
-    if (!GlobalCache.loginProtocol) {
+    if (!GlobalCache.getAll().loginProtocol) {
       return this.snackBarService.openMessage("登录前请确认已阅读服务条款");
     }
     if (this.loginForm.form.valid) {

@@ -59,13 +59,13 @@
             <div fxFlex fxLayoutAlign="space-between center" class="groupFirst">
               <span class="privacy-item-text">信息编辑</span>
             </div>
-            <div *ngIf="user_role != 'common'" fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="editGroupInfo('group_name')">
+            <div fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="editGroupInfo('group_name')">
               <span class="privacy-item-text">群组名称</span>
               <mat-icon class="mat-icon-cus" style="text-align:right;">
                 <img [src]="arrowRightIcon" alt="" class="icon">
               </mat-icon>
             </div>
-            <div *ngIf="user_role != 'common'" fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="changeView('group_notice')">
+            <div  fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="changeView('group_notice')">
               <span class="privacy-item-text">群组公告</span>
               <mat-icon class="mat-icon-cus" style="text-align:right;">
                 <img [src]="arrowRightIcon" alt="" class="icon">
@@ -128,7 +128,7 @@
                 <img [src]="arrowRightIcon" alt="" class="icon">
               </mat-icon>
             </div>
-            <div *ngIf="user_role != 'common'" fxFlex fxLayoutAlign="space-between center" class="group-pointer groupLast" (click)="changeView('manage_group_admin')">
+            <div *ngIf="user_role === 'owner'" fxFlex fxLayoutAlign="space-between center" class="group-pointer groupLast" (click)="changeView('manage_group_admin')">
               <span class="privacy-item-text">管理员管理</span>
               <mat-icon class="mat-icon-cus" style="text-align:right;">
                 <img [src]="arrowRightIcon" alt="" class="icon">
@@ -225,7 +225,14 @@
 
               <mat-list-item *ngFor="let item of group_member_list" [fxHide]="item.userUid === this.groupData.gownerUserUid || item.isAdmin != 1" class="list-box">
                 <img src="{{item.userAvatarFileName}}" mat-list-icon />
-                <div mat-line class="matLine nickName">{{item.showNickname}}</div>
+                <div mat-line class="matLine nickName">{{item.showNickname}}
+                  <span  *ngIf="item.userUid != this.userinfo.userId"  class="removeMemberImg" style="top:3px;">
+                    <mat-icon (click)="removeMember(item)" class="hover-icon icon14">
+                      <img [src]="closeIcon" alt="" class="icon">
+                      <img [src]="closeActiveIcon" alt="" class="icon-active">
+                    </mat-icon>
+                  </span>
+                </div>
                 <div mat-line class="matLine">
                   <span class="role-group role-group-admin">管理</span>
                   <span *ngIf="item.userUid == this.userinfo.userId" class="role-group role-group-self">我</span>
@@ -236,6 +243,12 @@
               <mat-list-item *ngFor="let item of group_member_list" [fxHide]="item.userUid == this.groupData.gownerUserUid || item.isAdmin != 0" class="list-box">
                 <img src="{{item.userAvatarFileName}}" mat-list-icon />
                 <div mat-line class="matLine nickName">{{item.showNickname}}</div>
+                  <span class="removeMemberImg" style="top: 3px;">
+                    <mat-icon (click)="removeMember(item)" class="hover-icon icon14">
+                      <img [src]="closeIcon" alt="" class="icon">
+                      <img [src]="closeActiveIcon" alt="" class="icon-active">
+                    </mat-icon>
+                  </span>
                 <div mat-line class="matLine">
                   <span *ngIf="item.userUid == this.userinfo.userId" class="role-group role-group-self">我</span>
                 </div>
@@ -252,7 +265,7 @@
                 <div fxLayout="column" fxLayoutGap="10px">
                     <div style="margin-top:20px;"></div>
                     <div fxLayout="column" fxLayoutGap="10px" style="padding:0px 15px;">
-                        <div fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="chooseGroupPeople('add_group_admin','添加管理员')">
+                        <div fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="mulChooseGroupPeople('add_group_admin','添加管理员')">
                             <span class="privacy-item-text">添加管理员</span>
                             <mat-icon class="mat-icon-cus" style="text-align:right;">
                                 <img [src]="arrowRightIcon" alt="" class="icon">

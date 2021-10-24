@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import {Subject} from "rxjs";
+import CommonTools from "@app/common/common.tools";
 
 @Injectable({
   providedIn: 'root'
@@ -26,18 +27,15 @@ export class InputAreaService {
   /**
    * 禁用到指定时间后解禁
    * 禁用30秒
-   * this.inputAreaService.disableToTime(new Date().getTime() / 1000 + 30);
+   * this.inputAreaService.disableToTime(new Date().getTime() + 3);
    * @param timestamp
    */
   disableToTime(timestamp: number) {
-    if((timestamp).toFixed(0).toString().length > 10) {
-      timestamp = new Date(timestamp).getTime() / 1000;
-    }
     if(this.interval) {
       clearInterval(this.interval);
     }
     this.interval = setInterval(() => {
-      const now = new Date().getTime() / 1000;
+      const now = CommonTools.getTime();
       if(now >= timestamp) {
         this.enable();
         clearInterval(this.interval);

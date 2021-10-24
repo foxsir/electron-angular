@@ -146,6 +146,12 @@
     color:white;
     display:inline-block;
   }
+  .removeMemberImg{
+    float: right;
+    position: relative;
+    z-index: 9;
+    .img{ width: 10px; height: 10px}
+  }
 
   .role-group-owner{
     background-color: #fdab02;

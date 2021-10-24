@@ -27,7 +27,7 @@ export class SearchWidgetComponent implements OnInit {
 
   public find_friends: any[] = [];
   public find_messages: any[] = [];
-  public globalCache =  GlobalCache;
+  public globalCache = GlobalCache.getAll();
 
   constructor(
     private dom: DomSanitizer,

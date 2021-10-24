@@ -1,5 +1,6 @@
 import {RBChatConfig} from "../config/rbchat-config";
 import IMSDK from "@app/libs/mobileimsdk-client-sdk";
+import CommonTools from "@app/common/common.tools";
 
 /**
  * 实用工具类。
@@ -632,7 +633,7 @@ export default class RBChatUtils {
    * @private
    */
   public static getCurrentUTCTimestamp() {
-    return new Date().getTime();
+    return CommonTools.getTimestamp();
   }
 
   /**

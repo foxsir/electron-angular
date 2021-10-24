@@ -132,7 +132,7 @@ export class ContextMenuService {
                     userAvatar: fri.userAvatarFileName,
                   });
                   const chatMsgEntity: ChatmsgEntityModel = this.messageEntityService.prepareSendedMessage(
-                    messageText, new Date().getTime(), null, MsgType.TYPE_CONTACT
+                    messageText, CommonTools.getTimestamp(), null, MsgType.TYPE_CONTACT
                   );
                   console.dir(1111111111111111111111)
                   console.dir(chatMsgEntity)
@@ -241,7 +241,7 @@ export class ContextMenuService {
     repeal: {
       label: "撤回",
       visibility: (filterData: MenuFilterData): boolean => {
-        const time = new Date().getTime();
+        const time = CommonTools.getTimestamp();
         const localUserInfo: LocalUserinfoModel = RBChatUtils.getAuthedLocalUserInfoFromCookie();
         if(filterData.alarmItem.metadata.chatType === 'friend') {
           if(time - filterData.chat.date > 2000 * 60) {
@@ -499,7 +499,7 @@ export class ContextMenuService {
           return owner || manager; // 是管理员或者群主
         },
         action: (alarmItem, chat) => {
-          this.dialogService.confirm({title: "从本群主中删除"}).then((ok) => {
+          this.dialogService.confirm({title: "从本群中删除"}).then((ok) => {
             if(ok) {
               const userId = Number(chat.uid);
               this.restService.removeGroupMembers(alarmItem.alarmItem.dataId, userId.toString(), [

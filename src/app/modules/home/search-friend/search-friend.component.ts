@@ -17,6 +17,7 @@ import {MessageService} from "@services/message/message.service";
 import {FriendAddWay} from "@app/config/friend-add-way";
 import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 import {CurrentChattingChangeService} from "@services/current-chatting-change/current-chatting-change.service";
+import CommonTools from "@app/common/common.tools";
 
 interface SearchFriend {
   isFriend: number;
@@ -80,9 +81,8 @@ export class SearchFriendComponent implements OnInit {
           if(res.data !== null) {
             this.searchFriendInfo = res.data;
             // 和本地匹配一下，看看是不是好友
-            const userId = this.localUserService.getObj().userId.toString();
             this.cacheService.getCacheFriends().then(data => {
-              if(data.get(this.searchFriendInfo.friendUserUid.toString()) || userId ==this.searchFriendInfo.friendUserUid.toString()  ) {
+              if(data.get(this.searchFriendInfo.friendUserUid.toString())  ) {
                 this.searchFriendInfo.isFriend = 1;
               }
             });
@@ -97,7 +97,9 @@ export class SearchFriendComponent implements OnInit {
   friendRequest() {
     this.cacheService.getCacheFriends().then(data => {
       console.log("搜索到的好友信息:" , this.searchFriendInfo);
-      if(data[this.searchFriendInfo.friendUserUid.toString()]) {
+      if (this.searchFriendInfo.friendUserUid.toString() === this.localUserService.localUserInfo.userId.toString()) {
+        this.snackBarService.openMessage("不能添加自己为好友");
+      } else if(data[this.searchFriendInfo.friendUserUid.toString()]) {
         this.snackBarService.openMessage("已经是好友");
       } else {
         this.messageService.addFriend(FriendAddWay.search, {
@@ -124,7 +126,7 @@ export class SearchFriendComponent implements OnInit {
       alarmItem: {
         alarmMessageType: 0, // 0单聊 1临时聊天/陌生人聊天 2群聊
         dataId: item.friendUserUid.toString(),
-        date: new Date().getTime(),
+        date: CommonTools.getTimestamp(),
         msgContent: "",
         title: item.remark?item.remark:item.nickname,
         avatar: item.userAvatarFileName,
