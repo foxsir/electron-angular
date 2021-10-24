@@ -225,7 +225,14 @@
 
               <mat-list-item *ngFor="let item of group_member_list" [fxHide]="item.userUid === this.groupData.gownerUserUid || item.isAdmin != 1" class="list-box">
                 <img src="{{item.userAvatarFileName}}" mat-list-icon />
-                <div mat-line class="matLine nickName">{{item.showNickname}}</div>
+                <div mat-line class="matLine nickName">{{item.showNickname}}
+                  <span  *ngIf="item.userUid != this.userinfo.userId"  class="removeMemberImg" style="top:3px;">
+                    <mat-icon (click)="removeMember(item)" class="hover-icon icon14">
+                      <img [src]="closeIcon" alt="" class="icon">
+                      <img [src]="closeActiveIcon" alt="" class="icon-active">
+                    </mat-icon>
+                  </span>
+                </div>
                 <div mat-line class="matLine">
                   <span class="role-group role-group-admin">管理</span>
                   <span *ngIf="item.userUid == this.userinfo.userId" class="role-group role-group-self">我</span>
@@ -236,6 +243,12 @@
               <mat-list-item *ngFor="let item of group_member_list" [fxHide]="item.userUid == this.groupData.gownerUserUid || item.isAdmin != 0" class="list-box">
                 <img src="{{item.userAvatarFileName}}" mat-list-icon />
                 <div mat-line class="matLine nickName">{{item.showNickname}}</div>
+                  <span class="removeMemberImg" style="top: 3px;">
+                    <mat-icon (click)="removeMember(item)" class="hover-icon icon14">
+                      <img [src]="closeIcon" alt="" class="icon">
+                      <img [src]="closeActiveIcon" alt="" class="icon-active">
+                    </mat-icon>
+                  </span>
                 <div mat-line class="matLine">
                   <span *ngIf="item.userUid == this.userinfo.userId" class="role-group role-group-self">我</span>
                 </div>

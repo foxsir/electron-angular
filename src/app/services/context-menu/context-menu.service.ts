@@ -499,7 +499,7 @@ export class ContextMenuService {
           return owner || manager; // 是管理员或者群主
         },
         action: (alarmItem, chat) => {
-          this.dialogService.confirm({title: "从本群主中删除"}).then((ok) => {
+          this.dialogService.confirm({title: "从本群中删除"}).then((ok) => {
             if(ok) {
               const userId = Number(chat.uid);
               this.restService.removeGroupMembers(alarmItem.alarmItem.dataId, userId.toString(), [
