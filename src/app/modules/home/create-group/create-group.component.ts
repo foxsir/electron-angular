@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
 import {CacheService} from "@services/cache/cache.service";
 import FriendModel from "@app/models/friend.model";
@@ -37,7 +37,7 @@ interface GroupMember {
   templateUrl: './create-group.component.html',
   styleUrls: ['./create-group.component.scss']
 })
-export class CreateGroupComponent implements OnInit {
+export class CreateGroupComponent implements OnInit, OnDestroy {
   public closeIcon = this.dom.bypassSecurityTrustResourceUrl(closeIcon);
   public closeActiveIcon = this.dom.bypassSecurityTrustResourceUrl(closeActiveIcon);
   public backspaceIcon = this.dom.bypassSecurityTrustResourceUrl(backspaceIcon);
@@ -192,6 +192,10 @@ export class CreateGroupComponent implements OnInit {
               });
             }
         });
+    }
+
+    ngOnDestroy() {
+      this.subscribeFriendMap.unsubscribe();
     }
 
 }

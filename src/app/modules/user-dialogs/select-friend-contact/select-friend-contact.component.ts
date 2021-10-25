@@ -1,7 +1,8 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import FriendModel from "@app/models/friend.model";
 import {CacheService} from "@services/cache/cache.service";
+import {Subscription} from "rxjs";
 
 
 @Component({
@@ -9,9 +10,11 @@ import {CacheService} from "@services/cache/cache.service";
   templateUrl: './select-friend-contact.component.html',
   styleUrls: ['./select-friend-contact.component.scss']
 })
-export class SelectFriendContactComponent implements OnInit {
+export class SelectFriendContactComponent implements OnInit, OnDestroy {
   public friendList: FriendModel[] = [];
   public filterFriend: string = "";
+
+  private subscribeFriendMap: Subscription;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: number[] = [],
@@ -20,13 +23,21 @@ export class SelectFriendContactComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.cacheService.getCacheFriends().then((data:Map<string, FriendModel>) => {
+    this.cacheService.getCacheFriends().then((data: Map<string, FriendModel>) => {
       data.forEach(friend => {
         // 过滤掉已经筛选过的用户
         if (!this.data || !this.data.includes(Number(friend.friendUserUid))) {
           this.friendList.push(friend);
         }
       });
+    });
+
+    this.subscribeFriendMap = this.cacheService.cacheUpdate$.subscribe((cache) => {
+      if(cache.friendMap) {
+        this.friendList.forEach(friend => {
+          friend.onlineStatus = cache.friendMap.get(friend.friendUserUid.toString()).onlineStatus;
+        });
+      }
     });
   }
 
@@ -60,5 +71,9 @@ export class SelectFriendContactComponent implements OnInit {
       selectfriends: selectfriends,
     }; console.dir(result);
     this.dialogRef.close(result);
+  }
+
+  ngOnDestroy() {
+    this.subscribeFriendMap.unsubscribe();
   }
 }
