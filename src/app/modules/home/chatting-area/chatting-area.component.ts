@@ -300,7 +300,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
     }
 
     // 获取缓存
-    this.currentSubscription =  this.currentChattingChangeService.currentChatting$.subscribe(currentChat => {
+    this.currentSubscription = this.currentChattingChangeService.currentChatting$.subscribe(currentChat => {
       this.searching = false;
       this.blacked = false;
       // === 为刷新聊天列表，只更新数据
