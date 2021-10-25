@@ -154,35 +154,37 @@ function createWindow(): BrowserWindow {
     });
   });
 
-  // 设置托盘
-  const tray = new Tray(path.resolve(__dirname, 'favicon.ico'))
-  const contextMenu = Menu.buildFromTemplate([
-    {
-      label: '打开',
-      click: () => {
-        win.show();
+  if(os.platform() !== "darwin") {
+    // 设置托盘
+    const tray = new Tray(path.resolve(__dirname, 'favicon.ico'))
+    const contextMenu = Menu.buildFromTemplate([
+      {
+        label: '打开',
+        click: () => {
+          win.show();
+        }
+      },
+      {
+        label: '隐藏',
+        click: () => {
+          win.hide();
+        }
+      },
+      {
+        label: '关闭app',
+        click: () => {
+          win.destroy();
+          win = null;
+        }
       }
-    },
-    {
-      label: '隐藏',
-      click: () => {
-        win.hide();
-      }
-    },
-    {
-      label: '关闭app',
-      click: () => {
-        win.destroy();
-        win = null;
-      }
-    }
-  ])
-  tray.setToolTip('草莓');
-  tray.setContextMenu(contextMenu)
-  tray.on('click', (event) => {
-    win.show();
-    tray.setToolTip('草莓1');
-  });
+    ])
+    tray.setToolTip('草莓');
+    tray.setContextMenu(contextMenu)
+    tray.on('click', (event) => {
+      win.show();
+      tray.setToolTip('草莓1');
+    });
+  }
 
   windows.add(win);
 
