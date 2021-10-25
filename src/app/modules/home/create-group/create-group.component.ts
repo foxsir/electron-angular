@@ -21,6 +21,7 @@ import {CurrentChattingChangeService} from "@services/current-chatting-change/cu
 import {GroupModel} from "@app/models/group.model";
 import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 import {DialogService} from "@services/dialog/dialog.service";
+import {Subscription} from "rxjs";
 
 interface GroupMember {
   groupUserId: string;
@@ -50,6 +51,8 @@ export class CreateGroupComponent implements OnInit {
   public selectedFriends: FriendModel[] = [];
   public defaultGroupName: string = "";
 
+  private subscribeFriendMap: Subscription;
+
   constructor(
     private router: Router,
     private dom: DomSanitizer,
@@ -64,6 +67,13 @@ export class CreateGroupComponent implements OnInit {
 
   ngOnInit(): void {
     this.getFriendList();
+    this.subscribeFriendMap = this.cacheService.cacheUpdate$.subscribe((cache) => {
+      if(cache.friendMap) {
+        this.friendList.forEach(friend => {
+          friend.onlineStatus = cache.friendMap.get(friend.friendUserUid.toString()).onlineStatus;
+        });
+      }
+    });
   }
 
   /**
