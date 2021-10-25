@@ -895,6 +895,8 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
   }
 
   saveAtMsg(ty: number, dataId: string, chatMsgEntity: ChatmsgEntityModel) {
+    //如果发送者与接收者相同，对本人不做@标记
+    if(chatMsgEntity.memberId.toString() === chatMsgEntity.uid.toString()) return;
     if(ty === MsgType.TYPE_AITE) {
       this.cacheService.putAtMessage(dataId, chatMsgEntity);
     }

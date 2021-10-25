@@ -272,8 +272,8 @@
                             </mat-icon>
                         </div>
                         <div fxFlex fxLayoutAlign="space-between center" class="group-pointer" (click)="deleteGroupAdmin()">
-                            <span class="privacy-item-text">删除管理员</span>
-                            <mat-icon class="mat-icon-cus" style="text-align:right;">
+                            <span class="privacy-item-text" style="{{this.group_admin_list.length === 0?'color:#999':''}}">删除管理员</span>
+                            <mat-icon *ngIf="this.group_admin_list.length>0" class="mat-icon-cus" style="text-align:right;">
                                 <img [src]="arrowRightIcon" alt="" class="icon">
                             </mat-icon>
                         </div>

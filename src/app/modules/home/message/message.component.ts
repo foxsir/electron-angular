@@ -273,14 +273,14 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
       const groupId: string = dataContent.t;
       // 进行删除会话和删除聊天记录的操作
       // 删除会话
-      this.cacheService.deleteChattingCache(groupId).then(() => {
-      });
+      //this.cacheService.deleteChattingCache(groupId).then(() => {
+      //});
       // 清空历史消息 先通过群id找到这个会话
-      this.cacheService.generateAlarmItem(groupId, 'group').then(chat => {
-        this.cacheService.clearChattingCache(chat).then(() => {
-        });
-      });
-      this.cacheService.deleteData<GroupModel>({model: 'group', query: {gid: groupId}}).then();
+      //this.cacheService.generateAlarmItem(groupId, 'group').then(chat => {
+      //  this.cacheService.clearChattingCache(chat).then(() => {
+      //  });
+      //});
+      //this.cacheService.deleteData<GroupModel>({model: 'group', query: {gid: groupId}}).then();
       // 删除聊天界面
       if (this.currentChat && this.currentChat.alarmItem.dataId == groupId) {
         this.currentChattingChangeService.switchCurrentChatting(null).then();
