@@ -636,25 +636,24 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
         del_opr_uid: this.userinfo.userId.toString()
       };
 
-            // 退群调用接口即可,不用发送消息
-            this.restService.exitGroup(post_data).subscribe(res => {
-              if (res.success == false) {
-                return this.snackBarService.openMessage("退群失败,请重试");
-              }else {
-                this.snackBarService.openMessage("退群成功");
-                // 清空历史消息
-                this.cacheService.clearChattingCache(this.currentChat).then(() => {});
-                // 删除会话
-                this.cacheService.deleteData<GroupModel>({model: 'group', query: {gid: this.currentChat.alarmItem.dataId}}).then(() => {
-                  // 从我的群组列表中删除
-                  this.cacheService.deleteChattingCache(this.currentChat.alarmItem.dataId).then(() => {});
-                });
-                this.drawer.close().then();
-              }
-
-            });
-        });
-    }
+      // 退群调用接口即可,不用发送消息
+      this.restService.exitGroup(post_data).subscribe(res => {
+        if (res.success == false) {
+          return this.snackBarService.openMessage("退群失败,请重试");
+        }else {
+          this.snackBarService.openMessage("退群成功");
+          // 清空历史消息
+          this.cacheService.clearChattingCache(this.currentChat).then(() => {});
+          // 删除会话
+          this.cacheService.deleteData<GroupModel>({model: 'group', query: {gid: this.currentChat.alarmItem.dataId}}).then(() => {
+            // 从我的群组列表中删除
+            this.cacheService.deleteChattingCache(this.currentChat.alarmItem.dataId).then(() => {});
+          });
+          this.drawer.close().then();
+        }
+      });
+    });
+  }
 
   ngOnDestroy() {
     this.currentSubscription.unsubscribe();
