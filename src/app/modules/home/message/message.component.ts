@@ -273,14 +273,14 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
       const groupId: string = dataContent.t;
       // 进行删除会话和删除聊天记录的操作
       // 删除会话
-      this.cacheService.deleteChattingCache(groupId).then(() => {
-      });
+      //this.cacheService.deleteChattingCache(groupId).then(() => {
+      //});
       // 清空历史消息 先通过群id找到这个会话
-      this.cacheService.generateAlarmItem(groupId, 'group').then(chat => {
-        this.cacheService.clearChattingCache(chat).then(() => {
-        });
-      });
-      this.cacheService.deleteData<GroupModel>({model: 'group', query: {gid: groupId}}).then();
+      //this.cacheService.generateAlarmItem(groupId, 'group').then(chat => {
+      //  this.cacheService.clearChattingCache(chat).then(() => {
+      //  });
+      //});
+      //this.cacheService.deleteData<GroupModel>({model: 'group', query: {gid: groupId}}).then();
       // 删除聊天界面
       if (this.currentChat && this.currentChat.alarmItem.dataId == groupId) {
         this.currentChattingChangeService.switchCurrentChatting(null).then();
@@ -455,7 +455,7 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
       } else {
         text = "你已经被邀请入群";
       }
-      this.cacheService.saveSystemMessage(content.g_id, text, protocol.sm);
+      this.cacheService.saveSystemMessage(content.g_id, text, protocol.sm, protocol.fp);
       // 生成一个新的会话
       const alarmData: AlarmItemInterface = {
         alarmItem: {
@@ -482,21 +482,21 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
       const dataContent: any = JSON.parse(protocol.dataContent);
       const text: string = dataContent.m;
       this.snackBarService.openMessage(text);
-      this.cacheService.saveSystemMessage(dataContent.t, text, protocol.sm);
+      this.cacheService.saveSystemMessage(dataContent.t, text, protocol.sm, protocol.fp);
     });
     // 处理群名被更改的指令
     this.messageDistributeService.MT51_OF_GROUP$SYSCMD_GROUP$NAME$CHANGED_FROM$SERVER$.subscribe((protocol: ProtocalModel) => {
       const dataContent: any = JSON.parse(protocol.dataContent);
       const text: string = dataContent.notificationContent;
       this.snackBarService.openMessage(text);
-      this.cacheService.saveSystemMessage(dataContent.gid, text, protocol.sm);
+      this.cacheService.saveSystemMessage(dataContent.gid, text, protocol.sm, protocol.fp);
     });
     // 处理有人退群/被踢的逻辑
     this.messageDistributeService.MT50_OF_GROUP$SYSCMD_SOMEONEB$REMOVED_FROM$SERVER$.subscribe((protocol: ProtocalModel) => {
       const dataContent: any = JSON.parse(protocol.dataContent);
       const text: string = dataContent.m;
       this.snackBarService.openMessage(text);
-      this.cacheService.saveSystemMessage(dataContent.t, text, protocol.sm);
+      this.cacheService.saveSystemMessage(dataContent.t, text, protocol.sm, protocol.fp);
     });
   }
 

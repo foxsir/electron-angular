@@ -37,3 +37,12 @@
     height: 38px;
   }
 }
+
+.quote-content {
+  .image-message {
+    height: 100%;
+    max-height: 200px;
+    background: white;
+    cursor: pointer;
+  }
+}

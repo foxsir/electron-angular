@@ -188,6 +188,17 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
       });
     }
 
+    /*
+    载入群成员信息
+     */
+  loadGroupMember(){
+    this.cacheService.getGroupMembers(this.currentChat.alarmItem.dataId).then(members => {
+      this.group_member_list = [];
+      members.forEach(member => {
+        this.group_member_list.push(member);
+      });
+    });
+  }
     initGroupData() {
       this.myAvatar = null;
         console.log('currentChat:'+this.currentChat+"当前页面:群组信息页面");
@@ -393,6 +404,7 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
             }
             else if (column == 'group_nickname') {
                 this.user_clu_info.showNickname = res.new_name;
+                console.dir(this.user_clu_info.showNickname)
                 this.cacheService.saveDataSync<GroupMemberModel>({model: 'groupMember', data: this.user_clu_info, update: {groupId: this.currentChat.alarmItem.dataId, userUid:this.userinfo.userid}}).then(() => {
                   setTimeout(() => {
                     return this.cacheService.cacheGroupMembers(this.currentChat.alarmItem.dataId).then();
@@ -409,11 +421,12 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
      */
     chooseGroupPeople(choose_type,popup_title) {
         var data = {
-            dialog_type: 'choose_group_member',
-            toUserId: this.currentChat.alarmItem.dataId,
-            chatType: this.currentChat.metadata.chatType,
-            count: '',
-            popup_title: popup_title,
+          dialog_type: 'choose_group_member',
+          toUserId: this.currentChat.alarmItem.dataId,
+          chatType: this.currentChat.metadata.chatType,
+          count: '',
+          popup_title: popup_title,
+          choose_type:choose_type
         };
         this.dialogService.openDialog(GroupInfoDialogComponent, { data: data,width: '314px',panelClass: "padding-less-dialog" }).then((res: any) => {
             if (res.ok == false) {
@@ -421,6 +434,7 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
             }
 
             if (choose_type == 'transfer') {
+              this.drawer.close().then();
                 this.restService.submitTransferGroupToServer(this.userinfo.userId.toString(), res.item.userUid, res.item.showNickname, this.currentChat.alarmItem.dataId).subscribe(res => {
                     this.user_role = 'common';
                 });
@@ -439,6 +453,7 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
       chatType: this.currentChat.metadata.chatType,
       count: '',
       popup_title: popup_title,
+      choose_type:choose_type,
     };
     this.dialogService.openDialog(GroupInfoDialogComponent, { data: data,width: '314px',panelClass: "padding-less-dialog" }).then((res: any) => {
       if (res.ok === false) {
@@ -467,7 +482,7 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
       if(ok) {
         const userId = Number(item.userUid);
         this.restService.removeGroupMembers(this.currentChat.alarmItem.dataId, this.localUserService.localUserInfo.userId.toString(),
-          [[this.currentChat.alarmItem.dataId, userId.toString(), item.showNickname]]
+          this.localUserService.localUserInfo.nickname,[[this.currentChat.alarmItem.dataId, userId.toString(), item.showNickname]]
         ).subscribe((res: HttpResponseInterface) => {
           if(res.success === true) {
             this.snackBarService.openMessage('删除成功');
@@ -500,6 +515,7 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
      * 删除管理员
      */
     deleteGroupAdmin() {
+        if(this.group_admin_list.length===0) return;
         var data = {
             dialog_type: 'delete_group_admin',
             toUserId: this.currentChat.alarmItem.dataId,
@@ -545,11 +561,13 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
               if (res.success === false) {
                   return this.snackBarService.openMessage("解散失败,请重试") ;
               } else {
+                this.drawer.close().then();
                 this.dialogService.alert({ title: '解散成功！', text: '输入框不能为空！' }).then(() => {});
-                // 删除会话
-                this.cacheService.deleteChattingCache(this.currentChat.alarmItem.dataId).then(() => {});
                 // 清空历史消息
                 this.cacheService.clearChattingCache(this.currentChat).then(() => {});
+                // 删除会话
+                this.cacheService.deleteChattingCache(this.currentChat.alarmItem.dataId).then(() => {});
+
                 // 从我的群组列表中删除
                 this.cacheService.deleteData<GroupModel>({model: 'group', query: {gid: this.currentChat.alarmItem.dataId}}).then();
               }
@@ -632,6 +650,7 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
                 // 从我的群组列表中删除
                 this.cacheService.deleteData<GroupModel>({model: 'group', query: {gid: this.currentChat.alarmItem.dataId}}).then();
               }
+
             });
         });
     }

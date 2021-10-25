@@ -120,6 +120,9 @@ export class MessageService {
       case MsgType.TYPE_NOTALK: //111 禁言
         messageContentForShow = JSON.parse(messageContent).msg;
         break;
+      case MsgType.TYPE_QUOTE: //111 禁言
+        messageContentForShow = '[回复消息]';
+        break;
       default:
         messageContentForShow = messageContent;
         break;
@@ -314,6 +317,8 @@ export class MessageService {
       const localAuthedUserInfo = this.localUserService.getObj();
 
       let fromNickname = (nickName === null?(localAuthedUserInfo.nickname?localAuthedUserInfo.nickname:fromUid):nickName);
+      console.dir(nickName)
+      console.dir(fromNickname)
 
       // console.log(fromNickname);
       // debugger

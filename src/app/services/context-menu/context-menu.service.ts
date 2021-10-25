@@ -502,8 +502,10 @@ export class ContextMenuService {
           this.dialogService.confirm({title: "从本群中删除"}).then((ok) => {
             if(ok) {
               const userId = Number(chat.uid);
-              this.restService.removeGroupMembers(alarmItem.alarmItem.dataId, userId.toString(), [
-                [alarmItem.alarmItem.dataId, chat.uid.toString(), chat.name]
+              const localUserInfo: LocalUserinfoModel = RBChatUtils.getAuthedLocalUserInfoFromCookie();
+              this.restService.removeGroupMembers(alarmItem.alarmItem.dataId, chat.uid,
+                chat.name, [
+                [alarmItem.alarmItem.dataId, chat.uid, chat.name]
               ]).subscribe((res: HttpResponseInterface) => {
                 if(res.success === true) {
                   this.snackBarService.openMessage('删除成功');

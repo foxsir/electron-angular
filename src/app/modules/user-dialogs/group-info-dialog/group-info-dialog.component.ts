@@ -5,6 +5,7 @@ import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 import { DialogService } from "@services/dialog/dialog.service"; // 必需
 import { RestService } from "@services/rest/rest.service";
+import { CacheService } from "@services/cache/cache.service";
 import { LocalUserService } from "@services/local-user/local-user.service";
 
 @Component({
@@ -16,11 +17,12 @@ import { LocalUserService } from "@services/local-user/local-user.service";
 export class GroupInfoDialogComponent implements OnInit {
 
     constructor(
-        public dialogRef: MatDialogRef<GroupInfoDialogComponent>, // 必需
-        @Inject(MAT_DIALOG_DATA) public data: any, // 必需
-        private dialogService: DialogService,
-        private restService: RestService,
-        private localUserService: LocalUserService,
+      public dialogRef: MatDialogRef<GroupInfoDialogComponent>, // 必需
+      @Inject(MAT_DIALOG_DATA) public data: any, // 必需
+      private dialogService: DialogService,
+      private restService: RestService,
+      private localUserService: LocalUserService,
+      private cacheService: CacheService,
     ) { }
 
     public group_members: any[] = [];
@@ -28,15 +30,27 @@ export class GroupInfoDialogComponent implements OnInit {
     public userinfo: any;
 
     ngOnInit(): void {
-        this.userinfo = this.localUserService.localUserInfo;
-        this.restService.submitGetGroupMembersListFromServer(this.data.toUserId).subscribe(res => {
-            console.log('群信息弹出框获取群成员：', res);
-            this.group_members = res.data.list; console.log(res.data.list);
-            for (let item of this.group_members) {
-                item.show = true;
-            }
+      this.userinfo = this.localUserService.localUserInfo;
+      this.cacheService.getGroupMembers(this.data.toUserId).then(members => {
+        this.group_members = [];
+        members.forEach(member => {
+          switch (this.data.choose_type){
+            case 'transfer':
+              if(this.userinfo.userId.toString() != member.userUid.toString()){
+                this.group_members.push(member);
+              }
+              break;
+            case 'add_group_admin':
+              if(this.userinfo.userId.toString() != member.userUid.toString() && member.isAdmin!=1){
+                this.group_members.push(member);
+              }
+              break;
+            default:
+              this.group_members.push(member);
+              break;
+          }
         });
-        console.log('群信息弹出框初始化 data：', this.data);
+      });
     }
 
     close() {
@@ -118,7 +132,6 @@ export class GroupInfoDialogComponent implements OnInit {
   confirmMulChoose(selectMember: any) {
     const selectfriends = [];
     selectMember.selectedOptions.selected.forEach(item => {
-      console.dir(item.value)
       selectfriends.push(item.value.userUid);
     });
 

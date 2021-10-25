@@ -96,7 +96,7 @@ export class VirtualScrollComponent implements OnInit {
 
   @Output()
   readonly scrollToItemForID = (id: string, behavior: 'smooth' | 'auto' = 'auto') => {
-    const ele = this.scrollContainer.nativeElement.getElementById(id);
+    const ele = this.scrollContainer.nativeElement.querySelector('#fp' + id);
     if(ele) {
       ele.scrollIntoView({behavior: behavior});
     }

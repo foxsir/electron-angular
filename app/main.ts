@@ -155,17 +155,34 @@ function createWindow(): BrowserWindow {
   });
 
   // 设置托盘
-  /*const tray = new Tray(path.resolve(__dirname, 'favicon.ico'))
+  const tray = new Tray(path.resolve(__dirname, 'favicon.ico'))
   const contextMenu = Menu.buildFromTemplate([
-    { label: 'Item1', type: 'radio' },
-    { label: 'Item2', type: 'radio' },
-    { label: 'Item3', type: 'radio', checked: true },
-    { label: 'Item4', type: 'radio' }
+    {
+      label: '打开',
+      click: () => {
+        win.show();
+      }
+    },
+    {
+      label: '隐藏',
+      click: () => {
+        win.hide();
+      }
+    },
+    {
+      label: '关闭app',
+      click: () => {
+        win.destroy();
+        win = null;
+      }
+    }
   ])
-  tray.setToolTip('This is my application.')
-  tray.setContextMenu(contextMenu)*/
-  // tray.destroy()
-
+  tray.setToolTip('草莓');
+  tray.setContextMenu(contextMenu)
+  tray.on('click', (event) => {
+    win.show();
+    tray.setToolTip('草莓1');
+  });
 
   windows.add(win);
 
