@@ -1241,7 +1241,9 @@ export class CacheService extends DatabaseService {
     this.saveDataSync<FriendModel>({
       model: 'friend', data: {onlineStatus: onlineStatus}, update: {friendUserUid: Number(friendId)}
     }).then(() => {
-      this.cacheSource.next({});
+      this.getCacheFriends().then(friends => {
+        this.cacheSource.next({friendMap: friends});
+      });
     });
   }
 
