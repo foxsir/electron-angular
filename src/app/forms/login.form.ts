@@ -16,7 +16,6 @@ export class LoginForm {
     {
       key: 'account',
       type: 'input',
-      defaultValue: 'guanliyuan',
       templateOptions: {
         label: '请输入登录账号',
         type: 'text',
@@ -51,7 +50,6 @@ export class LoginForm {
     {
       key: 'password',
       type: 'password',
-      defaultValue: '123456',
       templateOptions: {
         label: '密码',
         type: 'password',
