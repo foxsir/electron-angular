@@ -642,13 +642,14 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
                 return this.snackBarService.openMessage("退群失败,请重试");
               }else {
                 this.snackBarService.openMessage("退群成功");
-                this.drawer.close().then();
-                // 删除会话
-                this.cacheService.deleteChattingCache(this.currentChat.alarmItem.dataId).then(() => {});
                 // 清空历史消息
                 this.cacheService.clearChattingCache(this.currentChat).then(() => {});
-                // 从我的群组列表中删除
-                this.cacheService.deleteData<GroupModel>({model: 'group', query: {gid: this.currentChat.alarmItem.dataId}}).then();
+                // 删除会话
+                this.cacheService.deleteData<GroupModel>({model: 'group', query: {gid: this.currentChat.alarmItem.dataId}}).then(() => {
+                  // 从我的群组列表中删除
+                  this.cacheService.deleteChattingCache(this.currentChat.alarmItem.dataId).then(() => {});
+                });
+                this.drawer.close().then();
               }
 
             });
