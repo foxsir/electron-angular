@@ -121,6 +121,16 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
     this.inputAreaService.inputUpdate$.subscribe((status) => {
       this.inputEnableStatus = status;
     });
+
+    this.cacheService.cacheUpdate$.subscribe(res => {
+      if (res.groupMemberMap) {
+        const gid =this.currentChat.alarmItem.dataId;
+        this.cacheService.getGroupMembers(gid).then(cache => {
+          this.memberMap = cache;
+        });
+      }
+    });
+
     this.inputEnableStatus = this.inputAreaService.enableStatus;
   }
 
@@ -130,14 +140,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
       this.quoteMessage = meg;
     });
 
-    this.cacheService.cacheUpdate$.subscribe(res => {
-      if (res.groupMemberMap) {
-        const gid =this.currentChat.alarmItem.dataId;
-        this.cacheService.cacheGroupMembers(gid).then(cache => {
-          this.memberMap = cache;
-        });
-      }
-    });
+
 
 
     this.subscribeAtMember();
