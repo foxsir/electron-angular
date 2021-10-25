@@ -20,7 +20,7 @@ export class SelectFriendContactComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.cacheService.getCacheFriends().then(data => {
+    this.cacheService.getCacheFriends().then((data:Map<string, FriendModel>) => {
       data.forEach(friend => {
         // 过滤掉已经筛选过的用户
         if (!this.data || !this.data.includes(Number(friend.friendUserUid))) {
