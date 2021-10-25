@@ -96,10 +96,10 @@
           </div>
         </div>
       </div>
-      <div [fxHide]="searching === false" fxLayout="column" fxFlex="calc(100% - 60px)">
+      <div *ngIf="searching === false" fxLayout="column" fxFlex="calc(100% - 60px)">
         <app-search-chatting fxFlexFill [chatting]="currentChat"></app-search-chatting>
       </div>
-      <div [fxHide]="searching === true" fxLayout="column" fxFlex="calc(100% - 60px)" class="chatting-body">
+      <div *ngIf="searching === true" fxLayout="column" fxFlex="calc(100% - 60px)" class="chatting-body">
         <div *ngIf="group_tab_data.visible" [fxFlex]="showGroupTabs ? 100 : '49px'" class="group-tags-container">
           <div fxLayout="column" fxFill>
             <div fxFlex>
