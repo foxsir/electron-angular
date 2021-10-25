@@ -488,7 +488,7 @@ export class ContextMenuService {
         }
       },
       {
-        label: "从本群主中删除",
+        label: "从本群中删除",
         visibility: (filterData: MenuFilterData): boolean => {
           const localUserInfo: LocalUserinfoModel = RBChatUtils.getAuthedLocalUserInfoFromCookie();
           const admin = filterData.admins.get(filterData.alarmItem.alarmItem.dataId.toString());
