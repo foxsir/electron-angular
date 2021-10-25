@@ -19,6 +19,7 @@ import {MatSnackBarModule} from "@angular/material/snack-bar";
 import { NzMessageModule } from 'ng-zorro-antd/message';
 import {MatDialogModule} from "@angular/material/dialog";
 import {MAT_DATE_FORMATS, MatDateFormats} from "@angular/material/core";
+import {MAT_FORM_FIELD_DEFAULT_OPTIONS} from "@angular/material/form-field";
 
 // AoT requires an exported function for factories
 const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>  new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -60,7 +61,7 @@ const MY_FORMATS: MatDateFormats = {
     })
   ],
   providers: [
-    // {provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {floatLabel: 'never'}}
+    {provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {floatLabel: 'never'}}, // label 禁用浮动
     { provide: LOCALE_ID, useValue: 'zh-Hans' },
     // { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
   ],
