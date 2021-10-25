@@ -130,7 +130,16 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
       this.quoteMessage = meg;
     });
 
-    this.chattingChange();
+    this.cacheService.cacheUpdate$.subscribe(res => {
+      if (res.groupMemberMap) {
+        const gid =this.currentChat.alarmItem.dataId;
+        this.cacheService.cacheGroupMembers(gid).then(cache => {
+          this.memberMap = cache;
+        });
+      }
+    });
+
+
     this.subscribeAtMember();
     this.electronService.ipcRendererOn('screenshot-finished', (event, base64) => {
       const base64Data = base64.replace(/^data:image\/\w+;base64,/, "");
@@ -402,7 +411,9 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
     emitToUI: boolean = true,
     replaceEntity: ChatmsgEntityModel = null
   ) {
+    console.dir(this.memberMap)
     const myGroupShowNickName=this.memberMap.get(this.localUserService.localUserInfo.userId.toString()).showNickname;
+    console.dir(myGroupShowNickName);
     this.messageService.sendGroupMessage(messageType, this.currentChat.alarmItem.dataId, messageText, this.atTargetMember,myGroupShowNickName).then(res => {
       if(res.success === true) {
         const friendUid = this.currentChat.alarmItem.dataId;
