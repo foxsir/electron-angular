@@ -14,6 +14,7 @@ import {MatDrawer} from "@angular/material/sidenav";
 import {MiniUiService} from "@services/mini-ui/mini-ui.service";
 import rightArrowIcon from "@app/assets/icons/rightarr.svg";
 import rightArrowActiveIcon from "@app/assets/icons/rightarr.svg";
+import SubscribeManage from "@app/common/subscribe-manage";
 // import image end
 
 @Component({
@@ -84,14 +85,14 @@ export class AddressListComponent implements OnInit, AfterViewInit {
   listenMiniUI() {
     this.addressListPanel.open().then();
     this.drawerMode = this.miniUiService.isMini ? 'over' : 'side';
-    this.miniUiService.addressListDrawer$.subscribe(open => {
+    SubscribeManage.run(this.miniUiService.addressListDrawer$, open => {
       if(open) {
         this.addressListPanel.open().then();
       } else {
         this.addressListPanel.close().then();
       }
     });
-    this.miniUiService.mini$.subscribe((mini) => {
+    SubscribeManage.run(this.miniUiService.mini$, (mini) => {
       this.isMiniUI = mini;
       this.drawerMode = mini ? 'over' : 'side';
     });

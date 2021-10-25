@@ -4,6 +4,7 @@ import {CacheService} from "@services/cache/cache.service";
 import BlackListModel from "@app/models/black-list.model";
 import {DialogService} from "@services/dialog/dialog.service";
 import NewHttpResponseInterface from "@app/interfaces/new-http-response.interface";
+import SubscribeManage from "@app/common/subscribe-manage";
 
 @Component({
   selector: 'app-black-list',
@@ -28,7 +29,7 @@ export class BlackListComponent implements OnInit {
         });
       }
     });
-    this.cacheService.cacheUpdate$.subscribe(data => {
+    SubscribeManage.run(this.cacheService.cacheUpdate$, (data) => {
       if(data.blackListMap) {
         this.zone.run(() => {
           this.blacklist = [];

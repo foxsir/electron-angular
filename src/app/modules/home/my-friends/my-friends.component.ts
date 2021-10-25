@@ -8,6 +8,7 @@ import {Router} from "@angular/router";
 import {ContextMenuChattingModel} from "@app/models/context-menu.model";
 import {MatMenuTrigger} from "@angular/material/menu";
 import CommonTools from "@app/common/common.tools";
+import SubscribeManage from "@app/common/subscribe-manage";
 
 const iconv = window.require('iconv-lite');
 
@@ -53,7 +54,7 @@ export class MyFriendsComponent implements OnInit {
     });
 
     // 监听好友变化
-    this.cacheService.cacheUpdate$.subscribe(cache => {
+    SubscribeManage.run(this.cacheService.cacheUpdate$, (cache) => {
       if(cache.friendMap) {
         this.zone.run(() => {
           this.showFriend(cache.friendMap);

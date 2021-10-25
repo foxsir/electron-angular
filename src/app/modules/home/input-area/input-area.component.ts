@@ -53,6 +53,7 @@ import {InputAreaService} from "@services/input-area/input-area.service";
 import {GlobalCache} from "@app/config/global-cache";
 import {ElectronService} from "@app/core/services";
 import FriendModel from "@app/models/friend.model";
+import SubscribeManage from "@app/common/subscribe-manage";
 
 @Component({
   selector: 'app-input-area',
@@ -118,7 +119,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
     private inputAreaService: InputAreaService,
     private electronService: ElectronService
   ) {
-    this.inputAreaService.inputUpdate$.subscribe((status) => {
+    SubscribeManage.run(this.inputAreaService.inputUpdate$, (status) => {
       this.inputEnableStatus = status;
     });
     this.inputEnableStatus = this.inputAreaService.enableStatus;
@@ -126,7 +127,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
 
   ngOnInit(): void {
     // 订阅回复消息
-    this.quoteMessageService.message$.subscribe((meg) => {
+    SubscribeManage.run(this.quoteMessageService.message$, (meg) => {
       this.quoteMessage = meg;
     });
 
@@ -157,13 +158,13 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
     // if(this.forwardMessageService.message) {
     //   return this.doSend(this.forwardMessageService.message.text, this.forwardMessageService.message.msgType,true);
     // }
-    this.forwardMessageService.forward$.subscribe((msg) => {
+    SubscribeManage.run(this.forwardMessageService.forward$, (msg) => {
       this.doSend(msg.text, msg.msgType,true);
     });
   }
 
   private subscribeAtMember() {
-    this.elementService.atMember$.subscribe((friendId) => {
+    SubscribeManage.run(this.elementService.atMember$,(friendId) => {
       const member: GroupMemberModel[] = [];
       this.memberMap.forEach(m => {
         if(m.userUid.toString() === friendId.toString()) {
@@ -183,7 +184,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
    */
   private chattingChange() {
     this.getGroupMembers(this.currentChat);
-    this.currentSubscription =  this.currentChattingChangeService.currentChatting$.subscribe((currentChat) => {
+    SubscribeManage.run(this.currentChattingChangeService.currentChatting$, (currentChat) => {
       if(currentChat) {
         this.getGroupMembers(currentChat);
         this.clearTextArea();

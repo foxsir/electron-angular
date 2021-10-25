@@ -73,6 +73,7 @@ import {GroupNoticeComponent} from "@modules/user-dialogs/group-notice/group-not
 import {InputAreaService} from "@services/input-area/input-area.service";
 import ChattingModel from "@app/models/chatting.model";
 import {VirtualScrollComponent} from "@app/factorys/virtual-scroll";
+import SubscribeManage from "@app/common/subscribe-manage";
 
 @Component({
   selector: 'app-chatting-area',
@@ -170,7 +171,6 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
   public isAdmin: boolean = false;
   public isOwner: boolean = false;
 
-  public currentSubscription: Subscription;
   //发言时间间隔
   public talkIntervalSwitch: boolean = false;
   // public talkInterval: number = 0;
@@ -215,12 +215,12 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
     this.subscribeDeleteFriendMessage();
 
     // 选择消息
-    this.elementService.selectMessage$.subscribe((directive) => {
+    SubscribeManage.run(this.elementService.selectMessage$,(directive) => {
       this.selectMessage = directive;
     });
 
     // 获取拉黑我的人列表
-    this.cacheService.cacheUpdate$.subscribe(cache => {
+    SubscribeManage.run(this.cacheService.cacheUpdate$, cache => {
       if(cache && cache.blackMeListMap && this.currentChat) {
         this.blacked = false;
         console.log("拉黑我的人:",cache.blackMeListMap);
@@ -238,7 +238,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
     this.subscribeQuote();
 
     // 清屏
-    this.cacheService.cacheUpdate$.subscribe(cache => {
+    SubscribeManage.run(this.cacheService.cacheUpdate$, cache => {
       if(this.currentChat && cache.alarmDataMap) {
         const data = cache.alarmDataMap.get(this.currentChat.alarmItem.dataId);
         if(data && data.message && data.message.size === 0) {
@@ -270,7 +270,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
       }
     });
 
-    this.cacheService.groupSilence$.subscribe((map) => {
+    SubscribeManage.run(this.cacheService.groupSilence$, (map) => {
       this.mySilence = map.get(this.localUserService.localUserInfo.userId.toString());
       if(this.mySilence && this.mySilence.banTime) {
         this.inputAreaService.disableToTime(this.mySilence.banTime);
@@ -300,7 +300,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
     }
 
     // 获取缓存
-    this.currentSubscription = this.currentChattingChangeService.currentChatting$.subscribe(currentChat => {
+    SubscribeManage.run(this.currentChattingChangeService.currentChatting$, currentChat => {
       this.searching = false;
       this.blacked = false;
       // === 为刷新聊天列表，只更新数据
@@ -465,7 +465,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
   }
 
   private subscribeQuote() {
-    this.quoteMessageService.message$.subscribe((msg) => {
+    SubscribeManage.run(this.quoteMessageService.message$, (msg) => {
       // msg 不能为空
       this.quoteMessage = msg;
       if(msg) {
@@ -518,7 +518,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
    * @private
    */
   private subscribeChattingMessage() {
-    this.messageDistributeService.MT03_OF_CHATTING_MESSAGE$.subscribe((res: ProtocalModel) => {
+    SubscribeManage.run(this.messageDistributeService.MT03_OF_CHATTING_MESSAGE$, (res: ProtocalModel) => {
       const dataContent: ProtocalModelDataContent = JSON.parse(res.dataContent);
       const func = this.serverForwardService.functions[dataContent.ty];
       if(func) {
@@ -566,7 +566,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
         }
     });
 
-    this.messageDistributeService.MT17_OF_VIDEO$VOICE$REQUEST_REQUESTING$FROM$A$.subscribe(res => {
+    SubscribeManage.run(this.messageDistributeService.MT17_OF_VIDEO$VOICE$REQUEST_REQUESTING$FROM$A$, res => {
         const dataContent: ProtocalModelDataContent = JSON.parse(res.dataContent);
         console.log('订阅单聊消息：（17）', res, dataContent, this.currentChat);
 
@@ -595,7 +595,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
    * @private
    */
   private subscribeOfGroupChatMsgToServer() {
-    this.messageDistributeService.MT44_OF_GROUP$CHAT$MSG_A$TO$SERVER$.subscribe((res: ProtocalModel) => {
+    SubscribeManage.run(this.messageDistributeService.MT44_OF_GROUP$CHAT$MSG_A$TO$SERVER$, (res: ProtocalModel) => {
         const dataContent: any = JSON.parse(res.dataContent);
 
         console.log('订阅群聊消息 ToServer：', dataContent);
@@ -612,7 +612,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
    * @private
    */
   private subscribeOfGroupChatMsgServerToB() {
-    this.messageDistributeService.MT45_OF_GROUP$CHAT$MSG_SERVER$TO$B$.subscribe((res: ProtocalModel) => {
+    SubscribeManage.run(this.messageDistributeService.MT45_OF_GROUP$CHAT$MSG_SERVER$TO$B$, (res: ProtocalModel) => {
       let dataContentList: ProtocalModelDataContent[] | ProtocalModelDataContent = JSON.parse(res.dataContent);
       if(dataContentList.hasOwnProperty("length")) {
         dataContentList = dataContentList as ProtocalModelDataContent[];
@@ -1009,12 +1009,12 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
    * 订阅服务端发来的禁言消息
    */
   subscribeGroupSilence() {
-    this.messageDistributeService.GROUP_SILENCE$.subscribe(() => {
+    SubscribeManage.run(this.messageDistributeService.GROUP_SILENCE$, () => {
       if(this.currentChat) {
         this.cacheService.cacheGroupSilence(this.currentChat.alarmItem.dataId).then();
       }
     });
-    this.messageDistributeService.MT45_OF_GROUP$CHAT$MSG_SERVER$TO$B$.subscribe((res) => {
+    SubscribeManage.run(this.messageDistributeService.MT45_OF_GROUP$CHAT$MSG_SERVER$TO$B$, (res) => {
       const dataContent: ProtocalModelDataContent[] = JSON.parse(res.dataContent);
       if(dataContent.length) {
         const data = dataContent[0];
@@ -1066,7 +1066,6 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
     }
   }
   ngOnDestroy() {
-    this.currentSubscription.unsubscribe();
   }
 
   /* 弹窗群消息和群上屏     */
@@ -1096,7 +1095,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
    * @private
    */
   private subscribeDeleteGroupMessage() {
-    this.messageDistributeService.DELETE_FRIEND_FOR_TIRENSource$.subscribe((res: ProtocalModel) => {
+    SubscribeManage.run(this.messageDistributeService.DELETE_FRIEND_FOR_TIRENSource$,(res: ProtocalModel) => {
       const dataContent: any = JSON.parse(res.dataContent);
       const groupId: string = dataContent.groupId;
       const memberIdList:number[] = dataContent.userIds;
@@ -1112,7 +1111,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
    * @private
    */
   private subscribeDeleteFriendMessage() {
-    this.messageDistributeService.DELETE_CHAT_MESSAGESource$.subscribe((res: ProtocalModel) => {
+    SubscribeManage.run(this.messageDistributeService.DELETE_CHAT_MESSAGESource$,(res: ProtocalModel) => {
       const dataContent: any = JSON.parse(res.dataContent);
       const dataId: string = dataContent.uuid;
       const chatType: string = dataContent.chatType;

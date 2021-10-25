@@ -9,6 +9,7 @@ import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 import {MessageDistributeService} from "@services/message-distribute/message-distribute.service";
 import {ProtocalModel} from "@app/models/protocal.model";
 import {GlobalCache} from "@app/config/global-cache";
+import SubscribeManage from "@app/common/subscribe-manage";
 
 @Component({
   selector: 'app-index',
@@ -75,7 +76,7 @@ export class IndexComponent implements OnInit {
    * 系统配置发送了改变
    */
   subscribeUpdateAppConfig() {
-    this.messageDistributeService.UPDATE_APP_CONFIG$.subscribe((res: ProtocalModel) => {
+    SubscribeManage.run(this.messageDistributeService.UPDATE_APP_CONFIG$, (res: ProtocalModel) => {
       console.log("收到更新App配置的指令111");
       this.getAppConfig();
     });

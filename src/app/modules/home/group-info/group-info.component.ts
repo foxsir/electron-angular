@@ -33,6 +33,7 @@ import {InputAreaComponent} from "@app/modules/home/input-area/input-area.compon
 import {ProtocalModel} from "@app/models/protocal.model";
 import {GroupMemberModel} from "@app/models/group-member.model";
 import HttpResponseInterface from "@app/interfaces/http-response.interface";
+import SubscribeManage from "@app/common/subscribe-manage";
 
 @Component({
   selector: 'app-group-info',
@@ -100,7 +101,6 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
   public group_member_list: any[] = [];
   public group_admin_list: any[] = [];
 
-  public currentSubscription: Subscription;
   public oriNotice=""; //存储初始群公告，用于比对编辑后是否有变化
 
   constructor(
@@ -117,7 +117,7 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
     private changeDetectorRef: ChangeDetectorRef
   ) {
     this.userinfo = this.localUserService.localUserInfo;
-    this.currentSubscription = this.currentChattingChangeService.currentChatting$.subscribe(currentChat => {
+    SubscribeManage.run(this.currentChattingChangeService.currentChatting$, currentChat => {
       if(currentChat && this.currentChat.alarmItem.dataId !== currentChat.alarmItem.dataId) {
         console.log('群聊会话切换...');
         console.log("当前会话id:"+this.currentChat.alarmItem.dataId+",切换到的会话id:"+currentChat.alarmItem.dataId);
@@ -128,7 +128,7 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.cacheService.cacheUpdate$.subscribe(res => {
+    SubscribeManage.run(this.cacheService.cacheUpdate$, res => {
       if(res.groupAdminMap) {
         this.loadGroupAdminList();
       }
@@ -656,7 +656,6 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.currentSubscription.unsubscribe();
   }
 
   public setAvatar(upload: UploadedFile) {

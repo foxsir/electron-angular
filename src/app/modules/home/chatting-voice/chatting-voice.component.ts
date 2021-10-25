@@ -18,6 +18,7 @@ import callAccept from "@app/assets/icons/call_accept.svg";
 import callHangup from "@app/assets/icons/call_hangup.svg";
 import { CurrentChattingChangeService } from "@services/current-chatting-change/current-chatting-change.service";
 import {Subscription} from "rxjs";
+import SubscribeManage from "@app/common/subscribe-manage";
 
 @Component({
     selector: 'app-chatting-voice',
@@ -45,8 +46,6 @@ export class ChattingVoiceComponent implements OnInit,OnDestroy {
     public imres: any;
     public datacontent: any;
 
-  public currentSubscription: Subscription;
-
     constructor(
         private dom: DomSanitizer,
         private restService: RestService,
@@ -55,7 +54,7 @@ export class ChattingVoiceComponent implements OnInit,OnDestroy {
         private localUserService: LocalUserService,
         private currentChattingChangeService: CurrentChattingChangeService,
     ) {
-       this.currentSubscription =  this.currentChattingChangeService.currentChatting$.subscribe(currentChat => {
+       SubscribeManage.run(this.currentChattingChangeService.currentChatting$, currentChat => {
           if(currentChat && this.currentChat.alarmItem.dataId !== currentChat.alarmItem.dataId) {
             console.log('语音聊天会话切换...');
             console.log("当前会话id:"+this.currentChat.alarmItem.dataId+",切换到的会话id:"+currentChat.alarmItem.dataId);
@@ -241,6 +240,5 @@ export class ChattingVoiceComponent implements OnInit,OnDestroy {
     }
 
   ngOnDestroy() {
-    this.currentSubscription.unsubscribe();
   }
 }

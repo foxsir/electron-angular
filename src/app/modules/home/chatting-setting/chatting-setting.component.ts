@@ -17,6 +17,7 @@ import FriendModel from "../../../../../app/entitys/friend.model";
 import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 import {CacheService} from "@services/cache/cache.service";
 import NewHttpResponseInterface from "@app/interfaces/new-http-response.interface";
+import SubscribeManage from "@app/common/subscribe-manage";
 
 @Component({
     selector: 'app-chatting-setting',
@@ -39,8 +40,6 @@ export class ChattingSettingComponent implements OnInit,OnDestroy {
         width: '314px'
     };
 
-  public currentSubscription: Subscription;
-
     constructor(
         private dom: DomSanitizer,
         private restService: RestService,
@@ -49,7 +48,7 @@ export class ChattingSettingComponent implements OnInit,OnDestroy {
         private snackBarService: SnackBarService,
         private cacheService: CacheService,
     ) {
-       this.currentSubscription = this.currentChattingChangeService.currentChatting$.subscribe(currentChat => {
+       SubscribeManage.run(this.currentChattingChangeService.currentChatting$, currentChat => {
           if(currentChat && this.currentChat.alarmItem.dataId !== currentChat.alarmItem.dataId) {
             console.log('单聊会话切换...');
             console.log("当前会话id:"+this.currentChat.alarmItem.dataId+",切换到的会话id:"+currentChat.alarmItem.dataId);
@@ -112,7 +111,6 @@ export class ChattingSettingComponent implements OnInit,OnDestroy {
     }
 
   ngOnDestroy() {
-    this.currentSubscription.unsubscribe();
   }
   formatDate(date,format) {
     if (["string", "number"].includes(typeof date)) {

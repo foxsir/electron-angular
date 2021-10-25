@@ -35,6 +35,7 @@ import {SelectFriendContactComponent} from "@modules/user-dialogs/select-friend-
 import {MessageEntityService} from "@services/message-entity/message-entity.service";
 import FriendModel from "@app/models/friend.model";
 import LastMessageModel from "@app/models/last-message.model";
+import SubscribeManage from "@app/common/subscribe-manage";
 
 @Injectable({
   providedIn: 'root'
@@ -376,7 +377,7 @@ export class ContextMenuService {
       if(list) {
         this.muteMap  = list;
       }
-      this.cacheService.cacheUpdate$.subscribe(data => {
+      SubscribeManage.run(this.cacheService.cacheUpdate$, data => {
         if(data.muteMap) {
           this.muteMap = data.muteMap;
         }
@@ -386,7 +387,7 @@ export class ContextMenuService {
       if(list) {
         this.topMap  = list;
       }
-      this.cacheService.cacheUpdate$.subscribe(data => {
+      SubscribeManage.run(this.cacheService.cacheUpdate$, data => {
         if(data.topMap) {
           this.topMap = data.topMap;
         }

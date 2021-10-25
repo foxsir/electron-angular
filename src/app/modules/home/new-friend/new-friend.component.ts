@@ -10,6 +10,7 @@ import NewHttpResponseInterface from "@app/interfaces/new-http-response.interfac
 import {FriendRequestModel} from "@app/models/friend-request.model";
 import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 import {CacheService} from "@services/cache/cache.service";
+import SubscribeManage from "@app/common/subscribe-manage";
 
 @Component({
     selector: 'app-new-friend',
@@ -38,7 +39,7 @@ export class NewFriendComponent implements OnInit {
               this.model_list.push(item);
             });
           }
-          this.cacheService.cacheUpdate$.subscribe(data => {
+          SubscribeManage.run(this.cacheService.cacheUpdate$, data => {
             if(data.newFriendMap) {
               this.zone.run(() => {
                 this.model_list = [];

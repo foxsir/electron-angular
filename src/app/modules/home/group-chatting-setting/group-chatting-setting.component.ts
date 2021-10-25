@@ -15,6 +15,7 @@ import { DialogService } from "@services/dialog/dialog.service";
 import { CurrentChattingChangeService } from "@services/current-chatting-change/current-chatting-change.service";
 import {Subscription} from "rxjs";
 import {CacheService} from "@services/cache/cache.service";
+import SubscribeManage from "@app/common/subscribe-manage";
 
 @Component({
     selector: 'app-group-chatting-setting',
@@ -50,8 +51,6 @@ export class GroupChattingSettingComponent implements OnInit,OnDestroy {
     public customerServiceList: any[];
     public groupTabList: any[];
 
-    public currentSubscription: Subscription;
-
     /*
      * switch_default: 默认
      * group_top: 群上屏编辑
@@ -73,7 +72,7 @@ export class GroupChattingSettingComponent implements OnInit,OnDestroy {
         private currentChattingChangeService: CurrentChattingChangeService,
         private cacheService: CacheService,
     ) {
-       this.currentSubscription =  this.currentChattingChangeService.currentChatting$.subscribe(currentChat => {
+       SubscribeManage.run(this.currentChattingChangeService.currentChatting$, currentChat => {
           if(currentChat && this.currentChat.alarmItem.dataId !== currentChat.alarmItem.dataId) {
             console.log('群聊设置会话切换...');
             console.log("当前会话id:"+this.currentChat.alarmItem.dataId+",切换到的会话id:"+currentChat.alarmItem.dataId);
@@ -247,7 +246,6 @@ export class GroupChattingSettingComponent implements OnInit,OnDestroy {
     }
 
   ngOnDestroy() {
-    this.currentSubscription.unsubscribe();
   }
 
 

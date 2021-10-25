@@ -58,6 +58,7 @@ import GroupCommonMessageModel from "@app/models/group-common-message.model";
 import TopModel from "@app/models/top.model";
 import BlackListModel from "@app/models/black-list.model";
 import BlackMeListModel from "@app/models/black-me-list.model";
+import SubscribeManage from "@app/common/subscribe-manage";
 
 @Component({
   selector: 'app-message',
@@ -113,8 +114,6 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
   public topMapOfArray: string[] = [];
 
   public atMap: Map<string, number> = new Map();
-
-  public currentSubscription: Subscription;
 
   constructor(
     private alarmsProviderService: AlarmsProviderService,
@@ -195,7 +194,7 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
       });
     });
 
-    this.currentSubscription = this.currentChattingChangeService.currentChatting$.subscribe((alarm: AlarmItemInterface) => {
+    SubscribeManage.run(this.currentChattingChangeService.currentChatting$,(alarm: AlarmItemInterface) => {
       // console.log("在message组件发送已读消息");
       // this.currentChat = alarm;
       // if (alarm) {
@@ -214,14 +213,14 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
   listenMiniUI() {
     this.chattingPanel.open().then();
     this.drawerMode = this.miniUiService.isMini ? 'over' : 'side';
-    this.miniUiService.messageDrawer$.subscribe(open => {
+    SubscribeManage.run(this.miniUiService.messageDrawer$, open => {
       if (open) {
         this.chattingPanel.open().then();
       } else {
         this.chattingPanel.close().then();
       }
     });
-    this.miniUiService.mini$.subscribe((mini) => {
+    SubscribeManage.run(this.miniUiService.mini$,(mini) => {
       this.isMiniUI = mini;
       this.drawerMode = mini ? 'over' : 'side';
     });
@@ -240,7 +239,7 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
    * 群的基本信息变更
    */
   subscribeGroupInfoChange() {
-    this.messageDistributeService.GROUP_INFO_UPDATE$.subscribe((protocol: ProtocalModel) => {
+    SubscribeManage.run(this.messageDistributeService.GROUP_INFO_UPDATE$,(protocol: ProtocalModel) => {
       const dataContent: any = JSON.parse(protocol.dataContent);
       const gid: string = dataContent.groupId;
       this.cacheService.getCacheGroups().then();
@@ -254,7 +253,7 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
    * 群管理员变更
    */
   subscribeGroupAdminChange() {
-    this.messageDistributeService.UPDATE_GROUP_ADMIN$.subscribe((protocol: ProtocalModel) => {
+    SubscribeManage.run(this.messageDistributeService.UPDATE_GROUP_ADMIN$,(protocol: ProtocalModel) => {
       const dataContent: any = JSON.parse(protocol.dataContent);
       const gid: string = dataContent.groupId;
       this.cacheService.getCacheGroupAdmins(gid).then();
@@ -266,7 +265,7 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
    * 群被解散后收到的消息
    */
   subscribeDissolveGroup() {
-    this.messageDistributeService.MT48_OF_GROUP$SYSCMD_DISMISSED_FROM$SERVER$.subscribe((res: ProtocalModel) => {
+    SubscribeManage.run(this.messageDistributeService.MT48_OF_GROUP$SYSCMD_DISMISSED_FROM$SERVER$, (res: ProtocalModel) => {
       console.log("收到群被解散的指令:" + res);
       // 拿到群id
       const dataContent: any = JSON.parse(res.dataContent);
@@ -294,7 +293,7 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
    * 有人退群
    */
   subscribeGroupMemberQuit() {
-    this.messageDistributeService.MT50_OF_GROUP$SYSCMD_SOMEONEB$REMOVED_FROM$SERVER$.subscribe((protocol: ProtocalModel) => {
+    SubscribeManage.run(this.messageDistributeService.MT50_OF_GROUP$SYSCMD_SOMEONEB$REMOVED_FROM$SERVER$,(protocol: ProtocalModel) => {
 
     });
   }
@@ -303,7 +302,7 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
    * "你"被踢出群聊
    */
   subscribeGroupMemberWasRemoved() {
-    this.messageDistributeService.MT49_OF_GROUP$SYSCMD_YOU$BE$KICKOUT_FROM$SERVER$.subscribe((res: ProtocalModel) => {
+    SubscribeManage.run(this.messageDistributeService.MT49_OF_GROUP$SYSCMD_YOU$BE$KICKOUT_FROM$SERVER$, (res: ProtocalModel) => {
       // 解析消息体，拿到群信息
       const groupMsg: GroupCommonMessageModel = JSON.parse(res.dataContent);
       this.snackBarService.systemNotification(groupMsg.m);
@@ -330,7 +329,7 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
    * @private
    */
   private subscribeChattingListUpdate() {
-    this.cacheService.cacheUpdate$.subscribe(cache => {
+    SubscribeManage.run(this.cacheService.cacheUpdate$, cache => {
       this.zone.run(() => {
         if (cache.muteMap) {
           this.muteMap = cache.muteMap;
@@ -351,7 +350,7 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
    * @private
    */
   private subscribeChattingMessage() {
-    this.messageDistributeService.MT03_OF_CHATTING_MESSAGE$.subscribe((res: ProtocalModel) => {
+    SubscribeManage.run(this.messageDistributeService.MT03_OF_CHATTING_MESSAGE$,(res: ProtocalModel) => {
       const dataContent: any = JSON.parse(res.dataContent);
       // alert("单聊" + data.from);
       // this.cacheService.generateAlarmItem(res).then(alarm => {
@@ -374,7 +373,7 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
    * @private
    */
   private subscribeOfGroupChatMsgToServer() {
-    this.messageDistributeService.MT44_OF_GROUP$CHAT$MSG_A$TO$SERVER$.subscribe((res: ProtocalModel) => {
+    SubscribeManage.run(this.messageDistributeService.MT44_OF_GROUP$CHAT$MSG_A$TO$SERVER$,(res: ProtocalModel) => {
       // const dataContent: any = JSON.parse(res.dataContent);
       // const chatMsgEntity = this.messageEntityService.prepareRecievedMessage(
       //   res.from, dataContent.nickName, dataContent.m, (new Date()).getTime(), dataContent.ty, res.fp
@@ -389,7 +388,7 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
    * @private
    */
   private subscribeOfGroupChatMsgServerToB() {
-    this.messageDistributeService.MT45_OF_GROUP$CHAT$MSG_SERVER$TO$B$.subscribe((res: ProtocalModel) => {
+    SubscribeManage.run(this.messageDistributeService.MT45_OF_GROUP$CHAT$MSG_SERVER$TO$B$, (res: ProtocalModel) => {
       const dataContent: ProtocalModelDataContent = JSON.parse(res.dataContent);
       const ty = Number(dataContent.ty);
       switch (ty) {
@@ -401,7 +400,7 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public subscribeDeleteFriend() {
-    this.messageDistributeService.DELETE_FRIEND$.subscribe((res: ProtocalModel) => {
+    SubscribeManage.run(this.messageDistributeService.DELETE_FRIEND$, (res: ProtocalModel) => {
       // 拿到好友id
       const dataContent: any = JSON.parse(res.dataContent);
       const friendId: string = dataContent.userId;
@@ -447,7 +446,7 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
    */
   private subscribeGroupSystemMessage() {
     // 处理创建群/被邀请入群的指令
-    this.messageDistributeService.MT46_OF_GROUP$SYSCMD_MYSELF$BE$INVITE_FROM$SERVER$.subscribe((protocol: ProtocalModel) => {
+    SubscribeManage.run(this.messageDistributeService.MT46_OF_GROUP$SYSCMD_MYSELF$BE$INVITE_FROM$SERVER$,(protocol: ProtocalModel) => {
       const content = JSON.parse(protocol.dataContent);
       let text: string;
       if (content.g_owner_user_uid.toString() === this.localUserService.localUserInfo.userId.toString()) {
@@ -478,21 +477,21 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
 
     });
     // 处理通用的群系统指令
-    this.messageDistributeService.MT47_OF_GROUP$SYSCMD_COMMON$INFO_FROM$SERVER$.subscribe((protocol: ProtocalModel) => {
+    SubscribeManage.run(this.messageDistributeService.MT47_OF_GROUP$SYSCMD_COMMON$INFO_FROM$SERVER$, (protocol: ProtocalModel) => {
       const dataContent: any = JSON.parse(protocol.dataContent);
       const text: string = dataContent.m;
       this.snackBarService.openMessage(text);
       this.cacheService.saveSystemMessage(dataContent.t, text, protocol.sm, protocol.fp);
     });
     // 处理群名被更改的指令
-    this.messageDistributeService.MT51_OF_GROUP$SYSCMD_GROUP$NAME$CHANGED_FROM$SERVER$.subscribe((protocol: ProtocalModel) => {
+    SubscribeManage.run(this.messageDistributeService.MT51_OF_GROUP$SYSCMD_GROUP$NAME$CHANGED_FROM$SERVER$, (protocol: ProtocalModel) => {
       const dataContent: any = JSON.parse(protocol.dataContent);
       const text: string = dataContent.notificationContent;
       this.snackBarService.openMessage(text);
       this.cacheService.saveSystemMessage(dataContent.gid, text, protocol.sm, protocol.fp);
     });
     // 处理有人退群/被踢的逻辑
-    this.messageDistributeService.MT50_OF_GROUP$SYSCMD_SOMEONEB$REMOVED_FROM$SERVER$.subscribe((protocol: ProtocalModel) => {
+    SubscribeManage.run(this.messageDistributeService.MT50_OF_GROUP$SYSCMD_SOMEONEB$REMOVED_FROM$SERVER$, (protocol: ProtocalModel) => {
       const dataContent: any = JSON.parse(protocol.dataContent);
       const text: string = dataContent.m;
       this.snackBarService.openMessage(text);
@@ -507,12 +506,12 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
    */
   private subscribeFriendRequest() {
     // 添加好友后，收到服务器返回的错误信息
-    this.messageDistributeService.MT06_OF_ADD_FRIEND_REQUEST_RESPONSE$FOR$ERROR_SERVER$TO$A$.subscribe((protocol: ProtocalModel) => {
+    SubscribeManage.run(this.messageDistributeService.MT06_OF_ADD_FRIEND_REQUEST_RESPONSE$FOR$ERROR_SERVER$TO$A$, (protocol: ProtocalModel) => {
       const dataContent: any = protocol.dataContent;
       this.snackBarService.systemNotification(dataContent);
     });
     // 好友请求被同意
-    this.messageDistributeService.MT10_OF_PROCESS_ADD$FRIEND$REQ_FRIEND$INFO$SERVER$TO$CLIENT$.subscribe((protocol: ProtocalModel) => {
+    SubscribeManage.run(this.messageDistributeService.MT10_OF_PROCESS_ADD$FRIEND$REQ_FRIEND$INFO$SERVER$TO$CLIENT$, (protocol: ProtocalModel) => {
       const dataContent: any = JSON.parse(protocol.dataContent);
       const beRequestUser: string = dataContent.beRequestUser;
       const token: string = dataContent.token;
@@ -565,14 +564,14 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
     // 好友请求已经同意
-    this.messageDistributeService.MT10_OF_PROCESS_ADD$FRIEND$REQ_FRIEND$INFO$SERVER$TO$CLIENT$.subscribe((protocol: ProtocalModel) => {
+    SubscribeManage.run(this.messageDistributeService.MT10_OF_PROCESS_ADD$FRIEND$REQ_FRIEND$INFO$SERVER$TO$CLIENT$, (protocol: ProtocalModel) => {
       const dataContent: any = JSON.parse(protocol.dataContent);
       const friendInfo: FriendModel = dataContent.friendInfo;
       this.cacheService.updateNewFriendMap(friendInfo.friendUserUid, true);
       this.cacheService.cacheFriends().then();
     });
     // 好友请求被拒绝
-    this.messageDistributeService.MT12_OF_PROCESS_ADD$FRIEND$REQ_SERVER$TO$A_REJECT_RESULT$.subscribe((protocol: ProtocalModel) => {
+    SubscribeManage.run(this.messageDistributeService.MT12_OF_PROCESS_ADD$FRIEND$REQ_SERVER$TO$A_REJECT_RESULT$, (protocol: ProtocalModel) => {
       const dataContent: any = JSON.parse(protocol.dataContent);
       const beRequestUser: string = dataContent.beRequestUser;
       const friendInfo: FriendModel = dataContent.friendInfo;
@@ -587,7 +586,7 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     // 监听好友请求
-    this.messageDistributeService.MT07_OF_ADD_FRIEND_REQUEST_INFO_SERVER$TO$B$.subscribe(() => {
+    SubscribeManage.run(this.messageDistributeService.MT07_OF_ADD_FRIEND_REQUEST_INFO_SERVER$TO$B$, () => {
       this.cacheService.cacheNewFriends();
     });
 
@@ -656,7 +655,6 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.currentSubscription.unsubscribe();
   }
 
 

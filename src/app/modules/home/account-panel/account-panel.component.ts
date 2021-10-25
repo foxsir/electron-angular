@@ -38,6 +38,7 @@ import {ImService} from "@services/im/im.service";
 import {CurrentChattingChangeService} from "@services/current-chatting-change/current-chatting-change.service";
 import {ProtocalModel} from "@app/models/protocal.model";
 import {MessageDistributeService} from "@services/message-distribute/message-distribute.service";
+import SubscribeManage from "@app/common/subscribe-manage";
 // import icons end
 
 @Component({
@@ -168,6 +169,7 @@ export class AccountPanelComponent implements OnInit {
             this.currentChattingChangeService.switchCurrentChatting(null).then();
             sessionStorage.removeItem(RBChatUtils.COOKIE_KEY_AUTHED_LOCAL_USER_INFO_ID);
             ipcRenderer.removeAllListeners();
+            SubscribeManage.unsubscriptionAll();
           });
         });
       }
@@ -187,7 +189,7 @@ export class AccountPanelComponent implements OnInit {
    * @private
    */
   private subscribeLogOutMessage() {
-    this.messageDistributeService.LOG_OUTSourceSource$.subscribe((res: ProtocalModel) => {
+    SubscribeManage.run(this.messageDistributeService.LOG_OUTSourceSource$, (res: ProtocalModel) => {
       this.router.navigate(['/']).then(() => {
         this.restService.loginOut().subscribe(() => {
           this.imService.disconnectSocket();

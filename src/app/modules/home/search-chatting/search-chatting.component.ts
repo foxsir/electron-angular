@@ -11,6 +11,7 @@ import {Subscription} from "rxjs";
 import {DomSanitizer} from "@angular/platform-browser";
 import closeIcon from "@app/assets/icons/close.svg";
 import closeActiveIcon from "@app/assets/icons/close-active.svg";
+import SubscribeManage from "@app/common/subscribe-manage";
 
 @Component({
   selector: 'app-search-chatting',
@@ -33,8 +34,6 @@ export class SearchChattingComponent implements OnInit ,OnDestroy{
   public imageMap: Map<string, ChatmsgEntityModel> = new Map();
   public fileMap: Map<string, ChatmsgEntityModel> = new Map();
 
-  public currentSubscription: Subscription;
-
   constructor(
     private dom: DomSanitizer,
     private cacheService: CacheService,
@@ -45,7 +44,7 @@ export class SearchChattingComponent implements OnInit ,OnDestroy{
   ngOnInit(): void {
     this.loadImageAndFile();
 
-    this.currentSubscription = this.currentChattingChangeService.currentChatting$.subscribe(chatting => {
+    SubscribeManage.run(this.currentChattingChangeService.currentChatting$, chatting => {
       if(chatting) {
         this.chatting = chatting;
         this.loadImageAndFile();
@@ -104,6 +103,5 @@ export class SearchChattingComponent implements OnInit ,OnDestroy{
   }
 
   ngOnDestroy() {
-    this.currentSubscription.unsubscribe();
   }
 }

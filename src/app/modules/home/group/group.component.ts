@@ -11,6 +11,7 @@ import ChattingModel from "@app/models/chatting.model";
 import {LocalUserService} from "@services/local-user/local-user.service";
 import {DomSanitizer} from "@angular/platform-browser";
 import CommonTools from "@app/common/common.tools";
+import SubscribeManage from "@app/common/subscribe-manage";
 
 @Component({
   selector: 'app-group',
@@ -19,7 +20,6 @@ import CommonTools from "@app/common/common.tools";
 })
 export class GroupComponent implements OnInit, OnDestroy {
   public chattingGroup: GroupInfoModel[] = [];
-  private subscribe: Subscription;
   public groupOwnerIcon =  this.dom.bypassSecurityTrustResourceUrl(groupOwner);
 
 
@@ -39,7 +39,7 @@ export class GroupComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.subscribe = this.cacheService.cacheUpdate$.subscribe(cache => {
+    SubscribeManage.run(this.cacheService.cacheUpdate$, cache => {
 
       if (cache.groupMap) {
         this.chattingGroup = [];
@@ -74,7 +74,6 @@ export class GroupComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.subscribe.unsubscribe();
   }
 
 }

@@ -3,6 +3,7 @@ import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import FriendModel from "@app/models/friend.model";
 import {CacheService} from "@services/cache/cache.service";
 import {Subscription} from "rxjs";
+import SubscribeManage from "@app/common/subscribe-manage";
 
 
 @Component({
@@ -13,8 +14,6 @@ import {Subscription} from "rxjs";
 export class SelectFriendContactComponent implements OnInit, OnDestroy {
   public friendList: FriendModel[] = [];
   public filterFriend: string = "";
-
-  private subscribeFriendMap: Subscription;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: number[] = [],
@@ -32,7 +31,7 @@ export class SelectFriendContactComponent implements OnInit, OnDestroy {
       });
     });
 
-    this.subscribeFriendMap = this.cacheService.cacheUpdate$.subscribe((cache) => {
+    SubscribeManage.run(this.cacheService.cacheUpdate$, (cache) => {
       if(cache.friendMap) {
         this.friendList.forEach(friend => {
           friend.onlineStatus = cache.friendMap.get(friend.friendUserUid.toString()).onlineStatus;
@@ -74,6 +73,5 @@ export class SelectFriendContactComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.subscribeFriendMap.unsubscribe();
   }
 }

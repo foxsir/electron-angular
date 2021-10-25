@@ -35,6 +35,9 @@ import FriendModel from "@app/models/friend.model";
 import NewHttpResponseInterface from "@app/interfaces/new-http-response.interface";
 import {GlobalCache} from "@app/config/global-cache";
 import {ElectronService} from "@app/core/services";
+import {Subscription} from "rxjs";
+import CommonTools from "@app/common/common.tools";
+import SubscribeManage from "@app/common/subscribe-manage";
 
 // import svg end
 
@@ -630,17 +633,19 @@ export class IndexComponent implements OnInit {
     // 缓存黑名单
     this.cacheService.cacheBlackList();
     // 监听黑名单变化
-    this.messageDistributeService.PULLED_BLACK_LIST$.subscribe(() => {
+    SubscribeManage.run(this.messageDistributeService.PULLED_BLACK_LIST$, () => {
       this.cacheService.cacheBlackList();
     });
+
     // 缓存敏感词
     this.cacheService.sensitiveWordList();
     // 监听敏感词变化
-    this.messageDistributeService.SENSITIVE_WORD_UPDATE$.subscribe(() => {
+    SubscribeManage.run(this.messageDistributeService.SENSITIVE_WORD_UPDATE$, () => {
       this.cacheService.sensitiveWordList();
     });
+
     // 监听好友在线状态的更新
-    this.messageDistributeService.USER_ONLINE_STATUS_CHANGE$.subscribe((res: ProtocalModel) => {
+    SubscribeManage.run(this.messageDistributeService.USER_ONLINE_STATUS_CHANGE$, (res: ProtocalModel) => {
       const dataContent: any = JSON.parse(res.dataContent);
       const friendId: string = dataContent.userId;
       const onlineStatus: boolean = dataContent.onlineStatus;
@@ -651,7 +656,7 @@ export class IndexComponent implements OnInit {
     this.updateFriendRequestNumber();
 
     // 订阅新的好友通知
-    this.cacheService.cacheUpdate$.subscribe(cacheData => {
+    SubscribeManage.run(this.cacheService.cacheUpdate$, cacheData => {
       if (cacheData.newFriendMap) {
         this.updateFriendRequestNumber();
       }
@@ -671,7 +676,7 @@ export class IndexComponent implements OnInit {
     /**
      * 更新个人信息的指令
      */
-    this.messageDistributeService.USER_INFO_UPDATE$.subscribe(protocol => {
+    SubscribeManage.run(this.messageDistributeService.USER_INFO_UPDATE$,protocol => {
       this.cacheService.cacheMyInfo(this.localUserService.localUserInfo.userId).then();
     });
 

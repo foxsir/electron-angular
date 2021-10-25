@@ -22,6 +22,7 @@ import {GroupModel} from "@app/models/group.model";
 import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 import {DialogService} from "@services/dialog/dialog.service";
 import {Subscription} from "rxjs";
+import SubscribeManage from "@app/common/subscribe-manage";
 
 interface GroupMember {
   groupUserId: string;
@@ -51,8 +52,6 @@ export class CreateGroupComponent implements OnInit, OnDestroy {
   public selectedFriends: FriendModel[] = [];
   public defaultGroupName: string = "";
 
-  private subscribeFriendMap: Subscription;
-
   constructor(
     private router: Router,
     private dom: DomSanitizer,
@@ -67,13 +66,21 @@ export class CreateGroupComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getFriendList();
-    this.subscribeFriendMap = this.cacheService.cacheUpdate$.subscribe((cache) => {
+    SubscribeManage.run(this.cacheService.cacheUpdate$, (cache) => {
       if(cache.friendMap) {
         this.friendList.forEach(friend => {
           friend.onlineStatus = cache.friendMap.get(friend.friendUserUid.toString()).onlineStatus;
         });
       }
     });
+
+    // SubscribeManage.run(this.cacheService.cacheUpdate$,(cache) => {
+    //   if(cache.friendMap) {
+    //     this.friendList.forEach(friend => {
+    //       friend.onlineStatus = cache.friendMap.get(friend.friendUserUid.toString()).onlineStatus;
+    //     });
+    //   }
+    // });
   }
 
   /**
@@ -195,7 +202,6 @@ export class CreateGroupComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-      this.subscribeFriendMap.unsubscribe();
     }
 
 }
