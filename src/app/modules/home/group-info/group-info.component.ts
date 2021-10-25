@@ -466,8 +466,8 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
     this.dialogService.confirm({title: '成员移除', text: "确定要將「 "+item.showNickname+" 」移出群吗？"}).then(ok => {
       if(ok) {
         const userId = Number(item.userUid);
-        this.restService.removeGroupMembers(this.currentChat.alarmItem.dataId, this.userinfo.userUid,
-          [[this.currentChat.alarmItem.dataId, userId, item.showNickname]]
+        this.restService.removeGroupMembers(this.currentChat.alarmItem.dataId, this.localUserService.localUserInfo.userId.toString(),
+          [[this.currentChat.alarmItem.dataId, userId.toString(), item.showNickname]]
         ).subscribe((res: HttpResponseInterface) => {
           if(res.success === true) {
             this.snackBarService.openMessage('删除成功');
@@ -613,42 +613,25 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
                 del_opr_nickname: this.userinfo.nickname,
                 gid: alarmItem.dataId,
                 members: [
-                    [alarmItem.dataId, this.userinfo.userId, this.userinfo.nickname]
+                    [alarmItem.dataId, this.userinfo.userId.toString(), this.userinfo.nickname]
                 ],
-                del_opr_uid: this.userinfo.userId,
+                del_opr_uid: this.userinfo.userId.toString()
             };
 
+            // 退群调用接口即可,不用发送消息
             this.restService.exitGroup(post_data).subscribe(res => {
-                if (res.success == false) {
-                    return;
-                }
-                console.log('退出成功，发送通知消息...');
-
-                var imdata = {
-                    bridge: false,
-                    dataContent: {
-                        "nickName": this.userinfo.nickname,
-                        "uh": this.userinfo.userAvatarFileName, "f": this.userinfo.userId,
-                        "t": alarmItem.dataId,
-                        "m": this.userinfo.nickname + "已退出本群",
-                        "cy": 2, "ty": 90, "sync": "0"
-                    },
-                    fp: '', from: this.userinfo.userId, to: alarmItem.dataId,
-                    QoS: true, sm: -1, type: 2, typeu: 50,
-                    recvTime: 0, "sync": "0"
-                };
-                this.messageService.sendCustomerMessage(imdata).then(res2 => {
-                    if (res2.success === true) {
-                        this.dialogService.alert({ title: '退出成功！'}).then((done) => {
-                          this.cacheService.deleteData<ChattingModel>({model: "chatting", query: {dataId: alarmItem.dataId}}).then(() => {
-                            this.cacheService.deleteChattingCache(alarmItem.dataId).then(() => {
-                              return this.currentChattingChangeService.switchCurrentChatting(null);
-                            });
-                          });
-                        });
-                    }
-                });
-
+              if (res.success == false) {
+                return this.snackBarService.openMessage("退群失败,请重试");
+              }else {
+                this.snackBarService.openMessage("退群成功");
+                this.drawer.close().then();
+                // 删除会话
+                this.cacheService.deleteChattingCache(this.currentChat.alarmItem.dataId).then(() => {});
+                // 清空历史消息
+                this.cacheService.clearChattingCache(this.currentChat).then(() => {});
+                // 从我的群组列表中删除
+                this.cacheService.deleteData<GroupModel>({model: 'group', query: {gid: this.currentChat.alarmItem.dataId}}).then();
+              }
             });
         });
     }

@@ -1199,7 +1199,7 @@ export class RestService {
    */
   removeGroupMembers(gid: string, del_opr_uid: string, members: unknown[]) {
     const post = {
-      // del_opr_nickname: '', // 操作人昵称
+      del_opr_nickname: this.localUserService.localUserInfo.nickname, // 操作人昵称
       gid: gid, // 群id
       doInput: true,
       members: members,
