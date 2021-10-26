@@ -38,7 +38,6 @@ export class MySignatureComponent implements OnInit {
     private cacheService: CacheService,
   ) {
     this.cacheService.getMyInfo().then(info => {
-      console.dir(info);
       this.whatSUp = info.whatSUp;
     });
   }
