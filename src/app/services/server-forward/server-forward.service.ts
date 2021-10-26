@@ -18,6 +18,7 @@ export class ServerForwardService {
     [MsgType.TYPE_SYSTEAM$INFO]: this.systemMessage.bind(this),
     [MsgType.TYPE_READED]: this.readStatus.bind(this),
     [MsgType.TYPE_GETREDBAG]: this.getRedbag.bind(this),
+    [MsgType.TYPE_TRANSFER_MONEY]: this.transferMoney.bind(this),
   };
 
   constructor(
@@ -28,7 +29,6 @@ export class ServerForwardService {
   ) { }
 
   private backMessage(res: ProtocalModel) {
-    console.dir("撤回消息");
     const dataContent: ProtocalModelDataContent = JSON.parse(res.dataContent);
     const msg = JSON.parse(dataContent.m);
     const chatType = dataContent.cy === 0 ? 'friend' : 'group';
@@ -145,6 +145,16 @@ export class ServerForwardService {
         });
       });
     });
+  }
+
+  /**
+   * 处理转账消息
+   * @param res
+   * @private
+   */
+  private transferMoney(res: ProtocalModel) {
+    const dataContent: ProtocalModelDataContent = JSON.parse(res.dataContent);
+    this.cacheService.saveSystemMessage(dataContent.f, "转账消息请在手机上查看", res.sm, res.fp);
   }
 
 }
