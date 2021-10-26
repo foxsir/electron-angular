@@ -38,7 +38,7 @@ export class SessionService {
         const userInfo = res.data;
         this.localUserService.update(userInfo);
         this.cacheService.connectionDB(userInfo.userId.toString()).then((connect) => {
-          this.cacheService.cacheMyInfo(userInfo.userId).then(() => {
+          this.cacheService.cacheMyInfo().then(() => {
             // 使用缓存中的头像
             this.cacheService.getMyInfo().then((myInfo: UserModel) => {
               this.updateLocalUserInfo(myInfo);
@@ -82,7 +82,7 @@ export class SessionService {
       user_mail: data.userMail,
       user_phone: data.userPhone,
       user_sex: data.userSex,
-      whatsUp: data.whatSUp,
+      whatSUp: data.whatSUp,
     };
     this.localUserService.update( Object.assign(local, this.localUserService.localUserInfo) );
   }

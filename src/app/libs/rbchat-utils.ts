@@ -263,7 +263,7 @@ export default class RBChatUtils {
     ////　debug
     //var localUerInfo = getAuthedLocalUserInfoFromCookie();
     //if(localUerInfo)
-    //    RBChatUtils.logToConsole('>>>>>>>>>>>>>>>>>>>>>>>>>>> '+localUerInfo.whatsUp);
+    //    RBChatUtils.logToConsole('>>>>>>>>>>>>>>>>>>>>>>>>>>> '+localUerInfo.whatSUp);
 
 
     //    1111为了适应electron 改造成sessionStorage

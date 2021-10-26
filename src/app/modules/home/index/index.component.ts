@@ -677,7 +677,7 @@ export class IndexComponent implements OnInit {
      * 更新个人信息的指令
      */
     SubscribeManage.run(this.messageDistributeService.USER_INFO_UPDATE$,protocol => {
-      this.cacheService.cacheMyInfo(this.localUserService.localUserInfo.userId).then();
+      this.cacheService.cacheMyInfo().then();
     });
 
     this.listenNetStatus();

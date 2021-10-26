@@ -361,13 +361,13 @@ export class RestService {
   /**
    * 【接口1008-1-25】更新昵称、性别、个性签名、个人其它说明的综合接口.
    */
-  submitUserInfoModifiyToServer(newNickname, newSex, newWhatsup, newOthercaption, uid) {
+  submitUserInfoModifiyToServer(newNickname, newSex, newwhatSUp, newOthercaption, uid) {
 
     // 要提交给服务端的参数
     const m = {
       nickName: newNickname,    // 修改后的昵称
       sex: newSex,         // 修改后的性别
-      whats_up: newWhatsup,     // 修改后的个性签名
+      whats_up: newwhatSUp,     // 修改后的个性签名
       user_desc: newOthercaption,// 修改后的其它说明
       uid             // 被修改者的uid
     };
@@ -384,7 +384,7 @@ export class RestService {
    * @fnForSucess DataFromServer中sucess参数：true表示本次接口成功完成、否则表失败，
    *            returnValue：1 表示更新成功，否则失败。具体返回值详见接口文档！
    */
-  submitUserWhatsUpModifiyToServer(localUid, whats_up) {
+  submitUserwhatSUpModifiyToServer(localUid, whats_up) {
 
     // 要提交给服务端的参数
     const m = {

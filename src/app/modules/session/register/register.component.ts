@@ -189,7 +189,7 @@ export class RegisterComponent implements OnInit {
       user_mail: data.userMail,
       user_phone: data.userPhone,
       user_sex: data.userSex,
-      whatsUp: data.whatSUp,
+      whatSUp: data.whatSUp,
     };
     this.localUserService.update( Object.assign(local, this.localUserService.localUserInfo) );
 

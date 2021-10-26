@@ -66,7 +66,7 @@ export default class LocalUserinfoModel extends BaseEntity {
   web_liveStatus: number = 0;
 
   @Column({nullable: true})
-  whatsUp: string = "";
+  whatSUp: string = "";
 
   @Column({nullable: true})
   token: string = "";

@@ -626,7 +626,7 @@ export class CacheService extends DatabaseService {
   /**
    * 缓存个人信息
    */
-  cacheMyInfo(userId: number = null): Promise<UserModel> {
+  cacheMyInfo(): Promise<UserModel> {
     return new Promise((resolve, reject) => {
       const localUserInfo = this.localUserService.localUserInfo;
       this.restService.getUserBaseById(localUserInfo.userId.toString()).subscribe((res: NewHttpResponseInterface<UserModel>) => {

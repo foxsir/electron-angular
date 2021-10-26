@@ -19,6 +19,6 @@ export default class LocalUserinfoModel {
   // user_uid: string;
   userId: number;
   web_liveStatus: number;
-  whatsUp: string;
+  whatSUp: string;
   token: string;
 }

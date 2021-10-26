@@ -133,10 +133,21 @@ export class AccountPanelComponent implements OnInit {
       }
     });
 
-    //todo 保存到缓存中并做到界面数据实时更新
+    // todo 保存到缓存中并做到界面数据实时更新
     this.restService.getUserBaseById(this.localUserInfo.userId.toString()).subscribe(res => {
       console.log('MySignatureComponent result: ', res);
-      this.localUserInfo.whatsUp = res.data.whatSUp;
+      this.localUserInfo.whatSUp = res.data.whatSUp;
+    });
+
+    SubscribeManage.run(this.cacheService.cacheUpdate$, cache => {
+      if(cache.myInfo) {
+        console.dir(cache.myInfo);
+        console.dir(cache.myInfo);
+        console.dir(cache.myInfo);
+        console.dir(cache.myInfo);
+        console.dir(cache.myInfo);
+        this.localUserInfo = cache.myInfo;
+      }
     });
   }
 

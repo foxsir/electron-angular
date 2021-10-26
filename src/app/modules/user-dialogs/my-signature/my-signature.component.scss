@@ -1,29 +1,45 @@
-.my-signature-component{
-    .martop1{
-        margin-top:20px;
-    }
+.my-signature-component {
+  .martop1 {
+    margin-top: 20px;
+  }
 
-    .martop2{
-        margin-top:25px;
-        text-align:right;
-    }
+  .martop2 {
+    margin-top: 25px;
+    text-align: right;
+  }
 
-    .txtcom{
-        border:none;
-        border-bottom:1px solid #dddddd;
-    }
+  .txtcom {
+    border: none;
+    border-bottom: 1px solid #dddddd;
+  }
 
-    .btncancel{
-        padding-left:0px;
-        padding-right:0px;
-    }
+  .btncancel {
+    padding-left: 0px;
+    padding-right: 0px;
+  }
 
-    .btnsave{
-        padding-left:0px;
-        padding-right:0px;
-        margin-left:20px;
-    }
-  .txtcom{border-radius: 0;padding-left: 5px; line-height: 30px;outline:none;}
-  .txtcom:focus{outline:none;}
-  .txtcom::-webkit-input-placeholder {color: #ccc; letter-spacing: 1px;font-size: 15px; font-weight: 100;color: #CCC}
+  .btnsave {
+    padding-left: 0px;
+    padding-right: 0px;
+    margin-left: 20px;
+  }
+
+  .txtcom {
+    border-radius: 0;
+    padding-left: 5px;
+    line-height: 30px;
+    outline: none;
+  }
+
+  .txtcom:focus {
+    outline: none;
+  }
+
+  .txtcom::-webkit-input-placeholder {
+    color: #ccc;
+    letter-spacing: 1px;
+    font-size: 15px;
+    font-weight: 100;
+    color: #CCC
+  }
 }
