@@ -94,8 +94,6 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
 
   private tempList = [];
 
-  public currentSubscription: Subscription;
-
   private inputEnableStatus = true;
 
   constructor(
@@ -860,7 +858,6 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
   }
 
   ngOnDestroy() {
-    this.currentSubscription.unsubscribe();
   }
 
 }
