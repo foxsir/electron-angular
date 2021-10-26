@@ -362,7 +362,10 @@ const MsgType = {
   TYPE_QUOTE: 19,
 
   /** 转账 */
-  TYPE_TRANSFER_MONEY: 17
+  TYPE_TRANSFER_MONEY: 17,
+
+  /** 群管理員变更 */
+  TYPE_GROUP_ADMIN: 14
 };
 
 
