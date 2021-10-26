@@ -445,15 +445,13 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
       choose_type:choose_type
     };
     this.dialogService.openDialog(GroupInfoDialogComponent, { data: data,width: '314px',panelClass: "padding-less-dialog" }).then((res: any) => {
-      if (res.ok == false) {
-        return;
-      }
-
-      if (choose_type == 'transfer') {
-        this.drawer.close().then();
-        this.restService.submitTransferGroupToServer(this.userinfo.userId.toString(), res.item.userUid, res.item.showNickname, this.currentChat.alarmItem.dataId).subscribe(res => {
-          this.user_role = 'common';
-        });
+      if (res && res.ok === true) {
+        if (choose_type == 'transfer') {
+          this.drawer.close().then();
+          this.restService.submitTransferGroupToServer(this.userinfo.userId.toString(), res.item.userUid, res.item.showNickname, this.currentChat.alarmItem.dataId).subscribe(res => {
+            this.user_role = 'common';
+          });
+        }
       }
     });
   }
