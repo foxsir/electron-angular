@@ -259,8 +259,8 @@ export class CacheService extends DatabaseService {
         if(list.get(dataId)) {
           // 从列表删除
           list.delete(dataId);
-          this.cacheSource.next({alarmDataMap: list});
           this.deleteData<ChattingModel>({model: "chatting", query: {dataId: dataId}}).then(() => {
+            this.cacheSource.next({alarmDataMap: list});
             resolve(true);
           });
         }
