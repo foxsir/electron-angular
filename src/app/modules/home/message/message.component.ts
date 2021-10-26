@@ -415,7 +415,7 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
         });
         // 删除聊天界面
         console.log("当前会话是:", this.currentChat);
-        if (this.currentChat && this.currentChat.alarmItem.dataId == friendId) {
+        if (this.currentChat && this.currentChat.alarmItem.dataId === friendId) {
           this.currentChattingChangeService.switchCurrentChatting(null).then();
         }
         // 从我好友里里删除
@@ -489,6 +489,15 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
       const text: string = dataContent.notificationContent;
       this.snackBarService.openMessage(text);
       this.cacheService.saveSystemMessage(dataContent.gid, text, protocol.sm, protocol.fp);
+
+      this.cacheService.getChattingList().then(list => {
+        const chatting = list.get(dataContent.gid.toString());
+        if(chatting) {
+          chatting.alarmData.alarmItem.title = dataContent.nnewGroupName;
+          this.cacheService.putChattingCache(chatting.alarmData).then();
+        }
+      });
+
     });
     // 处理有人退群/被踢的逻辑
     SubscribeManage.run(this.messageDistributeService.MT50_OF_GROUP$SYSCMD_SOMEONEB$REMOVED_FROM$SERVER$, (protocol: ProtocalModel) => {
