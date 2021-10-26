@@ -1310,9 +1310,15 @@ export class CacheService extends DatabaseService {
     this.saveDataSync<ChatmsgEntityModel>({
       model: "chatmsgEntity", data: chatMsgEntity, update: null
     }).then(() => {
-      this.getChattingList().then(list => {
-        this.cacheSource.next({alarmDataMap: list});
-      });
+      setTimeout(() => {
+        this.getChattingList().then(list => {
+          const chatting = list.get(dataId.toString());
+          if(chatting) {
+            chatting.alarmData.alarmItem.msgContent = content;
+            this.putChattingCache(chatting.alarmData).then();
+          }
+        });
+      }, 200);
     });
   }
 
