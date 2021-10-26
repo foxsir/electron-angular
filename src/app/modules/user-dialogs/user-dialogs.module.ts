@@ -35,25 +35,27 @@ import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 import {NzInputNumberModule} from "ng-zorro-antd/input-number";
 import {GroupNoticeComponent} from "./group-notice/group-notice.component";
 import { PreviewMediaComponent } from './preview-media/preview-media.component';
+import { AddFriendComponent } from './add-friend/add-friend.component';
 
 @NgModule({
     declarations: [
-        QrCodeComponent,
-        PrivacySettingComponent,
-        MySignatureComponent,
-        UpdatePasswordComponent,
-        RedPocketComponent,
-        GroupInfoDialogComponent,
-        UserInfoComponent,
-        SetRemarkComponent,
-        UserSilenceComponent,
-        TransmitMessageComponent,
-        UserContactCardComponent,
-        SelectFriendContactComponent,
-        RedBagComponent,
-        MyFriendGroupComponent,
-        GroupNoticeComponent,
-        PreviewMediaComponent
+      AddFriendComponent,
+      QrCodeComponent,
+      PrivacySettingComponent,
+      MySignatureComponent,
+      UpdatePasswordComponent,
+      RedPocketComponent,
+      GroupInfoDialogComponent,
+      UserInfoComponent,
+      SetRemarkComponent,
+      UserSilenceComponent,
+      TransmitMessageComponent,
+      UserContactCardComponent,
+      SelectFriendContactComponent,
+      RedBagComponent,
+      MyFriendGroupComponent,
+      GroupNoticeComponent,
+      PreviewMediaComponent
     ],
     exports: [
         PrivacySettingComponent
