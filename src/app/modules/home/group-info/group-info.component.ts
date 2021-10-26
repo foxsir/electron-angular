@@ -286,12 +286,12 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
       this.restService.updateGroupBaseById(data).subscribe();
       // 如果开启了全体禁言,需要单独发个消息
       if (key == 'gmute') {
-        const notificationContent = this.setting_data[key]?"全体已被禁言了":"全体已被解禁了";
+        const notificationContent = this.setting_data[key]?"全体已被禁言":"全体已被解禁了";
         const messageText = {
           isBanned:this.setting_data[key],
           banTime:0,
           sendId: this.localUserService.localUserInfo.userId,
-          msg:this.setting_data[key]?"全体已被禁言了":"全体已被解禁了",
+          msg:this.setting_data[key]?"全体已被禁言":"全体已被解禁",
           adminId:this.localUserService.localUserInfo.userId,
           uuid:0
         };
