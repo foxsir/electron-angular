@@ -196,11 +196,18 @@ export class CacheService extends DatabaseService {
   deleteMessageCache(alarmData: AlarmItemInterface, messages: ChatmsgEntityModel[] = null): Promise<any> {
     return new Promise((resolve) => {
       this.getChattingList().then(list => {
-        messages.forEach(msg => {
-          this.deleteData<ChatmsgEntityModel>({model: 'chatmsgEntity', query: {fingerPrintOfProtocal: msg.fingerPrintOfProtocal}}).then();
+        messages.forEach((msg, index) => {
+          this.deleteData<ChatmsgEntityModel>({
+            model: 'chatmsgEntity', query: {fingerPrintOfProtocal: msg.fingerPrintOfProtocal}
+          }).then(() => {
+            this.chatMsgEntityMap.delete(msg.fingerPrintOfProtocal);
+            if((index+1) === messages.length) {
+              this.putMsgEntityMap();
+              this.cacheSource.next({alarmDataMap: list});
+              resolve(true);
+            }
+          });
         });
-        this.cacheSource.next({alarmDataMap: list});
-        resolve(true);
       });
     });
   }
