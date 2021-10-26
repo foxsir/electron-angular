@@ -920,7 +920,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
 
   loadGroupData(){
     this.restService.getGroupBaseById(this.currentChat.alarmItem.dataId).subscribe((group_data: NewHttpResponseInterface<GroupModel>) => {
-      if (group_data.data.tabSwitch === 1) {
+      if (group_data.status === 200 && group_data.data && group_data.data.tabSwitch === 1) {
         /*获取群页签列表*/
         this.restService.getUserGroupTab(this.currentChat.alarmItem.dataId).subscribe(
           (tab_data: NewHttpResponseInterface<GroupTabModel[]>
@@ -937,7 +937,10 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
           list: []
         };
       }
-      this.groupData.gnotice = group_data.data.gnotice == null ? '' : group_data.data.gnotice;
+      this.groupData.gnotice = "";
+      if(group_data.status === 200 && group_data.data) {
+        this.groupData.gnotice = group_data.data.gnotice == null ? '' : group_data.data.gnotice;
+      }
       this.groupData.gnotice_visible = true;
 
       this.groupData.gtopContent = group_data.data.gtopContent == null ? '' : group_data.data.gtopContent;
