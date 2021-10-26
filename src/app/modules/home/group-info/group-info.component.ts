@@ -282,9 +282,25 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
       var data = {
         gid: this.currentChat.alarmItem.dataId
       };
-      data[key] = this.setting_data[key] == true ? 1 : 0,
-
-        this.restService.updateGroupBaseById(data).subscribe();
+      data[key] = this.setting_data[key] == true ? 1 : 0;
+      this.restService.updateGroupBaseById(data).subscribe();
+      // 如果开启了全体禁言,需要单独发个消息
+      if (key == 'gmute') {
+        const notificationContent = this.setting_data[key]?"全体已被禁言了":"全体已被解禁了";
+        const messageText = {
+          isBanned:this.setting_data[key],
+          banTime:0,
+          sendId: this.localUserService.localUserInfo.userId,
+          msg:this.setting_data[key]?"全体已被禁言了":"全体已被解禁了",
+          adminId:this.localUserService.localUserInfo.userId,
+          uuid:0
+        };
+        this.messageService.sendGroupMessage(MsgType.TYPE_NOTALK, this.currentChat.alarmItem.dataId, JSON.stringify(messageText), []).then(res => {
+          if(res.success === true) {
+            // 暂时不做任何处理
+          }
+        });
+      }
     }
   }
 
