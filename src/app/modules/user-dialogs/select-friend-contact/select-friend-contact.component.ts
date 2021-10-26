@@ -19,7 +19,10 @@ export class SelectFriendContactComponent implements OnInit, OnDestroy {
     @Inject(MAT_DIALOG_DATA) public data: number[] = [],
     private dialogRef: MatDialogRef<SelectFriendContactComponent>,
     private cacheService: CacheService,
-  ) {}
+  ) {
+    // 订阅好友在线状态
+    this.subscribeFriendList();
+  }
 
   ngOnInit(): void {
     this.cacheService.getCacheFriends().then((data: Map<string, FriendModel>) => {
@@ -70,6 +73,16 @@ export class SelectFriendContactComponent implements OnInit, OnDestroy {
       selectfriends: selectfriends,
     }; console.dir(result);
     this.dialogRef.close(result);
+  }
+
+  private subscribeFriendList(){
+    SubscribeManage.run(this.cacheService.cacheUpdate$, (cache) => {
+      if(cache.friendMap) {
+        this.friendList.forEach(friend => {
+          friend.onlineStatus = cache.friendMap.get(friend.friendUserUid.toString()).onlineStatus;
+        });
+      }
+    });
   }
 
   ngOnDestroy() {
