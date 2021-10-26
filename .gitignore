@@ -10,6 +10,7 @@ main.js
 src/**/*.js
 app/entitys/*.js
 app/*.js
+app/temp/*.amr
 !src/karma.conf.js
 *.js.map
 
