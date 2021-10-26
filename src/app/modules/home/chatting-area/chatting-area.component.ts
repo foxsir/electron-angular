@@ -836,7 +836,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
         this.cacheService.chatMsgEntityMap = new Map([...appendAfter, ...this.cacheService.chatMsgEntityMap]);
         this.cacheService.chatMsgEntityList = new Array(...this.cacheService.chatMsgEntityMap).flatMap(t => t[1]);
 
-        if(last.length > 0) {
+        if(last.length > 0 && this.virtualScroll) {
           this.virtualScroll.scrollToBottom('auto');
         }
 
@@ -940,11 +940,11 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
       this.groupData.gnotice = "";
       if(group_data.status === 200 && group_data.data) {
         this.groupData.gnotice = group_data.data.gnotice == null ? '' : group_data.data.gnotice;
+        this.groupData.gtopContent = group_data.data.gtopContent == null ? '' : group_data.data.gtopContent;
+        this.groupData.gtopContent_visible = group_data.data.topContentSwitch===1?true:false;
       }
       this.groupData.gnotice_visible = true;
 
-      this.groupData.gtopContent = group_data.data.gtopContent == null ? '' : group_data.data.gtopContent;
-      this.groupData.gtopContent_visible = group_data.data.topContentSwitch===1?true:false;
 
       let gnotice_length = this.groupData.gnotice.length;
       let gtopContent_length = this.groupData.gtopContent.length;
