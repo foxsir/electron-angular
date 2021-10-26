@@ -11,7 +11,6 @@ import NewHttpResponseInterface from "@app/interfaces/new-http-response.interfac
 import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 import {MatDialogRef} from "@angular/material/dialog";
 import {CacheService} from "@services/cache/cache.service";
-import {LocalUserService} from "@services/local-user/local-user.service";
 
 @Component({
   selector: 'app-my-signature',
@@ -33,7 +32,6 @@ export class MySignatureComponent implements OnInit {
     private dialogRef: MatDialogRef<MySignatureComponent, boolean>,
     private dom: DomSanitizer,
     private restService: RestService,
-    private localUserService: LocalUserService,
     private snackBarService: SnackBarService,
     private cacheService: CacheService,
   ) {
@@ -55,9 +53,7 @@ export class MySignatureComponent implements OnInit {
       if (res.status === 200) {
         this.snackBarService.openMessage('修改完成');
         this.dialogRef.close(true);
-        this.cacheService.cacheMyInfo().then(info => {
-          this.localUserService.update(info);
-        });
+        this.cacheService.cacheMyInfo().then();
       }
     });
   }

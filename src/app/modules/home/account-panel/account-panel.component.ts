@@ -141,11 +141,6 @@ export class AccountPanelComponent implements OnInit {
 
     SubscribeManage.run(this.cacheService.cacheUpdate$, cache => {
       if(cache.myInfo) {
-        console.dir(cache.myInfo);
-        console.dir(cache.myInfo);
-        console.dir(cache.myInfo);
-        console.dir(cache.myInfo);
-        console.dir(cache.myInfo);
         this.localUserInfo = cache.myInfo;
       }
     });

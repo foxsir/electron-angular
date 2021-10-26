@@ -38,6 +38,7 @@ import BlackMeListModel from "@app/models/black-me-list.model";
 import {GlobalCache} from "@app/config/global-cache";
 import GroupInfoModel from "@app/models/group-info.model";
 import {ElectronService} from "@app/core/services";
+import LocalUserinfoModel from "@app/models/local-userinfo.model";
 
 export type AlarmDataMap = Map<string, {alarmData: AlarmItemInterface; message?: Map<string, ChatmsgEntityModel>}>;
 
@@ -47,7 +48,7 @@ interface CacheItem {
   groupMap: Map<string, GroupModel>; // 我的群组
   groupAdminMap: Map<string, GroupAdminModel>; // 群组管理员
   groupMemberMap: Map<string, GroupMemberModel>; // 群组成员
-  myInfo: UserModel; // 当前用户信息
+  myInfo: LocalUserinfoModel; // 当前用户信息
   muteMap: Map<string, boolean>; // 静音的会话
   topMap: Map<string, boolean>; // 置顶的会话
   blackListMap: Map<string, BlackListModel>; // 黑名单
@@ -634,7 +635,8 @@ export class CacheService extends DatabaseService {
           const data = res.data;
           data.userLevel = JSON.stringify(data.userLevel);
           this.saveDataSync<UserModel>({model: "user", data: data, update: {userUid: data.userUid}}).then(() => {
-            this.cacheSource.next({myInfo: res.data});
+            this.localUserService.updateLocalUserInfo(res.data);
+            this.cacheSource.next({myInfo: this.localUserService.localUserInfo});
             resolve(res.data);
           });
         }

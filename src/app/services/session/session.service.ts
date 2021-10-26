@@ -41,7 +41,7 @@ export class SessionService {
           this.cacheService.cacheMyInfo().then(() => {
             // 使用缓存中的头像
             this.cacheService.getMyInfo().then((myInfo: UserModel) => {
-              this.updateLocalUserInfo(myInfo);
+              this.localUserService.updateLocalUserInfo(myInfo);
               this.snackBarService.openMessage("正在登录...");
               setTimeout(() => {
                 this.router.navigate(["/home"]).then(() => {
@@ -66,25 +66,6 @@ export class SessionService {
         this.snackBarService.openMessage(res.msg);
       }
     });
-  }
-
-  updateLocalUserInfo(data: UserModel) {
-    const local: Partial<LocalUserinfoModel> = {
-      latest_login_ip: data.latestLoginIp,
-      latest_login_time: null,
-      login: true,
-      maxFriend: data.maxFriend,
-      nickname: data.nickname,
-      online: data.online,
-      userAvatarFileName: data.userAvatarFileName,
-      userDesc: data.whatSUp,
-      userType: data.userType,
-      user_mail: data.userMail,
-      user_phone: data.userPhone,
-      user_sex: data.userSex,
-      whatSUp: data.whatSUp,
-    };
-    this.localUserService.update( Object.assign(local, this.localUserService.localUserInfo) );
   }
 
 
