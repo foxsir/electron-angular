@@ -13,6 +13,7 @@ import { RestService } from "@services/rest/rest.service";
 import { DemoDialogComponent } from "@modules/setting-dialogs/demo-dialog/demo-dialog.component";
 import { DialogService } from "@services/dialog/dialog.service";
 import { GroupInfoDialogComponent } from "@modules/user-dialogs/group-info-dialog/group-info-dialog.component";
+import { UserInfoComponent } from "@modules/user-dialogs/user-info/user-info.component";
 import { LocalUserService } from "@services/local-user/local-user.service";
 import { CacheService } from "@services/cache/cache.service";
 import { SelectFriendContactComponent } from "@modules/user-dialogs/select-friend-contact/select-friend-contact.component";
@@ -28,6 +29,7 @@ import {Subscription} from "rxjs";
 import {AvatarService} from "@services/avatar/avatar.service";
 import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 import {RBChatConfig, MsgType,UserProtocalsType} from "@app/config/rbchat-config";
+import FriendModel from "@app/models/friend.model";
 
 import {InputAreaComponent} from "@app/modules/home/input-area/input-area.component";
 import {ProtocalModel} from "@app/models/protocal.model";
@@ -686,6 +688,14 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
         }
 
       })
+    });
+  }
+
+  //联系群主，弹出群主个人信息窗
+  contactGroupOwner() {
+    return this.dialogService.openDialog(UserInfoComponent, {
+      data: {userId: Number(this.groupData.gownerUserUid)},
+      panelClass: "padding-less-dialog",
     });
   }
 }
