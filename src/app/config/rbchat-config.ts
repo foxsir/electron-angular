@@ -359,7 +359,10 @@ const MsgType = {
   TYPE_VOICE_CALL: 21,
 
   /** 回复类型 */
-  TYPE_QUOTE: 19
+  TYPE_QUOTE: 19,
+
+  /** 回复类型 */
+  TYPE_TRANSFER_MONEY: 17
 };
 
 
