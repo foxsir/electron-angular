@@ -1,9 +1,9 @@
 import {ipcMain} from 'electron';
 const fs = require('fs')
 const ffmpeg = require('fluent-ffmpeg');
-// const ffmpegInstaller = require('@ffmpeg-installer/ffmpeg');
+const ffmpegInstaller = require('@ffmpeg-installer/ffmpeg');
 const fetch = require('node-fetch');
-// ffmpeg.setFfmpegPath(ffmpegInstaller.path);
+ffmpeg.setFfmpegPath(ffmpegInstaller.path);
 
 interface FormatParams {
   url: string;
