@@ -1300,7 +1300,7 @@ export class CacheService extends DatabaseService {
    * @param timestamp 时间戳
    * @param fp 消息指纹
    */
-  saveSystemMessage(dataId: number, content: string, timestamp: number, fp: string) {
+  saveSystemMessage(dataId: string, content: string, timestamp: number, fp: string) {
     const chatMsgEntity: ChatmsgEntityModel = this.messageEntityService.prepareRecievedMessage(
       dataId.toString(), "", content, timestamp, 0, ""
     );
@@ -1313,7 +1313,7 @@ export class CacheService extends DatabaseService {
       // this.chatMsgEntityMap.set(chatMsgEntity.fingerPrintOfProtocal, chatMsgEntity);
       this.putMsgEntityMap(chatMsgEntity);
     }
-    console.log(chatMsgEntity);
+
     this.saveDataSync<ChatmsgEntityModel>({
       model: "chatmsgEntity", data: chatMsgEntity, update: null
     }).then(() => {

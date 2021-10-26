@@ -6,6 +6,7 @@ import {CurrentChattingChangeService} from "@services/current-chatting-change/cu
 import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 import {MessageEntityService} from "@services/message-entity/message-entity.service";
 import {LocalUserService} from "@services/local-user/local-user.service";
+import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +20,7 @@ export class ServerForwardService {
     [MsgType.TYPE_READED]: this.readStatus.bind(this),
     [MsgType.TYPE_GETREDBAG]: this.getRedbag.bind(this),
     [MsgType.TYPE_TRANSFER_MONEY]: this.transferMoney.bind(this),
+    [MsgType.TYPE_GROUP_ADMIN]: this.groupAdminUpdate.bind(this),
   };
 
   constructor(
@@ -26,6 +28,7 @@ export class ServerForwardService {
     private currentChattingChangeService: CurrentChattingChangeService,
     private messageEntityService: MessageEntityService,
     private localUserService: LocalUserService,
+    private snackBarService: SnackBarService,
   ) { }
 
   private backMessage(res: ProtocalModel) {
@@ -154,7 +157,20 @@ export class ServerForwardService {
    */
   private transferMoney(res: ProtocalModel) {
     const dataContent: ProtocalModelDataContent = JSON.parse(res.dataContent);
-    this.cacheService.saveSystemMessage(dataContent.f, "转账消息请在手机上查看", res.sm, res.fp);
+    this.cacheService.saveSystemMessage(dataContent.f.toString(), "转账消息请在手机上查看", res.sm, res.fp);
+  }
+
+  private  groupAdminUpdate(res: ProtocalModel){
+    console.dir(res);
+    const dataContent: ProtocalModelDataContent[] = JSON.parse(res.dataContent);
+    console.dir(dataContent);
+    const msg=JSON.parse(dataContent[0].m);
+    console.dir(msg)
+    const txtMsg="\""+msg.nicNames[0]+"\""+(msg.nicNames.length>1?"等"+msg.nicNames.length.toString()+"人":"")+
+                  (msg.type === 1?"成为":"被取消")+"管理员";
+
+    console.dir(txtMsg);
+    this.cacheService.saveSystemMessage(dataContent[0].t, txtMsg, res.sm, res.fp);
   }
 
 }
