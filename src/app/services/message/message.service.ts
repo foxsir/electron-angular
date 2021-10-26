@@ -103,7 +103,7 @@ export class MessageService {
         break;
 
       case MsgType.TYPE_REDBAG: //111 新增红包
-        // messageContentForShow = "[红包消息，请至移动端查看]";
+        messageContentForShow = '[红包消息]';
         break;
       case MsgType.TYPE_GETREDBAG: //111 新增红包
         messageContentForShow = "["+ JSON.parse(messageContent).receiveName+"领取了"+JSON.parse(messageContent).sendName+"的红包]";
