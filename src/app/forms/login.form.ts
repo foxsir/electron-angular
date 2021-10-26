@@ -29,7 +29,7 @@ export class LoginForm {
           }
         },
         keyup: (field: FormlyFieldConfig, event?: any) => {
-          if (RegexpMap.username.test(field.formControl.value) === false) {
+          if (field.formControl.value && RegexpMap.username.test(field.formControl.value) === false) {
             const regexp = /[a-z0-9]/g;
             const array = [...field.formControl.value.matchAll(regexp)];
             const newValue = array.map(v => v[0]).join("");
