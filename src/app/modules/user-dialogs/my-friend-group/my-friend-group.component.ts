@@ -15,11 +15,11 @@ export class MyFriendGroupComponent implements OnInit {
     Validators.required
   ]);
 
-  groupName: string = "";
+  groupName: string = this.data?.groupName;
 
   constructor(
     private dialogRef: MatDialogRef<MyFriendGroupComponent, boolean>,
-    @Inject(MAT_DIALOG_DATA) public data: {groupId: number}, // 必需
+    @Inject(MAT_DIALOG_DATA) public data: {groupId: number; groupName: string}, // 必需
     private restService: RestService,
     private snackBarService: SnackBarService,
   ) { }

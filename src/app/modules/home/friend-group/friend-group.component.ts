@@ -132,10 +132,10 @@ export class FriendGroupComponent implements OnInit {
     });
   }
 
-  updateGroupName(groupId: number) {
+  updateGroupName(group: MyGroupListInterface) {
     this.dialogService.openDialog(MyFriendGroupComponent, {
       width: "314px",
-      data: {groupId: groupId}
+      data: {groupId: group.groupId, groupName: group.groupName}
     }).then(() => {
       this.getGroupList();
     });
