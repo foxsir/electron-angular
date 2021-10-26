@@ -152,16 +152,16 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
     visible: false,
     list: []
   };
-    public groupData = {
-        gnotice: '',
-        gtopContent: '',
-        gnotice_visible: true,
-        gtopContent_visible: true,
-        gnotice_class: '',
-        gtopContent_class: '',
-        gtalkIntervalSwitch: false,
-        gtalkInterval: 3,
-    };
+  public groupData = {
+    gnotice: '',
+    gtopContent: '',
+    gnotice_visible: true,
+    gtopContent_visible: true,
+    gnotice_class: '',
+    gtopContent_class: '',
+    gtalkIntervalSwitch: false,
+    gtalkInterval: 3,
+  };
 
   // @我的消息
   public atMsg: AtMeModel;
@@ -559,34 +559,34 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
         });
       }
 
-        if (res.type == 2) {
-            if (res.typeu == 3 && dataContent.ty == 21) {
-                this.appChattingVoice.endVoiceCallback();
-            }
+      if (res.type == 2) {
+        if (res.typeu == 3 && dataContent.ty == 21) {
+          this.appChattingVoice.endVoiceCallback();
         }
+      }
     });
 
     SubscribeManage.run(this.messageDistributeService.MT17_OF_VIDEO$VOICE$REQUEST_REQUESTING$FROM$A$, res => {
-        const dataContent: ProtocalModelDataContent = JSON.parse(res.dataContent);
-        console.log('订阅单聊消息：（17）', res, dataContent, this.currentChat);
+      const dataContent: ProtocalModelDataContent = JSON.parse(res.dataContent);
+      console.log('订阅单聊消息：（17）', res, dataContent, this.currentChat);
 
-        if (res.type == 2 && res.typeu == 17) {
-            if (this.currentChat == undefined || parseInt(res.from) != parseInt(this.currentChat.alarmItem.dataId)) {
-                this.cacheService.generateAlarmItem(res.from, 'friend', null, MsgType.TYPE_VOICE_CALL).then(alarm => {
-                    this.cacheService.putChattingCache(alarm).then(() => {
-                        // this.currentChattingChangeService.switchCurrentChatting(alarm).then(() => {
-                        //     console.log("聊天会话切换完成...");
-                        //     this.openEndDrawer('voice', true);
-                        //     this.appChattingVoice.openPanel(res, dataContent);
-                        // });
-                    });
-                });
-            }
-            else {
-                this.openEndDrawer('voice', true);
-                this.appChattingVoice.openPanel(res, dataContent);
-            }
+      if (res.type == 2 && res.typeu == 17) {
+        if (this.currentChat == undefined || parseInt(res.from) != parseInt(this.currentChat.alarmItem.dataId)) {
+          this.cacheService.generateAlarmItem(res.from, 'friend', null, MsgType.TYPE_VOICE_CALL).then(alarm => {
+            this.cacheService.putChattingCache(alarm).then(() => {
+              // this.currentChattingChangeService.switchCurrentChatting(alarm).then(() => {
+              //     console.log("聊天会话切换完成...");
+              //     this.openEndDrawer('voice', true);
+              //     this.appChattingVoice.openPanel(res, dataContent);
+              // });
+            });
+          });
         }
+        else {
+          this.openEndDrawer('voice', true);
+          this.appChattingVoice.openPanel(res, dataContent);
+        }
+      }
     });
   }
 
@@ -596,9 +596,9 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
    */
   private subscribeOfGroupChatMsgToServer() {
     SubscribeManage.run(this.messageDistributeService.MT44_OF_GROUP$CHAT$MSG_A$TO$SERVER$, (res: ProtocalModel) => {
-        const dataContent: any = JSON.parse(res.dataContent);
+      const dataContent: any = JSON.parse(res.dataContent);
 
-        console.log('订阅群聊消息 ToServer：', dataContent);
+      console.log('订阅群聊消息 ToServer：', dataContent);
 
       const chatMsgEntity = this.messageEntityService.prepareRecievedMessage(
         res.from, dataContent.nickName, dataContent.m, (new Date()).getTime(), dataContent.ty, res.fp
@@ -927,8 +927,13 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
           ) => {
             this.group_tab_data = {
               visible: true,
-              list: tab_data.data
+              list: []
             };
+            tab_data.data.forEach(d => {
+              if(d.status === 1){
+                this.group_tab_data.list.push(d);
+              }
+            });
           });
       }
       else{

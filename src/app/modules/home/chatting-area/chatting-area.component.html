@@ -11,9 +11,9 @@
         <!--<app-group-chatting-setting [drawer]="chattingAreaDrawer"
                                     *ngIf="currentChat.metadata.chatType === 'group'"
                                     [currentChat]="currentChat"></app-group-chatting-setting>-->
-          <app-group-info [drawer]="chattingAreaDrawer"
-                                      *ngIf="currentChat.metadata.chatType === 'group'"
-                                      [currentChat]="currentChat"></app-group-info>
+        <app-group-info [drawer]="chattingAreaDrawer"
+                        *ngIf="currentChat.metadata.chatType === 'group'"
+                        [currentChat]="currentChat"></app-group-info>
       </mat-card>
     </div>
     <!--语音聊天 drawerContent.voice 不要删除  *ngIf="drawerContent.voice"-->
@@ -100,7 +100,7 @@
         <app-search-chatting fxFlexFill [chatting]="currentChat"></app-search-chatting>
       </div>
       <div *ngIf="searching === false" fxLayout="column" fxFlex="calc(100% - 60px)" class="chatting-body">
-        <div *ngIf="group_tab_data.visible" [fxFlex]="showGroupTabs ? 100 : '49px'" class="group-tags-container">
+        <div *ngIf="group_tab_data.visible && group_tab_data.list.length>0" [fxFlex]="showGroupTabs ? 100 : '49px'" class="group-tags-container">
           <div fxLayout="column" fxFill>
             <div fxFlex>
               <nav mat-tab-nav-bar fxLayout="row">
@@ -115,31 +115,31 @@
           </div>
         </div>
         <div fxFlex fxLayout="column" [fxHide]="showGroupTabs">
-            <div class="down-arrow" [fxShow]="showDownArrow">
-                <button mat-icon-button mat-raised-button (click)="scrollToBottom('auto')">
-                    <mat-icon class="hover-icon">
-                        <img [src]="downArrowIcon" class="icon" alt="">
-                        <img [src]="downArrowActiveIcon" class="icon-active" alt="">
-                    </mat-icon>
-                </button>
+          <div class="down-arrow" [fxShow]="showDownArrow">
+            <button mat-icon-button mat-raised-button (click)="scrollToBottom('auto')">
+              <mat-icon class="hover-icon">
+                <img [src]="downArrowIcon" class="icon" alt="">
+                <img [src]="downArrowActiveIcon" class="icon-active" alt="">
+              </mat-icon>
+            </button>
+          </div>
+          <div *ngIf="groupData.gnotice.length > 0 && groupData.gnotice_visible == true" (click)="showTopWIn('notice')" class="moving-group-info mat-primary text hover-item">
+            <img class="icon-tip" [src]="gNoticeTip" alt="">
+            <div class="box">
+              <p class="animate {{groupData.gnotice_class}}">{{groupData.gnotice}}</p>
             </div>
-            <div *ngIf="groupData.gnotice.length > 0 && groupData.gnotice_visible == true" (click)="showTopWIn('notice')" class="moving-group-info mat-primary text hover-item">
-                <img class="icon-tip" [src]="gNoticeTip" alt="">
-                <div class="box">
-                    <p class="animate {{groupData.gnotice_class}}">{{groupData.gnotice}}</p>
-                </div>
-                <img class="icon-delete" [src]="gNoticeDelete" alt="" (click)="this.groupData.gnotice_visible = false;">
+            <img class="icon-delete" [src]="gNoticeDelete" alt="" (click)="this.groupData.gnotice_visible = false;">
+          </div>
+          <div *ngIf="groupData.gtopContent.length > 0 && groupData.gtopContent_visible === true" (click)="showTopWIn('topContent')" class="moving-group-info mat-primary text hover-item" style="background-color: #d9efff">
+            <img class="icon-tip" [src]="gTopContentTip" alt="">
+            <div class="box">
+              <p class="animate {{groupData.gtopContent_class}}" style="color:#0091ff">{{groupData.gtopContent}}</p>
             </div>
-            <div *ngIf="groupData.gtopContent.length > 0 && groupData.gtopContent_visible === true" (click)="showTopWIn('topContent')" class="moving-group-info mat-primary text hover-item" style="background-color: #d9efff">
-                <img class="icon-tip" [src]="gTopContentTip" alt="">
-                <div class="box">
-                    <p class="animate {{groupData.gtopContent_class}}" style="color:#0091ff">{{groupData.gtopContent}}</p>
-                </div>
-                <img class="icon-delete" [src]="gTopContentDelete" alt="" (click)="this.groupData.gtopContent_visible = false;">
-            </div>
-            <div fxFlex="20px" *ngIf="atMsg" class="at-me-sheet mat-primary text hover-item">
-                <div fxFlexFill fxLayoutAlign="center center" (click)="gotoAt()">有人@我</div>
-            </div>
+            <img class="icon-delete" [src]="gTopContentDelete" alt="" (click)="this.groupData.gtopContent_visible = false;">
+          </div>
+          <div fxFlex="20px" *ngIf="atMsg" class="at-me-sheet mat-primary text hover-item">
+            <div fxFlexFill fxLayoutAlign="center center" (click)="gotoAt()">有人@我</div>
+          </div>
           <div fxFlex id="chatting-panel" #chattingContainer>
             <mat-card class="mat-elevation-z0 transparent" fxFlex="100">
               <mat-card-content fxFlex="100">
