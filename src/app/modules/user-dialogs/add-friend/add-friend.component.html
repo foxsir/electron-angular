@@ -1,0 +1,24 @@
+<div fxLayout="column" class="addFriend">
+  <div fxFlex style="padding:20px 0 0 20px"><label>添加好友</label></div>
+  <div>
+    <mat-list>
+      <mat-list-item class="friend-list-item">
+        <mat-icon mat-list-icon class="friend-avatar">
+          <img [src]="data.base64Avatar || data.userAvatarFileName" alt="">
+        </mat-icon>
+        <div mat-line style="font-size:14px;padding-bottom: 3px">{{data.nickname}}</div>
+        <div mat-line style="color: #CCCCCC; font-size: 12px">最近上线时间 {{data.latestLoginTime | date:"yyyy-MM-dd hh:mm"}}</div>
+      </mat-list-item>
+    </mat-list>
+  </div>
+  <div fxFlex>
+    <input type="text" nz-input [(ngModel)]="this.txtMsg" class="txt-border-none" placeholder="" />
+  </div>
+  <div fxFlex style="padding-bottom: 20px">
+    <div fxLayout="row" fxLayoutAlign="end" fxLayoutGap="10">
+      <button nz-button nzType="link" class="btncancel" (click)="cancel()">取消</button>
+      <button nz-button nzType="link" class="btnsave" (click)="confirmAdd('nick_name_in_group')">保存</button>
+    </div>
+  </div>
+</div>
+

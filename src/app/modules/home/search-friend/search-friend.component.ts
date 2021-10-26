@@ -18,6 +18,8 @@ import {FriendAddWay} from "@app/config/friend-add-way";
 import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 import {CurrentChattingChangeService} from "@services/current-chatting-change/current-chatting-change.service";
 import CommonTools from "@app/common/common.tools";
+import {AddFriendComponent} from "@modules/user-dialogs/add-friend/add-friend.component";
+import {DialogService} from "@services/dialog/dialog.service";
 
 interface SearchFriend {
   isFriend: number;
@@ -65,6 +67,7 @@ export class SearchFriendComponent implements OnInit {
     private messageService: MessageService,
     private currentChattingChangeService: CurrentChattingChangeService,
     private localUserService: LocalUserService,
+    private dialogService: DialogService,
   ) { }
 
   ngOnInit(): void {
@@ -78,6 +81,7 @@ export class SearchFriendComponent implements OnInit {
     if (this.searchFriend.trim().length > 0) {
       this.restService.getFriendSearch({friendAccount: this.searchFriend})
         .subscribe((res: NewHttpResponseInterface<SearchFriend>) => {
+          console.dir(res)
           if(res.data !== null) {
             this.searchFriendInfo = res.data;
             // 和本地匹配一下，看看是不是好友
@@ -104,18 +108,24 @@ export class SearchFriendComponent implements OnInit {
       } else if(data[this.searchFriendInfo.friendUserUid.toString()]) {
         this.snackBarService.openMessage("已经是好友");
       } else {
-        this.messageService.addFriend(FriendAddWay.search, {
-          friendUserUid: this.searchFriendInfo.friendUserUid,
-          desc: this.searchFriendInfo.whatSUp
-        }).then(res => {
-          if(res.success) {
-            this.snackBarService.openMessage("已经发送请求");
-          } else {
-            this.snackBarService.openMessage("请稍后重试");
+        this.dialogService.openDialog(AddFriendComponent, { data: this.searchFriendInfo,width: '314px',panelClass: "padding-less-dialog" }).then((res: any) => {
+          if (res.ok != true) {
+            return;
           }
-          this.searchFriend = '';
-          this.searchFriendInfo = null;
+          this.messageService.addFriend(FriendAddWay.search, {
+            friendUserUid: this.searchFriendInfo.friendUserUid,
+            desc: res.txtMsg
+          }).then(re => {
+            if(re.success) {
+              this.snackBarService.openMessage("已经发送请求");
+            } else {
+              this.snackBarService.openMessage("请稍后重试");
+            }
+            this.searchFriend = '';
+            this.searchFriendInfo = null;
+          });
         });
+
       }
     });
   }
