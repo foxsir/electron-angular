@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {AfterContentInit, Component, OnInit} from '@angular/core';
 import {ResetPasswordForm} from "@app/forms/reset-password.form";
 import {RestService} from "@services/rest/rest.service";
 import NewHttpResponseInterface from "@app/interfaces/new-http-response.interface";
@@ -10,7 +10,7 @@ import {MatDialogRef} from "@angular/material/dialog";
   templateUrl: './update-password.component.html',
   styleUrls: ['./update-password.component.scss']
 })
-export class UpdatePasswordComponent implements OnInit {
+export class UpdatePasswordComponent implements OnInit, AfterContentInit {
 
   constructor(
     private dialogRef: MatDialogRef<UpdatePasswordComponent>,
@@ -20,6 +20,12 @@ export class UpdatePasswordComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+  }
+
+  ngAfterContentInit() {
+    setTimeout(() => {
+      this.form.form.reset()
+    }, 100);
   }
 
   update() {
