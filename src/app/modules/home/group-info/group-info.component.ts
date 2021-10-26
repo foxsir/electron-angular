@@ -577,15 +577,15 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
         if (res.success === false) {
           return this.snackBarService.openMessage("解散失败,请重试") ;
         } else {
-          this.drawer.close().then();
-          this.dialogService.alert({ title: '解散成功！', text: '输入框不能为空！' }).then(() => {});
-          // 清空历史消息
-          this.cacheService.clearChattingCache(this.currentChat).then(() => {});
-          // 删除会话
-          this.cacheService.deleteChattingCache(this.currentChat.alarmItem.dataId).then(() => {});
-
-          // 从我的群组列表中删除
-          this.cacheService.deleteData<GroupModel>({model: 'group', query: {gid: this.currentChat.alarmItem.dataId}}).then();
+          // 清空历史消息, 一定要嵌套在then里面
+          this.cacheService.clearChattingCache(this.currentChat).then(() => {
+            // 删除会话
+            this.cacheService.deleteChattingCache(this.currentChat.alarmItem.dataId).then(() => {});
+            // 从我的群组列表中删除
+            this.cacheService.deleteData<GroupModel>({model: 'group', query: {gid: this.currentChat.alarmItem.dataId}}).then();
+            this.drawer.close().then();
+            this.dialogService.alert({ title: '解散成功！'}).then(() => {});
+          });
         }
       });
     });
