@@ -45,6 +45,11 @@ export class GroupInfoDialogComponent implements OnInit {
                 this.group_members.push(member);
               }
               break;
+            case 'delete_group_admin':
+              if(this.userinfo.userId.toString() != member.userUid.toString() && member.isAdmin!=1){
+                this.group_members.push(member);
+              }
+              break;
             default:
               this.group_members.push(member);
               break;
