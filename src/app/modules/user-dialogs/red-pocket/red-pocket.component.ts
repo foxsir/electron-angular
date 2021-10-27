@@ -122,5 +122,12 @@ export class RedPocketComponent implements OnInit {
   //    this.dialogRef.close(result);
   //}
 
+  inputting() {
+    if(this.data.money > 200) {
+      this.data.money = 200;
+      this.snackBarService.openMessage("红包金额上限为200元");
+    }
+  }
+
 
 }

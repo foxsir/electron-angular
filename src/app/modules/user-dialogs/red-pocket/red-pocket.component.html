@@ -10,7 +10,8 @@
     </div>
     <div class="input-box">
       <span style="flex:1;font-size:14px;">金额</span>
-      <nz-input-number [(ngModel)]="data.money" placeholder="0.00" [nzMin]="1" [nzMax]="200" [nzStep]="1" class="txt-com-short"></nz-input-number>
+      <nz-input-number [(ngModel)]="data.money" autofocus (input)="inputting()" nzPlaceHolder="0.00" [nzMin]="1" [nzStep]="1" class="txt-com-short">
+      </nz-input-number>
       <span style="font-size:14px;">元</span>
     </div>
     <div class="input-box">
