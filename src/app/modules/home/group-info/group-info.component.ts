@@ -66,7 +66,7 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
     gownerUserUid: 0,
     gnotice: '',
   };
-  public user_clu_info = {
+  public user_clu_info: Partial<GroupMemberModel> = {
     groupOwnerName: '',
     showNickname: '',
     groupOwner: '',
@@ -698,4 +698,13 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
       panelClass: "padding-less-dialog",
     });
   }
+
+  /**
+   * 查看群主信息
+   * @param member
+   */
+  viewGroupOwner(member: Partial<GroupMemberModel>) {
+    this.dialogService.openDialog(UserInfoComponent, {data: {userId: member.userUid}}).then()
+  }
+
 }

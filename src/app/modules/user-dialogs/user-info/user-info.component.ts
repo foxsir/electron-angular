@@ -16,6 +16,7 @@ import {LocalUserService} from "@services/local-user/local-user.service";
 import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 import {DialogService} from "@services/dialog/dialog.service";
 import {MessageService} from "@services/message/message.service";
+import LocalUserinfoModel from "@app/models/local-userinfo.model";
 
 @Component({
   selector: 'app-user-info',
@@ -34,6 +35,8 @@ export class UserInfoComponent implements OnInit {
 
   // 判断是否已经是好友
   isFriend: boolean;
+
+  public localUserInfo: LocalUserinfoModel = this.localUserService.localUserInfo;
 
   constructor(
     public dialogRef: MatDialogRef<UserInfoComponent>,
@@ -66,7 +69,8 @@ export class UserInfoComponent implements OnInit {
         this.restService.getFriendInfo(this.data.userId).subscribe((info: NewHttpResponseInterface<FriendModel>) => {
           if(info.status === 200) {
             this.userInfo = info.data;
-            this.onlineStatus = info.data.onlineStatus ? '[离线]' : '[在线]';
+            console.dir(info);
+            this.onlineStatus = info.data.onlineStatus ? '[在线]' : '[离线]';
           }
         });
       }

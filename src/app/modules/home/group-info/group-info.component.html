@@ -44,7 +44,7 @@
         <mat-card-content>
           <!--群基本信息编辑-->
           <div fxLayout="column">
-            <div  *ngIf="user_role == 'owner'" fxLayoutAlign="space-between center" class="group-pointer groupLast groupFirst">
+            <div  *ngIf="user_role == 'owner'" (click)="viewGroupOwner(user_clu_info)" fxLayoutAlign="space-between center" class="group-pointer groupLast groupFirst">
               <span class="privacy-item-text">当前群主</span>
               <div style="display:flex;align-items:center;">
                 <span class="privacy-item-text">{{user_clu_info.groupOwnerName}}</span>

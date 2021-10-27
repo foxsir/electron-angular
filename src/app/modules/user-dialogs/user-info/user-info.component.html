@@ -41,7 +41,7 @@
             <div>{{user.whatSUp || '此人很懒，什么都没留下'}}</div>
           </div>
         </mat-card>
-        <mat-card class="mat-elevation-z0">
+        <mat-card class="mat-elevation-z0" *ngIf="data.userId.toString() !== localUserInfo.userId.toString()">
           <div fxLayout="row" *ngIf="isFriend === true"
                fxLayoutAlign="space-between center" style="cursor:pointer;" (click)="sendMessage()">
             <div class="mat-primary text">发送信息</div>
