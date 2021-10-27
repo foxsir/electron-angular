@@ -137,10 +137,8 @@ export class GroupInfoDialogComponent implements OnInit {
   confirmMulChoose(selectMember: any) {
     const selectfriends = [];
     selectMember.selectedOptions.selected.forEach(item => {
-      selectfriends.push(item.value.userUid);
+      selectfriends.push({id:item.value.userUid,name: item.value.showNickname});
     });
-
-    console.log('选中的数据：', selectfriends);
 
     const result = {
       ok: true,
@@ -154,17 +152,15 @@ export class GroupInfoDialogComponent implements OnInit {
      * @param friendSelect
      */
     confirmDeleteGroupAdmin(selectDeleteGroupAdmin: any) {
-        let selectfriends = [];
-        selectDeleteGroupAdmin.selectedOptions.selected.forEach(item => {
-            selectfriends.push(item.value);
-        });
+      let selectfriends = [];
+      selectDeleteGroupAdmin.selectedOptions.selected.forEach(item => {
+        selectfriends.push({id:item.value.userUid,name: item.value.nickname});
+      });
 
-        console.log('选中的数据：', selectfriends);
-
-        const result = {
-            ok: true,
-            selectfriends: selectfriends,
-        };
-        this.dialogRef.close(result);
+      const result = {
+          ok: true,
+          selectfriends: selectfriends,
+      };
+      this.dialogRef.close(result);
     }
 }
