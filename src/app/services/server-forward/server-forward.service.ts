@@ -22,6 +22,7 @@ export class ServerForwardService {
     [MsgType.TYPE_TRANSFER_MONEY]: this.transferMoney.bind(this),
     [MsgType.TYPE_GROUP_ADMIN]: this.groupAdminUpdate.bind(this),
     [MsgType.TYPE_VOICE_CALL]: this.voiceCall.bind(this),
+    [MsgType.TYPE_NOTALK]:this.groupNoTalk.bind(this),
   };
 
   constructor(
@@ -73,9 +74,11 @@ export class ServerForwardService {
     console.dir(res);
   }
 
+  /** 系统消息 */
   private systemMessage(res: ProtocalModel) {
-    console.dir("系统");
-    console.dir(res);
+    const dataContent: ProtocalModelDataContent = JSON.parse(res.dataContent);
+    const txtMsg=dataContent.m;
+    this.cacheService.saveSystemMessage(dataContent.t, txtMsg, res.sm, res.fp);
   }
 
   private readStatus(res: ProtocalModel) {
@@ -161,15 +164,12 @@ export class ServerForwardService {
     this.cacheService.saveSystemMessage(dataContent.f.toString(), "转账消息请在手机上查看", res.sm, res.fp);
   }
 
+  /** 群管理员变更 */
   private  groupAdminUpdate(res: ProtocalModel){
     const dataContent: ProtocalModelDataContent[] = JSON.parse(res.dataContent);
-    // console.dir(dataContent);
     const msg=JSON.parse(dataContent[0].m);
-    console.dir(msg)
     const txtMsg="\""+msg.nicNames[0]+"\""+(msg.nicNames.length>1?"等"+msg.nicNames.length.toString()+"人":"")+
                   (msg.type === 1?"成为":"被取消")+"管理员";
-
-    // console.dir(txtMsg);
     this.cacheService.saveSystemMessage(dataContent[0].t, txtMsg, res.sm, res.fp);
   }
 
@@ -178,6 +178,14 @@ export class ServerForwardService {
     const dataContent: ProtocalModelDataContent = JSON.parse(res.dataContent);
     const txtMsg = "语音通话请在手机上查看";
     this.cacheService.saveSystemMessage(res.from.toString(), txtMsg, res.sm, res.fp);
+  }
+
+  /** 群禁言解禁 **/
+  private groupNoTalk(res: ProtocalModel) {
+    console.dir(11111111111111)
+    const dataContent: ProtocalModelDataContent[] = JSON.parse(res.dataContent);
+    const msg=JSON.parse(dataContent[0].m);
+    this.cacheService.saveSystemMessage(dataContent[0].t.toString(), msg.msg, res.sm, res.fp);
   }
 
 }

@@ -36,6 +36,8 @@ import {ProtocalModel} from "@app/models/protocal.model";
 import {GroupMemberModel} from "@app/models/group-member.model";
 import HttpResponseInterface from "@app/interfaces/http-response.interface";
 import SubscribeManage from "@app/common/subscribe-manage";
+import {GroupNoticeComponent} from "@modules/user-dialogs/group-notice/group-notice.component";
+import CommonTools from "@app/common/common.tools";
 
 @Component({
   selector: 'app-group-info',
@@ -272,31 +274,32 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
    * @param key
    */
   bySwitch(key) {
-    if (key == 'no_disturb') {
+    if (key === 'no_disturb') {
       this.cacheService.setMute(this.currentChat.alarmItem.dataId, this.currentChat.metadata.chatType, this.setting_data[key]).then(() => {
         //this.snackBarService.openMessage("关闭声音通知");
       });
     }
-    else if (key == 'top_chat') {
+    else if (key === 'top_chat') {
       this.cacheService.setTop(this.currentChat.alarmItem.dataId, this.currentChat.metadata.chatType, this.setting_data[key]).then();
     }
     else {
       var data = {
         gid: this.currentChat.alarmItem.dataId
       };
-      data[key] = this.setting_data[key] == true ? 1 : 0;
+      data[key] = this.setting_data[key] === true ? 1 : 0;
       this.restService.updateGroupBaseById(data).subscribe();
       // 如果开启了全体禁言,需要单独发个消息
-      if (key == 'gmute') {
-        const notificationContent = this.setting_data[key]?"全体已被禁言":"全体已被解禁了";
+      if (key === 'gmute') {
+        const notificationContent = this.setting_data[key]?"全体禁言":"解除全体禁言";
         const messageText = {
           isBanned:this.setting_data[key],
           banTime:0,
           sendId: this.localUserService.localUserInfo.userId,
-          msg:this.setting_data[key]?"全体已被禁言":"全体已被解禁",
+          msg:this.setting_data[key]?"全体禁言":"解除全体禁言",
           adminId:this.localUserService.localUserInfo.userId,
           uuid:0
         };
+
         this.messageService.sendGroupMessage(MsgType.TYPE_NOTALK, this.currentChat.alarmItem.dataId, JSON.stringify(messageText), []).then(res => {
           if(res.success === true) {
             // 暂时不做任何处理
@@ -322,11 +325,27 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
    * 切换视图
    * @param view
    */
-  changeView(view) {
-    this.view_mode = view;
-
-    if (view == 'group_notice') {
-      this.group_notice_view_mode = 'view';
+  changeView(view) { console.dir(this.user_role)
+    switch (view){
+      case 'group_notice':
+        if(this.user_role === 'admin' || this.user_role === 'owner'){
+          this.group_notice_view_mode = 'view';
+          this.view_mode = view;
+        }else{
+          var data={
+            title:'群组公告',
+            txt:this.groupData.gnotice,
+          }
+          this.dialogService.openDialog(GroupNoticeComponent, { data: data,width: '314px',panelClass: "padding-less-dialog" }).then((res: any) => {
+            if (res.ok === false) {
+              return;
+            }
+          });
+        }
+        break;
+      default:
+        this.view_mode = view;
+        break;
     }
   }
 
@@ -478,10 +497,20 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
 
       if(res.selectfriends.length <= 0) return;
 
+      var members=[];
+      res.selectfriends.forEach(f => {
+        members.push(f.id);
+      });
+
       if (choose_type === 'add_group_admin') {
-        this.restService.updateGroupAdmin(this.currentChat.alarmItem.dataId, res.selectfriends, 1).subscribe(res => {
+        this.restService.updateGroupAdmin(this.currentChat.alarmItem.dataId, members, 1).subscribe(re => {
           setTimeout(() => {
-            this.cacheService.cacheGroupAdmins(this.currentChat.alarmItem.dataId).then(members => {
+            //添加一条系统消息
+            var text="\""+res.selectfriends[0].name+"\"" +(res.selectfriends.length>1?"等"+res.selectfriends.length.toString()
+                      +"人":"")+"成为管理员";
+            this.cacheService.saveSystemMessage(this.currentChat.alarmItem.dataId, text, CommonTools.getTimestamp(), CommonTools.uuid());
+            //更新管理员列表
+            this.cacheService.cacheGroupAdmins(this.currentChat.alarmItem.dataId).then(admin => {
               this.loadGroupAdminList();
             });
           }, 1000);
@@ -544,9 +573,21 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
         return;
       }
 
-      this.restService.updateGroupAdmin(this.currentChat.alarmItem.dataId, res.selectfriends, 0).subscribe(re => {
+      console.dir(res)
+
+      var members=[];
+      res.selectfriends.forEach(f => {
+        members.push(f.id);
+      });
+
+      this.restService.updateGroupAdmin(this.currentChat.alarmItem.dataId, members, 0).subscribe(re => {
         setTimeout(() => {
-          this.cacheService.cacheGroupAdmins(this.currentChat.alarmItem.dataId).then(members => {
+          //添加一条系统消息
+          var text="\""+res.selectfriends[0].name+"\"" +(res.selectfriends.length>1?"等"+res.selectfriends.length.toString()
+            +"人":"")+"取消管理员";
+          this.cacheService.saveSystemMessage(this.currentChat.alarmItem.dataId, text, CommonTools.getTimestamp(), CommonTools.uuid());
+          //更新管理员列表
+          this.cacheService.cacheGroupAdmins(this.currentChat.alarmItem.dataId).then(admin => {
             this.loadGroupAdminList();
             console.log('更新管理员缓存，并重新加载');
           });
@@ -619,7 +660,7 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
           };
 
           this.restService.inviteFriendToGroup(post_data).subscribe(res => {
-            if (res.success == false) {
+            if (res.success === false) {
               return this.snackBarService.openMessage(res.msg);
             }
             this.dialogService.alert({ title: '邀请成功！'}).then(() => {

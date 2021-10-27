@@ -36,7 +36,7 @@
     <mat-menu #atMenu="matMenu" (closed)="asyncTextareaFocus()">
       <mat-card class="mat-elevation-z0 scrollbar" style="max-height: 150px; width: 200px;">
         <mat-card-content>
-          <p mat-menu-item
+          <p mat-menu-item *ngIf="user_role != 'common'"
              (click)="appendAtMarkAll()" (keydown.enter)="appendAtMarkAll()">
             @所有人</p>
           <p mat-menu-item
