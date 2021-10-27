@@ -8,10 +8,10 @@ import {Subject} from "rxjs";
 export class ElementService {
 
   // 正在播放的语音
-  public static activatedAudio: HTMLAudioElement;
+  private activatedAudio: HTMLAudioElement;
 
   // 正在播放的视频
-  public static activatedVideo: HTMLVideoElement;
+  private activatedVideo: HTMLVideoElement;
 
   // 选择消息
   private selectMessageSource = new Subject<boolean>();
@@ -71,6 +71,34 @@ export class ElementService {
   private setToClipboard(blob) {
     const data = [new ClipboardItem({ [blob.type]: blob })];
     return navigator.clipboard.write(data);
+  }
+
+  /**
+   * 同时只能播放一个音频
+   * @param tag
+   */xiu
+  oncePLayAudio(tag: HTMLAudioElement) {
+    if(this.activatedAudio && this.activatedAudio !== tag) {
+      this.activatedAudio.pause();
+    }
+    if(this.activatedVideo) {
+      this.activatedVideo.pause();
+    }
+    this.activatedAudio = tag;
+  }
+
+  /**
+   * 同时只能播放一个视频
+   * @param tag
+   */
+  oncePLayVideo(tag: HTMLVideoElement) {
+    if(this.activatedVideo && this.activatedVideo !== tag) {
+      this.activatedVideo.pause();
+    }
+    if(this.activatedAudio) {
+      this.activatedAudio.pause();
+    }
+    this.activatedVideo = tag;
   }
 
 }
