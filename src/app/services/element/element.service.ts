@@ -7,6 +7,12 @@ import {Subject} from "rxjs";
 })
 export class ElementService {
 
+  // 正在播放的语音
+  public static activatedAudio: HTMLAudioElement;
+
+  // 正在播放的视频
+  public static activatedVideo: HTMLVideoElement;
+
   // 选择消息
   private selectMessageSource = new Subject<boolean>();
   selectMessage$ = this.selectMessageSource.asObservable();
