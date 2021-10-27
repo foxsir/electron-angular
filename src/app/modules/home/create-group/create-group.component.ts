@@ -193,6 +193,8 @@ export class CreateGroupComponent implements OnInit, OnDestroy {
             if (res.success) {
               this.cacheService.cacheGroups().then();
               this.cacheService.putChattingCache(alarmData).then(() => {
+                this.cacheService.cacheGroupAdmins(alarmData.alarmItem.dataId.toString()).then();
+                this.cacheService.cacheGroupMembers(alarmData.alarmItem.dataId.toString()).then();
                 this.currentChattingChangeService.switchCurrentChatting(alarmData).then(() => {
                   this.snackBarService.openMessage("群创建成功");
                 });
