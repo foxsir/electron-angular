@@ -270,18 +270,19 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
       // 拿到群id
       const dataContent: any = JSON.parse(res.dataContent);
       const groupId: string = dataContent.t;
-      // 进行删除会话和删除聊天记录的操作
-      // 删除会话
-      //this.cacheService.deleteChattingCache(groupId).then(() => {
-      //});
+
       // 清空历史消息 先通过群id找到这个会话
-      //this.cacheService.generateAlarmItem(groupId, 'group').then(chat => {
-      //  this.cacheService.clearChattingCache(chat).then(() => {
-      //  });
-      //});
-      //this.cacheService.deleteData<GroupModel>({model: 'group', query: {gid: groupId}}).then();
+      this.cacheService.generateAlarmItem(groupId, 'group').then(chat => {
+        this.cacheService.clearChattingCache(chat).then(() => {
+          // 删除会话
+          this.cacheService.deleteChattingCache(groupId).then(() => {});
+          // 从我的群组列表中删除
+          this.cacheService.deleteData<GroupModel>({model: 'group', query: {gid: groupId}}).then();
+        });
+      });
+
       // 删除聊天界面
-      if (this.currentChat && this.currentChat.alarmItem.dataId == groupId) {
+      if (this.currentChat && this.currentChat.alarmItem.dataId === groupId) {
         this.currentChattingChangeService.switchCurrentChatting(null).then();
       }
 
@@ -395,6 +396,9 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
         case MsgType.TYPE_AITE: // 处理@
           console.dir(dataContent);
           break;
+        case MsgType.TYPE_NOTALK:
+          console.dir(dataContent);
+          break;
       }
     });
   }
@@ -409,32 +413,32 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
       this.cacheService.generateAlarmItem(friendId, 'friend').then(chat => {
         // 删除所有的聊天记录
         this.cacheService.clearChattingCache(chat).then(() => {
+          // 删除会话
+          this.cacheService.deleteChattingCache(friendId).then(() => {
+            // 从我好友里里删除
+            this.cacheService.deleteData<FriendModel>({
+              model: 'friend',
+              query: {friendUserUid: Number(friendId)}
+            }).then(() => {
+              // 更新好友缓存
+              this.cacheService.cacheFriends().then();
+            });
+            // 删除置顶
+            this.cacheService.deleteData<TopModel>({model: 'top', query: {dataId: friendId}}).then();
+            // 从我的黑名单里删除
+            this.cacheService.deleteData<BlackListModel>({model: 'blackList', query: {userUid: Number(friendId)}}).then();
+            // 从拉黑我的人里删除
+            this.cacheService.deleteData<BlackMeListModel>({
+              model: 'blackMeList',
+              query: {userUid: Number(friendId)}
+            }).then();
+            // 删除聊天界面
+            console.log("当前会话是:", this.currentChat);
+            if (this.currentChat && this.currentChat.alarmItem.dataId === friendId) {
+              this.currentChattingChangeService.switchCurrentChatting(null).then();
+            }
+          });
         });
-        // 删除会话
-        this.cacheService.deleteChattingCache(friendId).then(() => {
-        });
-        // 删除聊天界面
-        console.log("当前会话是:", this.currentChat);
-        if (this.currentChat && this.currentChat.alarmItem.dataId === friendId) {
-          this.currentChattingChangeService.switchCurrentChatting(null).then();
-        }
-        // 从我好友里里删除
-        this.cacheService.deleteData<FriendModel>({
-          model: 'friend',
-          query: {friendUserUid: Number(friendId)}
-        }).then(() => {
-          // 更新好友缓存
-          this.cacheService.cacheFriends().then();
-        });
-        // 删除置顶
-        this.cacheService.deleteData<TopModel>({model: 'top', query: {dataId: friendId}}).then();
-        // 从我的黑名单里删除
-        this.cacheService.deleteData<BlackListModel>({model: 'blackList', query: {userUid: Number(friendId)}}).then();
-        // 从拉黑我的人里删除
-        this.cacheService.deleteData<BlackMeListModel>({
-          model: 'blackMeList',
-          query: {userUid: Number(friendId)}
-        }).then();
       });
     });
   }
@@ -490,6 +494,7 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
       this.snackBarService.openMessage(text);
       this.cacheService.saveSystemMessage(dataContent.gid, text, protocol.sm, protocol.fp);
 
+      //变更
       this.cacheService.getChattingList().then(list => {
         const chatting = list.get(dataContent.gid.toString());
         if(chatting) {
