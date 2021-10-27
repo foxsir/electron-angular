@@ -529,10 +529,11 @@ export class ContextMenuService {
           const localUserInfo: LocalUserinfoModel = RBChatUtils.getAuthedLocalUserInfoFromCookie();
           const noSelf = filterData.chat.uid.toString() !== localUserInfo.userId.toString();
           const isFriend = filterData.friends.get(filterData.chat.uid.toString());
-          console.dir(filterData.members)
-          console.dir(filterData.members.get(filterData.chat.uid.toString()));
-          // 不能是自己 and 必需不是好友
-          return noSelf && !isFriend;
+          const group = filterData.groups.get(filterData.alarmItem.alarmItem.dataId);
+          const isOwner = group && group.gownerUserUid.toString() === localUserInfo.userId.toString();
+          const allowPrivateChat = (group.allowPrivateChat === 1);
+          // 不能是自己 and 必需不是好友 不是群主 群設置成員可相互加好友
+          return noSelf && !isFriend && (allowPrivateChat || isOwner);
         },
         action: (alarmItem, chat) => {
           this.dialogService.confirm({title: "添加好友"}).then((ok) => {
