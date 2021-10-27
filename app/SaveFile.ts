@@ -3,7 +3,7 @@ const fs = require('fs')
 const ffmpeg = require('fluent-ffmpeg');
 // const ffmpegInstaller = require('@ffmpeg-installer/ffmpeg');
 const fetch = require('node-fetch');
-ffmpeg.setFfmpegPath([__dirname, 'node_modules\\node_modules\\@ffmpeg-installer\\win32-ia32\\ffmpeg.exe'].join('\\'));
+ffmpeg.setFfmpegPath([__dirname, 'node_modules\\@ffmpeg-installer\\win32-ia32\\ffmpeg.exe'].join('\\'));
 
 interface FormatParams {
   url: string;
