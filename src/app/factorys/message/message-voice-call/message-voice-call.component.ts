@@ -15,7 +15,6 @@ export class MessageVoiceCallComponent implements OnInit {
     constructor() { }
 
     ngOnInit(): void {
-        console.log('语音消息：', this.chatMsg);
         this.msg_data = JSON.parse(this.chatMsg.text);
     }
 }
