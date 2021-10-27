@@ -36,6 +36,7 @@ import {ProtocalModel} from "@app/models/protocal.model";
 import {GroupMemberModel} from "@app/models/group-member.model";
 import HttpResponseInterface from "@app/interfaces/http-response.interface";
 import SubscribeManage from "@app/common/subscribe-manage";
+import {GroupNoticeComponent} from "@modules/user-dialogs/group-notice/group-notice.component";
 
 @Component({
   selector: 'app-group-info',
@@ -322,11 +323,27 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
    * 切换视图
    * @param view
    */
-  changeView(view) {
-    this.view_mode = view;
-
-    if (view == 'group_notice') {
-      this.group_notice_view_mode = 'view';
+  changeView(view) { console.dir(this.user_role)
+    switch (view){
+      case 'group_notice':
+        if(this.user_role === 'admin' || this.user_role === 'owner'){
+          this.group_notice_view_mode = 'view';
+          this.view_mode = view;
+        }else{
+          var data={
+            title:'群组公告',
+            txt:this.groupData.gnotice,
+          }
+          this.dialogService.openDialog(GroupNoticeComponent, { data: data,width: '314px',panelClass: "padding-less-dialog" }).then((res: any) => {
+            if (res.ok === false) {
+              return;
+            }
+          });
+        }
+        break;
+      default:
+        this.view_mode = view;
+        break;
     }
   }
 
