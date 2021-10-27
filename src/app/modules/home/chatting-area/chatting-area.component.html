@@ -157,13 +157,13 @@
                             <mat-checkbox #msgCheckbox disableRipple color="primary" (change)="collectMessage(chat, msgCheckbox)"></mat-checkbox>
                           </div>
                         </div>
-                        <div fxFlex="100" *ngIf="chat.msgType === 999">
+                        <div fxFlex="100" *ngIf="chat.msgType === 999 || chat.msgType === 11">
                           <div fxLayoutAlign="center">
                             <app-message-factory [chatMsg]="chat"></app-message-factory>
                           </div>
                         </div>
                         <div fxFlex="65" fxFlex.sm="95"
-                             *ngIf="chat.msgType !== 999"
+                             *ngIf="chat.msgType !== 999 && chat.msgType !== 11"
                              [id]="'fp' + chat.fingerPrintOfProtocal"
                              [fxLayoutAlign]="chat.uid.toString() === localUserInfo.userId.toString() ? 'end' : 'start'">
                           <div fxLayout="column" class="message-container"
