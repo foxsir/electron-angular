@@ -167,7 +167,7 @@
       <mat-card class="mat-elevation-z0 groupBase" *ngIf="view_mode == 'basic_info'">
         <mat-card-content>
           <div fxLayout="column" class="group-pointer groupFirst">
-            <div fxFlex fxLayoutAlign="space-between center">
+            <div fxFlex fxLayoutAlign="space-between center"  (click)="contactGroupOwner()">
               <span class="privacy-item-text">当前群主</span>
               <span>{{user_clu_info.groupOwnerName}}</span>
             </div>
@@ -238,7 +238,7 @@
               <mat-list-item *ngFor="let item of group_member_list" [fxHide]="item.userUid === this.groupData.gownerUserUid || item.isAdmin != 1" class="list-box">
                 <img src="{{item.userAvatarFileName}}" mat-list-icon />
                 <div mat-line class="matLine nickName">{{item.showNickname}}
-                  <span  *ngIf="item.userUid != this.userinfo.userId"  class="removeMemberImg" style="top:3px;">
+                  <span  *ngIf="item.userUid != this.userinfo.userId && user_role != 'common'"  class="removeMemberImg" style="top:3px;">
                     <mat-icon (click)="removeMember(item)" class="hover-icon icon14">
                       <img [src]="closeIcon" alt="" class="icon">
                       <img [src]="closeActiveIcon" alt="" class="icon-active">
@@ -255,7 +255,7 @@
               <mat-list-item *ngFor="let item of group_member_list" [fxHide]="item.userUid == this.groupData.gownerUserUid || item.isAdmin != 0" class="list-box">
                 <img src="{{item.userAvatarFileName}}" mat-list-icon />
                 <div mat-line class="matLine nickName">{{item.showNickname}}</div>
-                  <span class="removeMemberImg" style="top: 3px;">
+                  <span *ngIf="user_role != 'common'" class="removeMemberImg" style="top: 3px;">
                     <mat-icon (click)="removeMember(item)" class="hover-icon icon14">
                       <img [src]="closeIcon" alt="" class="icon">
                       <img [src]="closeActiveIcon" alt="" class="icon-active">
