@@ -140,6 +140,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
   // 选择消息
   public selectMessage: boolean = false;
   public selectMessageList: ChatmsgEntityModel[] = [];
+  public selectCheckboxList: MatCheckbox[] = [];
 
   public showDownArrow: boolean = false;
   public loadingMessage: boolean = false;
@@ -738,10 +739,13 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
 
     if(msgCheckbox.checked) {
       this.selectMessageList.push(chat);
+      this.selectCheckboxList.push(msgCheckbox);
     } else {
       const index = this.selectMessageList.indexOf(chat);
       delete this.selectMessageList[index];
+      delete this.selectCheckboxList[index];
       this.selectMessageList = this.selectMessageList.filter(v => v);
+      this.selectCheckboxList = this.selectCheckboxList.filter(v => v);
     }
 
     return false;
@@ -752,6 +756,9 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
    */
   cancelSelectMessage() {
     this.selectMessage = false;
+    this.selectCheckboxList.forEach(item => {
+      item.checked = false;
+    })
     this.selectMessageList = [];
   }
 
