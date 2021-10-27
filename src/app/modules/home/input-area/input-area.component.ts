@@ -96,6 +96,15 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
 
   private inputEnableStatus = true;
 
+  public userinfo: any;
+  public user_role: string; /*当前用户在这个群的角色：owner, admin, common*/
+  public user_clu_info = {
+    groupOwnerName: '',
+    showNickname: '',
+    groupOwner: '',
+    isAdmin: 0,
+  };
+
   constructor(
     private router: Router,
     private dom: DomSanitizer,
@@ -156,6 +165,8 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
         });
       });
     });
+
+    this.initUserCluInfo();
   }
 
   ngAfterViewInit() {
@@ -855,6 +866,28 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
         callback(file);
       }
     }
+  }
+
+
+  initUserCluInfo(){
+    this.userinfo = this.localUserService.localUserInfo;
+    this.restService.getUserClusterVo(this.userinfo.userId.toString(), this.currentChat.alarmItem.dataId).subscribe(res => {
+      if (res.status !== 200)
+        return;
+
+      this.user_clu_info = res.data;
+      if (this.user_clu_info.groupOwner == this.userinfo.userId.toString()) {
+        this.user_role = 'owner';
+      }
+      else if (this.user_clu_info.isAdmin == 1) {
+        this.user_role = 'admin';
+      }
+      else {
+        this.user_role = 'common';
+      }
+
+      console.log('当前用户在这个群的角色: ', this.user_role);
+    });
   }
 
   ngOnDestroy() {
