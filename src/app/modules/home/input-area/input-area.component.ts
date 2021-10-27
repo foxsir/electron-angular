@@ -48,7 +48,6 @@ import {ForwardMessageService} from "@services/forward-message/forward-message.s
 import {RedPocketComponent} from "@modules/user-dialogs/red-pocket/red-pocket.component";
 import {RedPacketInterface} from "@app/interfaces/red-packet.interface";
 import DirectoryType from "@services/file/config/DirectoryType";
-import {Subscription} from "rxjs";
 import {InputAreaService} from "@services/input-area/input-area.service";
 import {GlobalCache} from "@app/config/global-cache";
 import {ElectronService} from "@app/core/services";
@@ -115,7 +114,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
     private localUserService: LocalUserService,
     private forwardMessageService: ForwardMessageService,
     private inputAreaService: InputAreaService,
-    private electronService: ElectronService
+    private electronService: ElectronService,
   ) {
     SubscribeManage.run(this.inputAreaService.inputUpdate$, (status) => {
       this.inputEnableStatus = status;
@@ -138,9 +137,6 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
     SubscribeManage.run(this.quoteMessageService.message$, (meg) => {
       this.quoteMessage = meg;
     });
-
-
-
 
     this.subscribeAtMember();
     this.electronService.ipcRendererOn('screenshot-finished', (event, base64) => {

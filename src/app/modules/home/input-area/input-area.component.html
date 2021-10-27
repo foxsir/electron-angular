@@ -1,6 +1,5 @@
 <div fxLayout="row" fxFlex="100" fxLayoutAlign="default end" style="background: #FFF">
   <div fxFlex="60px" fxLayoutAlign="center center" style="height:50px;">
-
     <mat-menu #attachmentMenu="matMenu">
       <button mat-menu-item>
         <app-upload-file showText="发送图片" [fileTypes]="['image/png', 'image/jpg', 'image/jpeg']"
@@ -17,9 +16,9 @@
       <button mat-menu-item (click)="selectFriend()" [disabled]="!!this.quoteMessage">
         名片发送
       </button>
-        <button mat-menu-item (click)="sendRedpocket()" [disabled]="!!this.quoteMessage">
-         红包
-        </button>
+      <button mat-menu-item (click)="sendRedpocket()" [disabled]="!!this.quoteMessage">
+        红包
+      </button>
       <button mat-menu-item [disabled]="!!this.quoteMessage" (click)="startScreenShot()">
         截图
       </button>
