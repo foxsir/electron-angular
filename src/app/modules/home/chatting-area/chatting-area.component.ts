@@ -521,6 +521,11 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
     SubscribeManage.run(this.messageDistributeService.MT03_OF_CHATTING_MESSAGE$, (res: ProtocalModel) => {
       const dataContent: ProtocalModelDataContent = JSON.parse(res.dataContent);
       const func = this.serverForwardService.functions[dataContent.ty];
+      console.dir(dataContent.ty)
+      console.dir(dataContent.ty)
+      console.dir(dataContent.ty)
+      console.dir(dataContent.ty)
+      console.dir(dataContent.ty)
       if(func) {
         func(res);
       } else if (dataContent.ty == 120) {

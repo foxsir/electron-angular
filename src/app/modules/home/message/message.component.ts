@@ -59,6 +59,7 @@ import TopModel from "@app/models/top.model";
 import BlackListModel from "@app/models/black-list.model";
 import BlackMeListModel from "@app/models/black-me-list.model";
 import SubscribeManage from "@app/common/subscribe-manage";
+import CommonTools from "@app/common/common.tools";
 
 @Component({
   selector: 'app-message',
@@ -511,6 +512,19 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
       this.snackBarService.openMessage(text);
       this.cacheService.saveSystemMessage(dataContent.t, text, protocol.sm, protocol.fp);
     });
+    /** 被禁言/解禁人收到消息 **/
+    SubscribeManage.run(this.messageDistributeService.GROUP_SILENCE$, (protocol: ProtocalModel) => {
+      const dataContent: any = JSON.parse(protocol.dataContent);
+      let text: string ="";
+      if(dataContent.type === 1){
+        text="你被禁言"+CommonTools.formatSecondToChinese(dataContent.banTime-protocol.sm);
+      }
+      else{
+        text="你被解除了禁言";
+      }
+      this.snackBarService.openMessage(text);
+      this.cacheService.saveSystemMessage(dataContent.groupId, text, protocol.sm, protocol.fp);
+    });
   }
 
 
@@ -603,7 +617,6 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
     SubscribeManage.run(this.messageDistributeService.MT07_OF_ADD_FRIEND_REQUEST_INFO_SERVER$TO$B$, () => {
       this.cacheService.cacheNewFriends();
     });
-
   }
 
 

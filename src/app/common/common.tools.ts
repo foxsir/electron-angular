@@ -82,4 +82,39 @@ export default class CommonTools {
     return new Date().getTime();
   }
 
+  //
+  public static formatSecondToChinese(s: number):string{
+    var theTime = Math.ceil(s/1000);// 秒
+    var theTime1 = 0;// 分
+    var theTime2 = 0;// 小时
+    var theDay = 0; //天
+    // alert(theTime);
+    if(theTime > 60) {
+      theTime1 = Math.floor(theTime/60);
+      theTime = Math.floor(theTime%60);
+      if(theTime1 > 60) {
+        theTime2 = Math.floor(theTime1/60);
+        theTime1 = Math.floor(theTime1%60);
+      }
+      console.dir(theTime2)
+      if(theTime2 > 24){
+        theDay = Math.floor(theTime2/24);
+        theTime2 = Math.floor(theTime2%24);
+      }
+      console.dir(theDay)
+    }
+    var result = ""//+Math.floor(theTime)+"秒";
+    if(theTime1 > 0) {
+      result = ""+Math.floor(theTime1)+"分钟"+result;
+    }
+    if(theTime2 > 0) {
+      result = ""+Math.floor(theTime2)+"小时"+result;
+    }
+    if(theDay > 0) {
+      result = ""+Math.floor(theDay)+"天"+result;
+    }
+
+    return result;
+  }
+
 }
