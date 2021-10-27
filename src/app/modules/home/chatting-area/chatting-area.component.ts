@@ -525,14 +525,22 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
       if(func) {
         func(res);
       } else if (dataContent.ty == 120) {
-        if (dataContent.m == "start_voice") {
-          this.openEndDrawer('voice', true);
-          this.appChattingVoice.openPanel('','');
-        }
-        else if (dataContent.m == "receive_voice") {
-          this.appChattingVoice.hadReceiveVoice();
-        }
+        // if (dataContent.m == "start_voice") {
+        //   this.openEndDrawer('voice', true);
+        //   this.appChattingVoice.openPanel('','');
+        // }
+        // else if (dataContent.m == "receive_voice") {
+        //   this.appChattingVoice.hadReceiveVoice();
+        // }
       } else {
+
+        console.dir(res);
+        console.dir(res);
+        console.dir(res);
+        console.dir(res);
+        console.dir(res);
+        console.dir(res);
+
         const chatMsgEntity = this.messageEntityService.prepareRecievedMessage(
           res.from, dataContent.nickName, dataContent.m, (new Date()).getTime(), dataContent.ty, res.fp
         );
@@ -560,11 +568,12 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
         });
       }
 
-      if (res.type == 2) {
-        if (res.typeu == 3 && dataContent.ty == 21) {
-          this.appChattingVoice.endVoiceCallback();
-        }
-      }
+      // 禁用掉语音通话
+      // if (res.type == 2) {
+      //   if (res.typeu == 3 && dataContent.ty == 21) {
+      //     this.appChattingVoice.endVoiceCallback();
+      //   }
+      // }
     });
 
     SubscribeManage.run(this.messageDistributeService.MT17_OF_VIDEO$VOICE$REQUEST_REQUESTING$FROM$A$, res => {
@@ -574,18 +583,20 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
       if (res.type == 2 && res.typeu == 17) {
         if (this.currentChat == undefined || parseInt(res.from) != parseInt(this.currentChat.alarmItem.dataId)) {
           this.cacheService.generateAlarmItem(res.from, 'friend', null, MsgType.TYPE_VOICE_CALL).then(alarm => {
-            this.cacheService.putChattingCache(alarm).then(() => {
-              // this.currentChattingChangeService.switchCurrentChatting(alarm).then(() => {
-              //     console.log("聊天会话切换完成...");
-              //     this.openEndDrawer('voice', true);
-              //     this.appChattingVoice.openPanel(res, dataContent);
-              // });
-            });
+            // this.cacheService.putChattingCache(alarm).then(() => {
+            //   // 禁用掉语音通话
+            //   this.currentChattingChangeService.switchCurrentChatting(alarm).then(() => {
+            //       console.log("聊天会话切换完成...");
+            //       this.openEndDrawer('voice', true);
+            //       this.appChattingVoice.openPanel(res, dataContent);
+            //   });
+            // });
           });
         }
         else {
-          this.openEndDrawer('voice', true);
-          this.appChattingVoice.openPanel(res, dataContent);
+          // 禁用掉语音通话
+          // this.openEndDrawer('voice', true);
+          // this.appChattingVoice.openPanel(res, dataContent);
         }
       }
     });
@@ -1037,7 +1048,8 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
           const msg = JSON.parse(data.m);
           this.cacheService.generateAlarmItem(data.t, 'group').then(alarm => {
             alarm.metadata.allSilence = msg.isBanned;
-            if(this.currentChat) {
+            // 判断禁言的是否时当前会话
+            if(this.currentChat && this.currentChat.alarmItem.dataId === data.t.toString()) {
               this.checkAdminAndOwner();
               this.currentChat.metadata.allSilence = msg.isBanned; // 修改当前会话
             }
