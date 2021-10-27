@@ -533,14 +533,6 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
         //   this.appChattingVoice.hadReceiveVoice();
         // }
       } else {
-
-        console.dir(res);
-        console.dir(res);
-        console.dir(res);
-        console.dir(res);
-        console.dir(res);
-        console.dir(res);
-
         const chatMsgEntity = this.messageEntityService.prepareRecievedMessage(
           res.from, dataContent.nickName, dataContent.m, (new Date()).getTime(), dataContent.ty, res.fp
         );
