@@ -3,7 +3,7 @@
     <img [src]="data.url" mat-card-image alt="">
   </ng-template>
   <ng-template [ngIf]="data.type === 'video'">
-    <video [src]="data.url" mat-card-image controls></video>
+    <video [src]="data.url" mat-card-image controls #tag (playing)="playing(tag)"></video>
   </ng-template>
   <mat-card-actions fxLayoutAlign="end center">
     <button mat-button mat-dialog-close>关闭</button>

@@ -5,6 +5,7 @@ import DirectoryType from "@services/file/config/DirectoryType";
 import {DomSanitizer, SafeResourceUrl} from "@angular/platform-browser";
 import {PreviewMediaComponent} from "@modules/user-dialogs/preview-media/preview-media.component";
 import {DialogService} from "@services/dialog/dialog.service";
+import {ElementService} from "@services/element/element.service";
 
 interface VideoInfo {
   fileName: string;
@@ -27,7 +28,8 @@ export class MessageVideoComponent implements OnInit {
   constructor(
     private fileService: FileService,
     private dom: DomSanitizer,
-    private dialogService: DialogService
+    private dialogService: DialogService,
+    private elementService: ElementService
   ) { }
 
   ngOnInit(): void {
@@ -41,6 +43,10 @@ export class MessageVideoComponent implements OnInit {
       data: {type: 'video', url: this.videoInfo.ossFilePath},
       panelClass: "padding-less-dialog",
     }).then(() => {});
+  }
+
+  playing(tag: HTMLVideoElement) {
+    this.elementService.oncePLayVideo(tag);
   }
 
 }

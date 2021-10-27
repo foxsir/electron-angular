@@ -1,1 +1,1 @@
-<audio [src]="resource" controls></audio>
+<audio [src]="resource" controls #tag (playing)="playing(tag)"></audio>
