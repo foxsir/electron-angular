@@ -30,10 +30,11 @@
           <mat-card-content>
             <mat-card-title class="small-title">{{localUserInfo.whatSUp || '暂无介绍'}}</mat-card-title>
             <mat-card-subtitle>账号：{{localUserInfo.user_mail}}</mat-card-subtitle>
+            <mat-card-subtitle>余额：{{myAccount}}元</mat-card-subtitle>
           </mat-card-content>
         </mat-card>
       </div>
-      <div fxFlex class="account-panel-body">
+      <div fxFlex class="account-panel-body" style="border-top: 10px solid #888;">
         <div fxLayout="column" fxLayoutGap="3px" class="user-setting-menu">
           <div fxFlex="100" *ngFor="let menu of userSettingMenu" class="user-setting-menu-item">
             <button mat-button fxFlex="100" style="text-align: start" tabindex="-1" (click)="menu.action()">
