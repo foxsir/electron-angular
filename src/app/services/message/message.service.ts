@@ -333,18 +333,30 @@ export class MessageService {
         , '0'                    // 消息中转接收者（因群聊消息为扩散写逻辑，所以必须由服务端代为转发）
         , UserProtocalsType.MT44_OF_GROUP$CHAT$MSG_A$TO$SERVER);
 
-      // console.log(p)
-      // debugger
-      // 将消息通过websocket发送出去
-      p.QoS = true;
-      this.imService.sendData(p);
-      success = true;
 
-      resolve({
-        success: success,
-        msgBody:msgBody,
-        currentChattingGe: currentChattingGe,
-        fingerPrint: p.fp,
+      const message = msgBody.m;
+      const chatMsgEntity: ChatmsgEntityModel = this.messageEntityService.prepareSendedMessage(
+        message, CommonTools.getTimestamp(), p.fp, msgType
+      );
+      chatMsgEntity.uh = this.localUserService.localUserInfo.userAvatarFileName;
+
+      // 如果是at消息msgBody直接使用文本
+      if(msgType === MsgType.TYPE_AITE) {
+        msgBody = chatMsgEntity.text;
+      }
+      this.cacheService.putChattingCache(this.currentChattingChangeService.currentChatting, chatMsgEntity, true).then(() => {
+        // debugger
+        // 将消息通过websocket发送出去
+        p.QoS = true;
+        this.imService.sendData(p);
+        success = true;
+
+        resolve({
+          success: success,
+          msgBody:msgBody,
+          currentChattingGe: currentChattingGe,
+          fingerPrint: p.fp,
+        });
       });
     });
   }
