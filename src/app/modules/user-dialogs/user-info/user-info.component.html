@@ -31,7 +31,8 @@
           <div fxLayout="column" fxLayoutGap="10px">
             <mat-card-title>基本信息</mat-card-title>
             <div>个人账号：{{user.userMail}}</div>
-            <div>最近登录：{{userInfo.latestLoginTime | date}}</div>
+            <div>注册时间：{{userInfo.registerTime}}</div>
+            <div>最近登录：{{latestLoginTime}}</div>
           </div>
         </mat-card>
 
