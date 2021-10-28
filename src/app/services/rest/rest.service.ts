@@ -27,6 +27,7 @@ import {
   getRedPacketById,
   getRemark,
   getUserBaseById,
+  getCustAccountbaseById,
   noDisturbDetail,
   topDetail,
   getUserClusterVo,
@@ -253,7 +254,6 @@ export class RestService {
       , JSON.stringify(m));
   }
 
-
   //111 新增 查询好友原始类型  邮箱好友 ACTION_APPEND2
   submitGetUserInfoToServer2(use_mail, user_mail, user_uid, isShowLoadingToast, logTAG) {
     // 要提交给服务端的参数
@@ -302,33 +302,33 @@ export class RestService {
       , receiveProcessedMail);
     }
 
-    changeGroupName(post_data: any) {
-        return this.restServer(1016, 24, 8, JSON.stringify(post_data));
-    }
+  changeGroupName(post_data: any) {
+      return this.restServer(1016, 24, 8, JSON.stringify(post_data));
+  }
 
-    /**
-     * 解散群聊
-     * @param post_data
-     */
-    jieSangGroup(post_data: any) {
-        return this.restServer(1016, 24, 26, JSON.stringify(post_data));
-    }
+  /**
+   * 解散群聊
+   * @param post_data
+   */
+  jieSangGroup(post_data: any) {
+      return this.restServer(1016, 24, 26, JSON.stringify(post_data));
+  }
 
-    /**
-     * 退出群聊
-     * @param post_data
-     */
-    exitGroup(post_data: any) {
-        return this.restServer(1016, 24, 23, JSON.stringify(post_data));
-    }
+  /**
+   * 退出群聊
+   * @param post_data
+   */
+  exitGroup(post_data: any) {
+      return this.restServer(1016, 24, 23, JSON.stringify(post_data));
+  }
 
-    changeGroupNotice(post_data: any) {
-        return this.restServer(1016, 24, 22, JSON.stringify(post_data));
-    }
+  changeGroupNotice(post_data: any) {
+      return this.restServer(1016, 24, 22, JSON.stringify(post_data));
+  }
 
-    inviteFriendToGroup(post_data: any) {
-        return this.restServer(1016, 24, 24, JSON.stringify(post_data));
-    }
+  inviteFriendToGroup(post_data: any) {
+      return this.restServer(1016, 24, 24, JSON.stringify(post_data));
+  }
 
   /**
    * 【接口1008-1-7】用户注册接口调用.
@@ -594,93 +594,93 @@ export class RestService {
       , JSON.stringify(m));
     }
 
-    /**
- * 用户好友相关 - 查看好友备注
- */
-    getRemark(data: any): Observable<any> {
-        const localUserInfo = this.localUserService.getObj();
-        data.id = localUserInfo.userId.toString();
+  /**
+* 用户好友相关 - 查看好友备注
+*/
+  getRemark(data: any): Observable<any> {
+      const localUserInfo = this.localUserService.getObj();
+      data.id = localUserInfo.userId.toString();
 
-        return this.http.get(getRemark, data);
-    }
+      return this.http.get(getRemark, data);
+  }
 
-    /**
-      * 用户好友相关 - 获取好友列表
-      */
-    getfriendList(data: any): Observable<any> {
-        const localUserInfo = this.localUserService.getObj();
-        data.userId = localUserInfo.userId.toString();
+  /**
+    * 用户好友相关 - 获取好友列表
+    */
+  getfriendList(data: any): Observable<any> {
+      const localUserInfo = this.localUserService.getObj();
+      data.userId = localUserInfo.userId.toString();
 
-        return this.http.get(getfriendList, data);
-    }
+      return this.http.get(getfriendList, data);
+  }
 
-    /**
-      * 红包相关 - 是否设置支付密码
-      */
-    checkPayKeyIsExist(): Observable<any> {
-        const localUserInfo = this.localUserService.getObj();
-        return this.http.get(checkPayKeyIsExist, { userId: localUserInfo.userId.toString()});
-    }
+  /**
+    * 红包相关 - 是否设置支付密码
+    */
+  checkPayKeyIsExist(): Observable<any> {
+      const localUserInfo = this.localUserService.getObj();
+      return this.http.get(checkPayKeyIsExist, { userId: localUserInfo.userId.toString()});
+  }
 
-    /**
-      * 红包相关 - 设置支付密码
-      */
-    updatePayKey(data: any): Observable<any> {
-        const localUserInfo = this.localUserService.getObj();
-        data.userId = localUserInfo.userId.toString();
+  /**
+    * 红包相关 - 设置支付密码
+    */
+  updatePayKey(data: any): Observable<any> {
+      const localUserInfo = this.localUserService.getObj();
+      data.userId = localUserInfo.userId.toString();
 
-        return this.http.get(updatePayKey, data);
-    }
+      return this.http.get(updatePayKey, data);
+  }
 
-    /**
-      * 红包相关 - 发送红包
-      */
-    sentRedPacket(data: any): Observable<any> {
-        const localUserInfo = this.localUserService.getObj();
-        data.userId = localUserInfo.userId.toString();
+  /**
+    * 红包相关 - 发送红包
+    */
+  sentRedPacket(data: any): Observable<any> {
+      const localUserInfo = this.localUserService.getObj();
+      data.userId = localUserInfo.userId.toString();
 
-        return this.http.postForm(sentRedPacket, data);
-    }
+      return this.http.postForm(sentRedPacket, data);
+  }
 
-    /**
-      * 红包相关 - 红包详情
-      */
-    getRedPacketById(data: any): Observable<any> {
-        const localUserInfo = this.localUserService.getObj();
-        data.userId = localUserInfo.userId.toString();
+  /**
+    * 红包相关 - 红包详情
+    */
+  getRedPacketById(data: any): Observable<any> {
+      const localUserInfo = this.localUserService.getObj();
+      data.userId = localUserInfo.userId.toString();
 
-        return this.http.get(getRedPacketById, data);
-    }
+      return this.http.get(getRedPacketById, data);
+  }
 
-    /**
-      * 红包相关 - 领取红包
-      */
-    robRedPacket(data: any): Observable<any> {
-        const localUserInfo = this.localUserService.getObj();
-        data.userId = localUserInfo.userId.toString();
+  /**
+    * 红包相关 - 领取红包
+    */
+  robRedPacket(data: any): Observable<any> {
+      const localUserInfo = this.localUserService.getObj();
+      data.userId = localUserInfo.userId.toString();
 
-        return this.http.get(robRedPacket, data);
-    }
+      return this.http.get(robRedPacket, data);
+  }
 
-    /**
-      * 红包相关 - 红包记录
-      */
-    getConsumeRecordList(data: any): Observable<any> {
-        const localUserInfo = this.localUserService.getObj();
-        data.userId = localUserInfo.userId.toString();
+  /**
+    * 红包相关 - 红包记录
+    */
+  getConsumeRecordList(data: any): Observable<any> {
+      const localUserInfo = this.localUserService.getObj();
+      data.userId = localUserInfo.userId.toString();
 
-        return this.http.get(getConsumeRecordList, data);
-    }
+      return this.http.get(getConsumeRecordList, data);
+  }
 
-    /**
-     * 用户好友相关 - 修改好友备注
-     */
-    updRemark(data: any): Observable<any> {
-        const localUserInfo = this.localUserService.getObj();
-        data.id = localUserInfo.userId.toString();
+  /**
+   * 用户好友相关 - 修改好友备注
+   */
+  updRemark(data: any): Observable<any> {
+      const localUserInfo = this.localUserService.getObj();
+      data.id = localUserInfo.userId.toString();
 
-        return this.http.postForm(updRemark, data);
-    }
+      return this.http.postForm(updRemark, data);
+  }
 
   /**
    * 【接口1016-24-23】删除群成员或退群接口调用.
@@ -888,16 +888,16 @@ export class RestService {
     return this.http.get(getMissuCollectById, data);
     }
 
-    /**
-     * s删除收藏
-     */
-    deleteMissuCollectById(id) {
-        const localUser = this.localUserService.getObj();
-        const data = {
-            userId: localUser.userId,
-        };
-        return this.http.postForm(deleteMissuCollectById + '?id=' + id, {});
-    }
+  /**
+   * s删除收藏
+   */
+  deleteMissuCollectById(id) {
+      const localUser = this.localUserService.getObj();
+      const data = {
+          userId: localUser.userId,
+      };
+      return this.http.postForm(deleteMissuCollectById + '?id=' + id, {});
+  }
 
   /**
    * 获取我的黑名单
@@ -929,15 +929,15 @@ export class RestService {
     return this.http.get(getSensitiveWord, {});
   }
 
-    /**
-       * 拉黑/取消拉黑
-       */
-    blackUser(data: any) {
-        const localUserInfo = this.localUserService.getObj();
-        data.userId = localUserInfo.userId;
+  /**
+     * 拉黑/取消拉黑
+     */
+  blackUser(data: any) {
+      const localUserInfo = this.localUserService.getObj();
+      data.userId = localUserInfo.userId;
 
-        return this.http.postForm(blackUser, data);
-    }
+      return this.http.postForm(blackUser, data);
+  }
 
   /**
    * 查询用户资料
@@ -945,7 +945,12 @@ export class RestService {
    */
   getUserBaseById(user_id: string): Observable<any> {
     return this.http.postForm(getUserBaseById, {userUid: user_id});
-    }
+  }
+
+  /** 获取我的账号余额 **/
+  getCustAccountbaseById(user_uid: string): Observable<any> {
+    return this.http.get(getCustAccountbaseById, {userId: user_uid});
+  }
 
   /**
     * 查看免打扰状态
@@ -971,134 +976,134 @@ export class RestService {
       return this.http.get(getUserClusterVo, { userId: user_id, clusterId: clusterId });
   }
 
-    /**
-     * 编辑个人信息
-     * @param user_id
-     */
-    updateUserBaseById(data: any): Observable<any> {
-        const localUserInfo = this.localUserService.getObj();
-        data.userUid = localUserInfo.userId;
-
-        return this.http.post(updateUserBaseById, data);
-    }
-
-    /**
-     * 修改我的群昵称
-     * @param user_id
-     */
-    updateNicknameInGroup(data: any): Observable<any> {
-        const localUserInfo = this.localUserService.getObj();
-        data.userId = localUserInfo.userId;
-
-        return this.http.post(updateNicknameInGroup, data);
-    }
-
-    /**
-    * 系统设置 - 获取声网Token
-    * @param user_id
-    */
-    generateAgoraToken(touserid: any, islanch: boolean): Observable<any> {
-        const localUserInfo = this.localUserService.getObj();
-
-        var channelId = "";
-        if (islanch == true) {
-            channelId = localUserInfo.userId.toString() + '-' + touserid.toString();
-        }
-        else {
-            channelId = touserid.toString() + '-' + localUserInfo.userId.toString();
-        }
-
-        return this.http.get(generateAgoraToken, { channelId: channelId });
-    }
-
-   /**
-   * 隐私设置-隐私设置详情
+  /**
+   * 编辑个人信息
    * @param user_id
    */
-    getPrivacyConfigById(): Observable<any> {
-        const localUserInfo = this.localUserService.getObj();
-        return this.http.get(getPrivacyConfigById, { userId: localUserInfo.userId});
-    }
+  updateUserBaseById(data: any): Observable<any> {
+      const localUserInfo = this.localUserService.getObj();
+      data.userUid = localUserInfo.userId;
 
-    /**
-     * 隐私设置-更新隐私设置
-     * @param user_id
-     */
-    updatePrivacyConfig(data: any): Observable<any> {
-        const localUserInfo = this.localUserService.getObj();
-        data.userId = localUserInfo.userId;
+      return this.http.post(updateUserBaseById, data);
+  }
 
-        return this.http.post(updatePrivacyConfig, data);
-    }
-
-    /**
-   * 用户相关-用户群聊列表
+  /**
+   * 修改我的群昵称
    * @param user_id
    */
-    getUserJoinGroup(): Observable<any> {
-        const localUserInfo = this.localUserService.getObj();
-        return this.http.get(getUserJoinGroup, { userId: localUserInfo.userId });
-    }
+  updateNicknameInGroup(data: any): Observable<any> {
+      const localUserInfo = this.localUserService.getObj();
+      data.userId = localUserInfo.userId;
 
-    /**
-    * 群组相关 - 群页签列表
-    */
-    getUserGroupTab(clusterId): Observable<any> {
-        return this.http.get(getUserGroupTab, { clusterId: clusterId });
-    }
+      return this.http.post(updateNicknameInGroup, data);
+  }
 
-    /**
-    * 群组相关 - 更新群页签
-    */
-    UpUserGroupTab(data: any): Observable<any> {
-        return this.http.post(UpUserGroupTab, data);
-    }
+  /**
+  * 系统设置 - 获取声网Token
+  * @param user_id
+  */
+  generateAgoraToken(touserid: any, islanch: boolean): Observable<any> {
+      const localUserInfo = this.localUserService.getObj();
 
-   /**
-    * 群组相关 - 群客服列表
-    */
-    getGroupCustomerService(clusterId): Observable<any> {
-        return this.http.get(getGroupCustomerService, { clusterId: clusterId });
-    }
+      var channelId = "";
+      if (islanch == true) {
+          channelId = localUserInfo.userId.toString() + '-' + touserid.toString();
+      }
+      else {
+          channelId = touserid.toString() + '-' + localUserInfo.userId.toString();
+      }
 
-   /**
-    * 群组相关 - 更新群客服
-    */
-    UpGroupCustomerService(data: any): Observable<any> {
-        return this.http.post(UpGroupCustomerService, data);
-    }
+      return this.http.get(generateAgoraToken, { channelId: channelId });
+  }
 
-    /**
-     * 通过id查询群的基本信息
-     */
-    getGroupBaseById(id) {
-        const localUser = this.localUserService.getObj();
-        const data = {
-            userId: localUser.userId,
-        };
-        return this.http.get(getGroupBaseById, { id: id });
-    }
+ /**
+ * 隐私设置-隐私设置详情
+ * @param user_id
+ */
+  getPrivacyConfigById(): Observable<any> {
+      const localUserInfo = this.localUserService.getObj();
+      return this.http.get(getPrivacyConfigById, { userId: localUserInfo.userId});
+  }
 
-    /**
-     * 群组相关 - 更新群的基本信息
-     * @param user_id
-     */
-    updateGroupBaseById(data: any): Observable<any> {
-        //const localUserInfo = this.localUserService.getObj();
-        //console.dir(localUserInfo)
-        //data.userId = localUserInfo.userId;
+  /**
+   * 隐私设置-更新隐私设置
+   * @param user_id
+   */
+  updatePrivacyConfig(data: any): Observable<any> {
+      const localUserInfo = this.localUserService.getObj();
+      data.userId = localUserInfo.userId;
 
-        return this.http.post(updateGroupBaseById, data);
-    }
+      return this.http.post(updatePrivacyConfig, data);
+  }
 
-    /*
-     * 用户相关 - 新的朋友
-     * @param user_id
-     */
-    getNewFriend(): Observable<any> {
-        const localUserInfo = this.localUserService.getObj();
-        return this.http.get(getNewFriend + localUserInfo.userId, {});
-    }
+  /**
+ * 用户相关-用户群聊列表
+ * @param user_id
+ */
+  getUserJoinGroup(): Observable<any> {
+      const localUserInfo = this.localUserService.getObj();
+      return this.http.get(getUserJoinGroup, { userId: localUserInfo.userId });
+  }
+
+  /**
+  * 群组相关 - 群页签列表
+  */
+  getUserGroupTab(clusterId): Observable<any> {
+      return this.http.get(getUserGroupTab, { clusterId: clusterId });
+  }
+
+  /**
+  * 群组相关 - 更新群页签
+  */
+  UpUserGroupTab(data: any): Observable<any> {
+      return this.http.post(UpUserGroupTab, data);
+  }
+
+ /**
+  * 群组相关 - 群客服列表
+  */
+  getGroupCustomerService(clusterId): Observable<any> {
+      return this.http.get(getGroupCustomerService, { clusterId: clusterId });
+  }
+
+ /**
+  * 群组相关 - 更新群客服
+  */
+  UpGroupCustomerService(data: any): Observable<any> {
+      return this.http.post(UpGroupCustomerService, data);
+  }
+
+  /**
+   * 通过id查询群的基本信息
+   */
+  getGroupBaseById(id) {
+      const localUser = this.localUserService.getObj();
+      const data = {
+          userId: localUser.userId,
+      };
+      return this.http.get(getGroupBaseById, { id: id });
+  }
+
+  /**
+   * 群组相关 - 更新群的基本信息
+   * @param user_id
+   */
+  updateGroupBaseById(data: any): Observable<any> {
+      //const localUserInfo = this.localUserService.getObj();
+      //console.dir(localUserInfo)
+      //data.userId = localUserInfo.userId;
+
+      return this.http.post(updateGroupBaseById, data);
+  }
+
+  /*
+   * 用户相关 - 新的朋友
+   * @param user_id
+   */
+  getNewFriend(): Observable<any> {
+      const localUserInfo = this.localUserService.getObj();
+      return this.http.get(getNewFriend + localUserInfo.userId, {});
+  }
 
   /**
   * 分组列表
