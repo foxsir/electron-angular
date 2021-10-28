@@ -1,84 +1,109 @@
-<div fxLayout="row" fxFlex="100" fxLayoutAlign="default end" style="background: #FFF">
-  <div fxFlex="60px" fxLayoutAlign="center center" style="height:50px;">
-    <mat-menu #attachmentMenu="matMenu">
-      <button mat-menu-item>
-        <app-upload-file showText="发送图片" [fileTypes]="['image/png', 'image/jpg', 'image/jpeg']"
-                         (getFileInfo)="getImageInfo($event)"
-                         directoryType="message_image"
-                         (fileUploaded)="imageUploaded($event)"></app-upload-file>
-      </button>
-      <button mat-menu-item [disabled]="!!this.quoteMessage">
-        <app-upload-file showText="文件发送" [fileTypes]="['*']"
-                         (getFileInfo)="getFileInfo($event)"
-                         directoryType="message_file"
-                         (fileUploaded)="fileUploaded($event)"></app-upload-file>
-      </button>
-      <button mat-menu-item (click)="selectFriend()" [disabled]="!!this.quoteMessage">
-        名片发送
-      </button>
-      <button mat-menu-item (click)="sendRedpocket()" [disabled]="!!this.quoteMessage">
-        红包
-      </button>
-      <button mat-menu-item [disabled]="!!this.quoteMessage" (click)="startScreenShot()">
-        截图
-      </button>
-    </mat-menu>
-
-    <button mat-icon-button [matMenuTriggerFor]="attachmentMenu">
-      <mat-icon class="hover-icon">
-        <img class="icon" [src]="attachmentIcon" alt="">
-        <img class="icon-active" [src]="attachmentActiveIcon" alt="">
-      </mat-icon>
-    </button>
-  </div>
-  <div fxFlex style="background: #FFF" class="message-textarea-container">
-    <span #createPlanMenuTrigger="matMenuTrigger" #matMenuTriggerSpan [matMenuTriggerFor]="atMenu"></span>
-    <mat-menu #atMenu="matMenu" (closed)="asyncTextareaFocus()">
-      <mat-card class="mat-elevation-z0 scrollbar" style="max-height: 150px; width: 200px;">
-        <mat-card-content>
-          <p mat-menu-item *ngIf="user_role != 'common'"
-             (click)="appendAtMarkAll()" (keydown.enter)="appendAtMarkAll()">
-            @所有人</p>
-          <p mat-menu-item
-             *ngFor="let member of memberMap | keyvalue"
-             (click)="appendAtMark(member.value)" (keydown.enter)="appendAtMark(member.value)">
-            @{{member.value.showNickname}}</p>
-        </mat-card-content>
-      </mat-card>
-    </mat-menu>
-    <div contenteditable="true" (paste)="pasteContent($event)" class="message-textarea" #textarea
-         (keyup)="textareaChange()" (keydown)="textareaKeydown($event)" (keydown.enter)="doSend();"></div>
-    <div class="message-text-placeholder" (selectstart)="false" (click)="textarea.focus()" [fxShow]="showPlaceholder">
-      {{messageTextPlaceholder}}
-    </div>
-  </div>
-  <div fxFlex="120px" fxLayoutAlign="center center" fxLayoutGap="10px" style="height:50px; background: #FFF">
-    <div class="emoji-panel">
-      <button mat-icon-button #openEmojiToggle [matMenuTriggerFor]="openEmoji">
-        <mat-icon class="hover-icon">
-          <img class="icon" [src]="emojiIcon" alt="">
-          <img class="icon-active" [src]="emojiActiveIcon" alt="">
-        </mat-icon>
-      </button>
-      <mat-menu #openEmoji="matMenu">
-        <mat-card class="mat-elevation-z0" style="height: 200px;">
+<div fxLayout="column">
+  <div fxLayout="row" fxFlex="100" fxLayoutAlign="default end" *ngIf="openAtPanel">
+    <div fxLayout="column" fxFlex="100">
+      <div class="cancel-at-overlay" (click)="closeAtPanel()"></div>
+      <div class="at-select-area">
+        <mat-card class="mat-elevation-z0 at-chip-filter">
           <mat-card-content>
-            <button mat-icon-button style="border-radius: 0" (mouseup)="insertEmoji(emoji)" *ngFor="let emoji of emojiItems">
-              <img style="width: 60%;" [src]="['assets/emojis', emoji.value].join('/')" alt="">
-            </button>
+            <input nz-input placeholder="搜索" />
           </mat-card-content>
         </mat-card>
-      </mat-menu>
+        <div class="at-chip-list">
+          <mat-chip-list #atChipList class="mat-chip-list-stacked" aria-label="Color selection">
+            <mat-chip (click)="appendAtMarkAll()" (keydown.enter)="appendAtMarkAll()" fxLayoutAlign="start center">
+              <div fxLayout="row" fxLayoutGap="10px">
+                <div fxFlex="30px" fxLayoutAlign="center center">
+                  <button mat-mini-fab color="primary" class="at-item-prefix">@</button>
+                </div>
+                <div fxFlex fxLayoutAlign="center center">
+                  所有人 ({{memberMap.size}})
+                </div>
+              </div>
+            </mat-chip>
+            <mat-chip *ngFor="let member of memberMap | keyvalue"  fxLayoutAlign="start center"
+                      (click)="appendAtMark(member.value)" (keydown.enter)="appendAtMark(member.value)">
+              <div fxLayout="row" fxLayoutGap="10px">
+                <div fxFlex="30px" fxLayoutAlign="center center">
+                  <img [src]="member.value.userAvatarFileName" alt="" class="at-item-prefix" />
+                </div>
+                <div fxFlex fxLayoutAlign="center center">
+                  {{member.value.showNickname}}
+                </div>
+              </div>
+            </mat-chip>
+          </mat-chip-list>
+        </div>
+      </div>
     </div>
-    <button mat-icon-button [disabled]="!messageText || messageText.length === 0" (click)="doSend()">
-      <mat-icon class="hover-icon" *ngIf="!!messageText && messageText.trim().length > 0">
-        <img class="icon" [src]="sendActiveIcon" alt="">
-        <img class="icon-active" [src]="sendActiveIcon" alt="">
-      </mat-icon>
-      <mat-icon class="hover-icon" *ngIf="!messageText || messageText.length === 0">
-        <img class="icon" [src]="sendIcon" alt="">
-        <img class="icon-active" [src]="sendIcon" alt="">
-      </mat-icon>
-    </button>
+  </div>
+  <div fxLayout="row" fxFlex="100" fxLayoutAlign="default end" style="background: #FFF">
+    <div fxFlex="60px" fxLayoutAlign="center center" style="height:50px;">
+      <mat-menu #attachmentMenu="matMenu">
+        <button mat-menu-item>
+          <app-upload-file showText="发送图片" [fileTypes]="['image/png', 'image/jpg', 'image/jpeg']"
+                           (getFileInfo)="getImageInfo($event)"
+                           directoryType="message_image"
+                           (fileUploaded)="imageUploaded($event)"></app-upload-file>
+        </button>
+        <button mat-menu-item [disabled]="!!this.quoteMessage">
+          <app-upload-file showText="文件发送" [fileTypes]="['*']"
+                           (getFileInfo)="getFileInfo($event)"
+                           directoryType="message_file"
+                           (fileUploaded)="fileUploaded($event)"></app-upload-file>
+        </button>
+        <button mat-menu-item (click)="selectFriend()" [disabled]="!!this.quoteMessage">
+          名片发送
+        </button>
+        <button mat-menu-item (click)="sendRedpocket()" [disabled]="!!this.quoteMessage">
+          红包
+        </button>
+        <button mat-menu-item [disabled]="!!this.quoteMessage" (click)="startScreenShot()">
+          截图
+        </button>
+      </mat-menu>
+
+      <button mat-icon-button [matMenuTriggerFor]="attachmentMenu">
+        <mat-icon class="hover-icon">
+          <img class="icon" [src]="attachmentIcon" alt="">
+          <img class="icon-active" [src]="attachmentActiveIcon" alt="">
+        </mat-icon>
+      </button>
+    </div>
+    <div fxFlex style="background: #FFF" class="message-textarea-container">
+      <div contenteditable="true" (paste)="pasteContent($event)" class="message-textarea" #textarea
+           (keyup)="textareaChange()" (keydown)="textareaKeydown($event)" (keydown.enter)="doSend();" (click)="closeAtPanel()"></div>
+      <div class="message-text-placeholder" (selectstart)="false" (click)="textarea.focus()" [fxShow]="showPlaceholder">
+        {{messageTextPlaceholder}}
+      </div>
+    </div>
+    <div fxFlex="120px" fxLayoutAlign="center center" fxLayoutGap="10px" style="height:50px; background: #FFF">
+      <div class="emoji-panel">
+        <button mat-icon-button #openEmojiToggle [matMenuTriggerFor]="openEmoji">
+          <mat-icon class="hover-icon">
+            <img class="icon" [src]="emojiIcon" alt="">
+            <img class="icon-active" [src]="emojiActiveIcon" alt="">
+          </mat-icon>
+        </button>
+        <mat-menu #openEmoji="matMenu">
+          <mat-card class="mat-elevation-z0" style="height: 200px;">
+            <mat-card-content>
+              <button mat-icon-button style="border-radius: 0" (mouseup)="insertEmoji(emoji)" *ngFor="let emoji of emojiItems">
+                <img style="width: 60%;" [src]="['assets/emojis', emoji.value].join('/')" alt="">
+              </button>
+            </mat-card-content>
+          </mat-card>
+        </mat-menu>
+      </div>
+      <button mat-icon-button [disabled]="!messageText || messageText.length === 0" (click)="doSend()">
+        <mat-icon class="hover-icon" *ngIf="!!messageText && messageText.trim().length > 0">
+          <img class="icon" [src]="sendActiveIcon" alt="">
+          <img class="icon-active" [src]="sendActiveIcon" alt="">
+        </mat-icon>
+        <mat-icon class="hover-icon" *ngIf="!messageText || messageText.length === 0">
+          <img class="icon" [src]="sendIcon" alt="">
+          <img class="icon-active" [src]="sendIcon" alt="">
+        </mat-icon>
+      </button>
+    </div>
   </div>
 </div>

@@ -1,10 +1,10 @@
 import {
   AfterViewInit,
-  ChangeDetectionStrategy,
+  ChangeDetectionStrategy, ChangeDetectorRef,
   Component,
   ElementRef,
-  EventEmitter,
-  Input, OnDestroy,
+  EventEmitter, HostListener,
+  Input, NgZone, OnDestroy,
   OnInit,
   Output,
   ViewChild
@@ -53,6 +53,7 @@ import {GlobalCache} from "@app/config/global-cache";
 import {ElectronService} from "@app/core/services";
 import FriendModel from "@app/models/friend.model";
 import SubscribeManage from "@app/common/subscribe-manage";
+import {MatChipList} from "@angular/material/chips";
 
 @Component({
   selector: 'app-input-area',
@@ -66,8 +67,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
   @ViewChild("textarea") textarea: ElementRef;
   @ViewChild("openEmojiToggle") openEmojiToggle: MatButton;
   @ViewChild("createPlanMenuTrigger") menuTrigger: MatMenuTrigger;
-  @ViewChild("matMenuTriggerSpan") matMenuTriggerSpan: ElementRef;
-  @ViewChild("atMenu") atMenu: MatMenu;
+  @ViewChild("atChipList") atChipList: MatChipList;
 
   private reversalEmojis = InputAreaComponent.reversalEmojiMap();
   emojiItems = InputAreaComponent.getEmojiMap();
@@ -104,6 +104,11 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
     isAdmin: 0,
   };
 
+  /**
+   * 打开@面板
+   */
+  public openAtPanel: boolean = false;
+
   constructor(
     private router: Router,
     private dom: DomSanitizer,
@@ -124,6 +129,8 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
     private forwardMessageService: ForwardMessageService,
     private inputAreaService: InputAreaService,
     private electronService: ElectronService,
+    private zone: NgZone,
+    private changeDetectorRef: ChangeDetectorRef,
   ) {
     SubscribeManage.run(this.inputAreaService.inputUpdate$, (status) => {
       this.inputEnableStatus = status;
@@ -163,6 +170,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
     });
 
     this.initUserCluInfo();
+    this.chattingChange(); // 切换聊天时初始化一些数据
   }
 
   ngAfterViewInit() {
@@ -197,11 +205,12 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
   }
 
   /**
-   * 获取群成员暂存
+   * 切换聊天初始化数据
    */
   private chattingChange() {
     this.getGroupMembers(this.currentChat);
     SubscribeManage.run(this.currentChattingChangeService.currentChatting$, (currentChat) => {
+      this.openAtPanel = false;
       if(currentChat) {
         this.getGroupMembers(currentChat);
         this.clearTextArea();
@@ -565,8 +574,21 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
    */
   private toggleAt() {
     this.textarea.nativeElement.blur();
-    this.matMenuTriggerSpan.nativeElement.style.marginLeft = this.calcMenuPosition();
-    this.menuTrigger.openMenu();
+    this.zone.run(() => {
+      this.openAtPanel = true;
+      this.changeDetectorRef.detectChanges();
+    });
+    this.atChipList.focus();
+  }
+
+  /**
+   * 关闭@面板
+   */
+  public closeAtPanel() {
+    this.zone.run(() => {
+      this.openAtPanel = false;
+      this.changeDetectorRef.detectChanges();
+    });
   }
 
   /**
@@ -614,7 +636,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
    * @param rightKey
    */
   public appendAtMark(member: GroupMemberModel, rightKey: boolean = false) {
-    this.textarea.nativeElement.focus();
+    this.openAtPanel = false;
     if(rightKey === false) {
       document.execCommand("delete");
     }
@@ -622,20 +644,26 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
     this.showPlaceholder = false;
     this.textarea.nativeElement.blur();
     this.textareaChange();
-    this.menuTrigger.closeMenu();
+    setTimeout(() => {
+      this.textarea.nativeElement.focus();
+    }, 10);
+    // this.menuTrigger.closeMenu();
   }
 
   /**
    * @所有人
    */
   public appendAtMarkAll() {
-    this.textarea.nativeElement.focus();
+    this.openAtPanel = false;
     document.execCommand("delete");
     document.execCommand("insertHTML", false, this.getATMark([]).outerHTML + " ");
     this.showPlaceholder = false;
     this.textarea.nativeElement.blur();
     this.textareaChange();
-    this.menuTrigger.closeMenu();
+    setTimeout(() => {
+      this.textarea.nativeElement.focus();
+    }, 10);
+    // this.menuTrigger.closeMenu();
   }
 
   /**
