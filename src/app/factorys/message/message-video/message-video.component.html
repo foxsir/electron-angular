@@ -1,3 +1,6 @@
 <div class="video-container preview" (click)="preview()">
-  <video [src]="videoInfo.ossFilePath" [poster]="videoInfo.videoCoverPath" controls #tag (playing)="playing(tag)"></video>
+  <div style="position: relative;">
+    <img [src]="videoIcon" alt="" class="video-icon">
+    <video [src]="videoInfo.ossFilePath" [poster]="videoInfo.videoCoverPath" #tag (playing)="playing(tag)"></video>
+  </div>
 </div>
