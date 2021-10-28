@@ -164,7 +164,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
       const filename = CommonTools.getTimestamp() + ".png";
       this.fileService.upload(buffer, filename, DirectoryType.OSS_IMAGE).then(res => {
         console.log('剪贴板图片地址：', res);
-        this.dialogService.confirm({title: "发送图片", text: res.url, height: '200px'}).then((ok) => {
+        this.dialogService.confirm({title: "图片发送", text: res.url, height: '200px'}).then((ok) => {
           if (ok) {
             this.doSend(res.url, MsgType.TYPE_IMAGE, true);
           }
@@ -860,7 +860,7 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
   pasteImage(e: ClipboardEvent) {
     this.retrieveImageFromClipboardAsFile(e, (file) => {
       CommonTools.getBlobUrlFromFile(file).then(url => {
-        this.dialogService.confirm({ title: "发送图片", text: url, height: "200px"}).then((ok) => {
+        this.dialogService.confirm({ title: "图片发送", text: url, height: "200px"}).then((ok) => {
           if (ok) {
             const filename = [CommonTools.md5(CommonTools.uuid()), file.type.split("/")[1]].join(".");
             this.fileService.upload(file, filename, DirectoryType.OSS_IMAGE).then(res => {
