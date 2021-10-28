@@ -89,6 +89,9 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
 
   public memberMap: Map<string, GroupMemberModel> = new Map();
 
+  // 用来过滤@成员
+  public filterAtMember: string = "";
+
   private atTargetMember: string[] = [];
 
   private tempList = [];
@@ -222,8 +225,12 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
   getGroupMembers(currentChat: AlarmItemInterface) {
     if(currentChat.metadata.chatType === "group") {
       const gid = currentChat.alarmItem.dataId;
-      this.cacheService.cacheGroupMembers(gid).then(cache => {
-        this.memberMap = cache;
+      this.cacheService.getGroupMembers(gid).then(cache => {
+        this.zone.run(() => {
+          this.memberMap.clear();
+          this.memberMap = cache;
+          this.changeDetectorRef.detectChanges();
+        });
       });
     }
   }
@@ -899,16 +906,19 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
       if (res.status !== 200)
         return;
 
-      this.user_clu_info = res.data;
-      if (this.user_clu_info.groupOwner == this.userinfo.userId.toString()) {
-        this.user_role = 'owner';
-      }
-      else if (this.user_clu_info.isAdmin == 1) {
-        this.user_role = 'admin';
-      }
-      else {
-        this.user_role = 'common';
-      }
+      this.zone.run(() => {
+        this.user_clu_info = res.data;
+        if (this.user_clu_info.groupOwner.toString() === this.userinfo.userId.toString()) {
+          this.user_role = 'owner';
+        }
+        else if (this.user_clu_info.isAdmin == 1) {
+          this.user_role = 'admin';
+        }
+        else {
+          this.user_role = 'common';
+        }
+        this.changeDetectorRef.detectChanges();
+      });
 
       console.log('当前用户在这个群的角色: ', this.user_role);
     });
