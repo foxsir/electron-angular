@@ -942,12 +942,18 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
           }
         });
       });
+
   }
 
   loadGroupData(){
     this.restService.getGroupBaseById(this.currentChat.alarmItem.dataId).subscribe((group_data: NewHttpResponseInterface<GroupModel>) => {
       if (group_data.status === 200 && group_data.data && group_data.data.tabSwitch === 1) {
         this.loadTabData();
+      }else{
+        this.group_tab_data = {
+          visible: true,
+          list: []
+        };
       }
 
       this.groupData.gnotice = "";
