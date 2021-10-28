@@ -759,7 +759,8 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
     }).then((friend: {ok: boolean;selectfriends: FriendModel[]}) => {
       if(friend.selectfriends.length === 0) return;
       if(friend.ok) {
-        this.dialogService.confirm({title: "消息提示", text: "确认分享联系信息到当前聊天吗？"}).then((ok) => {
+        let text="确认分享联系信息给"+this.currentChat.alarmItem.title+"吗？";
+        this.dialogService.confirm({title: "消息提示", text: text}).then((ok) => {
           if(ok) {
               this.cacheService.getCacheFriends().then(cache => {
                 friend.selectfriends.forEach(fri => {
