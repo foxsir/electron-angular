@@ -82,7 +82,7 @@ export default class CommonTools {
     return new Date().getTime();
   }
 
-  //
+  //毫秒时间戳转汉化日期时间
   public static formatSecondToChinese(s: number):string{
     var theTime = Math.ceil(s/1000);// 秒
     var theTime1 = 0;// 分
@@ -103,7 +103,7 @@ export default class CommonTools {
       }
       console.dir(theDay)
     }
-    var result = ""//+Math.floor(theTime)+"秒";
+    var result = "";
     if(theTime1 > 0) {
       result = ""+Math.floor(theTime1)+"分钟"+result;
     }
@@ -115,6 +115,18 @@ export default class CommonTools {
     }
 
     return result;
+  }
+
+  //将时间戳转换成正常时间格式
+  public static timestampToDateTime(timestamp,isSeconds) {
+    var date = new Date(timestamp * (isSeconds?1000:1));//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+    var Y = date.getFullYear() + '-';
+    var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
+    var D = date.getDate() + ' ';
+    var h = date.getHours() + ':';
+    var m = date.getMinutes() + ':';
+    var s = date.getSeconds();
+    return Y+M+D+h+m+s;
   }
 
 }

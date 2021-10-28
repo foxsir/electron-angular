@@ -17,6 +17,7 @@ import {SnackBarService} from "@services/snack-bar/snack-bar.service";
 import {DialogService} from "@services/dialog/dialog.service";
 import {MessageService} from "@services/message/message.service";
 import LocalUserinfoModel from "@app/models/local-userinfo.model";
+import CommonTools from "@app/common/common.tools";
 
 @Component({
   selector: 'app-user-info',
@@ -37,6 +38,7 @@ export class UserInfoComponent implements OnInit {
   isFriend: boolean;
 
   public localUserInfo: LocalUserinfoModel = this.localUserService.localUserInfo;
+  public latestLoginTime:string="";
 
   constructor(
     public dialogRef: MatDialogRef<UserInfoComponent>,
@@ -69,7 +71,7 @@ export class UserInfoComponent implements OnInit {
         this.restService.getFriendInfo(this.data.userId).subscribe((info: NewHttpResponseInterface<FriendModel>) => {
           if(info.status === 200) {
             this.userInfo = info.data;
-            console.dir(info);
+            this.latestLoginTime = CommonTools.timestampToDateTime(this.userInfo.latestLoginTime,false);
             this.onlineStatus = info.data.onlineStatus ? '[在线]' : '[离线]';
           }
         });
