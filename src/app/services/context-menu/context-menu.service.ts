@@ -500,12 +500,12 @@ export class ContextMenuService {
           return owner || manager; // 是管理员或者群主
         },
         action: (alarmItem, chat) => {
-          this.dialogService.confirm({title: "从本群中删除"}).then((ok) => {
+          this.dialogService.confirm({title: '成员移除', text: "确定要將「 "+chat.name+" 」移出群吗？"}).then((ok) => {
             if(ok) {
               const userId = Number(chat.uid);
               const localUserInfo: LocalUserinfoModel = RBChatUtils.getAuthedLocalUserInfoFromCookie();
-              this.restService.removeGroupMembers(alarmItem.alarmItem.dataId, chat.uid,
-                chat.name, [
+              this.restService.removeGroupMembers(alarmItem.alarmItem.dataId, this.localUserService.localUserInfo.userId.toString(),
+                this.localUserService.localUserInfo.nickname, [
                 [alarmItem.alarmItem.dataId, chat.uid, chat.name]
               ]).subscribe((res: HttpResponseInterface) => {
                 if(res.success === true) {
