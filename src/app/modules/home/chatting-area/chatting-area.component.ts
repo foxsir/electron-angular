@@ -1097,11 +1097,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
         txt:this.groupData.gtopContent,
       }
     }
-    this.dialogService.openDialog(GroupNoticeComponent, { data: data,width: '314px',panelClass: "padding-less-dialog" }).then((res: any) => {
-      if (res.ok === false) {
-        return;
-      }
-    });
+    this.dialogService.openDialog(GroupNoticeComponent, { data: data,width: '314px',panelClass: "padding-less-dialog" }).then();
   }
 
   /**
