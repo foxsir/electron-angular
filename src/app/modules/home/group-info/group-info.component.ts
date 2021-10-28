@@ -471,6 +471,7 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
           this.drawer.close().then();
           this.restService.submitTransferGroupToServer(this.userinfo.userId.toString(), res.item.userUid, res.item.showNickname, this.currentChat.alarmItem.dataId).subscribe(res => {
             this.user_role = 'common';
+            this.snackBarService.openMessage('转让成功！');
           });
         }
       }
