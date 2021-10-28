@@ -56,6 +56,8 @@ export class SearchFriendComponent implements OnInit {
 
   public searchFriend: string = "";
   public searchFriendInfo: SearchFriend = null;
+  // 是否进行过搜索
+  public hasSearch = false;
 
   constructor(
     private router: Router,
@@ -81,7 +83,6 @@ export class SearchFriendComponent implements OnInit {
     if (this.searchFriend.trim().length > 0) {
       this.restService.getFriendSearch({friendAccount: this.searchFriend})
         .subscribe((res: NewHttpResponseInterface<SearchFriend>) => {
-          console.dir(res)
           if(res.data !== null) {
             this.searchFriendInfo = res.data;
             // 和本地匹配一下，看看是不是好友
@@ -96,6 +97,8 @@ export class SearchFriendComponent implements OnInit {
             this.searchFriendInfo = null;
             this.snackBarService.openMessage("没有找到匹配的用户");
           }
+          // 已经进行过搜索
+          this.hasSearch = true;
       });
     }
   }

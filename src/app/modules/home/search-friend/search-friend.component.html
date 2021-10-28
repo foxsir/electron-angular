@@ -48,12 +48,21 @@
                   <div fxFlex fxLayoutAlign="start center">
                     {{searchFriendInfo.nickname}}
                   </div>
+                  <div fxFlex fxLayoutAlign="start center">
+                    <div mat-line *ngIf="!!searchFriendInfo.onlineStatus === true" style="color: #0091FF;font-size: 12px">[在线]</div>
+                    <div mat-line *ngIf="!!searchFriendInfo.onlineStatus === false" style="color: #CCCCCC;font-size:12px">[离线]</div>
+                  </div>
                 </div>
               </div>
               <div fxFlex fxLayoutAlign="end">
                 <div mat-line *ngIf="!!searchFriendInfo.isFriend === false"><button mat-flat-button color="primary" (click)="friendRequest()">添加</button></div>
                 <div  mat-line *ngIf="!!searchFriendInfo.isFriend === true" ><button mat-flat-button color="primary" (click)="switchChatting(searchFriendInfo)">发送消息</button></div>
               </div>
+            </div>
+          </div>
+          <div *ngIf="searchFriendInfo === null && hasSearch">
+            <div style="margin-top: 60px">
+              <empty-data text="抱歉，没有找到相关信息" [showIcon]="false"></empty-data>
             </div>
           </div>
         </div>
