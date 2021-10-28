@@ -172,9 +172,7 @@ export class GroupChattingSettingComponent implements OnInit,OnDestroy {
 
         this.restService.UpUserGroupTab(data).subscribe(res => {
             item.status = data.status;
-          this.currentChattingChangeService.switchCurrentChatting(
-            this.currentChat
-          ).then();
+          this.currentChattingChangeService.switchCurrentChatting(this.currentChat).then();
           this.cacheService.putChattingCache(this.currentChat).then(() => {});
         });
     }
@@ -215,8 +213,10 @@ export class GroupChattingSettingComponent implements OnInit,OnDestroy {
         };
 
         this.restService.updateGroupBaseById(data).subscribe(res => {
-            this.group_top_view_mode = 'view';
-            this.setting_data.gtopContent = this.setting_data.gtopContentTemp;
+          this.group_top_view_mode = 'view';
+          this.setting_data.gtopContent = this.setting_data.gtopContentTemp;
+          this.currentChattingChangeService.switchCurrentChatting(this.currentChat).then();
+          this.cacheService.putChattingCache(this.currentChat).then(() => {});
         });
     }
 
