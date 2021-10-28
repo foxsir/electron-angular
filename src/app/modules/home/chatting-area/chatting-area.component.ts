@@ -119,6 +119,8 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
 
   public localUserInfo: LocalUserinfoModel;
 
+  public friendOnLineStat: boolean = false;
+
   // 是否正在搜索
   public searching = false;
 
@@ -211,6 +213,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
     this.subscribeOfGroupChatMsgServerToB();
     this.subscribeChattingMessage();
     this.subscribeGroupSilence();
+
     // 订阅踢人时删除消息的通知
     this.subscribeDeleteGroupMessage();
     // 订阅删除单聊消息的通知
@@ -227,7 +230,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
         this.blacked = false;
         console.log("拉黑我的人:",cache.blackMeListMap);
         cache.blackMeListMap.forEach(item => {
-          if (item.userUid.toString() == this.currentChat.alarmItem.dataId) {
+          if (item.userUid.toString() === this.currentChat.alarmItem.dataId) {
             this.blacked = true;
             this.snackBarService.openMessage("你已被对方拉入黑名单");
           }
@@ -265,6 +268,14 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
 
         if (this.currentChat.alarmItem.chatType === 'group') {
           this.loadGroupData();
+        }
+        if(this.currentChat.alarmItem.chatType === 'friend'){
+          this.getFriendOnlineStat();
+          SubscribeManage.run(this.cacheService.cacheUpdate$, (cache) => {
+            if(cache.friendMap) {
+              this.getFriendOnlineStat();
+            }
+          });
         }
       }
 
@@ -326,15 +337,6 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
             this.loadMessage(true);
           }
         });
-        if ( this.currentChat.metadata.chatType === 'friend') {
-          this.restService.getUserBaseById(this.currentChat.alarmItem.dataId).subscribe(res => {
-            if (res.data !== null) {
-              this.currentChatSubtitle = [res.data.latestLoginAddres, res.data.latestLoginIp].join(": ");
-            } else {
-              this.currentChatSubtitle = null;
-            }
-          });
-        }
       } else {
         this.currentChat = currentChat;
       }
@@ -351,6 +353,27 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
         this.groupMembers = ms;
       });
     }
+  }
+
+  /** 单聊获取对方在线状态 **/
+  getFriendOnlineStat(){
+    this.cacheService.getCacheFriends().then(cache => {
+      const f = cache.get(this.currentChat.alarmItem.dataId);
+      if(f){
+        this.friendOnLineStat = f.onlineStatus;
+      }else{
+        this.friendOnLineStat = false;
+      }
+      console.dir(this.friendOnLineStat)
+      this.restService.getUserBaseById(this.currentChat.alarmItem.dataId).subscribe(res => {
+        this.currentChatSubtitle = (this.friendOnLineStat?"[在线]":"[离线]");
+        if (res.data !== null) {
+          this.currentChatSubtitle += [res.data.latestLoginAddres, res.data.latestLoginIp].join(": ");
+        } else {
+          this.currentChatSubtitle += "";
+        }
+      });
+    });
   }
 
   /**
@@ -937,12 +960,18 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
           }
         });
       });
+
   }
 
   loadGroupData(){
     this.restService.getGroupBaseById(this.currentChat.alarmItem.dataId).subscribe((group_data: NewHttpResponseInterface<GroupModel>) => {
       if (group_data.status === 200 && group_data.data && group_data.data.tabSwitch === 1) {
         this.loadTabData();
+      }else{
+        this.group_tab_data = {
+          visible: true,
+          list: []
+        };
       }
 
       this.groupData.gnotice = "";

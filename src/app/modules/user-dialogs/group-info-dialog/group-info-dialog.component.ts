@@ -154,13 +154,30 @@ export class GroupInfoDialogComponent implements OnInit {
     confirmDeleteGroupAdmin(selectDeleteGroupAdmin: any) {
       let selectfriends = [];
       selectDeleteGroupAdmin.selectedOptions.selected.forEach(item => {
-        selectfriends.push({id:item.value.userUid,name: item.value.nickname});
+        selectfriends.push({id: item.value.userUid, name: item.value.nickname});
       });
 
       const result = {
-          ok: true,
-          selectfriends: selectfriends,
+        ok: true,
+        selectfriends: selectfriends,
       };
-      this.dialogRef.close(result);
+
+      if(selectfriends.length > 0){
+        let confirmTxt = "";
+        if(selectfriends.length === 1){
+          confirmTxt="确定删除管理员 "+selectfriends[0].name+"吗？";
+        }else{
+          confirmTxt="确定删除"+selectfriends[0].name+"等"+selectfriends.length.toString()+"位管理员吗？";
+        }
+
+        this.dialogService.confirm({title: '删除管理员', text: confirmTxt}).then(ok => {
+          if (ok) {
+            this.dialogRef.close(result);
+          }
+        });
+      }
+      else{
+        this.dialogRef.close(result);
+      }
     }
 }

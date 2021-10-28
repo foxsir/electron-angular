@@ -124,7 +124,8 @@ export class ContextMenuService {
         }).then((friend: {ok: boolean;selectfriends: FriendModel[]}) => {
           if(friend.selectfriends.length === 0) return;
           if(friend.ok) {
-            this.dialogService.confirm({title: "消息提示", text: "确认分享联系信息到当前聊天吗？"}).then((ok) => {
+            let text="确认分享联系信息给"+chatting.alarmItem.title+"吗？";
+            this.dialogService.confirm({title: "消息提示", text: text}).then((ok) => {
               if(ok) {
                 friend.selectfriends.forEach(fri => {
                   const messageText = JSON.stringify({
@@ -135,8 +136,6 @@ export class ContextMenuService {
                   const chatMsgEntity: ChatmsgEntityModel = this.messageEntityService.prepareSendedMessage(
                     messageText, CommonTools.getTimestamp(), null, MsgType.TYPE_CONTACT
                   );
-                  console.dir(1111111111111111111111)
-                  console.dir(chatMsgEntity)
                   this.forwardMessageService.forward(chatting, chatMsgEntity);
                 });
               }
@@ -151,7 +150,11 @@ export class ContextMenuService {
         return true;
       },
       action: (chatting: AlarmItemInterface) => {
-        this.dialogService.confirm({title: '删除会话'}).then((ok) => {
+        let text="";
+        if(chatting.alarmItem.chatType === 'friend'){ text = "确定删除与该好友的会话吗？";}
+        if(chatting.alarmItem.chatType === 'group'){ text = "确定删除该群的会话吗？";}
+
+        this.dialogService.confirm({title: '消息提示', text: text}).then((ok) => {
           if(ok) {
             this.cacheService.getChattingCache(chatting).then(data => {
               const dataId = chatting.alarmItem.dataId;
@@ -169,9 +172,15 @@ export class ContextMenuService {
         return true;
       },
       action: (chatting: AlarmItemInterface) => {
-        this.dialogService.confirm({title: '清除历史消息'}).then((ok) => {
+        let text="";
+        if(chatting.alarmItem.chatType === 'friend'){ text = "确定清除与该好友的聊天记录吗？";}
+        if(chatting.alarmItem.chatType === 'group'){ text = "确定清除该群的聊天记录吗？";}
+        this.dialogService.confirm({title: '消息提示', text: text}).then((ok) => {
           if(ok) {
             this.cacheService.clearChattingCache(chatting).then(() => {});
+            if(chatting.alarmItem.chatType === 'group') {
+              this.cacheService.clearAt(chatting.alarmItem.dataId);
+            }
           }
         });
       }
@@ -183,7 +192,7 @@ export class ContextMenuService {
         return filterData.alarmItem.metadata.chatType === 'friend' && !inBlackList;
       },
       action: (chatting: AlarmItemInterface) => {
-        this.dialogService.confirm({text: ['将用户：', chatting.alarmItem.title, '拉入黑名单'].join("")}).then(ok => {
+        this.dialogService.confirm({title:'消息提示',text: ['确定将该好友拉入黑名单吗？'].join("")}).then(ok => {
           if(ok) {
             const data = {
               blackUserId: chatting.alarmItem.dataId,
@@ -327,7 +336,7 @@ export class ContextMenuService {
         return true;
       },
       action: (chat: ChatmsgEntityModel, messageContainer: HTMLDivElement) => {
-        this.dialogService.confirm({title: '删除消息', text: '是否删除该条消息？'}).then((ok) => {
+        this.dialogService.confirm({title: '删除消息', text: '您确定要删除此消息？'}).then((ok) => {
           if(ok) {
             // 删除消息
             return this.cacheService.deleteMessageCache(this.currentChattingChangeService.currentChatting, [chat]).then(res => {
@@ -500,7 +509,7 @@ export class ContextMenuService {
           return owner || manager; // 是管理员或者群主
         },
         action: (alarmItem, chat) => {
-          this.dialogService.confirm({title: '成员移除', text: "确定要將「 "+chat.name+" 」移出群吗？"}).then((ok) => {
+          this.dialogService.confirm({title: '消息提示', text: "确定删除 "+chat.name+"吗？"}).then((ok) => {
             if(ok) {
               const userId = Number(chat.uid);
               const localUserInfo: LocalUserinfoModel = RBChatUtils.getAuthedLocalUserInfoFromCookie();

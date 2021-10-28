@@ -61,6 +61,7 @@ export class AccountPanelComponent implements OnInit {
   myAvatar: SafeResourceUrl = null;
 
   public localUserInfo: LocalUserinfoModel;
+  public myAccount: number=0;
 
   public userSettingMenu = [
     {
@@ -135,8 +136,12 @@ export class AccountPanelComponent implements OnInit {
 
     // todo 保存到缓存中并做到界面数据实时更新
     this.restService.getUserBaseById(this.localUserInfo.userId.toString()).subscribe(res => {
-      console.log('MySignatureComponent result: ', res);
       this.localUserInfo.whatSUp = res.data.whatSUp;
+    });
+
+    //取账户余额
+    this.restService.getCustAccountbaseById(this.localUserInfo.userId.toString()).subscribe(res => {
+      this.myAccount = res.data.amount;
     });
 
     SubscribeManage.run(this.cacheService.cacheUpdate$, cache => {
