@@ -418,10 +418,11 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
           this.cacheService.putMsgEntityMap(data.chat);
           this.scrollToBottom();
         }
+        if(this.groupData.gtalkInterval === 1){
+          this.setTalkInterval(Number(data.chat.uid));
+        }
       }
     }
-    this.setTalkInterval(Number(data.chat.uid));
-    // chatMsg.fingerPrintOfProtocal
   }
 
   setTalkInterval(chatUid = 0) {
@@ -919,6 +920,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
     }
   }
 
+  /*获取群页签列表*/
   loadTabData() {
     console.log('显示消息组件数据打印：', this.currentChat);
 
@@ -927,38 +929,27 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
       list: []
     };
 
-    //如果是群聊，加载群页签数据
-    if (this.currentChat && this.currentChat.alarmItem.chatType === 'group') {
-      this.loadGroupData();
-    } else {
-      this.setTalkInterval();
-    }
+    this.restService.getUserGroupTab(this.currentChat.alarmItem.dataId).subscribe(
+      (tab_data: NewHttpResponseInterface<GroupTabModel[]>
+      ) => {
+        this.group_tab_data = {
+          visible: true,
+          list: []
+        };
+        tab_data.data.forEach(d => {
+          if(d.status === 1){
+            this.group_tab_data.list.push(d);
+          }
+        });
+      });
   }
 
   loadGroupData(){
     this.restService.getGroupBaseById(this.currentChat.alarmItem.dataId).subscribe((group_data: NewHttpResponseInterface<GroupModel>) => {
       if (group_data.status === 200 && group_data.data && group_data.data.tabSwitch === 1) {
-        /*获取群页签列表*/
-        this.restService.getUserGroupTab(this.currentChat.alarmItem.dataId).subscribe(
-          (tab_data: NewHttpResponseInterface<GroupTabModel[]>
-          ) => {
-            this.group_tab_data = {
-              visible: true,
-              list: []
-            };
-            tab_data.data.forEach(d => {
-              if(d.status === 1){
-                this.group_tab_data.list.push(d);
-              }
-            });
-          });
+        this.loadTabData();
       }
-      else{
-        this.group_tab_data = {
-          visible: false,
-          list: []
-        };
-      }
+
       this.groupData.gnotice = "";
       if(group_data.status === 200 && group_data.data) {
         this.groupData.gnotice = group_data.data.gnotice == null ? '' : group_data.data.gnotice;
@@ -977,7 +968,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
 
       this.groupData.gtalkIntervalSwitch=group_data.data.talkIntervalSwitch===1?true:false;
       this.groupData.gtalkInterval=group_data.data.talkInterval;
-      this.setTalkInterval();
+      //this.setTalkInterval();
     });
   }
   /**

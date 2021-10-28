@@ -151,7 +151,7 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.initGroupData();
+    //this.initGroupData();
   }
 
   loadGroupAdminList() {

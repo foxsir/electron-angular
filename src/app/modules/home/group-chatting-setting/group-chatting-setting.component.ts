@@ -134,9 +134,7 @@ export class GroupChattingSettingComponent implements OnInit,OnDestroy {
       data[key] = this.setting_data[key] == true ? 1 : 0;
 
       this.restService.updateGroupBaseById(data).subscribe(res => {
-        this.currentChattingChangeService.switchCurrentChatting(
-          this.currentChat
-        ).then();
+        //this.currentChattingChangeService.switchCurrentChatting(this.currentChat).then();
         this.cacheService.putChattingCache(this.currentChat).then(() => {});
       });
     }
