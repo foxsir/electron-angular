@@ -135,8 +135,6 @@ export class ContextMenuService {
                   const chatMsgEntity: ChatmsgEntityModel = this.messageEntityService.prepareSendedMessage(
                     messageText, CommonTools.getTimestamp(), null, MsgType.TYPE_CONTACT
                   );
-                  console.dir(1111111111111111111111)
-                  console.dir(chatMsgEntity)
                   this.forwardMessageService.forward(chatting, chatMsgEntity);
                 });
               }
@@ -169,9 +167,15 @@ export class ContextMenuService {
         return true;
       },
       action: (chatting: AlarmItemInterface) => {
-        this.dialogService.confirm({title: '清除历史消息'}).then((ok) => {
+        let text="";
+        if(chatting.alarmItem.chatType === 'friend'){ text = "确定清除与该好友的聊天记录吗？";}
+        if(chatting.alarmItem.chatType === 'group'){ text = "确定清除该群的聊天记录吗？";}
+        this.dialogService.confirm({title: '消息提示', text: text}).then((ok) => {
           if(ok) {
             this.cacheService.clearChattingCache(chatting).then(() => {});
+            if(chatting.alarmItem.chatType === 'group') {
+              this.cacheService.clearAt(chatting.alarmItem.dataId);
+            }
           }
         });
       }
