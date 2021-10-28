@@ -41,3 +41,51 @@
     height: 16px !important;
   }
 }
+
+.at-select-area {
+  max-height: 250px;
+  overflow: hidden;
+  .at-chip-filter {
+    padding-bottom: 4px;
+    input {
+      text-align: center;
+    }
+  }
+}
+
+.at-chip-list {
+  max-height: 200px;
+  overflow: scroll;
+  .mat-chip:focus {
+    background-color: #dcf1fe;
+  }
+  mat-chip {
+    margin: 0;
+    background: #ffffff;
+    border-radius: 0;
+    height: 50px;
+
+    ::ng-deep {
+      .at-item-prefix {
+        border-radius: 30px;
+        box-shadow: none;
+        height: 30px;
+        width: 30px;
+        line-height: 15px;
+        text-align: center;
+        .mat-button-wrapper {
+          padding: 0;
+        }
+      }
+    }
+  }
+}
+
+.cancel-at-overlay {
+  height: 10000px;
+  position: absolute;
+  width: 100%;
+  background: rgb(0 0 0 / 2%);
+  z-index: 99;
+  top: -10000px;
+}

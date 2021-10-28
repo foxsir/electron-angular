@@ -1,5 +1,6 @@
 ::-webkit-scrollbar {
   width: 0;
+  height: 0; // 隐藏横向滚动条
 }
 ::-webkit-scrollbar-thumb {
   border-radius: 8px;

@@ -61,6 +61,7 @@ import { GroupTabsComponent } from './group-tabs/group-tabs.component';
 import {MatTabsModule} from "@angular/material/tabs";
 import {CountDownModule} from "@app/factorys/count-down/count-down.module";
 import {VirtualScrollModule} from "@app/factorys/virtual-scroll/virtual-scroll.module";
+import {MatChipsModule} from "@angular/material/chips";
 
 @NgModule({
   declarations: [
@@ -123,6 +124,7 @@ import {VirtualScrollModule} from "@app/factorys/virtual-scroll/virtual-scroll.m
     MatTabsModule,
     CountDownModule,
     VirtualScrollModule,
+    MatChipsModule,
   ],
   providers: [{provide: LOCALE_ID, useValue: 'zh-Hans' }]
 })
