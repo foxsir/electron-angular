@@ -523,7 +523,7 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
   移除群成员 群主/管理员可操作，群主不能移除，管理员不能移除自己
   */
   removeMember(item){
-    this.dialogService.confirm({title: '成员移除', text: "确定要將「 "+item.showNickname+" 」移出群吗？"}).then(ok => {
+    this.dialogService.confirm({title: '消息提示', text: "确定要删除 "+item.showNickname+"吗？"}).then(ok => {
       if(ok) {
         const userId = Number(item.userUid);
         this.restService.removeGroupMembers(this.currentChat.alarmItem.dataId, this.localUserService.localUserInfo.userId.toString(),

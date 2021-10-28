@@ -500,7 +500,7 @@ export class ContextMenuService {
           return owner || manager; // 是管理员或者群主
         },
         action: (alarmItem, chat) => {
-          this.dialogService.confirm({title: '成员移除', text: "确定要將「 "+chat.name+" 」移出群吗？"}).then((ok) => {
+          this.dialogService.confirm({title: '消息提示', text: "确定删除 "+chat.name+"吗？"}).then((ok) => {
             if(ok) {
               const userId = Number(chat.uid);
               const localUserInfo: LocalUserinfoModel = RBChatUtils.getAuthedLocalUserInfoFromCookie();
