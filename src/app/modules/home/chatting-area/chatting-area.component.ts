@@ -162,6 +162,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
     gtopContent_class: '',
     gtalkIntervalSwitch: false,
     gtalkInterval: 3,
+    gmemberCount:0,
   };
 
   // @我的消息
@@ -259,6 +260,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
           gtopContent_class: '',
           gtalkIntervalSwitch: false,
           gtalkInterval: 3,
+          gmemberCount:0
         };
 
         if (this.currentChat.alarmItem.chatType === 'group') {
@@ -962,6 +964,8 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
         this.groupData.gnotice = group_data.data.gnotice == null ? '' : group_data.data.gnotice;
         this.groupData.gtopContent = group_data.data.gtopContent == null ? '' : group_data.data.gtopContent;
         this.groupData.gtopContent_visible = group_data.data.topContentSwitch===1?true:false;
+        this.groupData.gmemberCount=group_data.data.gmemberCount;
+        this.currentChatSubtitle = "人数："+ this.groupData.gmemberCount.toString()+"人"
       }
       this.groupData.gnotice_visible = true;
 
