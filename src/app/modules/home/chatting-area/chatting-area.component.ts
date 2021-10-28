@@ -271,6 +271,11 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
         }
         if(this.currentChat.alarmItem.chatType === 'friend'){
           this.getFriendOnlineStat();
+          SubscribeManage.run(this.cacheService.cacheUpdate$, (cache) => {
+            if(cache.friendMap) {
+              this.getFriendOnlineStat();
+            }
+          });
         }
       }
 
@@ -332,15 +337,6 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
             this.loadMessage(true);
           }
         });
-        if ( this.currentChat.metadata.chatType === 'friend') {
-          this.getFriendOnlineStat();
-          // 监听好友变化
-          SubscribeManage.run(this.cacheService.cacheUpdate$, (cache) => {
-            if(cache.friendMap) {
-              this.getFriendOnlineStat();
-            }
-          });
-        }
       } else {
         this.currentChat = currentChat;
       }
