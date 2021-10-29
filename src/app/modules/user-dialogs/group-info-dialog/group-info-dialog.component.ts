@@ -123,7 +123,6 @@ export class GroupInfoDialogComponent implements OnInit {
         this.dialogRef.close(result);
     }
 
-
     /* 确认选择 */
     confirmChoose(item) {
         const result = {
@@ -143,8 +142,31 @@ export class GroupInfoDialogComponent implements OnInit {
     const result = {
       ok: true,
       selectfriends: selectfriends,
-    }; console.dir(result);
-    this.dialogRef.close(result);
+    };
+
+    if(selectfriends.length > 0) {
+      switch (this.data.choose_type){
+        case 'add_group_admin':
+          let confirmTxt = "";
+          if (selectfriends.length === 1) {
+            confirmTxt = "确定设置 " + selectfriends[0].name + "为管理员吗？";
+          } else {
+            confirmTxt = "确定设置" + selectfriends[0].name + "等" + selectfriends.length.toString() + "位为管理员吗？";
+          }
+          this.dialogService.confirm({title: '添加管理员', text: confirmTxt}).then(ok => {
+            if (ok) {
+              this.dialogRef.close(result);
+            }
+          });
+          break;
+        default:
+          this.dialogRef.close(result);
+          break;
+      }
+
+    }else{
+      this.dialogRef.close(result);
+    }
   }
 
     /**
