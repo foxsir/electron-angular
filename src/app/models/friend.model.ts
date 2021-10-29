@@ -18,4 +18,5 @@ export default class FriendModel extends BaseEntity {
   latestLoginTime:  number; //  最近登录时间(时间戳)
   onlineStatus:  boolean; //  好友在线状态
   updateAvatarTimestamp:  number; //  头像更新时间戳
+  registerTime: string; //注册时间
 }
