@@ -61,7 +61,7 @@ export class NewFriendComponent implements OnInit {
       this.messageService.friendRequest("cancel", item).then(res => {
         if(res.success) {
           this.cacheService.updateNewFriendMap(item.reqUserId, false);
-          this.snackBarService.openMessage("已经拒绝");
+          this.snackBarService.openMessage(`已经拒绝${item.reqUserNickname}添加好友`);
         } else {
           this.snackBarService.openMessage("请稍后重试");
         }
@@ -75,7 +75,7 @@ export class NewFriendComponent implements OnInit {
           setTimeout(() => {
             this.cacheService.cacheFriends().then();
           }, 1000);
-          this.snackBarService.openMessage("已经同意");
+          this.snackBarService.openMessage(`已经同意${item.reqUserNickname}添加好友`);
         } else {
           this.snackBarService.openMessage("请稍后重试");
         }

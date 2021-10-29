@@ -548,11 +548,6 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
     SubscribeManage.run(this.messageDistributeService.MT03_OF_CHATTING_MESSAGE$, (res: ProtocalModel) => {
       const dataContent: ProtocalModelDataContent = JSON.parse(res.dataContent);
       const func = this.serverForwardService.functions[dataContent.ty];
-      console.dir(dataContent.ty)
-      console.dir(dataContent.ty)
-      console.dir(dataContent.ty)
-      console.dir(dataContent.ty)
-      console.dir(dataContent.ty)
       if(func) {
         func(res);
       } else if (dataContent.ty == 120) {
@@ -1131,11 +1126,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
         txt:this.groupData.gtopContent,
       }
     }
-    this.dialogService.openDialog(GroupNoticeComponent, { data: data,width: '314px',panelClass: "padding-less-dialog" }).then((res: any) => {
-      if (res.ok === false) {
-        return;
-      }
-    });
+    this.dialogService.openDialog(GroupNoticeComponent, { data: data,width: '314px',panelClass: "padding-less-dialog" }).then();
   }
 
   /**

@@ -71,7 +71,7 @@
       </button>
     </div>
     <div fxFlex style="background: #FFF" class="message-textarea-container">
-      <div contenteditable="true" (paste)="pasteContent($event)" class="message-textarea" #textarea
+      <div contenteditable="true" (paste)="pasteContent($event)" class="message-textarea" #textarea (focus)="textareaChange()"
            (keyup)="textareaChange()" (keydown)="textareaKeydown($event)" (keydown.enter)="doSend();" (click)="closeAtPanel()"></div>
       <div class="message-text-placeholder" (selectstart)="false" (click)="textarea.focus()" [fxShow]="showPlaceholder">
         {{messageTextPlaceholder}}

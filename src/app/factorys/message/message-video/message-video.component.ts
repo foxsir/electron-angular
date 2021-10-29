@@ -15,6 +15,8 @@ interface VideoInfo {
   videoCoverPath: string;
 }
 
+import videoIcon from "@app/assets/icons/video.svg";
+
 @Component({
   selector: 'app-message-video',
   templateUrl: './message-video.component.html',
@@ -24,6 +26,8 @@ export class MessageVideoComponent implements OnInit {
   @Input() chatMsg: ChatmsgEntityModel;
   public videoInfo: VideoInfo;
   public videoResource: SafeResourceUrl;
+
+  public videoIcon: SafeResourceUrl = this.dom.bypassSecurityTrustResourceUrl(videoIcon);
 
   constructor(
     private fileService: FileService,
