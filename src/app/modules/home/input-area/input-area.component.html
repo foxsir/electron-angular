@@ -16,13 +16,13 @@
                   <button mat-mini-fab color="primary" class="at-item-prefix">@</button>
                 </div>
                 <div fxFlex fxLayoutAlign="center center">
-                  所有人 ({{memberMap.size}})
+                  所有人 ({{memberMap.size}}){{user_role}}
                 </div>
               </div>
             </mat-chip>
-            <mat-chip *ngFor="let member of memberMap | keyvalue"  fxLayoutAlign="start center"
+            <mat-chip *ngFor="let member of memberMap | keyvalue" fxLayoutAlign="start center"
                       (click)="appendAtMark(member.value)" (keydown.enter)="appendAtMark(member.value)"
-                      [fxHide]="!member.value.showNickname.includes(filterAtMember)">
+                      [fxHide]="!member.value.showNickname.includes(filterAtMember) || (member.value.userUid.toString() === userinfo.userId.toString())">
               <div fxLayout="row" fxLayoutGap="10px">
                 <div fxFlex="30px" fxLayoutAlign="center center">
                   <img [src]="member.value.userAvatarFileName" alt="" class="at-item-prefix" />
