@@ -15,4 +15,5 @@ export class GroupMemberModel extends BaseEntity {
   updateAvatarTimestamp: number;
   userAvatarFileName: string;
   userUid: number;
+  latestLoginTime: number;
 }
