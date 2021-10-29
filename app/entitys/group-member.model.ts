@@ -47,6 +47,8 @@ export class GroupMemberModel extends BaseEntity {
   @Column({nullable: true})
   userUid: string;
 
+  @Column({nullable: true})
+  latestLoginTime: number;
 }
 
 

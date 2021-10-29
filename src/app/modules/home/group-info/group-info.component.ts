@@ -151,7 +151,7 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    //this.initGroupData();
+    this.initGroupData();
   }
 
   loadGroupAdminList() {
@@ -174,6 +174,7 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
   initUserCluInfo(){
     this.userinfo = this.localUserService.localUserInfo;
     this.restService.getUserClusterVo(this.userinfo.userId.toString(), this.currentChat.alarmItem.dataId).subscribe(res => {
+      console.dir(res)
       if (res.status !== 200)
         return;
 
@@ -208,6 +209,8 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
     console.log('currentChat:'+this.currentChat+"当前页面:群组信息页面");
     if (this.currentChat.metadata.chatType === 'friend') {
       return;
+    }else{
+      this.initUserCluInfo();
     }
 
     /*获取群基本信息*/
@@ -250,7 +253,7 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
     });
 
     this.loadGroupAdminList();
-    //this.initUserCluInfo();
+
 
     /* 查看免打扰状态 */
     this.restService.noDisturbDetail(this.userinfo.userId.toString(), this.currentChat.alarmItem.dataId).subscribe(res => {
