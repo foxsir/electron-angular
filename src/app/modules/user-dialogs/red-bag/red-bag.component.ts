@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Inject, NgZone, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import ChatmsgEntityModel from "@app/models/chatmsg-entity.model";
 import {DomSanitizer, SafeResourceUrl} from "@angular/platform-browser";
@@ -136,7 +136,6 @@ export class RedBagComponent implements OnInit {
           this.redBag.status = '2';
           this.data.text = JSON.stringify(this.redBag);
           this.cacheService.putChattingCache(this.currentChatting, this.data).then();
-          // this.cacheService.chatMsgEntityMap.set(this.data.fingerPrintOfProtocal, this.data);
           this.cacheService.putMsgEntityMap(this.data);
         } else {
           this.snackBarService.openMessage(res.msg);
