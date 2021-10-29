@@ -106,6 +106,7 @@
         <mat-list-option *ngFor="let item of group_members" [fxHide]="!item.showNickname.includes(search_keywords)" [value]="item" class="list-box"  style="cursor:pointer;">
           <img src="{{item.userAvatarFileName}}" mat-list-icon style="width: 40px; height: 40px" />
           <div mat-line class="nickName">{{item.showNickname}}</div>
+          <div mat-line style="color: #CCCCCC; font-size: 12px">最近上线 {{item.latestLoginTime | date:"yyyy-MM-dd hh:mm"}}</div>
         </mat-list-option>
       </mat-selection-list>
     </div>
