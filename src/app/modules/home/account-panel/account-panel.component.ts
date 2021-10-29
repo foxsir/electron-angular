@@ -61,7 +61,7 @@ export class AccountPanelComponent implements OnInit {
   myAvatar: SafeResourceUrl = null;
 
   public localUserInfo: LocalUserinfoModel;
-  public myAccount: number=0;
+  public myAccount: number=0.00;
 
   public userSettingMenu = [
     {
@@ -141,7 +141,7 @@ export class AccountPanelComponent implements OnInit {
 
     //取账户余额
     this.restService.getCustAccountbaseById(this.localUserInfo.userId.toString()).subscribe(res => {
-      this.myAccount = res.data.amount;
+      this.myAccount = res.data.amount.toFixed(2);
     });
 
     SubscribeManage.run(this.cacheService.cacheUpdate$, cache => {
