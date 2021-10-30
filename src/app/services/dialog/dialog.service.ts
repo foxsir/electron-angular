@@ -30,7 +30,8 @@ export class DialogService {
       this.openDialog(ConfirmComponent, {
         width: data.width === undefined ? '354px' : data.width + 'px',
         height: data.height ? data.height + 'px' : data.height,
-        data: data
+        data: data,
+        panelClass:'confirmDiv'
       }).then((res: boolean) => {
         resolve(res);
       });
