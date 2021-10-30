@@ -10,6 +10,7 @@ import {ChatModeType, MsgType} from "@app/config/rbchat-config";
 import {MessageEntityService} from "@services/message-entity/message-entity.service";
 import AlarmItemInterface from "@app/interfaces/alarm-item.interface";
 import {CurrentChattingChangeService} from "@services/current-chatting-change/current-chatting-change.service";
+import {GroupModel} from "@app/models/group.model";
 
 @Component({
   selector: 'app-transmit-message',
@@ -18,9 +19,9 @@ import {CurrentChattingChangeService} from "@services/current-chatting-change/cu
 })
 export class TransmitMessageComponent implements OnInit {
   public filterFriend: string = "";
-  public friendMap: Map<string, FriendModel> = new Map();
 
-  public selectedFriends: FriendModel[] = [];
+  public friends: any[] = [];
+  public selectedFriends: any[] = [];
 
   constructor(
     public dialogRef: MatDialogRef<TransmitMessageComponent>,
@@ -32,17 +33,27 @@ export class TransmitMessageComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.cacheService.getCacheFriends().then(data => {
-      if(data) {
-        this.friendMap = data;
+    this.cacheService.getCacheFriends().then((friendMap: Map<string, FriendModel>) => {
+      if(friendMap) {
+        friendMap.forEach(f =>{
+          this.friends.push({id:f.friendUserUid, name:f.nickname,imgbase64:f.base64Avatar,img:f.userAvatarFileName,online:f.onlineStatus?1:2});
+        });
+
+        this.cacheService.getCacheGroups().then((groups: Map<string, GroupModel>) => {
+          if(groups){
+            groups.forEach( g =>{
+              this.friends.push({id: g.gid, name:g.gname,imgbase64:null,img:g.avatar,online:3});
+            });
+            console.dir(this.friends);
+          }
+        });
       }
-      console.dir(this.friendMap)
     });
   }
 
+  /*
   filter() {
     this.cacheService.getCacheFriends().then(data => {
-      console.log(this.filterFriend)
       if(data) {
         data.forEach((friend: FriendModel) => {
           if(friend.nickname.includes(this.filterFriend)) {
@@ -53,13 +64,15 @@ export class TransmitMessageComponent implements OnInit {
       console.log(this.friendMap)
     });
   }
+  *
+   */
 
   async nextStep(friendSelect: MatSelectionList) {
     const names = [];
     this.selectedFriends = [];
     friendSelect.selectedOptions.selected.forEach(item => {
       this.selectedFriends.push(item.value);
-      names.push(item.value.nickname);
+      names.push(item.value.name);
     });
 
     // const merge: ReplyMessageChildMessage[] = [];
@@ -72,15 +85,15 @@ export class TransmitMessageComponent implements OnInit {
         type: msg.msgType,
       };
       this.selectedFriends.forEach(friend => {
-        this.messageService.sendMessage(msg.msgType, friend.friendUserUid, newMsg.text).then((res) => {
+        this.messageService.sendMessage(msg.msgType, friend.value.id, newMsg.text).then((res) => {
           if(res.success === true) {
             const alarmData: AlarmItemInterface = {
               alarmItem: {
                 alarmMessageType: ChatModeType.CHAT_TYPE_FRIEND$CHAT,
-                dataId: friend.friendUserUid.toString(),
+                dataId: friend.value.id.toString(),
                 date: msg.date,
                 msgContent: MessageService.parseMessageForShow(msg.text, msg.msgType),
-                title: friend.remark?friend.remark:friend.nickname,
+                title: friend.remark?friend.remark:friend.value.name,
                 avatar: null,
               },
               metadata: {
@@ -91,14 +104,10 @@ export class TransmitMessageComponent implements OnInit {
             const chatMsgEntity = this.messageEntityService.prepareSendedMessage(
               message, 0, res.fingerPrint, msg.msgType
             );
-            // chatMsgEntity.isOutgoing = false;
-            this.cacheService.getCacheFriends().then(list => {
-              const fm: FriendModel = list.get(friend.friendUserUid.toString());
-              alarmData.alarmItem.avatar = fm.userAvatarFileName;
-                this.cacheService.putChattingCache(alarmData, chatMsgEntity).then(() => {
-                this.currentChattingChangeService.switchCurrentChatting(alarmData).then(() => {
-                  this.dialogRef.close(true);
-                });
+            alarmData.alarmItem.avatar = friend.value.img;
+            this.cacheService.putChattingCache(alarmData, chatMsgEntity).then(() => {
+              this.currentChattingChangeService.switchCurrentChatting(alarmData).then(() => {
+                this.dialogRef.close(true);
               });
             });
           }

@@ -7,13 +7,14 @@
   </div>
   <div class="scrollbar" style=" max-height: 400px;">
     <mat-selection-list class="friend-list" #friendSelect disableRipple color="primary">
-      <mat-list-option class="friend-list-item" *ngFor="let friend of friendMap | keyvalue" [fxHide]="!friend.value.nickname.includes(filterFriend)" [value]="friend.value">
+      <mat-list-option class="friend-list-item" *ngFor="let friend of friends | keyvalue" [fxHide]="!friend.value.name.includes(filterFriend)" [value]="friend">
         <mat-icon mat-list-icon class="friend-avatar">
-          <img [src]="friend.value.base64Avatar || friend.value.userAvatarFileName">
+          <img [src]="friend.value.imgbase64 || friend.value.img">
         </mat-icon>
-        <div mat-line style="font-size: 14px">{{friend.value.nickname}}</div>
-        <div mat-line *ngIf="!!friend.value.onlineStatus === true" style="color: #0091FF;font-size: 12px; padding-bottom: 3px;">[在线]</div>
-        <div mat-line *ngIf="!!friend.value.onlineStatus === false" style="color: #CCCCCC; font-size: 12px">[离线]</div>
+        <div mat-line style="font-size: 14px">{{friend.value.name}}</div>
+        <div mat-line *ngIf="friend.value.online === 1" style="color: #0091FF;font-size: 12px; padding-bottom: 3px;">[在线]</div>
+        <div mat-line *ngIf="friend.value.online === 2" style="color: #CCCCCC; font-size: 12px">[离线]</div>
+        <div mat-line *ngIf="friend.value.online === 3" style="color: #CCCCCC; font-size: 12px">[群聊]</div>
       </mat-list-option>
     </mat-selection-list>
   </div>
