@@ -62,8 +62,10 @@
                       <div fxFlex="22px" class="chatting-title">
                         {{currentChat.alarmItem.title}}
                       </div>
-                      <div fxFlex="18px" class="chatting-subtitle" *ngIf="currentChatSubtitle">
-                        {{currentChatSubtitle}}
+                      <div fxFlex="18px" class="chatting-subtitle">
+                        <span *ngIf="currentChat.alarmItem.chatType === 'friend' && currentChatStat" style="color: #0091ff;margin-right: 5px">[在线]</span>
+                        <span *ngIf="currentChat.alarmItem.chatType === 'friend' && !currentChatStat" style="margin-right: 5px">[离线]</span>
+                        <span *ngIf="currentChatSubtitle">{{currentChatSubtitle}}</span>
                       </div>
                     </div>
                   </div>
