@@ -124,8 +124,8 @@ export class SearchFriendComponent implements OnInit {
             } else {
               this.snackBarService.openMessage("请稍后重试");
             }
-            this.searchFriend = '';
-            this.searchFriendInfo = null;
+            //this.searchFriend = '';
+            //this.searchFriendInfo = null;
           });
         });
 
