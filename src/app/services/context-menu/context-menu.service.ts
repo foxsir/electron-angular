@@ -275,7 +275,8 @@ export class ContextMenuService {
       },
       action: (chat: ChatmsgEntityModel, messageContainer: HTMLDivElement) => {
         chat.msgType = this.msgType.TYPE_BACK;
-        chat.text = [chat.name, '撤回一条消息'].join("");
+        //chat.text = [chat.name, '撤回一条消息'].join("");
+        chat.text = '你撤回了一条消息';
         return this.cacheService.putChattingCache(
           this.currentChattingChangeService.currentChatting,
           chat

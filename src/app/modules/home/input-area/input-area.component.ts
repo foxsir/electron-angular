@@ -135,9 +135,11 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
     private zone: NgZone,
     private changeDetectorRef: ChangeDetectorRef,
   ) {
+    this.userinfo = this.localUserService.localUserInfo;
     SubscribeManage.run(this.inputAreaService.inputUpdate$, (status) => {
       this.inputEnableStatus = status;
     });
+
 
     this.cacheService.cacheUpdate$.subscribe(res => {
       if (res.groupMemberMap) {
@@ -145,6 +147,14 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
         this.cacheService.getGroupMembers(gid).then(cache => {
           this.memberMap = cache;
         });
+        this.initUserCluInfo();
+      }
+      if(res.groupAdminMap){
+        console.dir(res.groupAdminMap);
+        this.initUserCluInfo();
+      }
+      if(res.groupMap){
+        this.initUserCluInfo();
       }
     });
 
@@ -900,7 +910,6 @@ export class InputAreaComponent implements OnInit, AfterViewInit,OnDestroy {
 
 
   initUserCluInfo(){
-    this.userinfo = this.localUserService.localUserInfo;
     this.restService.getUserClusterVo(this.userinfo.userId.toString(), this.currentChat.alarmItem.dataId).subscribe(res => {
       if (res.status !== 200)
         return;

@@ -470,12 +470,18 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
     };
     this.dialogService.openDialog(GroupInfoDialogComponent, { data: data,width: '314px',panelClass: "padding-less-dialog" }).then((res: any) => {
       if (res && res.ok === true) {
-        if (choose_type == 'transfer') {
-          this.drawer.close().then();
-          this.restService.submitTransferGroupToServer(this.userinfo.userId.toString(), res.item.userUid, res.item.showNickname, this.currentChat.alarmItem.dataId).subscribe(res => {
-            this.user_role = 'common';
-            this.snackBarService.openMessage('转让成功！');
-          });
+        switch (choose_type) {
+          case 'transfer':
+            this.dialogService.confirm({title: '转让本群', text: "确定将群主转让给"+ res.item.showNickname +"吗？"}).then(ok => {
+              if (ok) {
+                this.drawer.close().then();
+                this.restService.submitTransferGroupToServer(this.userinfo.userId.toString(), res.item.userUid, res.item.showNickname, this.currentChat.alarmItem.dataId).subscribe(res => {
+                  this.user_role = 'common';
+                  this.snackBarService.openMessage('转让成功！');
+                });
+              }
+            });
+            break;
         }
       }
     });

@@ -116,6 +116,7 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
   // end icon
 
   public currentChatSubtitle: string = null;
+  public currentChatStat:boolean = false;
 
   public localUserInfo: LocalUserinfoModel;
 
@@ -366,11 +367,11 @@ export class ChattingAreaComponent implements OnInit, AfterViewInit, AfterConten
       }
       console.dir(this.friendOnLineStat)
       this.restService.getUserBaseById(this.currentChat.alarmItem.dataId).subscribe(res => {
-        this.currentChatSubtitle = (this.friendOnLineStat?"[在线]":"[离线]");
+        this.currentChatStat = this.friendOnLineStat?true:false;
         if (res.data !== null) {
-          this.currentChatSubtitle += [res.data.latestLoginAddres, res.data.latestLoginIp].join(": ");
+          this.currentChatSubtitle = [res.data.latestLoginAddres, res.data.latestLoginIp].join(": ");
         } else {
-          this.currentChatSubtitle += "";
+          this.currentChatSubtitle = null;
         }
       });
     });

@@ -204,5 +204,16 @@
     .mat-list-base .mat-list-item.mat-list-item-with-avatar .mat-list-item-content .mat-list-text, .mat-list-base .mat-list-item.mat-list-option .mat-list-item-content .mat-list-text, .mat-list-base .mat-list-option.mat-list-item-with-avatar .mat-list-item-content .mat-list-text, .mat-list-base .mat-list-option.mat-list-option .mat-list-item-content .mat-list-text{
       padding-left:10px
     }
+    .matLine .role-group,.role-group-admin{
+      line-height: 12px;
+      border-radius: 10px;
+      color: #FFF;
+      font-size: 10px;
+      margin-right:5px;
+      padding: 2px 6px;
+      display:inline-block;
+      font-size: 12px;
+      margin-top: 3px;
+    }
   }
 }

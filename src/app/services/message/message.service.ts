@@ -555,6 +555,23 @@ export class MessageService {
     });
   }
 
+  /**取个人在群内的昵称**/
+  getGroupShowNickName(gid){
+    const localUserInfo = this.localUserService.localUserInfo;
+    if(gid===0){
+      return localUserInfo.nickname;
+    }else{
+      this.cacheService.getGroupMembers(gid).then(members => {
+        const m = members.get(localUserInfo.userId.toString());
+        if(m){
+          console.dir(m.showNickname)
+          return m.showNickname;
+        }else{
+          return localUserInfo.nickname;
+        }
+      });
+    }
+  }
   /**
    * 撤回群聊消息
    * @param currentChat
@@ -566,12 +583,12 @@ export class MessageService {
     return new Promise((resolve, reject) => {
       const localUserInfo = this.localUserService.localUserInfo;
       let success = false;
-      let adminId = {};
-      if (currentChat.metadata.chatType === 'group') {
-        adminId = {
+      let adminId = {
           adminId: "400070,400340",
-        };
-      }
+        }
+
+        let nick=this.getGroupShowNickName(currentChat.alarmItem.dataId);
+
 
       const msgBody = {
         cy: ChatModeType.CHAT_TYPE_GROUP$CHAT,
@@ -580,15 +597,17 @@ export class MessageService {
           isBanned: false,
           showMsg: false,
           senderId: currentChat.alarmItem.dataId.toString(),
-          msg: "普通管理员撤回了我的一条消息",
+          //msg: this.getGroupShowNickName(currentChat.alarmItem.dataId)+"撤回了我的一条消息",
+          msg: localUserInfo.nickname+"撤回了"+(chat.uid.toString() === localUserInfo.userId.toString()?"":"我的")+"一条消息",
           uuid: chat.fingerPrintOfProtocal,
-          adminId: adminId
+          adminId: localUserInfo.userId
         }),
         m3: "web",
-        nickName: "普通管理员",
+        nickName: localUserInfo.nickname,
         t: currentChat.alarmItem.dataId,
         ty: MsgType.TYPE_BACK,
       };
+      console.dir('111111111111:',nick)
 
       const p: any = createCommonData2(
         JSON.stringify(msgBody), localUserInfo.userId.toString(), "0", UserProtocalsType.MT44_OF_GROUP$CHAT$MSG_A$TO$SERVER
