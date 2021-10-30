@@ -499,7 +499,9 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
       this.cacheService.getChattingList().then(list => {
         const chatting = list.get(dataContent.gid.toString());
         if(chatting) {
-          chatting.alarmData.alarmItem.title = dataContent.nnewGroupName;
+          this.zone.run(() => {
+            chatting.alarmData.alarmItem.title = dataContent.nnewGroupName;
+          });
           this.cacheService.putChattingCache(chatting.alarmData).then();
         }
       });
@@ -507,6 +509,7 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     // 处理有人退群/被踢的逻辑
     SubscribeManage.run(this.messageDistributeService.MT50_OF_GROUP$SYSCMD_SOMEONEB$REMOVED_FROM$SERVER$, (protocol: ProtocalModel) => {
+      console.dir(protocol)
       const dataContent: any = JSON.parse(protocol.dataContent);
       const text: string = dataContent.m;
       this.snackBarService.openMessage(text);
