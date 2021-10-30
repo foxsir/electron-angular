@@ -20,6 +20,16 @@
   height: 30px;
 }
 
-
-::ng-deep {
+.index{
+  ::ng-deep {
+    .mat-badge-content, .mat-badge-active{
+      text-overflow: clip;
+    }
+    .font8{
+      .mat-badge-content.mat-badge-active{
+        font-size: 8px;
+      }
+    }
+  }
 }
+

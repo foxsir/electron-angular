@@ -1,4 +1,4 @@
-<div fxLayout="row" fxFlexFill>
+<div fxLayout="row" fxFlexFill class="index">
   <div fxFlex="74px" style="background: #F6F7F9">
     <div style="position: relative;">
       <app-toolbar [visibilityActions]="false" [stickyTop]="true"></app-toolbar>
@@ -17,7 +17,8 @@
             <div style="cursor: pointer" [routerLink]="menu.router" (click)="switchRouter(menu)">
               <div fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="3px">
                 <div>
-                  <mat-icon style="width: 30px" [matBadge]="massageBadges.get(menu.path)" matBadgeColor="warn"
+<!--                  [ngStyle]="{'font-size':massageBadges.get(menu.path)>99?'8px':'9px'}"-->
+                  <mat-icon [ngClass]="{'font8':true}"  style="width: 30px;" [matBadge]="massageBadges.get(menu.path)>99?'99+':massageBadges.get(menu.path)" matBadgeColor="warn"
                             matBadgePosition="above after" matBadgeSize="small"
                             matBadgeOverlap="true"
                             [matBadgeHidden]="!massageBadges.get(menu.path) || massageBadges.get(menu.path) === 0">
