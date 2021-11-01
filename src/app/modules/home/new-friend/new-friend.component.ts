@@ -61,7 +61,7 @@ export class NewFriendComponent implements OnInit {
       this.messageService.friendRequest("cancel", item).then(res => {
         if(res.success) {
           this.cacheService.updateNewFriendMap(item.reqUserId, false);
-          this.snackBarService.openMessage(`已经拒绝${item.reqUserNickname}添加好友`);
+          this.snackBarService.openMessage(`你拒绝了${item.reqUserNickname}的好友请求`);
         } else {
           this.snackBarService.openMessage("请稍后重试");
         }

@@ -613,7 +613,12 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
           this.cacheService.cacheFriends().then();
         }, 1000);
       });
-      this.snackBarService.openMessage(friendInfo.nickname + "拒绝了你的好友请求");
+      console.dir(dataContent)
+      if(dataContent.beRequestUser === dataContent.friendInfo.userUid ){
+        //this.snackBarService.openMessage("你拒绝了"+friendInfo.nickname+"的好友请求");
+      }else{
+        this.snackBarService.openMessage(friendInfo.nickname + "拒绝了你的好友请求");
+      }
     });
 
     // 监听好友请求
