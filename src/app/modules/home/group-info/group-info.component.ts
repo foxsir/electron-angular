@@ -516,9 +516,11 @@ export class GroupInfoComponent implements OnInit, OnDestroy {
         this.restService.updateGroupAdmin(this.currentChat.alarmItem.dataId, members, 1).subscribe(re => {
           setTimeout(() => {
             //添加一条系统消息
+            /*
             var text="\""+res.selectfriends[0].name+"\"" +(res.selectfriends.length>1?"等"+res.selectfriends.length.toString()
                       +"人":"")+"成为管理员";
             this.cacheService.saveSystemMessage(this.currentChat.alarmItem.dataId, text, CommonTools.getTimestamp(), CommonTools.uuid());
+         **/
             //更新管理员列表
             this.cacheService.cacheGroupAdmins(this.currentChat.alarmItem.dataId).then(admin => {
               this.loadGroupAdminList();

@@ -170,7 +170,7 @@ export class ServerForwardService {
     const msg=JSON.parse(dataContent[0].m);
     const txtMsg="\""+msg.nicNames[0]+"\""+(msg.nicNames.length>1?"等"+msg.nicNames.length.toString()+"人":"")+
                   (msg.type === 1?"成为":"被取消")+"管理员";
-    this.cacheService.saveSystemMessage(dataContent[0].t, txtMsg, res.sm, res.fp);
+    //this.cacheService.saveSystemMessage(dataContent[0].t, txtMsg, res.sm, res.fp);
   }
 
   // 语音通话消息
